@@ -1,0 +1,811 @@
+// @ts-nocheck
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import useSingleData from "@/hooks/useSingleData";
+import { MoveLeft, Check, Plus, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import axiosInstance from "@/lib/axiosInstance";
+import { cn } from "@/lib/utils";
+import useAllDepartments from "@/hooks/useAllDepartments";
+
+
+// 64 Districts of Bangladesh
+const bangladeshDistricts = [
+  // Dhaka Division (13 districts)
+  "Dhaka",
+  "Faridpur",
+  "Gazipur",
+  "Gopalganj",
+  "Kishoreganj",
+  "Madaripur",
+  "Manikganj",
+  "Munshiganj",
+  "Narayanganj",
+  "Narsingdi",
+  "Rajbari",
+  "Shariatpur",
+  "Tangail",
+
+  // Chittagong Division (11 districts)
+  "Bandarban",
+  "Brahmanbaria",
+  "Chandpur",
+  "Chattogram",
+  "Cumilla",
+  "Cox's Bazar",
+  "Feni",
+  "Khagrachhari",
+  "Lakshmipur",
+  "Noakhali",
+  "Rangamati",
+
+  // Rajshahi Division (8 districts)
+  "Bogura",
+  "Joypurhat",
+  "Naogaon",
+  "Natore",
+  "Chapainawabganj",
+  "Pabna",
+  "Rajshahi",
+  "Sirajganj",
+
+  // Khulna Division (10 districts)
+  "Bagerhat",
+  "Chuadanga",
+  "Jashore",
+  "Jhenaidah",
+  "Khulna",
+  "Kushtia",
+  "Magura",
+  "Meherpur",
+  "Narail",
+  "Satkhira",
+
+  // Barishal Division (6 districts)
+  "Barguna",
+  "Barishal",
+  "Bhola",
+  "Jhalokathi",
+  "Patuakhali",
+  "Pirojpur",
+
+  // Sylhet Division (4 districts)
+  "Habiganj",
+  "Moulvibazar",
+  "Sunamganj",
+  "Sylhet",
+
+  // Rangpur Division (8 districts)
+  "Dinajpur",
+  "Gaibandha",
+  "Kurigram",
+  "Lalmonirhat",
+  "Nilphamari",
+  "Panchagarh",
+  "Rangpur",
+  "Thakurgaon",
+
+  // Mymensingh Division (4 districts)
+  "Jamalpur",
+  "Mymensingh",
+  "Netrokona",
+  "Sherpur",
+];
+
+const UpdateCompanyMigration = () => {
+  const { id } = useParams();
+
+  // Fetch Company Migration data directly
+  const url = `https://egpserver.jubairahmad.com/api/v1/companyMigration/${id}`;
+  const { data: formData } = useSingleData(url);
+
+  const { transformedDepartments: AGENCIES, loading: departmentsLoading } = useAllDepartments();
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [selectedAgencies, setSelectedAgencies] = useState([]);
+  const [tempAgency, setTempAgency] = useState("");
+  const [tempValue, setTempValue] = useState("");
+  const [open, setOpen] = useState(false);
+  const [districtOpen, setDistrictOpen] = useState(false);
+  const [newFormData, setNewFormData] = useState({});
+
+  // Initialize selectedAgencies from formData.departmentLicenses
+  useEffect(() => {
+    if (formData?.departmentLicenses) {
+      const agencies = Object.entries(formData.departmentLicenses).map(([key, value]) => ({
+        name: key,
+        value: value as string
+      }));
+      setSelectedAgencies(agencies);
+    }
+
+    // Initialize newFormData with existing data when formData loads
+    if (formData && Object.keys(formData).length > 0) {
+      setNewFormData(formData);
+    }
+  }, [formData]);
+
+  // Fetch EGP Listed Company data to get yearsOfGeneralExperience
+  useEffect(() => {
+    const fetchEgpListedCompany = async () => {
+      if (!formData?.egpEmail) return;
+
+      try {
+        const response = await axiosInstance.get(`/egp-listed-company?searchTerm=${formData.egpEmail}&page=1&limit=1`);
+        const egpCompany = response.data?.data?.[0];
+
+        if (egpCompany?.yearsOfGeneralExperience) {
+          setNewFormData(prev => ({
+            ...prev,
+            yearsOfGeneralExperience: egpCompany.yearsOfGeneralExperience
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching EGP Listed Company:', error);
+      }
+    };
+
+    fetchEgpListedCompany();
+  }, [formData?.egpEmail]);
+
+  // Handle adding agency to selected list
+  const handleAddAgency = () => {
+    if (!tempAgency || !tempValue.trim()) {
+      return; // Don't add if no agency selected or no value entered
+    }
+
+    // Check if agency already exists
+    const exists = selectedAgencies.find((a) => a.name === tempAgency);
+    if (exists) {
+      alert(`${tempAgency} has already been added!`);
+      return;
+    }
+
+    // Add to selected agencies
+    setSelectedAgencies((prev) => [
+      ...prev,
+      { name: tempAgency, value: tempValue.trim() },
+    ]);
+
+    // Reset temporary values
+    setTempAgency("");
+    setTempValue("");
+    setOpen(false);
+  };
+
+  // Handle removing agency from selected list
+  const handleRemoveAgency = (agencyName) => {
+    setSelectedAgencies((prev) => prev.filter((a) => a.name !== agencyName));
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const toastId = toast.loading("Updating...");
+
+    try {
+      // Check if formData is loaded
+      if (!formData || !formData._id) {
+        toast.error("Company data not loaded. Please wait and try again.", {
+          id: toastId,
+        });
+        return;
+      }
+
+      // Transform selectedAgencies array to departmentLicenses object
+      const departmentLicenses = {};
+      selectedAgencies.forEach((agency) => {
+        departmentLicenses[agency.name] = agency.value;
+      });
+
+      // Merge with existing formData
+      const submitData = {
+        ...newFormData,
+        departmentLicenses,  // Send as nested object
+      };
+
+      // Update Company Migration
+      const response = await axiosInstance.patch(
+        `/companyMigration/${formData._id}`,
+        submitData
+      );
+
+      const data = response.data;
+
+      if (data?.success) {
+        // Also update EGP Listed Company if yearsOfGeneralExperience was changed
+        if (newFormData?.yearsOfGeneralExperience !== undefined) {
+          try {
+            const egpResponse = await axiosInstance.get(`/egp-listed-company?searchTerm=${formData.egpEmail}&page=1&limit=1`);
+            const egpCompany = egpResponse.data?.data?.[0];
+
+            if (egpCompany?._id) {
+              // Use PUT method with full company data (matching UpdateEgpListedCompany.tsx pattern)
+              const egpUpdateData = {
+                ...egpCompany,
+                yearsOfGeneralExperience: newFormData.yearsOfGeneralExperience
+              };
+
+              const updateUrl = `https://egpserver.jubairahmad.com/api/v1/egp-listed-company/${egpCompany._id}`;
+              await axiosInstance.put(updateUrl, egpUpdateData);
+            }
+          } catch (egpError) {
+            console.error('Error updating EGP Listed Company:', egpError);
+            // Don't fail the whole operation if EGP update fails
+          }
+        }
+
+        toast.success("Updated successfully", { id: toastId });
+      } else {
+        toast.error(data.message || "Failed to update", { id: toastId });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      const errorMessage = error?.response?.data?.message || error?.message || "An unexpected error occurred";
+      toast.error(errorMessage, {
+        id: toastId,
+      });
+    }
+  };
+
+  return (
+    <section className="min-h-lvh">
+      <Link to={"/dashboard/my-registered-company"}>
+        <Button className="flex items-center gap-1.5 mt-4 cursor-pointer">
+          <MoveLeft /> Back To My Companies
+        </Button>
+      </Link>
+      <h1 className="text-3xl font-bold text-center my-5">
+        Update Company Migration
+      </h1>
+
+      {/* Informational Note */}
+      <div className="w-full max-w-full md:max-w-2xl lg:max-w-4xl mx-auto mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-sm text-gray-700 leading-relaxed">
+          এই ফর্মে প্রয়োজনীয় সকল তথ্য হবে আপনার eGP অ্যাকাউন্টে Map-এর ফাইল নামসমূহ (উদাহরণস্বরূপ: Tin Certificate 25 26.pdf)।
+          ফাইল নাম লেখার পূর্বে নিম্নলিখিত বিষয়গুলি যাচাই করুন: 1) eGP-তে উক্ত নাম দিয়ে সার্চ করলে সংশ্লিষ্ট ফাইল ফিল্টার হয় কি না। 2) ফাইল নামের শুরুতে বা শেষে কোনো স্পেস (SPACE) আছে কি না। যদি থাকে, তা অপসারণ করুন।
+        </p>
+      </div>
+      <div className=" flex justify-center items-center">
+        <div className="w-full max-w-full md:max-w-2xl lg:max-w-4xl shadow-2xl p-4 md:p-6 lg:p-8 rounded border">
+          <form
+            onSubmit={handleSubmit}
+            className="w-full space-y-8"
+          >
+            {/* Section 1: Company Information */}
+            <div className="space-y-5">
+              <div className="border-b pb-3">
+                <h2 className="text-2xl font-bold text-gray-800">Company Information</h2>
+                <p className="text-sm text-gray-600 mt-1">Basic company details and credentials</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* E-GP Email - DISABLED */}
+                <div className="">
+                  <Label htmlFor="egpEmail">
+                    E-GP Email<span className="text-red-700">*</span>
+                  </Label>
+                  <Input
+                    type="text"
+                    name="egpEmail"
+                    defaultValue={formData?.egpEmail}
+                    placeholder="Enter Egp Email"
+                    className="mt-2 bg-gray-100 cursor-not-allowed"
+                    required
+                    readOnly
+                    disabled
+                  />
+                </div>
+
+                {/* Company Name - DISABLED */}
+                <div className="">
+                  <Label htmlFor="companyName">
+                    Company Name<span className="text-red-700">*</span>
+                  </Label>
+                  <Input
+                    type="text"
+                    name="companyName"
+                    defaultValue={formData?.companyName}
+                    placeholder="Enter Company Name"
+                    className="mt-2 bg-gray-100 cursor-not-allowed"
+                    required
+                    readOnly
+                    disabled
+                  />
+                </div>
+
+                {/* Password - DISABLED */}
+                <div className="">
+                  <Label htmlFor="egpLoginKey">
+                    Password<span className="text-red-700">*</span>
+                  </Label>
+                  <Input
+                    type="text"
+                    name="egpLoginKey"
+                    defaultValue={formData?.egpLoginKey}
+                    placeholder="Enter Password"
+                    className="mt-2 bg-gray-100 cursor-not-allowed"
+                    required
+                    readOnly
+                    disabled
+                  />
+                </div>
+
+                {/* Status - DISABLED */}
+                <div className="">
+                  <Label htmlFor="status">
+                    Status<span className="text-red-700">*</span>
+                  </Label>
+                  <Input
+                    type="text"
+                    name="status"
+                    defaultValue={formData?.status}
+                    placeholder="Status"
+                    className="mt-2 bg-gray-100 cursor-not-allowed"
+                    readOnly
+                    disabled
+                  />
+                </div>
+
+                {/* Remarks - DISABLED */}
+                <div className="">
+                  <Label htmlFor="remarks">
+                    Remarks<span className="text-red-700">*</span>
+                  </Label>
+                  <Input
+                    type="text"
+                    name="remarks"
+                    defaultValue={formData?.remarks}
+                    placeholder="Remarks"
+                    className="mt-2 bg-gray-100 cursor-not-allowed"
+                    readOnly
+                    disabled
+                  />
+                </div>
+
+                {/* Bank Name - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="bankName">
+                    Bank Name
+                  </Label>
+                  <Input
+                    type="text"
+                    name="bankName"
+                    onChange={handleInputChange}
+                    value={newFormData?.bankName || ""}
+                    placeholder="Bank Name"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* Bank Address - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="bankAddress">
+                    Bank Address for Contact Details
+                  </Label>
+                  <Input
+                    type="text"
+                    name="bankAddress"
+                    onChange={handleInputChange}
+                    value={newFormData?.bankAddress || ""}
+                    placeholder="Enter Bank Address for Contact Details"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* Company Address - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="companyAddress">
+                    Company Address
+                  </Label>
+                  <Input
+                    type="text"
+                    name="companyAddress"
+                    onChange={handleInputChange}
+                    value={newFormData?.companyAddress || ""}
+                    placeholder="Enter Company Address"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* Years of General Experience - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="yearsOfGeneralExperience">
+                    Years of General Experience
+                  </Label>
+                  <Input
+                    type="number"
+                    name="yearsOfGeneralExperience"
+                    onChange={handleInputChange}
+                    value={newFormData?.yearsOfGeneralExperience || ""}
+                    placeholder="Enter Years of General Experience"
+                    className="mt-2"
+                    min="0"
+                  />
+                </div>
+
+                {/* LTM District - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="ltmDistrict">
+                    LTM District
+                  </Label>
+                  <Popover open={districtOpen} onOpenChange={setDistrictOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className="w-full justify-between mt-2"
+                      >
+                        {newFormData?.ltmDistrict || "Search district..."}
+                        <Check className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput placeholder="Search district..." />
+                        <CommandList>
+                          <CommandEmpty>No district found.</CommandEmpty>
+                          <CommandGroup>
+                            {bangladeshDistricts.map((district) => (
+                              <CommandItem
+                                key={district}
+                                value={district}
+                                onSelect={(currentValue) => {
+                                  setNewFormData((prev) => ({
+                                    ...prev,
+                                    ltmDistrict: currentValue
+                                  }));
+                                  setDistrictOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    newFormData?.ltmDistrict === district ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {district}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Legal & Authorization Documents */}
+            <div className="space-y-5">
+              <div className="border-b pb-3">
+                <h2 className="text-2xl font-bold text-gray-800">Legal & Authorization Documents</h2>
+                <p className="text-sm text-gray-600 mt-1">File names for required documents in eGP account</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* Trade Certificate - First - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="trade">
+                    Trade Certificate File Name
+                  </Label>
+                  <Input
+                    type="text"
+                    name="trade"
+                    onChange={handleInputChange}
+                    value={newFormData?.trade || ""}
+                    placeholder="Trade"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* Authorization Letter File Name - Second - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="autho">
+                    Authorization Letter File Name
+                  </Label>
+                  <Input
+                    type="text"
+                    name="autho"
+                    onChange={handleInputChange}
+                    value={newFormData?.autho || ""}
+                    placeholder="Autho"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* TIN Certificate - Third - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="tin">
+                    TIN Certificate File Name
+                  </Label>
+                  <Input
+                    type="text"
+                    name="tin"
+                    onChange={handleInputChange}
+                    value={newFormData?.tin || ""}
+                    placeholder="Enter TIN Certificate"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* TIN Return Certificate - Fourth - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="tinReturnCertificate">
+                    TIN Return Certificate File Name
+                  </Label>
+                  <Input
+                    type="text"
+                    name="tinReturnCertificate"
+                    onChange={handleInputChange}
+                    value={newFormData?.tinReturnCertificate || ""}
+                    placeholder="Enter TIN Return Certificate"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* VAT Certificate - Fifth - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="vat">
+                    VAT Certificate File Name
+                  </Label>
+                  <Input
+                    type="text"
+                    name="vat"
+                    onChange={handleInputChange}
+                    value={newFormData?.vat || ""}
+                    placeholder="Enter Vat Certificate"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* VAT Return Certificate - Sixth - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="vatReturnCertificate">
+                    VAT Return Certificate File Name
+                  </Label>
+                  <Input
+                    type="text"
+                    name="vatReturnCertificate"
+                    onChange={handleInputChange}
+                    value={newFormData?.vatReturnCertificate || ""}
+                    placeholder="Enter VAT Return Certificate"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* NID - Seventh - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="nid">
+                    NID File Name
+                  </Label>
+                  <Input
+                    type="text"
+                    name="nid"
+                    onChange={handleInputChange}
+                    value={newFormData?.nid || ""}
+                    placeholder="NID"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* Equipment - Eighth - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="equipment">
+                    Equipment List File Name
+                  </Label>
+                  <Input
+                    type="text"
+                    name="equipment"
+                    onChange={handleInputChange}
+                    value={newFormData?.equipment || ""}
+                    placeholder="Enter Equipment Requirement"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* Manpower - Ninth - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="manpower">
+                    Manpower List File Name
+                  </Label>
+                  <Input
+                    type="text"
+                    name="manpower"
+                    onChange={handleInputChange}
+                    value={newFormData?.manpower || ""}
+                    placeholder="Enter Manpower Requirement"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* Audit Report - Tenth - EDITABLE */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="updateAuditReportFileName">
+                    Audit Report File Name
+                  </Label>
+                  <Input
+                    type="text"
+                    name="updateAuditReportFileName"
+                    onChange={handleInputChange}
+                    value={newFormData?.updateAuditReportFileName || ""}
+                    placeholder="Enter Audit Report File Name"
+                    className="mt-2"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3: Departmental Wise LTM Enlistment Certificate */}
+            <div className="space-y-5">
+              <div className="border-b pb-3">
+                <h2 className="text-2xl font-bold text-gray-800">Departmental Wise LTM Enlistment Certificate</h2>
+                <p className="text-sm text-gray-600 mt-1">Add department-specific license information</p>
+              </div>
+              <Label className="text-lg font-semibold mb-3">
+                Departmental Wise LTM Enlistment Certificate Name
+              </Label>
+
+              {/* Search, Input, and Add Button */}
+              <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
+                {/* Searchable Combobox */}
+                <div className="flex-1 w-full">
+                  <Label className="mb-2">Select Short Name</Label>
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="w-full justify-between mt-2"
+                      >
+                        {tempAgency
+                          ? AGENCIES.find((agency) => agency.value === tempAgency)?.label
+                          : "Search short name..."}
+                        <Check className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput placeholder="Search short name..." />
+                        <CommandList>
+                          <CommandEmpty>No short name found.</CommandEmpty>
+                          <CommandGroup>
+                            {AGENCIES.map((agency) => (
+                              <CommandItem
+                                key={agency.value}
+                                value={agency.value}
+                                onSelect={(currentValue) => {
+                                  setTempAgency(currentValue === tempAgency ? "" : currentValue);
+                                  setOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    tempAgency === agency.value ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {agency.label}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* Value Input */}
+                <div className="flex-1 w-full">
+                  <Label className="mb-2">Value</Label>
+                  <Input
+                    type="text"
+                    value={tempValue}
+                    onChange={(e) => setTempValue(e.target.value)}
+                    placeholder="Enter value"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* Add Button */}
+                <Button
+                  type="button"
+                  onClick={handleAddAgency}
+                  className="cursor-pointer w-full sm:w-auto"
+                  disabled={!tempAgency || !tempValue.trim()}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add
+                </Button>
+              </div>
+
+              {/* Display Added Agencies */}
+              {selectedAgencies.length > 0 && (
+                <div className="mt-5">
+                  <Label className="text-base font-semibold mb-2">Added Agencies:</Label>
+                  <div className="border rounded-md mt-2 overflow-hidden">
+                    <table className="w-full">
+                      <thead className="bg-gray-100">
+                        <tr>
+                          <th className="text-left p-3 font-semibold">Agency</th>
+                          <th className="text-left p-3 font-semibold">Value</th>
+                          <th className="text-center p-3 font-semibold w-20">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedAgencies.map((agency, index) => (
+                          <tr
+                            key={index}
+                            className="border-t hover:bg-gray-50 transition-colors"
+                          >
+                            <td className="p-3">{agency.name}</td>
+                            <td className="p-3">{agency.value}</td>
+                            <td className="p-3 text-center">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleRemoveAgency(agency.name)}
+                                className="cursor-pointer hover:bg-red-50 hover:text-red-600"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <div className="w-full">
+              {isDisabled ? (
+                <Button disabled className="w-full cursor-pointer">
+                  Submit
+                </Button>
+              ) : (
+                <Button type="submit" className="w-full cursor-pointer">
+                  Update Company
+                </Button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default UpdateCompanyMigration;

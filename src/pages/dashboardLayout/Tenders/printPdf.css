@@ -1,0 +1,65 @@
+/* Style for the print content */
+.print-content {
+    position: relative;
+    padding: 20px;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+  /* Ensure table fits content without overflow */
+
+  
+  /* Watermark only visible when printing */
+  @media print {
+    body {
+       
+        padding: 20px;
+        -webkit-print-color-adjust: exact;
+   
+      }
+
+      
+    
+    .print-content::before {
+      content: "";
+      position: fixed;
+      top: 10mm;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: black;
+      z-index: 100;
+    }
+
+    table {
+        width: 100% !important;
+        table-layout: auto;
+        border-collapse: collapse;
+       
+      }
+      
+      tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      th, td {
+        text-decoration: none;
+        font-size: 16px;
+      }
+      th, td a {
+         text-decoration: none;
+         font-size: 16px;
+      }
+      /* Optional: remove elements not meant for print */
+      button, input, nav, .pagination {
+        display: none !important;
+      }
+      .print-header{
+        display: flex;
+      }
+      .print-footer{
+        display: block;
+      }
+  }
+  
