@@ -12,8 +12,25 @@ RUN npm ci
 # Copy the rest of the application code
 COPY . .
 
+# Declare build arguments to receive environment variables
+ARG VITE_API_BASE_URL
+ARG VITE_API_BASE_URL_ALT
+ARG VITE_EXIN_API_BASE_URL
+ARG VITE_TTI_SERVER_URL
+ARG VITE_IMAGEBB_API_KEY
+ARG VITE_SUPPORT_WHATSAPP
+ARG VITE_EGP_SITE_URL
+
+# Set environment variables from arguments so the build script can see them
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_API_BASE_URL_ALT=$VITE_API_BASE_URL_ALT
+ENV VITE_EXIN_API_BASE_URL=$VITE_EXIN_API_BASE_URL
+ENV VITE_TTI_SERVER_URL=$VITE_TTI_SERVER_URL
+ENV VITE_IMAGEBB_API_KEY=$VITE_IMAGEBB_API_KEY
+ENV VITE_SUPPORT_WHATSAPP=$VITE_SUPPORT_WHATSAPP
+ENV VITE_EGP_SITE_URL=$VITE_EGP_SITE_URL
+
 # Build the application
-# Note: VITE_ env vars must be provided at build time in CI/CD (Dokploy)
 RUN npm run build
 
 # Stage 2: Serve the application with Nginx
