@@ -229,13 +229,10 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
         }
     };
 
-    // Download Tender List - Grouped by Financial Year
-    const handlePrintTenderList = () => {
+    // Download Tender List as CSV
+    const handleDownloadTenderListCSV = () => {
         try {
-            const doc = new jsPDF('landscape');
-            let currentY = addPDFHeader(doc, 'Tender Summary List');
-
-            // Get years from saved turnover data instead of yearlyTotals
+            // Get years from saved turnover data
             const validYears = turnoverData.map(item => item.period);
 
             // Filter completedContracts to only include those with years in saved turnover data
@@ -243,80 +240,74 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                 validYears.includes(contract.financialYear)
             );
 
-            // Group filtered contracts by Financial Year
-            const groupedByYear = filteredContracts.reduce((acc, contract) => {
-                const year = contract.financialYear || 'Unknown';
-                if (!acc[year]) acc[year] = [];
-                acc[year].push(contract);
-                return acc;
-            }, {});
-
-            const sortedYears = Object.keys(groupedByYear).sort((a, b) => b.localeCompare(a));
-
-            sortedYears.forEach((year, yearIndex) => {
-                const contracts = groupedByYear[year];
-
-                // Add Financial Year separator
-                doc.setFontSize(11);
-                doc.setFont(undefined, 'bold');
-                doc.setTextColor(0, 0, 0);
-                doc.text(`Financial Year: ${year}`, 14, currentY + 4);
-                currentY += 8;
-
-                const yearTableData = contracts.map((contract, index) => [
-                    index + 1,
-                    contract.tenderId || 'N/A',
-                    contract.packageNo || 'N/A',
-                    contract.procuringEntityName || 'N/A',
-                    contract.descriptionOfWorks || 'N/A',
-                    contract.jvShare || 'N/A',
-                    parseFloat(contract.actualPaymentJvShare || 0).toLocaleString('en-IN'),
-                    contract.Status_Complite_ongoing || 'N/A'
-                ]);
-
-                // Calculate year total
-                const yearTotal = contracts.reduce((sum, contract) =>
-                    sum + (parseFloat(contract.actualPaymentJvShare) || 0), 0
-                );
-
-                // Add year total row
-                yearTableData.push([
-                    { content: `Total for ${year}`, colSpan: 6, styles: { fontStyle: 'bold', halign: 'right', fillColor: [220, 220, 220] } },
-                    { content: yearTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), styles: { fontStyle: 'bold', halign: 'right', fillColor: [220, 220, 220] } },
-                    { content: '', styles: { fillColor: [220, 220, 220] } }
-                ]);
-
-                autoTable(doc, {
-                    startY: currentY,
-                    head: [['S. No.', 'Tender ID', 'Package No', 'Procuring Entity', 'Description of Works', 'JV Share (%)', 'Payment Amount', 'Status']],
-                    body: yearTableData,
-                    theme: 'grid',
-                    headStyles: { fillColor: [52, 73, 94], textColor: 255, fontStyle: 'bold', fontSize: 6, halign: 'center' },
-                    styles: { fontSize: 5.5, cellPadding: 1, overflow: 'linebreak' },
-                    columnStyles: {
-                        0: { cellWidth: 12, halign: 'center' },
-                        1: { cellWidth: 22 },
-                        2: { cellWidth: 22 },
-                        3: { cellWidth: 45 },
-                        4: { cellWidth: 80 },
-                        5: { cellWidth: 18, halign: 'center' },
-                        6: { cellWidth: 30, halign: 'right' },
-                        7: { cellWidth: 26, halign: 'center' }
-                    }
-                });
-
-                currentY = (doc as any).lastAutoTable.finalY + 8;
-                if (yearIndex < sortedYears.length - 1 && currentY > 180) {
-                    doc.addPage();
-                    currentY = 20;
-                }
+            // Sort by financial year (descending) and then by tender ID
+            const sortedContracts = filteredContracts.sort((a, b) => {
+                const yearCompare = b.financialYear.localeCompare(a.financialYear);
+                if (yearCompare !== 0) return yearCompare;
+                return (a.tenderId || '').localeCompare(b.tenderId || '');
             });
 
-            const fileName = `${companyName}_TenderListSummary_${tenderId}.pdf`;
-            doc.save(fileName);
+            // Create CSV headers
+            const headers = [
+                'Financial Year',
+                'S. No.',
+                'Tender ID',
+                'Package No',
+                'Procuring Entity',
+                'Description of Works',
+                'JV Share (%)',
+                'Payment Amount (BDT)',
+                'Status'
+            ];
+
+            // Create CSV rows
+            const rows = sortedContracts.map((contract, index) => [
+                contract.financialYear || 'N/A',
+                index + 1,
+                contract.tenderId || 'N/A',
+                contract.packageNo || 'N/A',
+                contract.procuringEntityName || 'N/A',
+                `"${(contract.descriptionOfWorks || 'N/A').replace(/"/g, '""')}"`, // Escape quotes
+                contract.jvShare || 'N/A',
+                parseFloat(contract.actualPaymentJvShare || 0).toFixed(2),
+                contract.Status_Complite_ongoing || 'N/A'
+            ]);
+
+            // Create metadata header rows
+            const metadataRows = [
+                ['Tender List & Summary Report'],
+                [''],
+                ['Company:', companyName || 'N/A'],
+                ['Email:', egpEmail || 'N/A'],
+                ['Tender ID:', String(tenderId || 'N/A')],
+                [''],
+                [''] // Empty row before table headers
+            ];
+
+            // Combine metadata, headers and data rows
+            const csvContent = [
+                ...metadataRows.map(row => row.join(',')),
+                headers.join(','),
+                ...rows.map(row => row.join(','))
+            ].join('\n');
+
+            // Create blob and download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `${companyName}_TenderListSummary_${tenderId}.csv`);
+            link.style.visibility = 'hidden';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            URL.revokeObjectURL(url);
         } catch (error) {
-            console.error('Error generating PDF:', error);
-            alert('Failed to generate PDF. Please try again.');
+            console.error('Error generating CSV:', error);
+            alert('Failed to generate CSV. Please try again.');
         }
     };
 
@@ -594,12 +585,12 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                                 <p>• Data Source: <span className="font-semibold">Saved Turnover Years</span></p>
                             </div>
                             <Button
-                                onClick={handlePrintTenderList}
+                                onClick={handleDownloadTenderListCSV}
                                 className="w-full"
                                 variant="default"
                             >
                                 <Download className="w-4 h-4 mr-2" />
-                                Download Tender List PDF
+                                Download Tender List CSV
                             </Button>
                         </div>
                     </CardContent>
