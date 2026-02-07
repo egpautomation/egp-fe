@@ -14,6 +14,7 @@ import { UpdateTenderInformationForm } from "./TenderTabs/Update_Tender_Informat
 import { TendererFormPreview } from "./TenderTabs/TendererFormPreview";
 import { TendererFormPreview_ePW3_2 } from "./TenderTabs/TendererFormPreview_ePW3_2";
 import { DownloadsTab } from "./TenderTabs/DownloadsTab";
+import { LineOfCreditTab } from "./TenderTabs/LineOfCreditTab";
 import { STLCalculationTab } from "./TenderTabs/STLCalculationTab";
 import useAllEgpListedCompanies from "@/hooks/useAllEgpListedCompany";
 import { Input } from "@/components/ui/input";
@@ -528,6 +529,17 @@ const PgTwoTowOtmGoodsDetails = () => {
       id: 13,
       name: "STL Calculation",
       content: <STLCalculationTab />,
+    },
+    {
+      id: 15,
+      name: "Line of Credit",
+      content: (
+        <LineOfCreditTab
+          currentTender={currentTender}
+          egpEmail={egpEmail}
+          companyData={companyData}
+        />
+      ),
     },
   ];
 
