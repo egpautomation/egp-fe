@@ -23,11 +23,7 @@ import { Button } from "@/components/ui/button";
 
 const mockTenderData = [
   { financialYear: '2024-2025', tenderId: 'TND-001', packageNo: 'PKG-001', ministry: 'Ministry A', organization: 'Org A', division: 'Div A', descriptionOfWorks: 'Road Construction', commencementDate: '2024-01-15', contractPeriodExtendedUpTo: '2025-01-15', Status_Complite_ongoing: 'Ongoing', revisedContractValue: '5000000', paymentAmount: '3500000', jvShare: '70' },
-  { financialYear: '2023-2024', tenderId: 'TND-002', packageNo: 'PKG-002', ministry: 'Ministry B', organization: 'Org B', division: 'Div B', descriptionOfWorks: 'Bridge Repair', commencementDate: '2023-03-20', contractPeriodExtendedUpTo: '2024-03-20', Status_Complite_ongoing: 'Completed', revisedContractValue: '3000000', paymentAmount: '4000000', jvShare: '100' },
-  { financialYear: '2024-2025', tenderId: 'TND-003', packageNo: 'PKG-003', ministry: 'Ministry C', organization: 'Org C', division: 'Div C', descriptionOfWorks: 'Building Construction', commencementDate: '2024-05-10', contractPeriodExtendedUpTo: '2025-05-10', Status_Complite_ongoing: 'Ongoing', revisedContractValue: '8000000', paymentAmount: '1250000', jvShare: '50' },
-  { financialYear: '2022-2023', tenderId: 'TND-004', packageNo: 'PKG-004', ministry: 'Ministry D', organization: 'Org D', division: 'Div D', descriptionOfWorks: 'Drainage System', commencementDate: '2022-07-01', contractPeriodExtendedUpTo: '2023-07-01', Status_Complite_ongoing: 'Completed', revisedContractValue: '2000000', paymentAmount: '8500000', jvShare: '90' },
-  { financialYear: '2021-2022', tenderId: 'TND-005', packageNo: 'PKG-005', ministry: 'Ministry E', organization: 'Org E', division: 'Div E', descriptionOfWorks: 'Hospital Renovation', commencementDate: '2021-08-15', contractPeriodExtendedUpTo: '2022-08-15', Status_Complite_ongoing: 'Completed', revisedContractValue: '9000000', paymentAmount: '9500000', jvShare: '100' },
-  { financialYear: '2020-2021', tenderId: 'TND-006', packageNo: 'PKG-006', ministry: 'Ministry F', organization: 'Org F', division: 'Div F', descriptionOfWorks: 'School Building', commencementDate: '2020-09-01', contractPeriodExtendedUpTo: '2021-09-01', Status_Complite_ongoing: 'Completed', revisedContractValue: '6000000', paymentAmount: '6000000', jvShare: '100' },
+ 
 ];
 
 
@@ -365,26 +361,31 @@ const PgTwoTowOtmGoodsDetails = () => {
     },
     {
       id: 8,
+      name: "STL Calculation",
+      content: <STLCalculationTab />,
+    },
+    {
+      id: 9,
       name: "BOQ",
       content: (<div className="bg-green-50 p-4 rounded-lg"><h3 className="font-semibold text-green-800 mb-2">Bill of Quantities</h3></div>),
     },
     {
-      id: 9,
+      id: 10,
       name: "CMS",
       content: <CMSTab completedContracts={completedContracts} ongoingContracts={ongoingContracts} loading={contractLoading} setReload={setContractReload} setActiveTab={setActiveTab} onEditContract={handleEditContract} />,
     },
     {
-      id: 10,
+      id: 11,
       name: "Add New Tender Info",
       content: <TenderInformationForm egpEmail={egpEmail} setReload={setContractReload} />,
     },
     {
-      id: 11,
+      id: 12,
       name: "Update Tender Info",
       content: <UpdateTenderInformationForm egpEmail={egpEmail} preSelectedContractId={selectedContractIdForEdit} />,
     },
     {
-      id: 12,
+      id: 13,
       name: "Company Profile",
       content: (
         <div className="space-y-8 bg-white p-6 rounded-lg shadow-sm border">
@@ -511,11 +512,7 @@ const PgTwoTowOtmGoodsDetails = () => {
         </div>
       ),
     },
-    {
-      id: 13,
-      name: "STL Calculation",
-      content: <STLCalculationTab />,
-    },
+    
   ];
 
   // Early Loading State for the initial resolution
