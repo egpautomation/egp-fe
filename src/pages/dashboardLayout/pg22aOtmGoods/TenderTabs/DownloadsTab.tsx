@@ -17,6 +17,8 @@ interface DownloadsTabProps {
     descriptionOfWorks?: string;
     turnoverData?: any[];
     currentTender?: any;
+    tdsRequiredFY?: string | number;
+    tdsRequiredBestYear?: string | number;
 }
 
 export const DownloadsTab: React.FC<DownloadsTabProps> = ({
@@ -29,7 +31,9 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
     tenderId,
     descriptionOfWorks,
     turnoverData = [],
-    currentTender
+    currentTender,
+    tdsRequiredFY,
+    tdsRequiredBestYear
 }) => {
 
     // Helper function to add header to PDF
@@ -64,7 +68,7 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
             doc.setFont(undefined, 'bold');
             doc.text(`Tender ID:`, leftMargin, currentY);
             doc.setFont(undefined, 'normal');
-            doc.text(tenderId, leftMargin + 25, currentY);
+            doc.text(String(tenderId), leftMargin + 25, currentY);
             currentY += 5;
         }
 
@@ -217,7 +221,7 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                 columnStyles: { 0: { cellWidth: 180 }, 1: { cellWidth: 87 } }
             });
 
-            const fileName = `${companyName}${tenderId}OngoingContracts.pdf`;
+            const fileName = `${companyName}_RecentOngoingWork_${tenderId}.pdf`;
             doc.save(fileName);
         } catch (error) {
             console.error('Error generating PDF:', error);
@@ -308,7 +312,7 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                 }
             });
 
-            const fileName = `${companyName}${tenderId}TenderListSummary.pdf`;
+            const fileName = `${companyName}_TenderListSummary_${tenderId}.pdf`;
             doc.save(fileName);
         } catch (error) {
             console.error('Error generating PDF:', error);
@@ -322,23 +326,26 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
             const doc = new jsPDF();
             let currentY = addPDFHeader(doc, 'Turnover Analysis Report');
 
-            // Use saved turnover data instead of yearlyTotals
-            // Convert turnoverData to the format needed for PDF generation
-            const savedTurnoverData = turnoverData.map(item => ({
-                year: item.period,
-                amount: parseFloat(item.amountBDT.replace(/[^0-9.-]+/g, '')) || 0
+            // Use yearlyTotals (real-time data) instead of turnoverData (saved DB data)
+            // yearlyTotals structure: { year: string, amount: number }
+            const savedTurnoverData = yearlyTotals.map(item => ({
+                year: item.year,
+                amount: item.amount || 0
             }));
 
-            // --- Table 1: Turnover for the Last 4 Financial Years ---
+            // Determine limits from props (default to 5 if not provided)
+            const nYears = Number(tdsRequiredFY) || 5;
+
+            // --- Table 1: Turnover for the Last N Financial Years ---
             doc.setFontSize(12);
             doc.setFont(undefined, 'bold');
-            doc.text('Turnover for the Last 4 Financial Years', 14, currentY);
+            doc.text(`Turnover for the Last ${nYears} Financial Years`, 14, currentY);
             currentY += 6;
 
-            // Show saved years (limit to 4 for the first table)
-            const last4Years = savedTurnoverData.slice(0, 4);
+            // Show saved years (limit based on nYears)
+            const lastNYears = savedTurnoverData.slice(0, nYears);
 
-            const tableData1 = last4Years.map((item, index) => [
+            const tableData1 = lastNYears.map((item, index) => [
                 index + 1,
                 item.year,
                 item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -361,14 +368,17 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
 
             currentY = (doc as any).lastAutoTable.finalY + 15;
 
-            // --- Table 2: Best 3 Years Based on Turnover ---
+            // Determine best years limit from props (default to 5)
+            const bestNYearsLimit = Number(tdsRequiredBestYear) || 5;
+
+            // --- Table 2: Best N Years Based on Turnover ---
             doc.setFontSize(12);
             doc.setFont(undefined, 'bold');
-            doc.text('Best 3 Years Based on Turnover', 14, currentY);
+            doc.text(`Best ${bestNYearsLimit} Years Based on Turnover`, 14, currentY);
             currentY += 6;
 
             // Sort by amount descending to find best years
-            const bestYears = [...savedTurnoverData].sort((a, b) => b.amount - a.amount).slice(0, 3);
+            const bestYears = [...savedTurnoverData].sort((a, b) => b.amount - a.amount).slice(0, bestNYearsLimit);
 
             const tableData2 = bestYears.map((item, index) => [
                 index + 1,
@@ -400,11 +410,11 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                 margin: { left: 14 }
             });
 
-            const fileName = `${companyName}${tenderId}TurnoverHistory.pdf`;
+            const fileName = `${companyName}_TurnoverHistory_${tenderId}.pdf`;
             doc.save(fileName);
         } catch (error) {
-            console.error('Error generating PDF:', error);
-            alert('Failed to generate PDF. Please try again.');
+            console.error('Error generating Turnover PDF:', error);
+            alert(`Failed to generate PDF. Error: ${error?.message || 'Unknown error'}`);
         }
     };
 
@@ -495,7 +505,7 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
             doc.setTextColor(0, 128, 0);
             doc.text(`BDT ${assessedCapacity.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 105, currentY + 15, { align: 'center' });
 
-            const fileName = `${companyName}${tenderId}TenderCapacity.pdf`;
+            const fileName = `${companyName}_TenderCapacity_${tenderId}.pdf`;
             doc.save(fileName);
         } catch (error: any) {
             console.error('Error generating PDF:', error);
@@ -541,7 +551,7 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                                 <Briefcase className="w-6 h-6 text-blue-600" />
                             </div>
                             <div>
-                                <CardTitle>Recent Ongoing Contracts</CardTitle>
+                                <CardTitle>Recent Ongoing Work</CardTitle>
                                 <CardDescription>Latest {recentOngoing.length} ongoing projects</CardDescription>
                             </div>
                         </div>

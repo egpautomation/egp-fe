@@ -10,10 +10,15 @@ import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 
 // --- Componente principale ---
-export const TurnoverHistoryTab = ({ yearlyTotals }) => {
+export const TurnoverHistoryTab = ({
+    yearlyTotals,
+    tdsRequiredFY,
+    setTdsRequiredFY,
+    tdsRequiredBestYear,
+    setTdsRequiredBestYear
+}) => {
     const { id } = useParams(); // egpEmail from URL
-    const [tdsRequiredFY, setTdsRequiredFY] = useState('');
-    const [tdsRequiredBestYear, setTdsRequiredBestYear] = useState('');
+    // Local state moved to parent
     const [saving, setSaving] = useState(false);
     const [loading, setLoading] = useState(true);
     const [existingData, setExistingData] = useState(null);
@@ -45,13 +50,7 @@ export const TurnoverHistoryTab = ({ yearlyTotals }) => {
                     }
                     setSavedFinancialYears(savedYears);
 
-                    // Set input fields from saved data (if exists)
-                    if (tenderPrep.tdsYearFinancial) {
-                        setTdsRequiredFY(String(tenderPrep.tdsYearFinancial));
-                    }
-                    if (tenderPrep.tdsYearBest) {
-                        setTdsRequiredBestYear(String(tenderPrep.tdsYearBest));
-                    }
+                    // Set input fields logic moved to parent component
 
 
                 }

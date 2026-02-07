@@ -44,7 +44,9 @@ const PgTwoTowOtmGoodsDetails = () => {
   const [selectedContractIdForEdit, setSelectedContractIdForEdit] = useState(null);
 
   // Shared state for Tender Capacity inputs (for real-time preview updates)
+  // Shared state for Tender Capacity inputs (for real-time preview updates)
   const [tdsRequiredFY, setTdsRequiredFY] = useState('');
+  const [tdsRequiredBestYear, setTdsRequiredBestYear] = useState('');
   const [proposedProjectYear, setProposedProjectYear] = useState('');
 
   // 1. Fetch Tender Preparation Data by _id
@@ -60,6 +62,9 @@ const PgTwoTowOtmGoodsDetails = () => {
     if (currentTender) {
       if (currentTender.tdsYearFinancialCapacity && !tdsRequiredFY) {
         setTdsRequiredFY(String(currentTender.tdsYearFinancialCapacity));
+      }
+      if (currentTender.tdsYearBest && !tdsRequiredBestYear) {
+        setTdsRequiredBestYear(String(currentTender.tdsYearBest));
       }
       if (currentTender.proposeYear && !proposedProjectYear) {
         setProposedProjectYear(String(currentTender.proposeYear));
@@ -315,7 +320,13 @@ const PgTwoTowOtmGoodsDetails = () => {
     {
       id: 2,
       name: "Turnover History",
-      content: <TurnoverHistoryTab yearlyTotals={yearlyTotals} />,
+      content: <TurnoverHistoryTab
+        yearlyTotals={yearlyTotals}
+        tdsRequiredFY={tdsRequiredFY}
+        setTdsRequiredFY={setTdsRequiredFY}
+        tdsRequiredBestYear={tdsRequiredBestYear}
+        setTdsRequiredBestYear={setTdsRequiredBestYear}
+      />,
     },
     {
       id: 3,
@@ -351,10 +362,12 @@ const PgTwoTowOtmGoodsDetails = () => {
           totalOngoingCommitments={totalOngoingCommitments}
           egpEmail={egpEmail}
           companyName={companyData?.companyName}
-          tenderId={ongoingContracts[0]?.tenderId || completedContracts[0]?.tenderId}
+          tenderId={currentTender?.tenderId || ongoingContracts[0]?.tenderId || completedContracts[0]?.tenderId}
           descriptionOfWorks={currentTender?.descriptionOfWorks}
           turnoverData={turnoverData}
           currentTender={currentTender}
+          tdsRequiredFY={tdsRequiredFY}
+          tdsRequiredBestYear={tdsRequiredBestYear}
         />
       ),
     },
@@ -540,6 +553,9 @@ const PgTwoTowOtmGoodsDetails = () => {
           <div>
             <h1 className="text-xl sm:text-2xl font-bold">Tender Preparation Details</h1>
             <h3 className="text-base sm:text-lg text-gray-600 mt-1">Id: {id}</h3>
+            {currentTender?.tenderId && (
+              <h3 className="text-base sm:text-lg text-gray-600 mt-1">Tender ID: {currentTender.tenderId}</h3>
+            )}
           </div>
           <Button
             onClick={() => {
