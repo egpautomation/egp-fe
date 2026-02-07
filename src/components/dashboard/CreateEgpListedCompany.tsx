@@ -123,6 +123,14 @@ const CreateEgpListedCompany = () => {
   const [tempValue, setTempValue] = useState("");
   const [open, setOpen] = useState(false);
   const [districtOpen, setDistrictOpen] = useState(false);
+
+  // Bank Details Array State
+  const [bankDetails, setBankDetails] = useState([]);
+  const [tempBankAccount, setTempBankAccount] = useState({
+    bankAccountName: "",
+    bankAccountNumber: "",
+    holderName: ""
+  });
   const { user } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     userMail: user?.email,
@@ -146,7 +154,8 @@ const CreateEgpListedCompany = () => {
     equipment: "",
     manpower: "",
     companyUniqueEGP_ID: "",
-    yearsOfGeneralExperience: ""
+    yearsOfGeneralExperience: "",
+    proprietorName: ""
   });
 
   const url = `https://egpserver.jubairahmad.com/api/v1/egp-listed-company/check-egpEmail-exist?egpEmail=${formData?.egpEmail}`;
@@ -181,6 +190,47 @@ const CreateEgpListedCompany = () => {
   const handleRemoveAgency = (agencyName) => {
     setSelectedAgencies((prev) => prev.filter((a) => a.name !== agencyName));
   };
+
+  // Handle adding bank account to bank details array
+  const handleAddBankAccount = () => {
+    if (!tempBankAccount.bankAccountName.trim() ||
+      !tempBankAccount.bankAccountNumber.trim() ||
+      !tempBankAccount.holderName.trim()) {
+      return; // Don't add if any field is empty
+    }
+
+    // Add to bank details array
+    setBankDetails((prev) => [
+      ...prev,
+      {
+        bankAccountName: tempBankAccount.bankAccountName.trim(),
+        bankAccountNumber: tempBankAccount.bankAccountNumber.trim(),
+        holderName: tempBankAccount.holderName.trim()
+      }
+    ]);
+
+    // Reset temporary values
+    setTempBankAccount({
+      bankAccountName: "",
+      bankAccountNumber: "",
+      holderName: ""
+    });
+  };
+
+  // Handle removing bank account from bank details array
+  const handleRemoveBankAccount = (index) => {
+    setBankDetails((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Handle bank account input change
+  const handleBankAccountChange = (e) => {
+    const { name, value } = e.target;
+    setTempBankAccount((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -225,6 +275,7 @@ const CreateEgpListedCompany = () => {
     const submitData = {
       ...formData,
       departmentLicenses,  // Send as nested object
+      bankDetails,  // Send bank details array
     };
 
     const url =
@@ -488,6 +539,21 @@ const CreateEgpListedCompany = () => {
                     </PopoverContent>
                   </Popover>
                 </div>
+
+                {/* Proprietor Name */}
+                <div className="">
+                  <Label className="mb-2" htmlFor="proprietorName">
+                    Proprietor Name
+                  </Label>
+                  <Input
+                    type="text"
+                    name="proprietorName"
+                    onChange={handleInputChange}
+                    value={formData.proprietorName}
+                    placeholder="Enter Proprietor Name (e.g., মোঃ রহিম উদ্দিন)"
+                    className="mt-2"
+                  />
+                </div>
               </div>
             </div>
 
@@ -662,7 +728,117 @@ const CreateEgpListedCompany = () => {
             </div>
 
 
-            {/* Section 3: Departmental Wise LTM Enlistment Certificate */}
+            {/* Section 3: Bank Account Details */}
+            <div className="space-y-5">
+              <div className="border-b pb-3">
+                <h2 className="text-2xl font-bold text-gray-800">Bank Account Details</h2>
+                <p className="text-sm text-gray-600 mt-1">Add multiple bank account information (optional)</p>
+              </div>
+
+              {/* Bank Account Input Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {/* Bank Account Name */}
+                <div className="flex-1">
+                  <Label className="mb-2">Bank Account Name</Label>
+                  <Input
+                    type="text"
+                    name="bankAccountName"
+                    value={tempBankAccount.bankAccountName}
+                    onChange={handleBankAccountChange}
+                    placeholder="e.g., Business Current Account"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* Bank Account Number */}
+                <div className="flex-1">
+                  <Label className="mb-2">Bank Account Number</Label>
+                  <Input
+                    type="text"
+                    name="bankAccountNumber"
+                    value={tempBankAccount.bankAccountNumber}
+                    onChange={handleBankAccountChange}
+                    placeholder="e.g., 1234567890123"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* Holder Name */}
+                <div className="flex-1">
+                  <Label className="mb-2">Account Holder Name</Label>
+                  <Input
+                    type="text"
+                    name="holderName"
+                    value={tempBankAccount.holderName}
+                    onChange={handleBankAccountChange}
+                    placeholder="e.g., মোঃ রহিম উদ্দিন"
+                    className="mt-2"
+                  />
+                </div>
+              </div>
+
+              {/* Add Button */}
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  onClick={handleAddBankAccount}
+                  className="cursor-pointer"
+                  disabled={
+                    !tempBankAccount.bankAccountName.trim() ||
+                    !tempBankAccount.bankAccountNumber.trim() ||
+                    !tempBankAccount.holderName.trim()
+                  }
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Bank Account
+                </Button>
+              </div>
+
+              {/* Display Added Bank Accounts */}
+              {bankDetails.length > 0 && (
+                <div className="mt-5">
+                  <Label className="text-base font-semibold mb-2">Added Bank Accounts:</Label>
+                  <div className="border rounded-md mt-2 overflow-hidden">
+                    <table className="w-full">
+                      <thead className="bg-gray-100">
+                        <tr>
+                          <th className="text-left p-3 font-semibold">Account Name</th>
+                          <th className="text-left p-3 font-semibold">Account Number</th>
+                          <th className="text-left p-3 font-semibold">Holder Name</th>
+                          <th className="text-center p-3 font-semibold w-20">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {bankDetails.map((account, index) => (
+                          <tr
+                            key={index}
+                            className="border-t hover:bg-gray-50 transition-colors"
+                          >
+                            <td className="p-3">{account.bankAccountName}</td>
+                            <td className="p-3">{account.bankAccountNumber}</td>
+                            <td className="p-3">{account.holderName}</td>
+                            <td className="p-3 text-center">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleRemoveBankAccount(index)}
+                                className="cursor-pointer hover:bg-red-50 hover:text-red-600"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+
+
+            {/* Section 4: Departmental Wise LTM Enlistment Certificate */}
             <div className="space-y-5">
               <div className="border-b pb-3">
                 <h2 className="text-2xl font-bold text-gray-800">Departmental Wise LTM Enlistment Certificate</h2>
