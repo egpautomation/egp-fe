@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import useSingleData from "@/hooks/useSingleData";
-import { MoveLeft, Check, Plus, X } from "lucide-react";
+import { MoveLeft, Check, Plus, X, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -277,6 +277,12 @@ const UpdateCompanyMigration = () => {
     }
   };
 
+  const handleCopy = (text, label) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copied to clipboard`);
+  };
+
   return (
     <section className="min-h-lvh">
       <Link to={"/dashboard/my-registered-company"}>
@@ -314,16 +320,27 @@ const UpdateCompanyMigration = () => {
                   <Label htmlFor="egpEmail">
                     E-GP Email<span className="text-red-700">*</span>
                   </Label>
-                  <Input
-                    type="text"
-                    name="egpEmail"
-                    defaultValue={formData?.egpEmail}
-                    placeholder="Enter Egp Email"
-                    className="mt-2 bg-gray-100 cursor-not-allowed"
-                    required
-                    readOnly
-                    disabled
-                  />
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      name="egpEmail"
+                      defaultValue={formData?.egpEmail}
+                      placeholder="Enter Egp Email"
+                      className="mt-2 bg-gray-100 cursor-not-allowed pr-10"
+                      required
+                      readOnly
+                      disabled
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 top-1/2 -translate-y-1/2 h-9 w-9 text-gray-500 hover:text-gray-900 cursor-pointer"
+                      onClick={() => handleCopy(formData?.egpEmail, "E-GP Email")}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Company Name - DISABLED */}
@@ -348,16 +365,27 @@ const UpdateCompanyMigration = () => {
                   <Label htmlFor="egpLoginKey">
                     Password<span className="text-red-700">*</span>
                   </Label>
-                  <Input
-                    type="text"
-                    name="egpLoginKey"
-                    defaultValue={formData?.egpLoginKey}
-                    placeholder="Enter Password"
-                    className="mt-2 bg-gray-100 cursor-not-allowed"
-                    required
-                    readOnly
-                    disabled
-                  />
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      name="egpLoginKey"
+                      defaultValue={formData?.egpLoginKey}
+                      placeholder="Enter Password"
+                      className="mt-2 bg-gray-100 cursor-not-allowed pr-10"
+                      required
+                      readOnly
+                      disabled
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 top-1/2 -translate-y-1/2 h-9 w-9 text-gray-500 hover:text-gray-900 cursor-pointer"
+                      onClick={() => handleCopy(formData?.egpLoginKey, "Password")}
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Status - DISABLED */}
