@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllUserJobOrderCart = (user) => {
@@ -14,7 +15,7 @@ const useAllUserJobOrderCart = (user) => {
       try {
         setLoading(true);
         // https://egp-tender-automation-server.vercel.app
-        const url = `https://egpserver.jubairahmad.com/api/v1/jobOrder-cart/user?user=${user}`;
+        const url = `${config.apiBaseUrl}/jobOrder-cart/user?user=${user}`;
         const response = await fetch(url);
         const data = await response.json();
         setUserJobOrderCart(data?.data);

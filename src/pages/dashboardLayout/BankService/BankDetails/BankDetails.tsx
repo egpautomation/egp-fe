@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,8 +57,7 @@ const BankDetails = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-    // https://egpserver.jubairahmad.com
-    const url = "https://egpserver.jubairahmad.com/api/v1/banks/create-bank-details";
+    const url = `${config.apiBaseUrl}/banks/create-bank-details`;
     createData(url, formData, null, resetForm);
   };
 

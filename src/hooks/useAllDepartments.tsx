@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllDepartments = () => {
@@ -12,7 +13,7 @@ const useAllDepartments = () => {
     const result = async () => {
       try {
         setLoading(true);
-        const url = `https://egpserver.jubairahmad.com/api/v1/departments`;
+        const url = `${config.apiBaseUrl}/departments`;
         const response = await fetch(url);
         const data = await response.json();
 

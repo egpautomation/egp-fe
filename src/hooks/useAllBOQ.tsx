@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllBOQ = (searchTerm, page, limit) => {
@@ -12,7 +13,7 @@ const useAllBOQ = (searchTerm, page, limit) => {
       try {
         setLoading(true);
         // https://egp-tender-automation-server.vercel.app
-        const url = `https://egpserver.jubairahmad.com/api/v1/boq?searchTerm=${searchTerm}&page=${page}&limit=${limit}`;
+        const url = `${config.apiBaseUrl}/boq?searchTerm=${searchTerm}&page=${page}&limit=${limit}`;
         const response = await fetch(url);
         const data = await response.json();
         setData(data?.data);

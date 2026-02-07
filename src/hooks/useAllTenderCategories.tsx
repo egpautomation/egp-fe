@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import TenderCategories from "@/pages/dashboardLayout/TenderCategories/TenderCategories";
 import { useEffect, useState } from "react";
 
@@ -14,8 +15,7 @@ const useAllTenderCategories = (
     const result = async () => {
       try {
         setLoading(true);
-        // https://egpserver.jubairahmad.com
-        const url = `https://egpserver.jubairahmad.com/api/v1/tender-categories`;
+        const url = `${config.apiBaseUrl}/tender-categories`;
         const response = await fetch(url);
         const data = await response.json();
         console.log(data)

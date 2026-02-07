@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { AlignJustify, Edit, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -82,7 +83,7 @@ const TutorialCategories = () => {
                         </Link>
                         <DeleteDataModal
                           setReload={setReload}
-                          url={`https://egp-tender-automation-server.vercel.app/api/v1/tutorials-categories/${item?._id}`}
+                          url={`${config.apiBaseUrlAlt}/tutorials-categories/${item?._id}`}
                         />
                       </td>
                     </tr>

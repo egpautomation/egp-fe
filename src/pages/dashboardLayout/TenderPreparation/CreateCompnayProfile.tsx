@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createData } from "@/lib/createData";
@@ -45,9 +46,8 @@ export default function CreateCompanyProfile() {
             fileInputRef.current.value = ""; // reset file input
         }
     };
-    // https://egp-tender-automation-server.vercel.app
     const handleSubmit = () => {
-        const url = `https://egpserver.jubairahmad.com/api/v1/company-profile/create-companay-profile`;
+        const url = `${config.apiBaseUrl}/company-profile/create-companay-profile`;
         createData(url, data, null, resetForm);
     };
     return (

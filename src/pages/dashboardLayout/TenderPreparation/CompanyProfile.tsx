@@ -1,11 +1,12 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import useSingleData from "@/hooks/useSingleData"
 import { useParams } from "react-router-dom"
 
 export default function CompanyProfile() {
     const {id} = useParams()
-    const url = `https://egpserver.jubairahmad.com/api/v1/company-profile/single-profile-information?email=${id}`
+    const url = `${config.apiBaseUrl}/company-profile/single-profile-information?email=${id}`
     const {data} = useSingleData(url)
     console.log(data)
 

@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllTenderDepartments = () => {
@@ -13,7 +14,7 @@ const useAllTenderDepartments = () => {
       try {
         setLoading(true);
         // https://egp-tender-automation-server.vercel.app
-        const url = `https://egpserver.jubairahmad.com/api/v1/tenders/tender-departments`;
+        const url = `${config.apiBaseUrl}/tenders/tender-departments`;
         const response = await fetch(url);
         const data = await response.json();
         setDepartments(data?.data);

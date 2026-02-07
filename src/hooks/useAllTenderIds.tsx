@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllTenderIds = (
@@ -17,7 +18,7 @@ const useAllTenderIds = (
       try {
         setLoading(true);
         // https://egpserver.jubairahmad.com
-        const url = `https://egpserver.jubairahmad.com/api/v1/tenderIds?searchTerm=${searchTerm}&method=${method}&page=${page}&limit=${limit}`;
+        const url = `${config.apiBaseUrl}/tenderIds?searchTerm=${searchTerm}&method=${method}&page=${page}&limit=${limit}`;
         const response = await fetch(url);
         const data = await response.json();
         setTenders(data?.data);

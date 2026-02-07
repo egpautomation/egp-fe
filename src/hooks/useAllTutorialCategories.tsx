@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllTutorialsCategories = (searchTerm = "", page = 1, limit = 20) => {
@@ -12,7 +13,7 @@ const useAllTutorialsCategories = (searchTerm = "", page = 1, limit = 20) => {
       // https://egpserver.jubairahmad.com
       try {
         setLoading(true);
-        const url = `https://egpserver.jubairahmad.com/api/v1/tutorials-categories?searchTerm=${searchTerm}&page=${page}&limit=${limit}`;
+        const url = `${config.apiBaseUrl}/tutorials-categories?searchTerm=${searchTerm}&page=${page}&limit=${limit}`;
         const response = await fetch(url);
         const data = await response.json();
         setData(data?.data);

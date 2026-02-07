@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
@@ -28,9 +29,8 @@ const CreatePromoCode = () => {
   };
 
   const handleSubmit = async (e) => {
-    // https://egpserver.jubairahmad.com
     e.preventDefault();
-    const url = "https://egpserver.jubairahmad.com/api/v1/promoCode/create-promoCode";
+    const url = `${config.apiBaseUrl}/promoCode/create-promoCode`;
     createData(url, formData);
   };
   return (

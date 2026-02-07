@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -118,7 +119,7 @@ const UpdateCompanyMigration = () => {
   const { id } = useParams();
 
   // Fetch Company Migration data directly
-  const url = `https://egpserver.jubairahmad.com/api/v1/companyMigration/${id}`;
+  const url = `${config.apiBaseUrl}/companyMigration/${id}`;
   const { data: formData } = useSingleData(url);
 
   const { transformedDepartments: AGENCIES, loading: departmentsLoading } = useAllDepartments();
@@ -254,7 +255,7 @@ const UpdateCompanyMigration = () => {
                 yearsOfGeneralExperience: newFormData.yearsOfGeneralExperience
               };
 
-              const updateUrl = `https://egpserver.jubairahmad.com/api/v1/egp-listed-company/${egpCompany._id}`;
+              const updateUrl = `${config.apiBaseUrl}/egp-listed-company/${egpCompany._id}`;
               await axiosInstance.put(updateUrl, egpUpdateData);
             }
           } catch (egpError) {

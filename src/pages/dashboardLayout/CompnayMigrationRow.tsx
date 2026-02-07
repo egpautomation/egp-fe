@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import useSingleData from "@/hooks/useSingleData";
 import { formatDate } from "@/lib/formateDate";
 import DeleteDataModal from "@/shared/Dashboard/DeleteDataModal";
@@ -30,7 +31,7 @@ export default function CompnayMigrationRow({ item, idx, setReload }) {
                 </Link>
                 <DeleteDataModal
                     setReload={setReload}
-                    url={`https://egp-tender-automation-server.vercel.app/api/v1/companyMigration/${item?._id}`}
+                    url={`${config.apiBaseUrlAlt}/companyMigration/${item?._id}`}
                 />
             </td>
         </tr>

@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +9,7 @@ import { Link, useParams } from "react-router-dom";
 
 const ViewUser = () => {
   const { userId } = useParams();
-  const url = `https://egpserver.jubairahmad.com/api/v1/user/get-single-user-by-userId?userId=${userId}`;
+  const url = `${config.apiBaseUrl}/user/get-single-user-by-userId?userId=${userId}`;
   const { data, loading } = useSingleData(url);
 
   return (

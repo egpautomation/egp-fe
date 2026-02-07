@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -115,7 +116,7 @@ const bangladeshDistricts = [
 
 const UpdateEgpListedCompany = () => {
   const { id } = useParams();
-  const url = `https://egpserver.jubairahmad.com/api/v1/egp-listed-company/${id}`;
+  const url = `${config.apiBaseUrl}/egp-listed-company/${id}`;
   const { data: formData } = useSingleData(url);
 
   const { transformedDepartments: AGENCIES, loading: departmentsLoading } = useAllDepartments();
@@ -193,7 +194,7 @@ const UpdateEgpListedCompany = () => {
     };
 
     console.log(submitData);
-    const updateUrl = `https://egpserver.jubairahmad.com/api/v1/egp-listed-company/${id}`;
+    const updateUrl = `${config.apiBaseUrl}/egp-listed-company/${id}`;
     await updateData(updateUrl, submitData);
   };
 

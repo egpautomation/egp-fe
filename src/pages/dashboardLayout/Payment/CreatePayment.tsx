@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,8 +36,7 @@ const CreatePayment = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url =
-      "https://egpserver.jubairahmad.com/api/v1/payments/create-payment";
+    const url = `${config.apiBaseUrl}/payments/create-payment`;
     await createData(url, {
       ...formData,
       wallet: Number(formData.wallet),

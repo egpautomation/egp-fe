@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import useAccountHolderEgpMail from "@/hooks/getAccountHolderEgpMail";
 import { AuthContext } from "@/provider/AuthProvider";
@@ -74,7 +75,7 @@ const UserAllAccounts = () => {
                       </Link>{" "}
                       <DeleteDataModal
                         setReload={setReload}
-                        url={`https://egp-tender-automation-server.vercel.app/api/v1/accounts/${item?._id}`}
+                        url={`${config.apiBaseUrlAlt}/accounts/${item?._id}`}
                       />
                     </td>
                   </tr>

@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllUniqueOrganizations = () => {
@@ -12,7 +13,7 @@ const useAllUniqueOrganizations = () => {
       try {
         setLoading(true);
         // https://egp-tender-automation-server.vercel.app
-        const url = `https://egpserver.jubairahmad.com/api/v1/departments/unique-organizations`;
+        const url = `${config.apiBaseUrl}/departments/unique-organizations`;
         const response = await fetch(url);
         const data = await response.json();
         setData(data?.data);

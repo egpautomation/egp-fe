@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,8 +41,7 @@ const CreateAccountHolderDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url =
-      "https://egpserver.jubairahmad.com/api/v1/accounts/create-account-holder-details";
+    const url = `${config.apiBaseUrl}/accounts/create-account-holder-details`;
     createData(url, formData, null, resetForm);
   };
 

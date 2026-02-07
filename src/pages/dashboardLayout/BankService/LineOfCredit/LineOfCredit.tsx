@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useSingleData from "@/hooks/useSingleData";
@@ -19,15 +20,15 @@ const LineOfCredit = () => {
     documentTitle: "Line-Of-Credit-Letter",
   });
   const { data: tender } = useSingleData(
-    `https://egpserver.jubairahmad.com/api/v1/tenders/tenderId/${tenderId}`
+    `${config.apiBaseUrl}/tenders/tenderId/${tenderId}`
   );
 
   const { data: accountData } = useSingleData(
-    `https://egpserver.jubairahmad.com/api/v1/accounts/egp-email?egpMail=${egpMail}`
+    `${config.apiBaseUrl}/accounts/egp-email?egpMail=${egpMail}`
   );
 
   const { data: bankData } = useSingleData(
-    `https://egpserver.jubairahmad.com/api/v1/banks/user?user=${user?.email}`
+    `${config.apiBaseUrl}/banks/user?user=${user?.email}`
   );
 
   // Display settings state

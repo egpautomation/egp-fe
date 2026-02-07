@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +12,7 @@ import { Link, useParams } from "react-router-dom";
 
 const EditTutorialCategory = () => {
   const { id } = useParams();
-  const url = `https://egpserver.jubairahmad.com/api/v1/tutorials-categories/${id}`;
+  const url = `${config.apiBaseUrl}/tutorials-categories/${id}`;
   const { data: formData, setReload } = useSingleData(url);
   const [newFormData, setNewFormData] = useState({});
 
@@ -25,8 +26,8 @@ const EditTutorialCategory = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `https://egp-tender-automation-server.vercel.app/api/v1/tutorials-categories/${id}`;
-    await updateData(url, newFormData, setReload);
+    const updateUrl = `${config.apiBaseUrlAlt}/tutorials-categories/${id}`;
+    await updateData(updateUrl, newFormData, setReload);
   };
 
   useEffect(() => {

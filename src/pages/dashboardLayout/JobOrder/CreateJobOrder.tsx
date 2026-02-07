@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import SlOfCreditLine from "@/components/dashboard/SLOfCreditLine";
 import UserEgpMail from "@/components/dashboard/UserEgpMail";
 import { Button } from "@/components/ui/button";
@@ -60,7 +61,7 @@ const CreateJobOrder = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `https://egpserver.jubairahmad.com/api/v1/jobOrder-cart/create-jobOrderCart`;
+    const url = `${config.apiBaseUrl}/jobOrder-cart/create-jobOrderCart`;
 
     const toastId = toast.loading("Adding to cart...");
 

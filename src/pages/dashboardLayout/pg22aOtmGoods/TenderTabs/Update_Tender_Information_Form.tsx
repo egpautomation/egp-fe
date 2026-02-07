@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Combobox } from "@/components/ui/combobox";
+import { config } from '@/lib/config';
 import { patchData, updateData } from '@/lib/updateData';
 import useSingleData from '@/hooks/useSingleData';
 import toast from 'react-hot-toast';
@@ -128,18 +129,18 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
   const [tenderCategories, setTenderCategories] = useState([]);
 
   // Fetch company data
-  const url = `https://egpserver.jubairahmad.com/api/v1/egp-listed-company/get-by-mail?mail=${egpEmail}`
+  const url = `${config.apiBaseUrl}/egp-listed-company/get-by-mail?mail=${egpEmail}`
   const { data: egpListedCompany } = useSingleData(url)
 
   // Fetch existing contracts for this company using companyId
   const companyId = egpListedCompany?.companyUniqueEGP_ID;
   const contractsUrl = companyId
-    ? `https://egpserver.jubairahmad.com/api/v1/contract-information?companyId=${encodeURIComponent(companyId)}&limit=100`
+    ? `${config.apiBaseUrl}/contract-information?companyId=${encodeURIComponent(companyId)}&limit=100`
     : null;
   const { data: existingContracts, loading: contractsLoading, setReload: setContractReload } = useSingleData(contractsUrl);
 
   // Fetch tender data when tender ID is available
-  const tenderUrl = formData?.tenderId ? `https://egpserver.jubairahmad.com/api/v1/tenders/tenderId/${formData?.tenderId}` : null;
+  const tenderUrl = formData?.tenderId ? `${config.apiBaseUrl}/tenders/tenderId/${formData?.tenderId}` : null;
   const { data: tenderData } = useSingleData(tenderUrl)
 
   // Fetch sub-categories from TenderCategory API
@@ -147,7 +148,7 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          'https://egpserver.jubairahmad.com/api/v1/tender-categories/with-pagination?page=1&limit=1000'
+          `${config.apiBaseUrl}/tender-categories/with-pagination?page=1&limit=1000`
         );
         const data = await response.json();
         setSubCategories(data?.data || []);
@@ -324,7 +325,7 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
 
     // Use _id (MongoDB ID) or construct uniqueId (tenderId_companyId) as fallback
     const idToUse = selectedContractId || `${dataToSubmit.tenderId}_${dataToSubmit.companyId}`;
-    const updateUrl = `https://egpserver.jubairahmad.com/api/v1/contract-information/${idToUse}`;
+    const updateUrl = `${config.apiBaseUrl}/contract-information/${idToUse}`;
     await patchData(updateUrl, dataToSubmit, setContractReload);
     setLoading(false);
   };

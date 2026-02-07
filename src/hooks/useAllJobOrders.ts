@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllJobOrders = (searchTerm, page = 1, limit = 20, status = "all") => {
@@ -22,7 +23,7 @@ const useAllJobOrders = (searchTerm, page = 1, limit = 20, status = "all") => {
         // https://egp-tender-automation-server.vercel.app
         // https://egpserver.jubairahmad.com
         const statusParam = status === "all" ? "" : `&status=${status}`;
-        const url = `https://egpserver.jubairahmad.com/api/v1/jobOrder?searchTerm=${searchTerm}&page=${page}&limit=${limit}${statusParam}`;
+        const url = `${config.apiBaseUrl}/jobOrder?searchTerm=${searchTerm}&page=${page}&limit=${limit}${statusParam}`;
         const response = await fetch(url);
         const apiResult = await response.json();
 

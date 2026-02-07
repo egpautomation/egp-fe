@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,8 +36,7 @@ const UpdateTenderInformation = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // https://egp-tender-automation-server.vercel.app
-    const url = `https://egp-tender-automation-server.vercel.app/api/v1/tenders/tenderId/${tenderId}`;
+    const url = `${config.apiBaseUrlAlt}/tenders/tenderId/${tenderId}`;
     await updateData(url, formData, null, resetForm);
   };
 

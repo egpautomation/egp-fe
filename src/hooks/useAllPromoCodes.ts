@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllPromoCodes = ( searchTerm) => {
@@ -13,7 +14,7 @@ const useAllPromoCodes = ( searchTerm) => {
         setLoading(true);
         // https://egp-tender-automation-server.vercel.app
         // https://egpserver.jubairahmad.com
-        const url = `https://egpserver.jubairahmad.com/api/v1/promoCode?searchTerm=${searchTerm}`;
+        const url = `${config.apiBaseUrl}/promoCode?searchTerm=${searchTerm}`;
         const response = await fetch(url);
         const data = await response.json();
 

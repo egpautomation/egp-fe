@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { createData } from "@/lib/createData";
 import { Input } from "@/components/ui/input";
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { UniqueOrganizationComboBox } from "./OrganizationCombobox";
@@ -42,7 +43,7 @@ const CreateDepartment = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = "https://egpserver.jubairahmad.com/api/v1/departments/create-department";
+    const url = `${config.apiBaseUrl}/departments/create-department`;
     createData(url, { ...formData, organization }, setReload, resetForm);
   };
 

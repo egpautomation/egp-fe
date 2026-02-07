@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { config } from '@/lib/config';
 import { createData } from '@/lib/createData';
 import { Combobox } from "@/components/ui/combobox";
 import useSingleData from '@/hooks/useSingleData';
@@ -111,9 +112,9 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
   const [subCategoryValue, setSubCategoryValue] = useState('');
   const [tenderCategories, setTenderCategories] = useState([]);
 
-  const url = `https://egpserver.jubairahmad.com/api/v1/egp-listed-company/get-by-mail?mail=${egpEmail}`
+  const url = `${config.apiBaseUrl}/egp-listed-company/get-by-mail?mail=${egpEmail}`
   const { data: egpListedCompany } = useSingleData(url)
-  const tenderUrl = `https://egpserver.jubairahmad.com/api/v1/tenders/tenderId/${formData?.tenderId}`
+  const tenderUrl = `${config.apiBaseUrl}/tenders/tenderId/${formData?.tenderId}`
   const { data: tenderData } = useSingleData(tenderUrl)
 
   // Fetch sub-categories from TenderCategory API
@@ -121,7 +122,7 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          'https://egpserver.jubairahmad.com/api/v1/tender-categories/with-pagination?page=1&limit=1000'
+          `${config.apiBaseUrl}/tender-categories/with-pagination?page=1&limit=1000`
         );
         const data = await response.json();
         setSubCategories(data?.data || []);
@@ -241,7 +242,7 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
     try {
       const companyId = egpListedCompany?.companyUniqueEGP_ID;
       if (companyId) {
-        const checkUrl = `https://egpserver.jubairahmad.com/api/v1/contract-information?companyId=${encodeURIComponent(companyId)}&limit=1000`;
+        const checkUrl = `${config.apiBaseUrl}/contract-information?companyId=${encodeURIComponent(companyId)}&limit=1000`;
         const response = await fetch(checkUrl);
         const data = await response.json();
 
@@ -307,7 +308,7 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
     }
 
     try {
-      await createData("https://egpserver.jubairahmad.com/api/v1/contract-information/create-contract-information", [dataToSubmit]);
+      await createData(`${config.apiBaseUrl}/contract-information/create-contract-information`, [dataToSubmit]);
 
       // Success: Reset form and reload data
       setFeedback({ message: 'Tender created successfully!', type: 'success' });

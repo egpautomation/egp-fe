@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useFormattedTenders from "@/hooks/useAllFormattedTenders";
@@ -67,7 +68,7 @@ const UpdateTenderDataEntry = () => {
   const handleSendTender = async (tenderData) => {
     try {
       const response = await fetch(
-        "https://exin.alltender.cc/api/tender_update",
+        `${config.exinApiBaseUrl}/tender_update`,
         {
           method: "POST",
           headers: {
@@ -99,7 +100,7 @@ const UpdateTenderDataEntry = () => {
     const tenderId = { tender_id: Number(`${tenderData?.tender_id}${0}${0}`) };
     try {
       const response = await fetch(
-        "https://exin.alltender.cc/api/delete_tender",
+        `${config.exinApiBaseUrl}/delete_tender`,
         {
           method: "POST",
           headers: {
@@ -112,7 +113,7 @@ const UpdateTenderDataEntry = () => {
       const data = await response.json();
  
       if ((data?.status == "success") && (data?.code === 200)) {
-        const url = `https://egp-tender-automation-server.vercel.app/api/v1/tender-dataEntry/${tenderData?.tender_id}`;
+        const url = `${config.apiBaseUrlAlt}/tender-dataEntry/${tenderData?.tender_id}`;
         const response = await axios.delete(url, { withCredentials: false });
         if (response.status === 200) {
           toast.dismiss(toastId);

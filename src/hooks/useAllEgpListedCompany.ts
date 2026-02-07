@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllEgpListedCompanies = (searchTerm) => {
@@ -13,7 +14,7 @@ const useAllEgpListedCompanies = (searchTerm) => {
         setLoading(true);
         // https://egp-tender-automation-server.vercel.app
         // https://egpserver.jubairahmad.com
-        const url = `https://egpserver.jubairahmad.com/api/v1/egp-listed-company?searchTerm=${encodeURIComponent(searchTerm)}`;
+        const url = `${config.apiBaseUrl}/egp-listed-company?searchTerm=${encodeURIComponent(searchTerm)}`;
         const response = await fetch(url);
         const data = await response.json();
 

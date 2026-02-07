@@ -1,13 +1,14 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import useSingleData from "@/hooks/useSingleData";
 
 export default function ByPassReportRow({ item, idx, data }) {
-  const { data: egpListendCompany, loading } = useSingleData(`https://egpserver.jubairahmad.com/api/v1/egp-listed-company/get-by-mail?mail=${item?.egpMail}`);
+  const { data: egpListendCompany, loading } = useSingleData(`${config.apiBaseUrl}/egp-listed-company/get-by-mail?mail=${item?.egpMail}`);
   console.log(egpListendCompany)
   const bankName = egpListendCompany?.bankName || "NILL";
 
-  const { data: tenderData } = useSingleData(`https://egpserver.jubairahmad.com/api/v1/tenders/tenderId/${item?.tenderIdNum}`);
+  const { data: tenderData } = useSingleData(`${config.apiBaseUrl}/tenders/tenderId/${item?.tenderIdNum}`);
   console.log(tenderData)
   const liquidAssets = tenderData?.liquidAssets || 1
 

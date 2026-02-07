@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllMethodTenders = (
@@ -24,7 +25,7 @@ const useAllMethodTenders = (
         // https://egp-tender-automation-server.vercel.app
         // https://egpserver.jubairahmad.com
 
-        const url = `https://egpserver.jubairahmad.com/api/v1/tenders/method/${method}?searchTerm=${searchTerm}&from=${from}&to=${to}&department=${department}&category=${category}&location=${location}&page=${page}&limit=${limit}`;
+        const url = `${config.apiBaseUrl}/tenders/method/${method}?searchTerm=${searchTerm}&from=${from}&to=${to}&department=${department}&category=${category}&location=${location}&page=${page}&limit=${limit}`;
         const response = await fetch(url);
         const data = await response.json();
         setTenders(data?.data);

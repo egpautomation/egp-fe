@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useUserProfile = () => {
@@ -10,7 +11,7 @@ const useUserProfile = () => {
         const fetchUserProfile = async () => {
             try {
                 setLoading(true);
-                const url = `https://egpserver.jubairahmad.com/api/v1/user/get-single-user`;
+                const url = `${config.apiBaseUrl}/user/get-single-user`;
                 const response = await fetch(url, {
                     method: "GET",
                     credentials: "include",

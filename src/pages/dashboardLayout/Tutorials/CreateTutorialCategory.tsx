@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,7 +33,7 @@ const CreateTutorialCategory = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `https://egpserver.jubairahmad.com/api/v1/tutorials-categories/create-category`;
+    const url = `${config.apiBaseUrl}/tutorials-categories/create-category`;
     createData(url, formData, null, handleReset);
   };
   return (

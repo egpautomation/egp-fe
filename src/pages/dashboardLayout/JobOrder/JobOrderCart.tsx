@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,8 +20,8 @@ const JobOrderCart = () => {
   const { userJobOrderCart, totalPrice, setReload } = useContext(CartContext);
   const location = useLocation();
   const promoCodeUrl = code
-    ? `https://egpserver.jubairahmad.com/api/v1/promoCode/findByCode/${code}`
-    : `https://egpserver.jubairahmad.com/api/v1/promoCode/findByCode/${null}`;
+    ? `${config.apiBaseUrl}/promoCode/findByCode/${code}`
+    : `${config.apiBaseUrl}/promoCode/findByCode/${null}`;
   const { data: promoCode, setReload: refetchPromo } = useSingleData(promoCodeUrl);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -71,7 +72,7 @@ const JobOrderCart = () => {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(
-        `https://egp-tender-automation-server.vercel.app/api/v1/jobOrder-cart/${id}`,
+        `${config.apiBaseUrlAlt}/jobOrder-cart/${id}`,
         { withCredentials: true }
       );
     } catch (error) {
@@ -85,7 +86,7 @@ const JobOrderCart = () => {
 
 
   const handleDownloadFile = async (id) => {
-    const api = `https://egpserver.jubairahmad.com/api/v1/jobOrder-cart/jobOrderCart/${id}/file`
+    const api = `${config.apiBaseUrl}/jobOrder-cart/jobOrderCart/${id}/file`
     console.log(api)
     try {
 
@@ -125,8 +126,7 @@ const JobOrderCart = () => {
         balance: createOrder.remainingBalance
       }
     };
-    // https://egpserver.jubairahmad.com
-    const url = "https://egpserver.jubairahmad.com/api/v1/jobOrder/create-jobOrder";
+    const url = `${config.apiBaseUrl}/jobOrder/create-jobOrder`;
     createData(url, createOrder, setReload);
     setReload((prevReload) => prevReload + 1);
     setUser(updatedUser)

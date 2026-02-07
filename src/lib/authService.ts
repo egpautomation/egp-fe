@@ -2,6 +2,7 @@
 // Industry-standard JWT authentication utilities
 
 import { jwtDecode } from 'jwt-decode';
+import { config } from './config';
 
 // Token storage keys
 const ACCESS_TOKEN_KEY = 'accessToken';
@@ -54,7 +55,7 @@ export interface RegisterData {
   userId: number;
 }
 
-const API_BASE_URL = 'https://egpserver.jubairahmad.com/api/v1';
+const API_BASE_URL = config.apiBaseUrl;
 
 /**
  * Store tokens securely in localStorage

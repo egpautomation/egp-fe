@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,7 +25,7 @@ const CreateService = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = 'https://egpserver.jubairahmad.com/api/v1/services/create-service'
+    const url = `${config.apiBaseUrl}/services/create-service`
     createData(url,formData);
   };
   return (

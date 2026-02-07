@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createData } from "@/lib/createData";
@@ -37,8 +38,7 @@ const JsonFileUploader = ({ setReload }) => {
   };
 
   const handleSubmit = () => {
-    // https://egpserver.jubairahmad.com
-    const url = `https://egpserver.jubairahmad.com/api/v1/tenderIds/create-tenderIds`;
+    const url = `${config.apiBaseUrl}/tenderIds/create-tenderIds`;
     createData(url, data, setReload);
   };
 

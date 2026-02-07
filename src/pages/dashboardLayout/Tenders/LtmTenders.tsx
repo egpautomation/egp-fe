@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { Input } from "@/components/ui/input";
 import { AlignJustify, Filter, Printer, ExternalLink } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -172,7 +173,7 @@ const LtmTenders = () => {
         // Website link
         const prefixWidth = doc.getTextWidth(prefix);
         doc.textWithLink(website, startX + prefixWidth, line2Y, {
-          url: "https://egp.jubairahmad.com",
+          url: config.egpSiteUrl,
         });
 
         // Mid text
@@ -186,7 +187,7 @@ const LtmTenders = () => {
           startX + prefixWidth + websiteWidth + midWidth,
           line2Y,
           {
-            url: "https://wa.me/8801926959331",
+            url: `https://wa.me/${config.supportWhatsApp}`,
           }
         );
         doc.text(`Page ${pageNumber}`, centerX, line3Y, { align: "center" });
@@ -447,7 +448,7 @@ const LtmTenders = () => {
             Reserved. <br />
             Visit us at{" "}
             <a
-              href="https://egp.jubairahmad.com"
+              href={config.egpSiteUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -455,7 +456,7 @@ const LtmTenders = () => {
             </a>{" "}
             | Contact:{" "}
             <a
-              href="https://wa.me/8801926959331"
+              href={`https://wa.me/${config.supportWhatsApp}`}
               target="_blank"
               rel="noopener noreferrer"
             >

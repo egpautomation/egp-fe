@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { Input } from "@/components/ui/input";
 
 const TestPrintPdf = () => {
@@ -10,9 +11,7 @@ const TestPrintPdf = () => {
     const formData = new FormData();
     formData.append("file", file);
     console.log("formData", formData);
-    // https://egpserver.jubairahmad.com/api/v1/files/upload
-
-    const res = await fetch("https://egpserver.jubairahmad.com/api/v1/files/upload", {
+    const res = await fetch(`${config.apiBaseUrl}/files/upload`, {
       method: "POST",
       body: formData,
       mode: "cors"

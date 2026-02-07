@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -51,8 +52,7 @@ const MyJobOrder = () => {
 
   const confirmCancel = () => {
     if (selectedItem) {
-      const url =
-        "https://egp-tender-automation-server.vercel.app/api/v1/jobOrder/update-status";
+      const url = `${config.apiBaseUrlAlt}/jobOrder/update-status`;
       const updatedData = {
         orderId: selectedItem?.orderId,
         jobId: selectedItem?.jobId,

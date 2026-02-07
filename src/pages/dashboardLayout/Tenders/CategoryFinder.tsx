@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useSingleData from "@/hooks/useSingleData";
@@ -11,7 +12,7 @@ import { LoaderCircle, SkipBack } from "lucide-react";
 
 export default function TenderCategoryFinder() {
   const { id } = useParams();
-  const { data: tender, setReload } = useSingleData("https://egpserver.jubairahmad.com/api/v1/tenders/tenderId/" + id);
+  const { data: tender, setReload } = useSingleData(`${config.apiBaseUrl}/tenders/tenderId/` + id);
   const [jobTitle, setJobTitle] = useState(tender?.descriptionOfWorks || "");
   const [matchedCategories, setMatchedCategories] = useState([]);
   const [newKeywordSuggestions, setNewKeywordSuggestions] = useState([]);
@@ -203,12 +204,12 @@ export default function TenderCategoryFinder() {
 
    
 
-    const url = `https://egp-tender-automation-server.vercel.app/api/v1/tenders/tenderId/${id}`;
+    const url = `${config.apiBaseUrlAlt}/tenders/tenderId/${id}`;
     updateData(url, payload, null, handleRedirect);
   };
 
   const handleCategoryUpdate = () => {
-    const url = `https://egp-tender-automation-server.vercel.app/api/v1/tender-categories/create-category`;
+    const url = `${config.apiBaseUrlAlt}/tender-categories/create-category`;
     createData(url, suggestionsData);
     console.log("New Category Suggestions Data:", suggestionsData);
   };
@@ -218,7 +219,7 @@ export default function TenderCategoryFinder() {
   };
 // null, handleRedirect
   const handleSkipAnalyze = () => {
-    updateData(`https://egpserver.jubairahmad.com/api/v1/tenders/tenderId/${id}`, { skip: true }, null, handleRedirect);
+    updateData(`${config.apiBaseUrl}/tenders/tenderId/${id}`, { skip: true }, null, handleRedirect);
   }
 
   useEffect(() => {

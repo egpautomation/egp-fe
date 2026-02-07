@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import useAllUsers from "@/hooks/useAllUsers";
@@ -17,10 +18,7 @@ const Users = () => {
   
 
   const handleUserRoleUpdate = async (email: string, role: string) => {
-  // https://egpserver.jubairahmad.com
-  // https://egp-tender-automation-server.vercel.app/
-  //  setLoading(true);
-  const url = `https://egpserver.jubairahmad.com/api/v1/user/update-user`;
+  const url = `${config.apiBaseUrl}/user/update-user`;
   await updateData(url, { email, role }, setReload);
 
   // ✅ if the logged-in user's role is changed, refetch

@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createData } from "@/lib/createData";
@@ -44,9 +45,8 @@ const MultipleTenderSender = ({ setReload }) => {
       fileInputRef.current.value = ""; // reset file input
     }
   };
-  // https://egp-tender-automation-server.vercel.app
   const handleSubmit = () => {
-    const url = `https://egp-tender-automation-server.vercel.app/api/v1/tenders/create-multiple-tender`;
+    const url = `${config.apiBaseUrlAlt}/tenders/create-multiple-tender`;
     createData(url, data, setReload, resetForm);
   };
 

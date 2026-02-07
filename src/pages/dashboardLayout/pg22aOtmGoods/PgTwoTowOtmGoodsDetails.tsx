@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useParams, Link } from "react-router-dom";
 import { useMemo, useState, useEffect, useContext } from "react";
 import { Filter, RefreshCw, Edit } from "lucide-react";
@@ -47,11 +48,11 @@ const PgTwoTowOtmGoodsDetails = () => {
   const [proposedProjectYear, setProposedProjectYear] = useState('');
 
   // 1. Fetch Tender Preparation Data by _id
-  const tenderUrl = id ? `https://egpserver.jubairahmad.com/api/v1/tender-preparation/${id}` : null;
+  const tenderUrl = id ? `${config.apiBaseUrl}/tender-preparation/${id}` : null;
   const { data: currentTender, loading: tenderLoading, setReload: setTenderReload } = useSingleData(tenderUrl);
 
   // 1.1 Fetch Live Tender Data to get Liquid Assets Requirement (based on tenderId from preparation)
-  const liveTenderUrl = currentTender?.tenderId ? `https://egpserver.jubairahmad.com/api/v1/tenders/tenderId/${currentTender.tenderId}` : null;
+  const liveTenderUrl = currentTender?.tenderId ? `${config.apiBaseUrl}/tenders/tenderId/${currentTender.tenderId}` : null;
   const { data: liveTenderData } = useSingleData(liveTenderUrl);
 
   // Initialize shared state from database values
@@ -86,7 +87,7 @@ const PgTwoTowOtmGoodsDetails = () => {
   // This bypasses the company lookup in backend and queries directly by companyId
   const companyId = companyData?.companyUniqueEGP_ID;
   const contractUrl = companyId
-    ? `https://egpserver.jubairahmad.com/api/v1/contract-information?companyId=${encodeURIComponent(companyId)}&limit=100`
+    ? `${config.apiBaseUrl}/contract-information?companyId=${encodeURIComponent(companyId)}&limit=100`
     : null;
   const { data: contractData, loading: contractLoading, setReload: setContractReload } = useSingleData(contractUrl);
 
@@ -261,7 +262,7 @@ const PgTwoTowOtmGoodsDetails = () => {
   const handleSaveExperienceContract = async (contractId) => {
     try {
       if (!currentTender?._id) return;
-      const updateUrl = `https://egpserver.jubairahmad.com/api/v1/tender-preparation/${currentTender._id}`;
+      const updateUrl = `${config.apiBaseUrl}/tender-preparation/${currentTender._id}`;
       // Patch the experienceContractId
       await fetch(updateUrl, {
         method: "PATCH",

@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +12,7 @@ import { Link, useParams } from "react-router-dom";
 
 const EditCompanyMigration = () => {
   const { id } = useParams();
-  const url = `https://egpserver.jubairahmad.com/api/v1/companyMigration/${id}`;
+  const url = `${config.apiBaseUrl}/companyMigration/${id}`;
 
   const { data: formData } = useSingleData(url);
   const [updatedData, setUpdatedFormData] = useState({});
@@ -27,8 +28,8 @@ const EditCompanyMigration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `https://egpserver.jubairahmad.com/api/v1/companyMigration/${id}`
-    updateData(url, updatedData)
+    const updateUrl = `${config.apiBaseUrl}/companyMigration/${id}`;
+    updateData(updateUrl, updatedData);
   };
 
   return (

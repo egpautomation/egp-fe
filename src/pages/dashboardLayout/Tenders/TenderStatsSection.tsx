@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const TenderStatsSection = () => {
@@ -12,7 +13,7 @@ const TenderStatsSection = () => {
   });
 
   useEffect(() => {
-    fetch("https://egpserver.jubairahmad.com/api/v1/tenders/tender-method-counts")
+    fetch(`${config.apiBaseUrl}/tenders/tender-method-counts`)
       .then((res) => res.json())
       .then((data) => {
         setCounts(data?.data);

@@ -3,10 +3,11 @@
 
 import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { getAccessToken, refreshAccessToken, clearTokens, isTokenExpired } from './authService';
+import { config } from './config';
 
 // Create axios instance with base configuration
 const axiosInstance = axios.create({
-  baseURL: 'https://egpserver.jubairahmad.com/api/v1',
+  baseURL: config.apiBaseUrl,
   headers: {
     'Content-Type': 'application/json',
   },

@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useBankName = (initialBankName, egpMail) => {
@@ -8,7 +9,7 @@ const useBankName = (initialBankName, egpMail) => {
     if (!initialBankName && egpMail) {
       const fetchBankName = async () => {
         try {
-          const res = await fetch(`https://egpserver.jubairahmad.com/api/v1/egp-listed-company/get-by-mail/${egpMail}`);
+          const res = await fetch(`${config.apiBaseUrl}/egp-listed-company/get-by-mail/${egpMail}`);
           const json = await res.json();
           setBankName(json?.data?.bankName || "NILL");
         } catch (err) {

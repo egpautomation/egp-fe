@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import UserEgpMail from "@/components/dashboard/UserEgpMail";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,7 +69,7 @@ export default function CreateBulpJobOrder() {
       return;
     }
 
-    const url = `https://egpserver.jubairahmad.com/api/v1/jobOrder-cart/create-multiple-jobOrderCart`;
+    const url = `${config.apiBaseUrl}/jobOrder-cart/create-multiple-jobOrderCart`;
     createData(url, orders, setReload, setReset);
   };
 

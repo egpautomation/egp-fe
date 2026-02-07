@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -81,9 +82,7 @@ const CreateTender = () => {
     //   openingDateTime: openingDate,
     // };
 
-    const url =
-      // https://egpserver.jubairahmad.com
-      "https://egpserver.jubairahmad.com/api/v1/tenders/create-tender";
+    const url = `${config.apiBaseUrl}/tenders/create-tender`;
     createData(url, formData);
   };
 

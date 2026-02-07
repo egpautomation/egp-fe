@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useFormattedTendersTTI = (currentPage, pageLimit) => {
@@ -14,7 +15,7 @@ const useFormattedTendersTTI = (currentPage, pageLimit) => {
         setLoading(true);
         // https://egp-tender-automation-server.vercel.app
         // https://egpserver.jubairahmad.com
-        const url = `https://egpserver.jubairahmad.com/api/v1/tti-dataEntry?page=${currentPage}&limit=${pageLimit}`;
+        const url = `${config.apiBaseUrl}/tti-dataEntry?page=${currentPage}&limit=${pageLimit}`;
         const response = await fetch(url);
         const data = await response.json();
         console.log(data.data);

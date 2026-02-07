@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useUsersCompanyMigration from "@/hooks/useUsersCompanyMigrations";
@@ -113,7 +114,7 @@ const UsersCompanyMigrations = () => {
                     <td className="px-4 py-2  min-w-48">{item?.remarks}</td>
                     <td className="px-4 py-2">
                       <a
-                        href={`https://api.whatsapp.com/send?phone=8801926959331&text=I am ${encodeURIComponent(
+                        href={`https://api.whatsapp.com/send?phone=${config.supportWhatsApp}&text=I am ${encodeURIComponent(
                           item?.user
                         )}. Please Update ${encodeURIComponent(item?.egpEmail)} Information immediately.`}
                         target="_blank"
@@ -160,9 +161,7 @@ const UsersCompanyMigrations = () => {
                       </Link>
                       <DeleteDataModal
                         setReload={setReload}
-                        // https://egpserver.jubairahmad.com
-                        // https://egp-tender-automation-server.vercel.app
-                        url={`https://egp-tender-automation-server.vercel.app/api/v1/companyMigration/${item?._id}`}
+                        url={`${config.apiBaseUrlAlt}/companyMigration/${item?._id}`}
                       />
                     </td>
                   </tr>
@@ -353,7 +352,7 @@ const MobileTableLayout = ({
                 </Link>
                 <DeleteDataModal
                   setReload={setReload}
-                  url={`https://egp-tender-automation-server.vercel.app/api/v1/companyMigration/${item?._id}`}
+                  url={`${config.apiBaseUrlAlt}/companyMigration/${item?._id}`}
                 />
               </div>
             </motion.div>

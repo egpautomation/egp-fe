@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +10,7 @@ import { Link, useParams } from "react-router-dom";
 
 const ViewEgpListedCompany = () => {
   const { id } = useParams();
-  const url = `https://egp-tender-automation-server.vercel.app/api/v1/egp-listed-company/${id}`;
+  const url = `${config.apiBaseUrlAlt}/egp-listed-company/${id}`;
   const { data: formData } = useSingleData(url);
   return (
     <div className="min-h-lvh py-5 pb-10">

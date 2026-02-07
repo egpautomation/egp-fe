@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllNullCategoryTenders = (
@@ -17,7 +18,7 @@ const useAllNullCategoryTenders = (
       // https://egpserver.jubairahmad.com
       try {
         setLoading(true);
-        const url = `https://egpserver.jubairahmad.com/api/v1/tenders/tender-null-category?searchTerm=${searchTerm}&method=${method}&page=${page}&limit=${limit}`;
+        const url = `${config.apiBaseUrl}/tenders/tender-null-category?searchTerm=${searchTerm}&method=${method}&page=${page}&limit=${limit}`;
         const response = await fetch(url);
         const data = await response.json();
         setTenders(data?.data);

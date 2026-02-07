@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -40,7 +41,7 @@ const Profile = () => {
         try {
             setChangingPassword(true);
             const response = await fetch(
-                "https://egpserver.jubairahmad.com/api/v1/user/change-password",
+                `${config.apiBaseUrl}/user/change-password`,
                 {
                     method: "PUT",
                     credentials: "include",

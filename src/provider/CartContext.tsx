@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { createContext,  useEffect, useState } from "react";
 
 export const CartContext = createContext();
@@ -16,8 +17,7 @@ const CartProvider = ({ children, userEmail }) => {
     const fetchCart = async () => {
       try {
         setLoading(true);
-        // https://egpserver.jubairahmad.com
-        const url = `https://egpserver.jubairahmad.com/api/v1/jobOrder-cart/user?user=${userEmail}`;
+        const url = `${config.apiBaseUrl}/jobOrder-cart/user?user=${userEmail}`;
         const res = await fetch(url);
         const data = await res.json();
 

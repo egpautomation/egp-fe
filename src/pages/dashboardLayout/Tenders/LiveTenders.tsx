@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { Input } from "@/components/ui/input";
 import useAllTenders from "@/hooks/useAllTenders";
 import { AlignJustify, Filter, Printer, ExternalLink } from "lucide-react";
@@ -188,7 +189,7 @@ const LiveTenders = () => {
         // Website link
         const prefixWidth = doc.getTextWidth(prefix);
         doc.textWithLink(website, startX + prefixWidth, line2Y, {
-          url: "https://egp.jubairahmad.com",
+          url: config.egpSiteUrl,
         });
 
         // Mid text
@@ -202,7 +203,7 @@ const LiveTenders = () => {
           startX + prefixWidth + websiteWidth + midWidth,
           line2Y,
           {
-            url: "https://wa.me/8801926959331",
+            url: `https://wa.me/${config.supportWhatsApp}`,
           }
         );
         doc.text(`Page ${pageNumber}`, centerX, line3Y, { align: "center" });

@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -37,7 +38,7 @@ const TenderCategories = () => {
 
     const handleDelete = async (id) => {
         const toastId = toast.loading("Loading...");
-        const url = `https://egp-tender-automation-server.vercel.app/api/v1/tender-categories/delete-category/${id}`;
+        const url = `${config.apiBaseUrlAlt}/tender-categories/delete-category/${id}`;
         try {
 
             const response = await axios.delete(url, { withCredentials: false });

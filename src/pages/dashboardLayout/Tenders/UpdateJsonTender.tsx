@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { updateData } from "@/lib/updateData";
@@ -37,9 +38,8 @@ const UpdateJsonTender = () => {
       fileInputRef.current.value = ""; // reset file input
     }
   };
-  // https://egp-tender-automation-server.vercel.app
   const handleSubmit = () => {
-    const url = `https://egp-tender-automation-server.vercel.app/api/v1/tenders/tenderId/${data?.tenderId}`;
+    const url = `${config.apiBaseUrlAlt}/tenders/tenderId/${data?.tenderId}`;
     updateData(url, data, null, resetForm);
   };
 

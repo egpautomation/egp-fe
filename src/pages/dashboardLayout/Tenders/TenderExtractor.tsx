@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useState } from "react";
 import { saveAs } from "file-saver";
 import { Button } from "@/components/ui/button";
@@ -217,7 +218,7 @@ const TenderExtractor = ({ data, setReload }) => {
       selectedTenderCategory: categoryItem ? categoryItem.Value : "Not found",
     };
 
-    const url = `https://egp-tender-automation-server.vercel.app/api/v1/tenders/tenderId/${data?.tenderId}`;
+    const url = `${config.apiBaseUrlAlt}/tenders/tenderId/${data?.tenderId}`;
     await updateData(url, simplified, setReload);
 
     // const blob = new Blob([JSON.stringify(simplified, null, 2)], {

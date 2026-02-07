@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { TenderMethodComboBox } from "@/components/mainlayout/Tenders/TenderMethodComboBox";
 import { Input } from "@/components/ui/input";
 import useAllTenderIds from "@/hooks/useAllTenderIds";
@@ -34,7 +35,7 @@ const TenderIds = () => {
   const skeleton = new Array(pageLimit).fill(Math?.random());
 
   const handleDelete = async (id) => {
-    const url = `https://egpserver.jubairahmad.com/api/v1/tenderIds/delete-tenderId/${id}`
+    const url = `${config.apiBaseUrl}/tenderIds/delete-tenderId/${id}`
     const toastId = toast.loading("Loading...");
     try {
       const response = await axios.delete(url, { withCredentials: false });

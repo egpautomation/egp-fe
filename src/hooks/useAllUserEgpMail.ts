@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllUserEgpMail = (userEmail) => {
@@ -13,7 +14,7 @@ const useAllUserEgpMail = (userEmail) => {
         setLoading(true);
         // Fetching from the master list (egp-listed-company) which has the fresh data.
         // We fetch a large batch (limit=2000) to ensure we find the user's records even if not indexed properly for search.
-        const url = `https://egpserver.jubairahmad.com/api/v1/egp-listed-company?limit=2000`;
+        const url = `${config.apiBaseUrl}/egp-listed-company?limit=2000`;
         const response = await fetch(url);
         const data = await response.json();
 

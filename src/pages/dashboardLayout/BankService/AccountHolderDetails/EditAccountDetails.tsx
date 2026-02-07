@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +13,7 @@ import { Link, useParams } from "react-router-dom";
 
 const UpdateAccountHolderInformation = () => {
   const { id } = useParams();
-  const url = `https://egpserver.jubairahmad.com/api/v1/accounts/${id}`;
+  const url = `${config.apiBaseUrl}/accounts/${id}`;
   const { data: formData } = useSingleData(url);
   const [newFormData, setNewFormData] = useState({});
 
@@ -26,8 +27,8 @@ const UpdateAccountHolderInformation = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `https://egp-tender-automation-server.vercel.app/api/v1/accounts/${id}`;
-    await updateData(url, newFormData);
+    const updateUrl = `${config.apiBaseUrlAlt}/accounts/${id}`;
+    await updateData(updateUrl, newFormData);
   };
 
   return (

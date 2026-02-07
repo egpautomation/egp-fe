@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +10,7 @@ import { Link, useParams } from "react-router-dom";
 
 const ViewCompanyMigration = () => {
   const { id } = useParams();
-  const url = `https://egpserver.jubairahmad.com/api/v1/companyMigration/${id}`;
+  const url = `${config.apiBaseUrl}/companyMigration/${id}`;
   const { data, loading } = useSingleData(url);
   console.log(data);
 

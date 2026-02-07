@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createData } from "@/lib/createData";
@@ -45,10 +46,8 @@ export default function CreateContactInfo() {
           fileInputRef.current.value = ""; // reset file input
         }
       };
-      // https://egp-tender-automation-server.vercel.app
       const handleSubmit = () => {
-        // https://egpserver.jubairahmad.com/
-        const url = `https://egpserver.jubairahmad.com/api/v1/contract-information/create-contract-information`;
+        const url = `${config.apiBaseUrl}/contract-information/create-contract-information`;
         createData(url, data, null , resetForm);
       };
   return (

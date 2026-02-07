@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import useFormattedTenders from "@/hooks/useAllFormattedTenders";
 import { createData } from "@/lib/createData";
@@ -17,8 +18,7 @@ const TenderDataEntry = () => {
     pageLimit
   );
   const sendToDB = (id) => {
-    const url =
-      "https://egpserver.jubairahmad.com/api/v1/tender-dataEntry/create-tenderId";
+    const url = `${config.apiBaseUrl}/tender-dataEntry/create-tenderId`;
     createData(url, { tenderId: id }, setReload);
   };
 
@@ -29,7 +29,7 @@ const TenderDataEntry = () => {
     };
 
     try {
-      const response = await fetch("https://exin.alltender.cc/api/add_tender", {
+      const response = await fetch(`${config.exinApiBaseUrl}/add_tender`, {
         method: "POST",
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -63,7 +63,7 @@ const TenderDataEntry = () => {
 
     try {
       const response = await fetch(
-        "https://exin.alltender.cc/api/add_tenders",
+        `${config.exinApiBaseUrl}/add_tenders`,
         {
           method: "POST",
           headers: {
@@ -78,9 +78,8 @@ const TenderDataEntry = () => {
       const res = await response.json();
 
       if (res?.status == "success" && res?.code === 200) {
-        const url =
-      "https://egpserver.jubairahmad.com/api/v1/tender-dataEntry/create-tenderId";
-      createData(url, tenderIds, setReload);
+        const url = `${config.apiBaseUrl}/tender-dataEntry/create-tenderId`;
+        createData(url, tenderIds, setReload);
         // toast.success("Successfully Create Tenders");
         
         return res;

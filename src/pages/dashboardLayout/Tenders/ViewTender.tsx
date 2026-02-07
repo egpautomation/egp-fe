@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { config } from "@/lib/config";
 import { Detail } from "@/components/mainlayout/Tenders/Detail";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +21,7 @@ const ViewTender = () => {
   const [linkCopied, setLinkCopied] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
 
-  const url = `https://egpserver.jubairahmad.com/api/v1/tenders/${id}`;
+  const url = `${config.apiBaseUrl}/tenders/${id}`;
   const { data: formData, loading, setReload } = useSingleData(url);
 
   const openingDateTime = formatDate(formData?.openingDateTime, "eee MMM dd yyyy");
@@ -37,7 +38,7 @@ const ViewTender = () => {
     // Replace localhost with production domain
     const currentUrl = window.location.href.replace(
       /http:\/\/localhost:\d+/,
-      "https://egp.jubairahmad.com"
+      config.egpSiteUrl
     );
     navigator.clipboard.writeText(currentUrl);
     setLinkCopied(true);
@@ -346,7 +347,7 @@ const ViewTender = () => {
 
       const prefixWidth = doc.getTextWidth(prefix);
       doc.textWithLink(website, startX + prefixWidth, line2Y, {
-        url: "https://egp.jubairahmad.com",
+        url: config.egpSiteUrl,
       });
 
       const websiteWidth = doc.getTextWidth(website);
@@ -358,7 +359,7 @@ const ViewTender = () => {
         startX + prefixWidth + websiteWidth + midWidth,
         line2Y,
         {
-          url: "https://wa.me/8801926959331",
+          url: `https://wa.me/${config.supportWhatsApp}`,
         }
       );
 

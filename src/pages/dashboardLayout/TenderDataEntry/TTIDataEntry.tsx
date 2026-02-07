@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import useFormattedTendersTTI from "@/hooks/useFormattedTendersTTI";
 import { createData } from "@/lib/createData";
@@ -30,10 +31,9 @@ const TTITenderDataEntry = () => {
       tenderId: tender?.tenderId,
     }));
     console.log(updatedTenders);
-    // https://server.tendertradinginc.com
     try {
       const response = await fetch(
-        " https://server.tendertradinginc.com/api/v1/tenders/create-multiple-tender",
+        `${config.ttiServerUrl}/tenders/create-multiple-tender`,
         {
           method: "POST",
           headers: {
@@ -46,8 +46,7 @@ const TTITenderDataEntry = () => {
       const res = await response.json();
       
       if (res.success || res.message == "Error: No New Tenders To Insert") {
-        const url =
-          "https://egpserver.jubairahmad.com/api/v1/tti-dataEntry/create-tenderId";
+        const url = `${config.apiBaseUrl}/tti-dataEntry/create-tenderId`;
         createData(url, tenderIds, setReload, resetForm);
         // toast.success("Successfully Create Tenders");
         return res;
