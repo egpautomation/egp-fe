@@ -14,4 +14,4 @@ createRoot(document.getElementById("root")!).render(
       <Toaster />
     </AuthProvider>
   </StrictMode>
-);
+); 
