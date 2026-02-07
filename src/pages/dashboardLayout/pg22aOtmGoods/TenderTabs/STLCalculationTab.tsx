@@ -38,20 +38,7 @@ export const STLCalculationTab = () => {
     const [priceIndex, setPriceIndex] = useState('0.9168');
     const [bidders, setBidders] = useState<Bidder[]>([
         { name: 'Hassan Techno Builders Ltd.', price: '75' },
-        { name: 'Affan Builders Ltd.', price: '78' },
-        { name: 'Rana Builders (Pvt.) Ltd.', price: '80' },
-        { name: 'M/S. Hoque Enterprise', price: '83' },
-        { name: 'Rimi Nirman Ltd.', price: '85' },
-        { name: 'National Development Engineers Ltd.', price: '88' },
-        { name: 'Md. Delour Hossain Babul', price: '90' },
-        { name: 'Taher Brothers', price: '92' },
-        { name: 'Masud Hi-Tech Engineering Ltd.', price: '94' },
-        { name: 'RAB-RC (PVT) LIMITED', price: '96' },
-        { name: 'UDC Construction Ltd.', price: '98' },
-        { name: 'Shamim Enterprise (Pvt.) Ltd.', price: '100' },
-        { name: 'M/S. Nur Nabi', price: '102' },
-        { name: 'Mostufa Zaman Traders (Pvt) Ltd.', price: '105' },
-        { name: 'Turna Enterprise (Pvt.)', price: '109' },
+        
     ]);
     const [results, setResults] = useState<CalculationResults | { error: string } | null>(null);
     const [isUploading, setIsUploading] = useState(false);
