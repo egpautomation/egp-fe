@@ -3,8 +3,14 @@
  * All sensitive / environment-specific values should be read from here.
  */
 
-const getEnv = (key: string) =>
-  (import.meta.env[key] as string | undefined);
+// @ts-nocheck
+const getEnv = (key: string) => {
+  // Check runtime env first (docker), then build time env (local/vite)
+  if (typeof window !== 'undefined' && window._env_ && window._env_[key]) {
+    return window._env_[key];
+  }
+  return import.meta.env[key] as string | undefined;
+};
 
 export const config = {
   /** Main API base URL (auth, most CRUD) */
