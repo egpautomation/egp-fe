@@ -54,17 +54,20 @@ const LiveTenders = () => {
     pageLimit
   );
   const skeleton = new Array(pageLimit).fill(Math?.random());
-
+console.log(tenders)
   const downloadPdf = () => {
-    const doc = new jsPDF("p", "mm", "a4");
+    const doc = new jsPDF("l", "mm", "a4");
 
     const tableColumn = [
       "Tender ID",
       "Department",
+       "Description",
       "Location",
       "Details",
       "Quality criteria",
+     
     ];
+    
     const tableRows = [];
 
     tenders.forEach((item) => {
@@ -95,13 +98,18 @@ const LiveTenders = () => {
         `TENDER CAPACITY: ${item?.tenderCapacity || "N/A"}`,
         `WORKING LOCATION: ${item?.workingLocation || "N/A"}`,
       ].join("\n");
+      const Description = [
+        `${item?.descriptionOfWorks || "N/A"}`,
+      ].join("\n");
 
       const rowData = [
         tenderIdAndMore,
         item?.organization || item?.department,
+        Description,
         item?.locationDistrict,
         details,
         others,
+       
       ];
       tableRows.push(rowData);
     });
@@ -117,11 +125,12 @@ const LiveTenders = () => {
         overflow: "linebreak",
       },
       columnStyles: {
-        0: { cellWidth: 25 }, // Tender ID
-        1: { cellWidth: 30 }, // Department
-        2: { cellWidth: 30 }, // Location
-        3: { cellWidth: 50 }, // Details
-        4: { cellWidth: 55 }, // Others
+        0: { cellWidth: 30 }, // Tender ID
+        1: { cellWidth: 40 }, // Department
+        2: { cellWidth: 70 }, // Description
+        3: { cellWidth: 30 }, // Location
+        4: { cellWidth: 60 }, // Details
+        5: { cellWidth: 47 }, // Quality criteria / Others
       },
       headStyles: {
         fillColor: [37, 37, 37],
