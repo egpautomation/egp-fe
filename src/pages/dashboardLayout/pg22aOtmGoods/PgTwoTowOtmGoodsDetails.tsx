@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 
 const mockTenderData = [
   { financialYear: '2024-2025', tenderId: 'TND-001', packageNo: 'PKG-001', ministry: 'Ministry A', organization: 'Org A', division: 'Div A', descriptionOfWorks: 'Road Construction', commencementDate: '2024-01-15', contractPeriodExtendedUpTo: '2025-01-15', Status_Complite_ongoing: 'Ongoing', revisedContractValue: '5000000', paymentAmount: '3500000', jvShare: '70' },
- 
+
 ];
 
 
@@ -525,11 +525,6 @@ const PgTwoTowOtmGoodsDetails = () => {
           )}
         </div>
       ),
-    },
-    {
-      id: 13,
-      name: "STL Calculation",
-      content: <STLCalculationTab />,
     },
     {
       id: 15,
