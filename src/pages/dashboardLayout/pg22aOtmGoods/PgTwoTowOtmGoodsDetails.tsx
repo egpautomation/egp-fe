@@ -14,6 +14,7 @@ import { UpdateTenderInformationForm } from "./TenderTabs/Update_Tender_Informat
 import { TendererFormPreview } from "./TenderTabs/TendererFormPreview";
 import { TendererFormPreview_ePW3_2 } from "./TenderTabs/TendererFormPreview_ePW3_2";
 import { DownloadsTab } from "./TenderTabs/DownloadsTab";
+import { LineOfCreditTab } from "./TenderTabs/LineOfCreditTab";
 import { STLCalculationTab } from "./TenderTabs/STLCalculationTab";
 import useAllEgpListedCompanies from "@/hooks/useAllEgpListedCompany";
 import { Input } from "@/components/ui/input";
@@ -40,7 +41,9 @@ const PgTwoTowOtmGoodsDetails = () => {
   const [selectedContractIdForEdit, setSelectedContractIdForEdit] = useState(null);
 
   // Shared state for Tender Capacity inputs (for real-time preview updates)
+  // Shared state for Tender Capacity inputs (for real-time preview updates)
   const [tdsRequiredFY, setTdsRequiredFY] = useState('');
+  const [tdsRequiredBestYear, setTdsRequiredBestYear] = useState('');
   const [proposedProjectYear, setProposedProjectYear] = useState('');
 
   // 1. Fetch Tender Preparation Data by _id
@@ -56,6 +59,9 @@ const PgTwoTowOtmGoodsDetails = () => {
     if (currentTender) {
       if (currentTender.tdsYearFinancialCapacity && !tdsRequiredFY) {
         setTdsRequiredFY(String(currentTender.tdsYearFinancialCapacity));
+      }
+      if (currentTender.tdsYearBest && !tdsRequiredBestYear) {
+        setTdsRequiredBestYear(String(currentTender.tdsYearBest));
       }
       if (currentTender.proposeYear && !proposedProjectYear) {
         setProposedProjectYear(String(currentTender.proposeYear));
@@ -311,7 +317,13 @@ const PgTwoTowOtmGoodsDetails = () => {
     {
       id: 2,
       name: "Turnover History",
-      content: <TurnoverHistoryTab yearlyTotals={yearlyTotals} />,
+      content: <TurnoverHistoryTab
+        yearlyTotals={yearlyTotals}
+        tdsRequiredFY={tdsRequiredFY}
+        setTdsRequiredFY={setTdsRequiredFY}
+        tdsRequiredBestYear={tdsRequiredBestYear}
+        setTdsRequiredBestYear={setTdsRequiredBestYear}
+      />,
     },
     {
       id: 3,
@@ -347,10 +359,12 @@ const PgTwoTowOtmGoodsDetails = () => {
           totalOngoingCommitments={totalOngoingCommitments}
           egpEmail={egpEmail}
           companyName={companyData?.companyName}
-          tenderId={ongoingContracts[0]?.tenderId || completedContracts[0]?.tenderId}
+          tenderId={currentTender?.tenderId || ongoingContracts[0]?.tenderId || completedContracts[0]?.tenderId}
           descriptionOfWorks={currentTender?.descriptionOfWorks}
           turnoverData={turnoverData}
           currentTender={currentTender}
+          tdsRequiredFY={tdsRequiredFY}
+          tdsRequiredBestYear={tdsRequiredBestYear}
         />
       ),
     },
@@ -512,7 +526,22 @@ const PgTwoTowOtmGoodsDetails = () => {
         </div>
       ),
     },
-    
+    {
+      id: 13,
+      name: "STL Calculation",
+      content: <STLCalculationTab />,
+    },
+    {
+      id: 15,
+      name: "Line of Credit",
+      content: (
+        <LineOfCreditTab
+          currentTender={currentTender}
+          egpEmail={egpEmail}
+          companyData={companyData}
+        />
+      ),
+    },
   ];
 
   // Early Loading State for the initial resolution
@@ -537,6 +566,9 @@ const PgTwoTowOtmGoodsDetails = () => {
           <div>
             <h1 className="text-xl sm:text-2xl font-bold">Tender Preparation Details</h1>
             <h3 className="text-base sm:text-lg text-gray-600 mt-1">Id: {id}</h3>
+            {currentTender?.tenderId && (
+              <h3 className="text-base sm:text-lg text-gray-600 mt-1">Tender ID: {currentTender.tenderId}</h3>
+            )}
           </div>
           <Button
             onClick={() => {
