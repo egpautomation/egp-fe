@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import useSingleData from "@/hooks/useSingleData";
 import { formatDate } from "@/lib/formateDate";
 import { AuthContext } from "@/provider/AuthProvider";
-import { useContext, useReducer, useState } from "react";
+import { useContext, useReducer, useState, useEffect } from "react";
 import { useReactToPrint } from "react-to-print";
 
 interface LineOfCreditTabProps {
@@ -21,7 +21,6 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
     companyData,
     companyMigration
 }) => {
-    const [creditAmount, setCreditAmount] = useState(0);
     const { user } = useContext(AuthContext);
     const contentRef = useReducer(null);
     const reactToPrintFn = useReactToPrint({
@@ -225,24 +224,7 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
                     </div>
                 </div>
 
-                {/* Credit Amount Input */}
-                <div className="w-full gap-5">
-                    <div className="flex-1 grid grid-cols-3 gap-5">
-                        <div>
-                            <label className="block text-sm mb-1">
-                                <span className="font-medium inline-block">Credit Amount</span>{" "}
-                                {tender?.liquidAssets && `(${tender?.liquidAssets})`}
-                            </label>
-                            <Input
-                                type="number"
-                                name="creditAmount"
-                                value={creditAmount}
-                                onChange={(e) => setCreditAmount(e.target.value)}
-                                className="w-full"
-                            />
-                        </div>
-                    </div>
-                </div>
+                {/* Credit Amount Input Removed */}
 
                 {/* Preview Panel */}
                 <div className="flex justify-end">
@@ -369,9 +351,21 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
                                         case awarded the contract, for execution of the Works Viz "
                                         <strong>{tender?.descriptionOfWorks || "N/A"}</strong> " for
                                         the amount not less than BDT{" "}
-                                        <strong>{creditAmount || "N/A"}</strong>&nbsp;{" "}
-                                        {creditAmount
-                                            ? `(${numberToWords(Number(creditAmount))} taka only)`
+                                        <strong>
+                                            {tender?.liquidAssets
+                                                ? String(tender.liquidAssets).replace(/[^0-9.]/g, "")
+                                                : "N/A"}{" "}
+                                        </strong>
+                                        &nbsp;{" "}
+                                        {tender?.liquidAssets
+                                            ? `(${numberToWords(
+                                                Number(
+                                                    String(tender.liquidAssets).replace(
+                                                        /[^0-9.]/g,
+                                                        ""
+                                                    )
+                                                )
+                                            )} taka only)`
                                             : ""}{" "}
                                         for the sole purpose of the execution of the above contract.
                                         This revolving line of Credit will be maintained by us until
