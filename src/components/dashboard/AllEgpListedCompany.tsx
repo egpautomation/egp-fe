@@ -2,6 +2,7 @@
 
 import useAllEgpListedCompanies from "@/hooks/useAllEgpListedCompany";
 import DeleteDataModal from "@/shared/Dashboard/DeleteDataModal";
+import { config } from "@/lib/config";
 import { CirclePlus, Edit, Eye, SquarePen } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -85,7 +86,7 @@ const AllEgpListedCompany = () => {
                     </Link>
                     <DeleteDataModal
                       setReload={setReload}
-                      url={`https://egp-tender-automation-server.vercel.app/api/v1/egp-listed-company/${company?._id}`}
+                      url={`${config.apiBaseUrlAlt}/egp-listed-company/${company?._id}`}
                     />
                   </td>
                 </tr>
@@ -251,7 +252,7 @@ const MobileTableLayout = ({
                 </Link>
                 <DeleteDataModal
                   setReload={setReload}
-                  url={`https://egp-tender-automation-server.vercel.app/api/v1/companyMigration/${item?._id}`}
+                  url={`${config.apiBaseUrlAlt}/companyMigration/${item?._id}`}
                 />
               </div>
             </motion.div>

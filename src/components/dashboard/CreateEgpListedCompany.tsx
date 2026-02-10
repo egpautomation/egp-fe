@@ -29,7 +29,7 @@ import { MoveLeft, Check, Plus, X } from "lucide-react";
 import useSingleData from "@/hooks/useSingleData";
 import { cn } from "@/lib/utils";
 import useAllDepartments from "@/hooks/useAllDepartments";
-
+import { config } from "@/lib/config";
 
 // 64 Districts of Bangladesh
 const bangladeshDistricts = [
@@ -158,8 +158,10 @@ const CreateEgpListedCompany = () => {
     proprietorName: ""
   });
 
-  const url = `https://egpserver.jubairahmad.com/api/v1/egp-listed-company/check-egpEmail-exist?egpEmail=${formData?.egpEmail}`;
-  const { data } = useSingleData(url);
+  const checkEmailUrl = config.apiBaseUrl && formData?.egpEmail
+    ? `${config.apiBaseUrl}/egp-listed-company/check-egpEmail-exist?egpEmail=${encodeURIComponent(formData.egpEmail)}`
+    : "";
+  const { data } = useSingleData(checkEmailUrl);
 
   // Handle adding agency to selected list
   const handleAddAgency = () => {
@@ -278,9 +280,7 @@ const CreateEgpListedCompany = () => {
       bankDetails,  // Send bank details array
     };
 
-    const url =
-      "https://egpserver.jubairahmad.com/api/v1/egp-listed-company/create-egp-listed-company";
-    createData(url, submitData);
+    createData("/egp-listed-company/create-egp-listed-company", submitData);
   };
 
   useEffect(() => {
