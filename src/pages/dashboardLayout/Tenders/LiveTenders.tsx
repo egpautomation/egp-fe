@@ -54,7 +54,7 @@ const LiveTenders = () => {
     pageLimit
   );
   const skeleton = new Array(pageLimit).fill(Math?.random());
-console.log(tenders)
+
   const downloadPdf = () => {
     const doc = new jsPDF("l", "mm", "a4");
 

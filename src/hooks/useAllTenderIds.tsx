@@ -21,7 +21,9 @@ const useAllTenderIds = (
         const url = `${config.apiBaseUrl}/tenderIds?searchTerm=${searchTerm}&method=${method}&page=${page}&limit=${limit}`;
         const response = await fetch(url);
         const data = await response.json();
+        
         setTenders(data?.data);
+        
         setTendersCount(data?.count);
       } catch (error) {
         console.error("Error fetching :", error);

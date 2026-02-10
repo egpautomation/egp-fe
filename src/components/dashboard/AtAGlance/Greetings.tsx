@@ -5,7 +5,7 @@ import useUsersCompanyMigration from "@/hooks/useUsersCompanyMigrations";
 import { AuthContext } from "@/provider/AuthProvider";
 import { CartContext } from "@/provider/CartContext";
 import { ChevronRight, Dot, RefreshCw } from "lucide-react";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import axiosInstance from "@/lib/axiosInstance";
 import { Button } from "@/components/ui/button";
@@ -51,10 +51,7 @@ const Greetings = () => {
     }
   };
 
-  // Fetch on component mount
-  useEffect(() => {
-    fetchWalletData();
-  }, [user?.userId]);
+  
 
   return (
     <div className="shadow-xl mt-10 border border-gray-50">
