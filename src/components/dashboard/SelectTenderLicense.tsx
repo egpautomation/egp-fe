@@ -12,10 +12,11 @@ import {
 import { Label } from "@radix-ui/react-label";
 import { useParams } from "react-router-dom";
 import useSingleData from "@/hooks/useSingleData";
+import { config } from "@/lib/config";
 
 export default function SelectTenderLicense({ setFormData }) {
   const { id } = useParams();
-  const url = `https://egpserver.jubairahmad.com/api/v1/companyMigration/${id}`;
+  const url = config.apiBaseUrl && id ? `${config.apiBaseUrl}/companyMigration/${id}` : "";
   const { data, loading } = useSingleData(url);
 
   const [selectedItems, setSelectedItems] = useState(

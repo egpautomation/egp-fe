@@ -7,6 +7,7 @@ import axiosInstance from "@/lib/axiosInstance";
 import toast from "react-hot-toast";
 import { Combobox } from "@/components/ui/combobox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { config } from "@/lib/config";
 
 
 interface UpdateTenderDialogProps {
@@ -66,7 +67,7 @@ const UpdateTenderDialog = ({ open, onOpenChange, tenderId, initialData, onSucce
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          "https://egpserver.jubairahmad.com/api/v1/tender-categories/with-pagination?page=1&limit=1000"
+          `${config.apiBaseUrl}/tender-categories/with-pagination?page=1&limit=1000`
         );
         const data = await response.json();
         setSubCategories(data?.data || []);
