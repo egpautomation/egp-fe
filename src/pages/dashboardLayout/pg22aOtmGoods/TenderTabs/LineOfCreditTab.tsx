@@ -12,12 +12,14 @@ interface LineOfCreditTabProps {
     currentTender: any;
     egpEmail: string;
     companyData: any;
+    companyMigration?: any;
 }
 
 export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
     currentTender,
     egpEmail,
-    companyData
+    companyData,
+    companyMigration
 }) => {
     const [creditAmount, setCreditAmount] = useState(0);
     const { user } = useContext(AuthContext);
@@ -41,6 +43,26 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
     const { data: bankData } = useSingleData(
         user?.email ? `${config.apiBaseUrl}/banks/user?user=${user.email}` : null
     );
+
+    // Prefer company details from tender preparation company over account holder details
+    const displayCompanyName =
+        companyData?.companyName ||
+        companyMigration?.companyName ||
+        currentTender?.egpCompanyName ||
+        accountData?.bankAccName ||
+        "N/A";
+
+    const displayProprietorName =
+        companyData?.proprietorName ||
+        companyMigration?.proprietorName ||
+        accountData?.accHolderName ||
+        "N/A";
+
+    const displayAddress =
+        companyData?.companyAddress ||
+        companyMigration?.companyAddress ||
+        accountData?.accHolderAddress ||
+        "N/A";
 
     // Display settings state
     const [displaySettings, setDisplaySettings] = useState({
@@ -308,11 +330,11 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
                                 <div className="mb-4">
                                     <p>
                                         We have been informed that{" "}
-                                        <strong>{accountData?.bankAccName || "N/A"}</strong>,
+                                        <strong>{displayCompanyName}</strong>,
                                         Proprietor{" "}
-                                        <strong>{accountData?.accHolderName || "N/A"}</strong>,
+                                        <strong>{displayProprietorName}</strong>,
                                         Address:{" "}
-                                        <strong>{accountData?.accHolderAddress || "N/A"}</strong>{" "}
+                                        <strong>{displayAddress}</strong>{" "}
                                         (herein after called The Tenderer) intends to submit to you
                                         it's Tender for the execution of the works of{" "}
                                         <strong> "{tender?.descriptionOfWorks || "N/A"}" </strong>
@@ -338,11 +360,11 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
                                             {tender?.locationDistrict}
                                         </span>{" "}
                                         do hereby agree and undertake that{" "}
-                                        <strong>{accountData?.bankAccName || "N/A"}</strong>,
+                                        <strong>{displayCompanyName}</strong>,
                                         Proprietor{" "}
-                                        <strong>{accountData?.accHolderName || "N/A"}</strong>,
+                                        <strong>{displayProprietorName}</strong>,
                                         Address{" "}
-                                        <strong>{accountData?.accHolderAddress || "N/A"}</strong>,
+                                        <strong>{displayAddress}</strong>,
                                         will be provided by us with a revolving line of credit, in
                                         case awarded the contract, for execution of the Works Viz "
                                         <strong>{tender?.descriptionOfWorks || "N/A"}</strong> " for
