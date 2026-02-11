@@ -1,15 +1,17 @@
 // @ts-nocheck
 
 import Navbar from "@/shared/Navbar/Navbar";
+import Footer from "@/shared/Footer/Footer";
 import { Outlet } from "react-router-dom";
 
 const Root = () => {
     return (
-        <div>
+        <div className="min-h-screen flex flex-col">
             <Navbar />
-            <div className="p-5 md:p-10">
-            <Outlet />
-            </div>
+            <main className="flex-1 p-5 md:p-10">
+                <Outlet />
+            </main>
+            <Footer />
         </div>
     );
 };
