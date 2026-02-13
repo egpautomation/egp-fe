@@ -1,13 +1,21 @@
 // @ts-nocheck
 
 import { Check, Minus, X } from "lucide-react";
+import { Button } from "../ui/button";
+import { FiHelpCircle } from "react-icons/fi";
+import { FaBell } from "react-icons/fa6";
 
 export default function WhyChooseUs() {
   const highlights = [
     {
       title: "নতুন টেন্ডার নোটিশ",
       description:
-        "eGP হতে প্রকাশিত টেন্ডার নোটিস + টেন্ডার ডেটা শীট হতে সংগ্রহিত তথ্য + প্রাক্কলিত মূল্য একসাথে",
+        "eGP থেকে প্রাপ্ত নতুন টেন্ডার  + TDS থেকে সংগৃহীত ফাইন্যান্সিয়াল ক্রাইটেরিয়া  +  প্রাক্কলিত মূল্য একসাথে",
+    },
+    {
+      title: "টেন্ডার SLT Calculation",
+      description:
+        "টেন্ডার সাবমিশনের পূর্বে নির্ভুল SLT ক্যালকুলেশনের মাধ্যমে আত্মবিশ্বাসের সাথে সঠিক ও প্রতিযোগিতামূলক রেট কোট করার সুবিধা।",
     },
     {
       title: "LTM, OTM টেন্ডার eGP ‍তে অটো সাবমিশন",
@@ -17,22 +25,19 @@ export default function WhyChooseUs() {
     {
       title: "অটো ডকুমেন্ট জেনারেশন",
       description:
-        "টেন্ডার অনুযায়ী Autorized Latter, Code of condac, JV Aggrement এবং সকল ধরনের ট্রেমপ্লেট অনুসারে টেন্ডার অনুযায়ী প্রস্তাত",
+        "টেন্ডারের চাহিদা অনুযায়ী সকল ধরনের অফিসিয়াল টেমপ্লেট (Authorized Letter, Code of Conduct, JV Agreement ইত্যাদি) স্বয়ংক্রিয়ভাবে তৈরি করুন।",
     },
-    {
-      title: "রিয়েলটাইম নোটিফিকেশন",
-      description: "WhatsApp, Email এর মাধ্যেমে আপনার পছেন্দের টেন্ডার তালিকা প্রেরণ",
-    },
+   
     {
       title: "টেন্ডার ম্যানেজমেন্ট",
       description:
         "আসন্ন টেন্ডারগুলো TO DO লিষ্ট করা, টেন্ডার প্রিপারেশন এর কাজ ম্যনেজমেন্ট, টেন্ডার সিকিউরিটির তথ্য ট্রেকিং, আগামী সম্পাহের টেন্ডার গুলোর তালিকা সুস্জ্জিত রিপোর্ট, সাবমিট করার টেন্ডার লটারির ফলাফল দেখা।",
     },
-    {
-      title: "টেন্ডার SLT Calculation",
-      description:
-        "টেন্ডার ড্রপিং করার পূর্বে SLT ক্যলকুলেশন করে নিজেকে যথা স্থানে রেইট কোট করার ব্যবস্থা",
+     {
+      title: "রিয়েলটাইম নোটিফিকেশন",
+      description: "WhatsApp, Email এর মাধ্যেমে আপনার পছেন্দের টেন্ডার তালিকা প্রেরণ",
     },
+    
   ];
 
   const comparisonColumns = [
@@ -94,21 +99,52 @@ export default function WhyChooseUs() {
   const statusIcons = { yes: Check, no: X, partial: Minus };
 
   return (
-    <div className="w-full">
+    <div className="w-full ">
       <div className="mx-auto py-10 lg:py-16">
-        <div className="text-center max-w-3xl mx-auto">
-          <p className="text-sm font-semibold uppercase tracking-wide text-[#4874c7]">
+        <div className="text-center max-w-4xl mx-auto">
+          <p className="text-sm font-semibold uppercase tracking-wide text-[#4874c7] ">
             কেন ই-টেন্ডার বিডি?
           </p>
           <h2 className="mt-2 text-gray-900">
             আপনার টেন্ডার পিপারেশনের স্মার্ট পার্টনার
           </h2>
           <p className="mt-3 text-base text-gray-600">
-            নতুন টেন্ডার নোটিশ, টেন্ডার ডাটা শীট হতে তথ্য, প্রাক্কলিত মূল্য, টেন্ডারে অংশগ্রহনের যোগ্যতা যাচাই, SLT হিসাব করার ব্যবস্থা, অটো Turnover, Tender Capasity হিসাব করা ব্যবস্থা,RHD, PWD, LGED, WBD, EL BOQ রেইট খুজে বের করা, টেন্ডার অনুযায়ী Autorized Latter, Code of condac, JV Aggrement এবং সকল ধরনের ট্রেমপ্লেট অনুসারে টেন্ডার অনুযায়ী প্রস্তাত — সবকিছু এক প্ল্যাটফর্মে।
+            শুধু প্রত্রিকার নোটিশ নয়, আরও পাচ্ছেন TDS থেকে সকল ধরনের ফাইন্যান্সিয়াল ক্রাইটেরিয়া (প্রাক্কলিত মূল্য, টেন্ডার সিকিউরিটি, টার্নওভার, লিকুইড অ্যাসেট ক্যাপাসিটি)। রেজিস্ট্রেশন ছাড়া Tender Opening Report (TOR2) পিডিএফ আপলোড করে SLT হিসাব করার ব্যবস্থা। যেকোনো দপ্তর (RHD, PWD, LGED, WBD, ELECTRICAL)-এর BOQ স্বয়ংক্রিয়ভাবে বের করার ব্যবস্থা । টেন্ডার অনুযায়ী সকল ধরনের টেমপ্লেট (Authorization Letter, Code of Conduct, Manufacturing Letter, Production Capacity, JV Agreement) স্বয়ংক্রিয়ভাবে তৈরি করা যায়। <span className="inline-block font-semibold">সবকিছুর নির্ভরযোগ্য একমাত্র প্ল্যাটফর্ম।</span>
+           
           </p>
         </div>
+         <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto  lg:gap-8">
+          
+          {highlights.map((card) => (
+            <div className="bg-[url(/egp_logo.png)] bg-no-repeat  h-full"  key={card.title}>
+              <div
+             
+              className="bg-gray-100/90 flex flex-col  justify-between backdrop-blur-md rounded-2xl p-6 shadow-lg border border-slate-200/70 hover:shadow-2xl transition-all duration-300 bg-no-repeat bg-contain h-full"
+            >
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className=" items-start gap-4">
+              <div className="bg-[#3a5da8] p-2 rounded-full h-max w-max">
+                 <FaBell  className="h-5 w-5  rounded-full text-white" />
+              </div>
+                <div className="flex-1 min-w-0 mt-8">
+                  <h3 className="text-xl font-bold text-gray-900">{card.title}</h3>
+                  <p className="text-base text-slate-600 mt-1">{card.description}</p>
+                </div>
+              </div>
+              <div className="mt-4 flex justify-end">
+                <Button
+                  type="button"
+                  className="h-10 rounded-full px-6 text-white bg-[#4874c7] hover:bg-[#3a5da8] hover:text-base transition-all duration-200"
+                >
+                  বিস্তারিত
+                </Button>
+              </div>
+            </div>
+            </div>
+          ))}
+        </div>
+
+        {/* <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {highlights.map((item) => (
             <div
               key={item.title}
@@ -118,9 +154,9 @@ export default function WhyChooseUs() {
               <p className="mt-2 text-sm text-gray-600">{item.description}</p>
             </div>
           ))}
-        </div>
+        </div> */}
 
-        <div className="mt-10 flex flex-col items-center gap-3 text-center">
+        <div className="mt-20 flex flex-col items-center gap-3 text-center ">
           <h3 className="text-2xl font-bold text-gray-900">কেন ই-টেন্ডার বিডি?</h3>
           <span className="rounded-full bg-blue-50 px-4 py-1 text-sm font-medium text-[#4874c7]">
             টেন্ডার সংক্রান্ত সকল কাজ এখন একই প্লাটফমে
