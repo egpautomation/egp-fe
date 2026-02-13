@@ -71,6 +71,7 @@ import PgTwoTowOtmGoodsDetails from "@/pages/dashboardLayout/pg22aOtmGoods/PgTwo
 import PgTwoTowOtmGoods from "@/pages/dashboardLayout/pg22aOtmGoods/pgTwoTowOtmGoods";
 import Profile from "@/pages/dashboardLayout/Profile";
 import SuccessTest from "@/pages/SuccessTest";
+import LiveTendersFromTenderIds from "@/pages/dashboardLayout/LiveTenders/LiveTendersFromTenderIds";
 
 
 const router = createBrowserRouter([
@@ -190,6 +191,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "live-tenders-tenderIds",
+        element: (
+          <PrivateRoute>
+            <LiveTendersFromTenderIds />
+          </PrivateRoute>
+        ),
+      },
+      {
         path: "profile",
         element: (
           <PrivateRoute>
@@ -250,6 +259,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <CreateBulpJobOrder />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "create-job-order-single",
+        element: (
+          <PrivateRoute>
+            <CreateJobOrder />
           </PrivateRoute>
         ),
       },

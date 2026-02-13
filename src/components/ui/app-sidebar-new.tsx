@@ -124,16 +124,29 @@ export function AppSidebarNew() {
     {
       label: "At a Glance",
       path: "/dashboard",
-      role: ["admin", "user_agent", "user", "moderator", "user"],
+      role: ["admin",  "user", "moderator", "user"],
       icon: BarChart3,
-      children: [{ label: "At a Glance", path: "/dashboard", role: ["admin"] }],
+      children: [{ label: "At a Glance", path: "/dashboard", role: ["admin",  "user", "moderator", "user"] }],
     },
     {
-      label: "Job Order",
+      label: "Live Tender",
+      path: "/dashboard/live-tenders-tenderIds",
+      role: ["admin",  "user", "moderator", "user"],
+      icon: BarChart3,
+       children: [{ label: "Live Tender", path: "/dashboard/live-tenders-tenderIds", role: ["admin",  "user", "moderator", "user"] }]
+      
+    },
+    {
+      label: "LTM",
       path: "/dashboard",
       role: ["admin", "user_agent"],
       icon: Briefcase,
       children: [
+        {
+          label: "Create a Job Order (Single)",
+          path: "/dashboard/create-job-order-single",
+          role: ["admin", "user_agent", "user", "moderator"],
+        },
         {
           label: "Create Job Order(BulK)",
           path: "/dashboard/create-job-order-bulk",
@@ -152,21 +165,21 @@ export function AppSidebarNew() {
           path: "/dashboard/tender-preparation",
           role: ["admin", "user_agent", "user", "moderator"],
         },
-        {
-          label: "Add Contract Info",
-          path: "/public/tenders-preparation/create-contract-info",
-          role: ["admin", "user_agent", "user", "moderator"],
-        },
-        {
-          label: "Add Company Profile",
-          path: "/public/tenders-preparation/create-contract-information",
-          role: ["admin", "user_agent", "user", "moderator"],
-        },
-        {
-          label: "Add BOQ",
-          path: "/public/tenders-preparation/create-BOQ",
-          role: ["admin", "user_agent", "user", "moderator"],
-        },
+        // {
+        //   label: "Add Contract Info",
+        //   path: "/public/tenders-preparation/create-contract-info",
+        //   role: ["admin", "user_agent", "user", "moderator"],
+        // },
+        // {
+        //   label: "Add Company Profile",
+        //   path: "/public/tenders-preparation/create-contract-information",
+        //   role: ["admin", "user_agent", "user", "moderator"],
+        // },
+        // {
+        //   label: "Add BOQ",
+        //   path: "/public/tenders-preparation/create-BOQ",
+        //   role: ["admin", "user_agent", "user", "moderator"],
+        // },
       ],
     },
     {
@@ -566,7 +579,7 @@ export function AppSidebarNew() {
           </motion.div>
 
           {/* Navigation List */}
-          <ul className="flex flex-col mt-4 ">
+          <ul className="flex flex-col mt-4  ">
             <div className="max-h-[calc(100vh-250px)] md:max-h-[calc(100vh-150px)] overflow-y-scroll overflow-x-hidden pr-4 pb-8 [&::-webkit-scrollbar]:w-[2px]  [&::-webkit-scrollbar-thumb]:bg-gray-500">
               {/* Home Link */}
               <motion.li
