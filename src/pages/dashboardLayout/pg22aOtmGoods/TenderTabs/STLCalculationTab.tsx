@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Trash2, Plus, Upload, FileText, Loader2 } from 'lucide-react';
@@ -11,13 +12,14 @@ import { toast } from 'react-hot-toast';
 interface Bidder {
     name: string;
     price: string;
+    qualified: boolean;
 }
 
 interface ParsePdfResponse {
     success: boolean;
     message: string;
     data?: {
-        bidders: Bidder[];
+        bidders: { name: string; price: string }[];
         totalBidders: number;
         storedDataId: string;
     };
@@ -37,15 +39,15 @@ export const STLCalculationTab = () => {
     const [xoce, setXoce] = useState('100');
     const [priceIndex, setPriceIndex] = useState('0.9168');
     const [bidders, setBidders] = useState<Bidder[]>([
-        { name: 'Hassan Techno Builders Ltd.', price: '75' },
-        
+        { name: 'Hassan Techno Builders Ltd.', price: '75', qualified: true },
+
     ]);
     const [results, setResults] = useState<CalculationResults | { error: string } | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadedFileName, setUploadedFileName] = useState('');
 
     const addBidder = () => {
-        setBidders([...bidders, { name: '', price: '' }]);
+        setBidders([...bidders, { name: '', price: '', qualified: true }]);
     };
 
     const removeBidder = (index: number) => {
@@ -54,9 +56,9 @@ export const STLCalculationTab = () => {
         }
     };
 
-    const updateBidder = (index: number, field: keyof Bidder, value: string) => {
+    const updateBidder = (index: number, field: keyof Bidder, value: any) => {
         const updated = [...bidders];
-        updated[index][field] = value;
+        updated[index] = { ...updated[index], [field]: value };
         setBidders(updated);
     };
 
@@ -102,9 +104,10 @@ export const STLCalculationTab = () => {
                 // Backend returns: { name: "Company Name", price: "7534639.524" }
                 if (extractedBidders.length > 0) {
                     // Format bidders to match our state structure
-                    const formattedBidders = extractedBidders.map((bidder: Bidder) => ({
+                    const formattedBidders = extractedBidders.map((bidder) => ({
                         name: bidder.name || '',
-                        price: bidder.price ? String(bidder.price) : ''
+                        price: bidder.price ? String(bidder.price) : '',
+                        qualified: true
                     }));
                     setBidders(formattedBidders);
                     toast.success(`Successfully extracted ${response.data.data.totalBidders} bidder(s) from PDF`);
@@ -153,17 +156,22 @@ export const STLCalculationTab = () => {
         const priceIndexValue = parseFloat(priceIndex) || 0.9168;
         const x_nppi = xoceValue * priceIndexValue;
 
-        // Get all valid bid prices
+        // Get all valid bid prices FROM QUALIFIED BIDDERS ONLY ??
+        // For now, keeping original logic but filter if user requested filtering. 
+        // User said "qualied oita check box hbe", usually means only qualified are considered.
+        // I will filter by qualified.
         const prices: number[] = [];
         bidders.forEach(bidder => {
-            const price = parseFloat(bidder.price);
-            if (!isNaN(price)) {
-                prices.push(price);
+            if (bidder.qualified) {
+                const price = parseFloat(bidder.price);
+                if (!isNaN(price)) {
+                    prices.push(price);
+                }
             }
         });
 
         if (prices.length === 0) {
-            setResults({ error: 'No valid bids entered.' });
+            setResults({ error: 'No valid qualified bids entered.' });
             return;
         }
 
@@ -187,12 +195,21 @@ export const STLCalculationTab = () => {
             .filter(item => item.price >= slt)
             .sort((a, b) => a.price - b.price);
 
-        const winner = eligibleBids.length > 0
-            ? {
-                name: bidders[eligibleBids[0].index]?.name || 'Unknown',
-                price: eligibleBids[0].price
+        // Map back to original bidder name (finding the qualified bidder with that price)
+        // Since we filtered prices, we need to find which bidder has this price
+        const winnerBid = eligibleBids.length > 0 ? eligibleBids[0] : null;
+
+        let winnerName = 'None';
+        let winnerPrice: number | 'None' = 'None';
+
+        if (winnerBid) {
+            // Find the bidder with this price who is qualified
+            const winningBidder = bidders.find(b => b.qualified && parseFloat(b.price) === winnerBid.price);
+            if (winningBidder) {
+                winnerName = winningBidder.name;
+                winnerPrice = winnerBid.price;
             }
-            : { name: 'None', price: 'None' as const };
+        }
 
         setResults({
             xi: xi.toFixed(4),
@@ -200,13 +217,22 @@ export const STLCalculationTab = () => {
             wa: wa.toFixed(4),
             sd: sd.toFixed(4),
             slt: slt.toFixed(4),
-            winner: winner.name,
-            winnerPrice: winner.price
+            winner: winnerName,
+            winnerPrice: winnerPrice
         });
     };
 
+    // Helper to calculate difference percentage
+    const calculateDifference = (priceStr: string) => {
+        const price = parseFloat(priceStr);
+        const xoceVal = parseFloat(xoce);
+        if (isNaN(price) || isNaN(xoceVal) || xoceVal === 0) return '-';
+        const diff = ((price - xoceVal) / xoceVal) * 100;
+        return diff.toFixed(2) + '%';
+    };
+
     return (
-        <div className="max-w-5xl mx-auto p-6">
+        <div className="max-w-6xl mx-auto p-6">
             <Card className="shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
                     <CardTitle className="text-2xl font-bold text-center text-gray-800">
@@ -310,52 +336,63 @@ export const STLCalculationTab = () => {
                             </Button>
                         </div>
 
-                    {/* Bidders Table */}
-                    <div className="border rounded-lg overflow-hidden">
-                        <div className="bg-gray-50 border-b">
-                            <div className="grid grid-cols-12 gap-4 p-3 font-semibold text-gray-700">
-                                <div className="col-span-6">Bidder Name</div>
-                                <div className="col-span-4">Tender Price</div>
-                                <div className="col-span-2 text-center">Action</div>
+                        {/* Bidders Table */}
+                        <div className="border rounded-lg overflow-hidden">
+                            <div className="bg-gray-50 border-b">
+                                <div className="grid grid-cols-12 gap-4 p-3 font-semibold text-gray-700 text-sm">
+                                    <div className="col-span-4">Bidder Name</div>
+                                    <div className="col-span-3">Tender Price</div>
+                                    <div className="col-span-2 text-center">Difference %</div>
+                                    <div className="col-span-2 text-center">Qualified</div>
+                                    <div className="col-span-1 text-center">Action</div>
+                                </div>
+                            </div>
+
+                            <div className="divide-y">
+                                {bidders.map((bidder, index) => (
+                                    <div key={index} className="grid grid-cols-12 gap-4 p-3 hover:bg-gray-50 transition-colors items-center">
+                                        <div className="col-span-4">
+                                            <Input
+                                                value={bidder.name}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'name', e.target.value)}
+                                                placeholder="Enter bidder name"
+                                                className="w-full"
+                                            />
+                                        </div>
+                                        <div className="col-span-3">
+                                            <Input
+                                                type="number"
+                                                step="0.01"
+                                                value={bidder.price}
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'price', e.target.value)}
+                                                placeholder="Enter price"
+                                                className="w-full"
+                                            />
+                                        </div>
+                                        <div className="col-span-2 text-center font-medium text-gray-600">
+                                            {calculateDifference(bidder.price)}
+                                        </div>
+                                        <div className="col-span-2 flex justify-center">
+                                            <Checkbox
+                                                checked={bidder.qualified}
+                                                onCheckedChange={(checked) => updateBidder(index, 'qualified', checked)}
+                                            />
+                                        </div>
+                                        <div className="col-span-1 flex justify-center">
+                                            <Button
+                                                onClick={() => removeBidder(index)}
+                                                variant="destructive"
+                                                size="icon"
+                                                disabled={bidders.length === 1}
+                                                className="h-9 w-9"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
-
-                        <div className="divide-y">
-                            {bidders.map((bidder, index) => (
-                                <div key={index} className="grid grid-cols-12 gap-4 p-3 hover:bg-gray-50 transition-colors">
-                                    <div className="col-span-6">
-                                        <Input
-                                            value={bidder.name}
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'name', e.target.value)}
-                                            placeholder="Enter bidder name"
-                                            className="w-full"
-                                        />
-                                    </div>
-                                    <div className="col-span-4">
-                                        <Input
-                                            type="number"
-                                            step="0.01"
-                                            value={bidder.price}
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'price', e.target.value)}
-                                            placeholder="Enter price"
-                                            className="w-full"
-                                        />
-                                    </div>
-                                    <div className="col-span-2 flex justify-center">
-                                        <Button
-                                            onClick={() => removeBidder(index)}
-                                            variant="destructive"
-                                            size="sm"
-                                            disabled={bidders.length === 1}
-                                            className="w-full"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
                     </div>
 
                     {/* Calculate Button */}

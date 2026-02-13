@@ -73,6 +73,7 @@ import PgTwoTowOtmGoods from "@/pages/dashboardLayout/pg22aOtmGoods/pgTwoTowOtmG
 import Profile from "@/pages/dashboardLayout/Profile";
 import SuccessTest from "@/pages/SuccessTest";
 import LiveTendersFromTenderIds from "@/pages/dashboardLayout/LiveTenders/LiveTendersFromTenderIds";
+import StlCalculationPage from "@/pages/homeLayout/StlCalculationPage";
 
 
 const router = createBrowserRouter([
@@ -168,6 +169,10 @@ const router = createBrowserRouter([
       {
         path: "/test-success",
         element: <SuccessTest />,
+      },
+      {
+        path: "/stl-calculation",
+        element: <StlCalculationPage />,
       },
     ],
   },

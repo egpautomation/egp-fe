@@ -15,7 +15,7 @@ const Navbar = () => {
   const navItems = [
     { label: "এটি কিভাবে কাজ করে", to: "/#how-it-works" },
     { label: "সেবা সমূহ", to: "/#services" },
-    { label: "STL Calculation", to: "/#stl-calculation" },
+    { label: "STL Calculation", to: "/stl-calculation" },
     { label: "About Us", to: "/#about" },
     { label: "Contact Us", to: "/#contact-us" },
     { label: "Blog", to: "/#blogs" },
@@ -36,11 +36,10 @@ const Navbar = () => {
               <NavLink key={item.label} to={item.to}>
                 {({ isActive }) => (
                   <div
-                    className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                      isActive
+                    className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${isActive
                         ? "text-[#4874c7] bg-blue-50"
                         : "text-gray-700 hover:text-[#4874c7] hover:bg-blue-50"
-                    }`}
+                      }`}
                   >
                     {item.label}
                   </div>
@@ -90,9 +89,8 @@ const Navbar = () => {
       </div>
 
       <div
-        className={`xl:hidden bg-white/95 backdrop-blur-md shadow-2xl overflow-hidden transition-all duration-500 ease-in-out ${
-          isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
-        }`}
+        className={`xl:hidden bg-white/95 backdrop-blur-md shadow-2xl overflow-hidden transition-all duration-500 ease-in-out ${isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+          }`}
       >
         <div className="px-4 pt-4 pb-3 space-y-2">
           {navItems.map((item, index) => (
@@ -101,10 +99,9 @@ const Navbar = () => {
               to={item.to}
               onClick={() => setIsMobileMenuOpen(false)}
               className={({ isActive }) =>
-                `group block px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 transform hover:translate-x-1 ${
-                  isActive
-                    ? "text-[#4874c7] bg-gradient-to-r from-blue-50 to-indigo-50"
-                    : "text-gray-700 hover:text-[#4874c7] hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50"
+                `group block px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 transform hover:translate-x-1 ${isActive
+                  ? "text-[#4874c7] bg-gradient-to-r from-blue-50 to-indigo-50"
+                  : "text-gray-700 hover:text-[#4874c7] hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50"
                 }`
               }
               style={{ animationDelay: `${index * 50}ms` }}
