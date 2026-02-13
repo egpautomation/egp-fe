@@ -273,7 +273,7 @@ function Registration() {
           </form>
           <p className="mt-4 text-sm">
             Already Have account?{" "}
-            <Link className="underline" to={"/"}>
+            <Link className="underline" to={"/login"}>
               Login
             </Link>
           </p>

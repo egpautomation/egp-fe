@@ -1,9 +1,10 @@
 // @ts-nocheck
+// "/" root route – EGP-style landing page. Logged-in users redirect to dashboard. Login at /login.
 
 import { useContext, useEffect, useState } from "react";
-import Login from "./pages/homeLayout/Login";
 import { AuthContext } from "./provider/AuthProvider";
 import { Navigate } from "react-router-dom";
+import LandingPage from "./pages/homeLayout/LandingPage";
 
 function App() {
   const { user, loading } = useContext(AuthContext);
@@ -13,10 +14,14 @@ function App() {
     setAuthChecked(true);
   }, [user]);
   if (loading || !authChecked) {
-    return <div>Loading...</div>;
+    return <></>;
   }
 
-  return user ? <Navigate to="/dashboard" replace /> : <Login />;
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <LandingPage />;
 }
 
 export default App;

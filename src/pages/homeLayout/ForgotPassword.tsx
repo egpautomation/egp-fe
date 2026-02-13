@@ -40,9 +40,9 @@ const ForgotPassword = () => {
             // Clear form
             setEmail("");
 
-            // Optionally redirect to login after a delay
+            // Redirect to login after a short delay
             setTimeout(() => {
-                navigate("/");
+                navigate("/login");
             }, 3000);
 
         } catch (error) {
@@ -84,7 +84,7 @@ const ForgotPassword = () => {
                         <div className="col-span-full">
                             <Button
                                 type="submit"
-                                className="w-full cursor-pointer"
+                                className="w-full cursor-pointer h-11 text-white bg-[#4874c7] hover:bg-[#3a5da8] hover:scale-102 transition-all duration-200"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? "Sending..." : "Send Reset Link"}
@@ -94,7 +94,7 @@ const ForgotPassword = () => {
 
                     <p className="mt-4 text-sm text-center">
                         Remember your password?{" "}
-                        <Link className="underline text-blue-600 hover:text-blue-800" to="/">
+                        <Link className="underline text-blue-600 hover:text-blue-800" to="/login">
                             Back to Login
                         </Link>
                     </p>

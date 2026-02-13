@@ -10,6 +10,7 @@ import JobOrder from "@/pages/dashboardLayout/JobOrder/JobOrder";
 import Registration from "@/pages/homeLayout/Registration";
 import ForgotPassword from "@/pages/homeLayout/ForgotPassword";
 import ResetPassword from "@/pages/homeLayout/ResetPassword";
+import Login from "@/pages/homeLayout/Login";
 import EgpPassEmail from "@/pages/dashboardLayout/EgpPassEmail";
 import CreateEgpListedCompany from "@/components/dashboard/CreateEgpListedCompany";
 import AllEgpListedCompany from "@/components/dashboard/AllEgpListedCompany";
@@ -82,6 +83,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <App />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
       },
       {
         path: "/registration",
