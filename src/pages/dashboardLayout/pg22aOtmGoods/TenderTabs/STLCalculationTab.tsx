@@ -22,6 +22,7 @@ interface ParsePdfResponse {
         bidders: { name: string; price: string }[];
         totalBidders: number;
         storedDataId: string;
+        tenderId?: string;
     };
 }
 
@@ -45,6 +46,8 @@ export const STLCalculationTab = () => {
     const [results, setResults] = useState<CalculationResults | { error: string } | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadedFileName, setUploadedFileName] = useState('');
+    const [storedDataId, setStoredDataId] = useState<string | null>(null);
+    const [tenderId, setTenderId] = useState<string | null>(null);
 
     const addBidder = () => {
         setBidders([...bidders, { name: '', price: '', qualified: true }]);
@@ -82,6 +85,7 @@ export const STLCalculationTab = () => {
 
         setIsUploading(true);
         setUploadedFileName(file.name);
+        setTenderId(null);
 
         try {
             // Create FormData: backend requires "pdf" (file). pdfFilename is sent in query + form + header so backend can read it.
@@ -99,6 +103,16 @@ export const STLCalculationTab = () => {
             // Check response.success before accessing response.data
             if (response.data?.success && response.data?.data?.bidders) {
                 const extractedBidders = response.data.data.bidders;
+                const dataId = response.data.data.storedDataId;
+                const extractedTenderId = response.data.data.tenderId;
+
+                if (dataId) {
+                    setStoredDataId(dataId);
+                }
+
+                if (extractedTenderId) {
+                    setTenderId(extractedTenderId);
+                }
 
                 // Update bidders state with extracted data
                 // Backend returns: { name: "Company Name", price: "7534639.524" }
@@ -151,10 +165,25 @@ export const STLCalculationTab = () => {
         }
     };
 
-    const handleCalculate = () => {
+    const handleCalculate = async () => {
         const xoceValue = parseFloat(xoce) || 100;
         const priceIndexValue = parseFloat(priceIndex) || 0.9168;
         const x_nppi = xoceValue * priceIndexValue;
+
+        // Update estimateCost and priceIndex if storedDataId exists
+        if (storedDataId) {
+            try {
+                await axiosInstance.patch(`/stl/${storedDataId}`, {
+                    estimateCost: xoce,
+                    priceIndex: priceIndex
+                });
+
+            } catch (error) {
+                console.error("Failed to update STL data:", error);
+                // Optional: show a silent error or non-blocking toast
+                // toast.error("Failed to sync calculation parameters to server");
+            }
+        }
 
         // Get all valid bid prices FROM QUALIFIED BIDDERS ONLY ??
         // For now, keeping original logic but filter if user requested filtering. 
@@ -317,6 +346,11 @@ export const STLCalculationTab = () => {
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
                                     <FileText className="w-4 h-4" />
                                     <span>{uploadedFileName}</span>
+                                </div>
+                            )}
+                            {tenderId && (
+                                <div className="ml-auto px-3 py-1 bg-green-100 text-green-800 rounded-md text-sm font-semibold border border-green-200 shadow-sm">
+                                    Tender ID: {tenderId}
                                 </div>
                             )}
                         </div>
