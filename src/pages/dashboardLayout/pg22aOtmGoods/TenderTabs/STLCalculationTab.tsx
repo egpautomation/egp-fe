@@ -34,6 +34,11 @@ interface CalculationResults {
     slt: string;
     winner: string;
     winnerPrice: number | 'None';
+    bidderStats: {
+        isAbove110: boolean;
+        isResponsive: boolean;
+        rank: number | '-';
+    }[];
 }
 
 export const STLCalculationTab = () => {
@@ -212,32 +217,43 @@ export const STLCalculationTab = () => {
         const wa = (xoceValue * 0.2) + (xi * 0.5) + (x_nppi * 0.3);
 
         // Calculate variance and Standard Deviation
-        const variance = prices.reduce((sum, p) => sum + Math.pow(p - xi, 2), 0) / n;
+        // Formula: SD = sqrt(sum((Price - WeightedAverage)^2) / n)
+        const variance = prices.reduce((sum, p) => sum + Math.pow(p - wa, 2), 0) / n;
         const sd = Math.sqrt(variance);
 
         // Calculate SLT (Significantly Low-Priced Tender)
         const slt = wa - sd;
 
-        // Find winner: lowest bid >= SLT
-        const eligibleBids = prices
-            .map((price, index) => ({ price, index }))
-            .filter(item => item.price >= slt)
+        // Generate stats for all bidders
+        const bidderStats = bidders.map((bidder) => {
+            const price = parseFloat(bidder.price);
+            const isAbove110 = !isNaN(price) && !isNaN(xoceValue) && price > (xoceValue * 1.1);
+            const isResponsive = bidder.qualified && !isNaN(price) && price >= slt && !isAbove110;
+
+            return {
+                isAbove110,
+                isResponsive,
+                rank: '-' as number | '-'
+            };
+        });
+
+        // Calculate rankings for responsive bidders
+        const responsiveBidders = bidderStats
+            .map((stats, index) => ({ stats, index, price: parseFloat(bidders[index].price) }))
+            .filter(item => item.stats.isResponsive)
             .sort((a, b) => a.price - b.price);
 
-        // Map back to original bidder name (finding the qualified bidder with that price)
-        // Since we filtered prices, we need to find which bidder has this price
-        const winnerBid = eligibleBids.length > 0 ? eligibleBids[0] : null;
+        responsiveBidders.forEach((item, i) => {
+            bidderStats[item.index].rank = i + 1;
+        });
 
+        const winnerBid = responsiveBidders.length > 0 ? responsiveBidders[0] : null;
         let winnerName = 'None';
         let winnerPrice: number | 'None' = 'None';
 
         if (winnerBid) {
-            // Find the bidder with this price who is qualified
-            const winningBidder = bidders.find(b => b.qualified && parseFloat(b.price) === winnerBid.price);
-            if (winningBidder) {
-                winnerName = winningBidder.name;
-                winnerPrice = winnerBid.price;
-            }
+            winnerName = bidders[winnerBid.index].name;
+            winnerPrice = winnerBid.price;
         }
 
         setResults({
@@ -247,7 +263,8 @@ export const STLCalculationTab = () => {
             sd: sd.toFixed(4),
             slt: slt.toFixed(4),
             winner: winnerName,
-            winnerPrice: winnerPrice
+            winnerPrice: winnerPrice,
+            bidderStats
         });
     };
 
@@ -374,57 +391,81 @@ export const STLCalculationTab = () => {
                         <div className="border rounded-lg overflow-hidden">
                             <div className="bg-gray-50 border-b">
                                 <div className="grid grid-cols-12 gap-4 p-3 font-semibold text-gray-700 text-sm">
-                                    <div className="col-span-4">Bidder Name</div>
-                                    <div className="col-span-3">Tender Price</div>
-                                    <div className="col-span-2 text-center">Difference %</div>
-                                    <div className="col-span-2 text-center">Qualified</div>
+                                    <div className="col-span-3">Name of Tenderer</div>
+                                    <div className="col-span-2">Quoted Price (Xi)</div>
+                                    <div className="col-span-1 text-center">% Above/Below</div>
+                                    <div className="col-span-2 text-center">Primary Responsiveness</div>
+                                    <div className="col-span-2 text-center">Financial Responsiveness</div>
+                                    <div className="col-span-1 text-center">Rank</div>
                                     <div className="col-span-1 text-center">Action</div>
                                 </div>
                             </div>
 
                             <div className="divide-y">
-                                {bidders.map((bidder, index) => (
-                                    <div key={index} className="grid grid-cols-12 gap-4 p-3 hover:bg-gray-50 transition-colors items-center">
-                                        <div className="col-span-4">
-                                            <Input
-                                                value={bidder.name}
-                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'name', e.target.value)}
-                                                placeholder="Enter bidder name"
-                                                className="w-full"
-                                            />
+                                {bidders.map((bidder, index) => {
+                                    const stats = results && 'bidderStats' in results ? results.bidderStats[index] : null;
+                                    return (
+                                        <div key={index} className="grid grid-cols-12 gap-4 p-3 hover:bg-gray-50 transition-colors items-center">
+                                            <div className="col-span-3">
+                                                <Input
+                                                    value={bidder.name}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'name', e.target.value)}
+                                                    placeholder="Enter bidder name"
+                                                    className="w-full"
+                                                />
+                                            </div>
+                                            <div className="col-span-2">
+                                                <Input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value={bidder.price}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'price', e.target.value)}
+                                                    placeholder="Enter price"
+                                                    className="w-full"
+                                                />
+                                            </div>
+                                            <div className="col-span-1 text-center font-medium text-gray-600 text-xs">
+                                                {calculateDifference(bidder.price)}
+                                            </div>
+                                            <div className="col-span-2 flex flex-col items-center gap-1">
+                                                <div className="flex items-center gap-2">
+                                                    <Checkbox
+                                                        id={`q-${index}`}
+                                                        checked={bidder.qualified}
+                                                        onCheckedChange={(checked) => updateBidder(index, 'qualified', checked)}
+                                                    />
+                                                    <Label htmlFor={`q-${index}`} className="text-[10px] cursor-pointer">Technical</Label>
+                                                </div>
+                                                {stats?.isAbove110 && (
+                                                    <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1 rounded">
+                                                        {'>'} 10% OCE
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="col-span-2 text-center">
+                                                {stats ? (
+                                                    <span className={`text-[10px] font-bold px-2 py-1 rounded ${stats.isResponsive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                        {stats.isResponsive ? 'Responsive' : 'Non-Responsive'}
+                                                    </span>
+                                                ) : '-'}
+                                            </div>
+                                            <div className="col-span-1 text-center font-bold text-blue-600">
+                                                {stats?.rank || '-'}
+                                            </div>
+                                            <div className="col-span-1 flex justify-center">
+                                                <Button
+                                                    onClick={() => removeBidder(index)}
+                                                    variant="destructive"
+                                                    size="icon"
+                                                    disabled={bidders.length === 1}
+                                                    className="h-9 w-9"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </div>
                                         </div>
-                                        <div className="col-span-3">
-                                            <Input
-                                                type="number"
-                                                step="0.01"
-                                                value={bidder.price}
-                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'price', e.target.value)}
-                                                placeholder="Enter price"
-                                                className="w-full"
-                                            />
-                                        </div>
-                                        <div className="col-span-2 text-center font-medium text-gray-600">
-                                            {calculateDifference(bidder.price)}
-                                        </div>
-                                        <div className="col-span-2 flex justify-center">
-                                            <Checkbox
-                                                checked={bidder.qualified}
-                                                onCheckedChange={(checked) => updateBidder(index, 'qualified', checked)}
-                                            />
-                                        </div>
-                                        <div className="col-span-1 flex justify-center">
-                                            <Button
-                                                onClick={() => removeBidder(index)}
-                                                variant="destructive"
-                                                size="icon"
-                                                disabled={bidders.length === 1}
-                                                className="h-9 w-9"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
