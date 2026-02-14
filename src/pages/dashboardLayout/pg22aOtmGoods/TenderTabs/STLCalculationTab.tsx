@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Trash2, Plus, Upload, FileText, Loader2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Upload, Plus, Trash2, FileText, Loader2 } from 'lucide-react';
 import axiosInstance from '@/lib/axiosInstance';
 import { toast } from 'react-hot-toast';
+import { patchData } from '@/lib/updateData';
 
 // TypeScript interfaces matching backend contract
 interface Bidder {
@@ -22,6 +23,8 @@ interface ParsePdfResponse {
         bidders: { name: string; price: string }[];
         totalBidders: number;
         storedDataId: string;
+        _id?: string;
+        id?: string;
         tenderId?: string;
     };
 }
@@ -93,80 +96,59 @@ export const STLCalculationTab = () => {
         setTenderId(null);
 
         try {
-            // Create FormData: backend requires "pdf" (file). pdfFilename is sent in query + form + header so backend can read it.
             const formData = new FormData();
             formData.append('pdf', file);
             formData.append('pdfFilename', file.name);
 
-            const url = `/stl/parse-pdf?pdfFilename=${encodeURIComponent(file.name)}`;
-            const response = await axiosInstance.post<ParsePdfResponse>(url, formData, {
-                headers: {
-                    'X-PDF-Filename': file.name,
-                },
+            const costVal = parseFloat(xoce) || 0;
+            const indexVal = parseFloat(priceIndex) || 0;
+
+            formData.append('estimateCost', String(costVal));
+            formData.append('officialCost', String(costVal));
+            formData.append('xoce', String(costVal));
+            formData.append('priceIndex', String(indexVal));
+
+            const url = `/stl/parse-pdf?pdfFilename=${encodeURIComponent(file.name)}&estimateCost=${costVal}&officialCost=${costVal}&xoce=${costVal}&priceIndex=${indexVal}`;
+
+            console.log("PDF Uploading to:", url);
+            const response = await axiosInstance.post<any>(url, formData, {
+                headers: { 'X-PDF-Filename': file.name },
             });
 
-            // Check response.success before accessing response.data
-            if (response.data?.success && response.data?.data?.bidders) {
-                const extractedBidders = response.data.data.bidders;
-                const dataId = response.data.data.storedDataId;
-                const extractedTenderId = response.data.data.tenderId;
+            console.log("PDF Upload Success Response:", response.data);
 
-                if (dataId) {
-                    setStoredDataId(dataId);
-                }
+            if (response.data?.success) {
+                const responseData = response.data.data;
+                const extractedBidders = responseData?.bidders || [];
 
-                if (extractedTenderId) {
-                    setTenderId(extractedTenderId);
-                }
+                // Broad ID extraction
+                const dataId = responseData?.storedDataId || responseData?._id || responseData?.id || responseData?.data?._id;
+                if (dataId) setStoredDataId(dataId);
 
-                // Update bidders state with extracted data
-                // Backend returns: { name: "Company Name", price: "7534639.524" }
+                if (responseData?.tenderId) setTenderId(responseData.tenderId);
+
                 if (extractedBidders.length > 0) {
-                    // Format bidders to match our state structure
-                    const formattedBidders = extractedBidders.map((bidder) => ({
-                        name: bidder.name || '',
-                        price: bidder.price ? String(bidder.price) : '',
+                    const formattedBidders = extractedBidders.map((b: any) => ({
+                        name: b.name || b.tendererName || '',
+                        price: String(b.price || b.finalPrice || b.quotedAmount || b.totalAmount || ''),
                         qualified: true
                     }));
                     setBidders(formattedBidders);
-                    toast.success(`Successfully extracted ${response.data.data.totalBidders} bidder(s) from PDF`);
+                    toast.success(`Extracted ${formattedBidders.length} bidder(s)`);
                 } else {
-                    toast('No bidder data found in PDF. Please check the PDF format.', { icon: '⚠️' });
+                    toast.error('No bidders found in PDF.');
                 }
             } else {
-                // Handle backend error messages
-                toast.error(response.data?.message || 'Failed to extract data from PDF');
+                toast.error(response.data?.message || 'Failed to parse PDF');
             }
         } catch (error: any) {
-            const data = error.response?.data;
-            // Log full response to see exact backend error (e.g. validation message)
-            console.error('PDF upload error:', error.response?.status, data);
-
-            const errorMessage =
-                (typeof data?.message === 'string' && data.message) ||
-                (typeof data?.error === 'string' && data.error) ||
-                (typeof data?.msg === 'string' && data.msg) ||
-                (Array.isArray(data?.errors) && data.errors[0]?.msg && data.errors.map((e: { msg?: string }) => e.msg).join(', ')) ||
-                (data?.message && typeof data.message === 'object' && String(data.message)) ||
-                'Error processing PDF';
-
-            if (error.response) {
-                if (error.response.status === 400) {
-                    toast.error(errorMessage);
-                } else if (error.response.status === 500) {
-                    toast.error(errorMessage);
-                } else {
-                    toast.error(errorMessage);
-                }
-            } else if (error.request) {
-                toast.error('Network error. Please check your connection and try again.');
-            } else {
-                toast.error('Error processing PDF. Please try again.');
-            }
+            console.error('PDF Upload Error:', error);
+            const serverData = error.response?.data;
+            const errorMsg = serverData?.message || serverData?.error || error.message || 'Error processing PDF';
+            toast.error(errorMsg);
         } finally {
             setIsUploading(false);
-            // Reset file input
-            event.target.value = '';
+            if (event.target) event.target.value = '';
         }
     };
 
@@ -175,25 +157,6 @@ export const STLCalculationTab = () => {
         const priceIndexValue = parseFloat(priceIndex) || 0.9168;
         const x_nppi = xoceValue * priceIndexValue;
 
-        // Update estimateCost and priceIndex if storedDataId exists
-        if (storedDataId) {
-            try {
-                await axiosInstance.patch(`/stl/${storedDataId}`, {
-                    estimateCost: xoce,
-                    priceIndex: priceIndex
-                });
-
-            } catch (error) {
-                console.error("Failed to update STL data:", error);
-                // Optional: show a silent error or non-blocking toast
-                // toast.error("Failed to sync calculation parameters to server");
-            }
-        }
-
-        // Get all valid bid prices FROM QUALIFIED BIDDERS ONLY ??
-        // For now, keeping original logic but filter if user requested filtering. 
-        // User said "qualied oita check box hbe", usually means only qualified are considered.
-        // I will filter by qualified.
         const prices: number[] = [];
         bidders.forEach(bidder => {
             if (bidder.qualified) {
@@ -212,19 +175,11 @@ export const STLCalculationTab = () => {
         const n = prices.length;
         const total = prices.reduce((sum, p) => sum + p, 0);
         const xi = total / n;
-
-        // Calculate Weighted Average: WA = (XOCE * 0.2) + (Xi * 0.5) + (X_NPPI * 0.3)
         const wa = (xoceValue * 0.2) + (xi * 0.5) + (x_nppi * 0.3);
-
-        // Calculate variance and Standard Deviation
-        // Formula: SD = sqrt(sum((Price - WeightedAverage)^2) / n)
         const variance = prices.reduce((sum, p) => sum + Math.pow(p - wa, 2), 0) / n;
         const sd = Math.sqrt(variance);
-
-        // Calculate SLT (Significantly Low-Priced Tender)
         const slt = wa - sd;
 
-        // Generate stats for all bidders
         const bidderStats = bidders.map((bidder) => {
             const price = parseFloat(bidder.price);
             const isAbove110 = !isNaN(price) && !isNaN(xoceValue) && price > (xoceValue * 1.1);
@@ -237,7 +192,6 @@ export const STLCalculationTab = () => {
             };
         });
 
-        // Calculate rankings for responsive bidders
         const responsiveBidders = bidderStats
             .map((stats, index) => ({ stats, index, price: parseFloat(bidders[index].price) }))
             .filter(item => item.stats.isResponsive)
@@ -266,9 +220,37 @@ export const STLCalculationTab = () => {
             winnerPrice: winnerPrice,
             bidderStats
         });
+
+        if (storedDataId) {
+            const bidderPayload = bidders.map(b => ({
+                name: b.name,
+                price: parseFloat(b.price) || 0,
+                finalPrice: parseFloat(b.price) || 0,
+                quotedAmount: parseFloat(b.price) || 0,
+                qualified: b.qualified
+            }));
+
+            const payload = {
+                tenderId: tenderId,
+                officialCost: parseFloat(xoce) || 0,
+                estimatedCost: parseFloat(xoce) || 0,
+                estimateCost: parseFloat(xoce) || 0,
+                xoce: parseFloat(xoce) || 0,
+                priceIndex: parseFloat(priceIndex) || 0,
+                bidders: bidderPayload,
+                xi: parseFloat(xi.toFixed(4)),
+                wa: parseFloat(wa.toFixed(4)),
+                sd: parseFloat(sd.toFixed(4)),
+                slt: parseFloat(slt.toFixed(4)),
+                winner: winnerName,
+                winnerPrice: winnerPrice === 'None' ? 0 : parseFloat(String(winnerPrice))
+            };
+
+            console.log("STL Payload being sent to:", `/stl/${storedDataId}`, payload);
+            patchData(`/stl/${storedDataId}`, payload, undefined, undefined);
+        }
     };
 
-    // Helper to calculate difference percentage
     const calculateDifference = (priceStr: string) => {
         const price = parseFloat(priceStr);
         const xoceVal = parseFloat(xoce);
