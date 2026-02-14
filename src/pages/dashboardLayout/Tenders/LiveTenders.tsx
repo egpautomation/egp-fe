@@ -235,7 +235,7 @@ const LiveTenders = () => {
 
   return (
     <div>
-      <TenderStatsSection />
+      {/* <TenderStatsSection /> */}
       <div className="lg:grid max-lg:grid-cols-1 md:grid-cols-2 justify-between my-5 gap-3">
         <div className="hidden lg:block">
           <div className="flex items-center gap-2">
