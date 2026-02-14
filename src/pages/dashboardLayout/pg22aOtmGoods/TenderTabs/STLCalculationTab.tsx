@@ -16,18 +16,6 @@ interface Bidder {
     qualified: boolean;
 }
 
-interface ParsePdfResponse {
-    success: boolean;
-    message: string;
-    data?: {
-        bidders: { name: string; price: string }[];
-        totalBidders: number;
-        storedDataId: string;
-        _id?: string;
-        id?: string;
-        tenderId?: string;
-    };
-}
 
 interface CalculationResults {
     xi: string;
