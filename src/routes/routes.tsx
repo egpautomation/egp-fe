@@ -11,6 +11,12 @@ import Registration from "@/pages/homeLayout/Registration";
 import ForgotPassword from "@/pages/homeLayout/ForgotPassword";
 import ResetPassword from "@/pages/homeLayout/ResetPassword";
 import Login from "@/pages/homeLayout/Login";
+import Services from "@/pages/homeLayout/Services";
+import AboutUs from "@/pages/homeLayout/AboutUs";
+import ContactUs from "@/pages/homeLayout/ContactUs";
+import HowItWorks from "@/pages/homeLayout/HowItWorks";
+import Blogs from "@/pages/homeLayout/Blogs";
+import StlCalculation from "@/pages/homeLayout/StlCalculation";
 import EgpPassEmail from "@/pages/dashboardLayout/EgpPassEmail";
 import CreateEgpListedCompany from "@/components/dashboard/CreateEgpListedCompany";
 import AllEgpListedCompany from "@/components/dashboard/AllEgpListedCompany";
@@ -98,6 +104,34 @@ const router = createBrowserRouter([
       {
         path: "/reset-password",
         element: <ResetPassword />,
+      },
+      {
+        path: "/about-us",
+        element: <AboutUs />,
+      },
+      {
+        path: "/services",
+        element: <Services />,
+      },
+      {
+        path: "/contact-us",
+        element: <ContactUs />,
+      },
+      {
+        path: "/how-it-works",
+        element: <HowItWorks />,
+      },
+      {
+        path: "/blogs",
+        element: <Blogs />,
+      },
+      {
+        path: "/stl-calculation",
+        element: <StlCalculation />,
+      },
+      {
+        path: "/forget-password",
+        element: <ForgotPassword />,
       },
       {
         path: "/public/create-tender",

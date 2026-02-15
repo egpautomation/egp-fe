@@ -82,31 +82,41 @@ function Registration() {
   };
 
   return (
-    <section className="min-h-lvh">
-      <h1 className="text-3xl font-bold text-center my-5">Sign Up</h1>
+    <section className="min-h-lvh py-10">
+      <div className="container mx-auto px-4">
+        <div className="max-w-4xl mx-auto text-center mb-8">
+          <p className="text-sm font-semibold uppercase tracking-wide text-[#4874c7] animate-fade-in">
+            রেজিস্ট্রেশন
+          </p>
+          <h2 className="mt-2 text-gray-900 animate-slide-up">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
+          <p className="mt-3 text-base text-gray-600 animate-slide-up" style={{ animationDelay: "100ms" }}>
+            ই-টেন্ডার বিডি-তে যোগ দিন এবং আপনার টেন্ডার ব্যবস্থাপনা শুরু করুন
+          </p>
+        </div>
+      </div>
       <div className=" flex justify-center items-center">
-        <div className="w-full max-w-xl shadow-2xl p-3 md:p-5 rounded border">
+        <div className="w-full max-w-xl shadow-2xl p-3 md:p-5 rounded-2xl border border-slate-200/70 bg-white/90 backdrop-blur-sm">
           <form
             onSubmit={handleSubmit}
             className="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-5"
           >
             <div className="">
-              <Label htmlFor="name">
-                Full Name<span className="text-red-700">*</span>
+              <Label htmlFor="name" className="text-sm font-medium">
+                পূর্ণ নাম<span className="text-red-700">*</span>
               </Label>
               <Input
                 type="text"
                 name="name"
                 onChange={handleInputChange}
                 value={formData.name}
-                placeholder="Your Full Name"
-                className="mt-2"
+                placeholder="আপনার পূর্ণ নাম"
+                className="mt-2 h-11"
                 required
               />
             </div>
             <div className="">
-              <Label htmlFor="district">
-                District (LTM Tender)<span className="text-red-700">*</span>
+              <Label htmlFor="district" className="text-sm font-medium">
+                জেলা (LTM Tender)<span className="text-red-700">*</span>
               </Label>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
@@ -163,20 +173,20 @@ function Registration() {
               </Popover>
             </div>
             <div className="col-span-full">
-              <Label htmlFor="presentAddress">Present Address</Label>
+              <Label htmlFor="presentAddress" className="text-sm font-medium">বর্তমান ঠিকানা</Label>
               <Input
                 type="text"
                 name="address"
                 onChange={handleInputChange}
                 value={formData.address}
-                placeholder="Your Present Address"
-                className="mt-2 h-14"
+                placeholder="আপনার বর্তমান ঠিকানা"
+                className="mt-2 h-11"
               />
             </div>
 
             <div className="">
-              <Label className="mb-2" htmlFor="phoneNumber">
-                Active Contact Number<span className="text-red-700">*</span>
+              <Label className="mb-2 text-sm font-medium" htmlFor="phoneNumber">
+                সক্রিয় যোগাযোগ নম্বর<span className="text-red-700">*</span>
               </Label>
               <PhoneInput
                 required
@@ -196,11 +206,17 @@ function Registration() {
                 inputStyle={{
                   width: "100%", // Set a fixed width
                 }}
+                countrySelectorStyleProps={{
+                  buttonStyle: {
+                    paddingLeft: "10px",
+                    paddingRight: "10px",
+                  },
+                }}
               />
             </div>
             <div className="">
-              <Label className="mb-2" htmlFor="What's app number">
-                Active What's App Number<span className="text-red-700">*</span>
+              <Label className="mb-2 text-sm font-medium" htmlFor="What's app number">
+                সক্রিয় WhatsApp নম্বর<span className="text-red-700">*</span>
               </Label>
 
               <PhoneInput
@@ -218,38 +234,44 @@ function Registration() {
                 inputStyle={{
                   width: "100%", // Set a fixed width
                 }}
+                countrySelectorStyleProps={{
+                  buttonStyle: {
+                    paddingLeft: "10px",
+                    paddingRight: "10px",
+                  },
+                }}
               />
             </div>
             <div className="">
-              <Label htmlFor="Email">
-                Email<span className="text-red-700">*</span>
+              <Label htmlFor="Email" className="text-sm font-medium">
+                ইমেইল<span className="text-red-700">*</span>
               </Label>
               <Input
                 required
-                type="text"
+                type="email"
                 name="email"
                 onChange={handleInputChange}
                 value={formData.email}
-                placeholder="Your Email Address"
-                className="mt-2"
+                placeholder="example@yourmail.com"
+                className="mt-2 h-11"
               />
             </div>
             <div className="">
-              <Label htmlFor="userPassword">
-                Password<span className="text-red-700">*</span>
+              <Label htmlFor="userPassword" className="text-sm font-medium">
+                পাসওয়ার্ড<span className="text-red-700">*</span>
               </Label>
               <Input
                 required
-                type="text"
+                type="password"
                 name="password"
                 onChange={handleInputChange}
                 value={formData.password}
-                placeholder="Use A strong Password"
-                className="mt-2"
+                placeholder="একটি শক্তিশালী পাসওয়ার্ড ব্যবহার করুন"
+                className="mt-2 h-11"
               />
             </div>
             <div className="">
-              <Label htmlFor="userID">
+              <Label htmlFor="userID" className="text-sm font-medium">
                 User ID<span className="text-red-700">*</span>
               </Label>
 
@@ -259,22 +281,22 @@ function Registration() {
                 name="uerId"
                 onChange={handleInputChange}
                 value={generatedUserId}
-                placeholder="Last 5 digit of your phone number"
-                className="mt-2"
+                placeholder="আপনার ফোন নম্বরের শেষ ৫টি সংখ্যা"
+                className="mt-2 h-11"
                 readOnly
               />
             </div>
 
             <div className="col-span-full">
-              <Button type="submit" className="w-full cursor-pointer">
-                Submit
+              <Button type="submit" className="w-full cursor-pointer h-11 text-white bg-[#4874c7] hover:bg-[#3a5da8] hover:scale-102 transition-all duration-200">
+                রেজিস্ট্রেশন করুন
               </Button>
             </div>
           </form>
-          <p className="mt-4 text-sm">
-            Already Have account?{" "}
-            <Link className="underline" to={"/login"}>
-              Login
+          <p className="mt-4 text-sm text-center">
+            ইতিমধ্যে অ্যাকাউন্ট আছে?{" "}
+            <Link className="underline text-[#4874c7] hover:text-[#3a5da8]" to={"/login"}>
+              লগইন করুন
             </Link>
           </p>
         </div>

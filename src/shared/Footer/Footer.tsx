@@ -7,17 +7,17 @@ import { HiMail, HiPhone, HiLocationMarker } from "react-icons/hi";
 
 const Footer = () => {
   const quickLinks = [
-    { label: "এটি কিভাবে কাজ করে", to: "/#how-it-works" },
-    { label: "সেবা সমূহ", to: "/#services" },
-    { label: "STL Calculation", to: "/#stl-calculation" },
-    { label: "About Us", to: "/#about" },
+    { label: "এটি কিভাবে কাজ করে", to: "/how-it-works" },
+    { label: "সেবা সমূহ", to: "/services" },
+    { label: "STL Calculation", to: "/stl-calculation" },
+    { label: "About Us", to: "/about-us" },
   ];
 
   const services = [
-    { label: "ইজিপি একাউন্ট ওপেন", to: "/#services" },
-    { label: "ইজিপি ট্রেনিং", to: "/#services" },
-    { label: "টেন্ডার সাবমিশন", to: "/#services" },
-    { label: "কোম্পানি রেজিস্ট্রেশন", to: "/#services" },
+    { label: "ইজিপি একাউন্ট ওপেন", to: "/services" },
+    { label: "ইজিপি ট্রেনিং", to: "/services" },
+    { label: "টেন্ডার সাবমিশন", to: "/services" },
+    { label: "কোম্পানি রেজিস্ট্রেশন", to: "/services" },
   ];
 
   return (

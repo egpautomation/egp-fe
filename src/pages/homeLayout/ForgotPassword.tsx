@@ -55,28 +55,34 @@ const ForgotPassword = () => {
     };
 
     return (
-        <section className="min-h-lvh">
-            <h1 className="text-3xl font-bold text-center my-5">Forgot Password</h1>
-            <div className="flex justify-center items-center">
-                <div className="w-full max-w-sm shadow-2xl p-3 md:p-5 rounded border">
-                    <p className="text-sm text-gray-600 mb-4">
-                        Enter your email address and we'll send you a link to reset your password.
+        <section className="min-h-lvh py-10">
+            <div className="container mx-auto px-4">
+                <div className="max-w-4xl mx-auto text-center mb-8">
+                    <p className="text-sm font-semibold uppercase tracking-wide text-[#4874c7] animate-fade-in">
+                        পাসওয়ার্ড পুনরুদ্ধার
                     </p>
-
+                    <h2 className="mt-2 text-gray-900 animate-slide-up">পাসওয়ার্ড ভুলে গেছেন?</h2>
+                    <p className="mt-3 text-base text-gray-600 animate-slide-up" style={{ animationDelay: "100ms" }}>
+                        আপনার ইমেইল ঠিকানা দিন এবং আমরা আপনাকে পাসওয়ার্ড রিসেট লিঙ্ক পাঠাবো
+                    </p>
+                </div>
+            </div>
+            <div className="flex justify-center items-center">
+                <div className="w-full max-w-md shadow-2xl p-6 md:p-8 rounded-2xl border border-slate-200/70 bg-white/90 backdrop-blur-sm">
                     <form
                         onSubmit={handleSubmit}
-                        className="w-full max-w-2xl grid grid-cols-1 gap-5"
+                        className="w-full grid grid-cols-1 gap-5"
                     >
                         <div>
-                            <Label htmlFor="email">Email Address</Label>
+                            <Label htmlFor="email" className="text-sm font-medium">ইমেইল ঠিকানা</Label>
                             <Input
                                 type="email"
                                 name="email"
                                 id="email"
                                 onChange={(e) => setEmail(e.target.value)}
                                 value={email}
-                                placeholder="Your Email Address"
-                                className="mt-2"
+                                placeholder="example@yourmail.com"
+                                className="mt-2 h-11"
                                 disabled={isSubmitting}
                             />
                         </div>
@@ -87,15 +93,15 @@ const ForgotPassword = () => {
                                 className="w-full cursor-pointer h-11 text-white bg-[#4874c7] hover:bg-[#3a5da8] hover:scale-102 transition-all duration-200"
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? "Sending..." : "Send Reset Link"}
+                                {isSubmitting ? "পাঠানো হচ্ছে..." : "রিসেট লিঙ্ক পাঠান"}
                             </Button>
                         </div>
                     </form>
 
                     <p className="mt-4 text-sm text-center">
-                        Remember your password?{" "}
-                        <Link className="underline text-blue-600 hover:text-blue-800" to="/login">
-                            Back to Login
+                        পাসওয়ার্ড মনে আছে?{" "}
+                        <Link className="underline text-[#4874c7] hover:text-[#3a5da8]" to="/login">
+                            লগইনে ফিরে যান
                         </Link>
                     </p>
                 </div>
