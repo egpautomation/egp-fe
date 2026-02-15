@@ -486,7 +486,7 @@ export function AppSidebar() {
       <SidebarHeader />
       <SidebarContent className="h-full">
         <div>
-          <h1 className="text-2xl px-2 font-semibold pb-5 border-b">
+          <h1 className="text-2xl px-2 font-semibold pb-5 border-b text-red-700-">
             E-GP Automation
           </h1>
         </div>

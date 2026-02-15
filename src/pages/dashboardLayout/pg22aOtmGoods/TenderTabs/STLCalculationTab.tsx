@@ -1,27 +1,21 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Trash2, Plus, Upload, FileText, Loader2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Upload, Plus, Trash2, FileText, Loader2 } from 'lucide-react';
 import axiosInstance from '@/lib/axiosInstance';
 import { toast } from 'react-hot-toast';
+import { patchData } from '@/lib/updateData';
 
 // TypeScript interfaces matching backend contract
 interface Bidder {
     name: string;
     price: string;
+    qualified: boolean;
 }
 
-interface ParsePdfResponse {
-    success: boolean;
-    message: string;
-    data?: {
-        bidders: Bidder[];
-        totalBidders: number;
-        storedDataId: string;
-    };
-}
 
 interface CalculationResults {
     xi: string;
@@ -31,21 +25,28 @@ interface CalculationResults {
     slt: string;
     winner: string;
     winnerPrice: number | 'None';
+    bidderStats: {
+        isAbove110: boolean;
+        isResponsive: boolean;
+        rank: number | '-';
+    }[];
 }
 
 export const STLCalculationTab = () => {
     const [xoce, setXoce] = useState('100');
     const [priceIndex, setPriceIndex] = useState('0.9168');
     const [bidders, setBidders] = useState<Bidder[]>([
-        { name: 'Hassan Techno Builders Ltd.', price: '75' },
-        
+        { name: 'Hassan Techno Builders Ltd.', price: '75', qualified: true },
+
     ]);
     const [results, setResults] = useState<CalculationResults | { error: string } | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadedFileName, setUploadedFileName] = useState('');
+    const [storedDataId, setStoredDataId] = useState<string | null>(null);
+    const [tenderId, setTenderId] = useState<string | null>(null);
 
     const addBidder = () => {
-        setBidders([...bidders, { name: '', price: '' }]);
+        setBidders([...bidders, { name: '', price: '', qualified: true }]);
     };
 
     const removeBidder = (index: number) => {
@@ -54,9 +55,9 @@ export const STLCalculationTab = () => {
         }
     };
 
-    const updateBidder = (index: number, field: keyof Bidder, value: string) => {
+    const updateBidder = (index: number, field: keyof Bidder, value: any) => {
         const updated = [...bidders];
-        updated[index][field] = value;
+        updated[index] = { ...updated[index], [field]: value };
         setBidders(updated);
     };
 
@@ -80,119 +81,122 @@ export const STLCalculationTab = () => {
 
         setIsUploading(true);
         setUploadedFileName(file.name);
+        setTenderId(null);
 
         try {
-            // Create FormData: backend requires "pdf" (file). pdfFilename is sent in query + form + header so backend can read it.
             const formData = new FormData();
             formData.append('pdf', file);
             formData.append('pdfFilename', file.name);
 
-            const url = `/stl/parse-pdf?pdfFilename=${encodeURIComponent(file.name)}`;
-            const response = await axiosInstance.post<ParsePdfResponse>(url, formData, {
-                headers: {
-                    'X-PDF-Filename': file.name,
-                },
+            const costVal = parseFloat(xoce) || 0;
+            const indexVal = parseFloat(priceIndex) || 0;
+
+            formData.append('estimateCost', String(costVal));
+            formData.append('officialCost', String(costVal));
+            formData.append('xoce', String(costVal));
+            formData.append('priceIndex', String(indexVal));
+
+            const url = `/stl/parse-pdf?pdfFilename=${encodeURIComponent(file.name)}&estimateCost=${costVal}&officialCost=${costVal}&xoce=${costVal}&priceIndex=${indexVal}`;
+
+            console.log("PDF Uploading to:", url);
+            const response = await axiosInstance.post<any>(url, formData, {
+                headers: { 'X-PDF-Filename': file.name },
             });
 
-            // Check response.success before accessing response.data
-            if (response.data?.success && response.data?.data?.bidders) {
-                const extractedBidders = response.data.data.bidders;
+            console.log("PDF Upload Success Response:", response.data);
 
-                // Update bidders state with extracted data
-                // Backend returns: { name: "Company Name", price: "7534639.524" }
+            if (response.data?.success) {
+                const responseData = response.data.data;
+                const extractedBidders = responseData?.bidders || [];
+
+                // Broad ID extraction
+                const dataId = responseData?.storedDataId || responseData?._id || responseData?.id || responseData?.data?._id;
+                if (dataId) setStoredDataId(dataId);
+
+                if (responseData?.tenderId) setTenderId(responseData.tenderId);
+
                 if (extractedBidders.length > 0) {
-                    // Format bidders to match our state structure
-                    const formattedBidders = extractedBidders.map((bidder: Bidder) => ({
-                        name: bidder.name || '',
-                        price: bidder.price ? String(bidder.price) : ''
+                    const formattedBidders = extractedBidders.map((b: any) => ({
+                        name: b.name || b.tendererName || '',
+                        price: String(b.price || b.finalPrice || b.quotedAmount || b.totalAmount || ''),
+                        qualified: true
                     }));
                     setBidders(formattedBidders);
-                    toast.success(`Successfully extracted ${response.data.data.totalBidders} bidder(s) from PDF`);
+                    toast.success(`Extracted ${formattedBidders.length} bidder(s)`);
                 } else {
-                    toast('No bidder data found in PDF. Please check the PDF format.', { icon: '⚠️' });
+                    toast.error('No bidders found in PDF.');
                 }
             } else {
-                // Handle backend error messages
-                toast.error(response.data?.message || 'Failed to extract data from PDF');
+                toast.error(response.data?.message || 'Failed to parse PDF');
             }
         } catch (error: any) {
-            const data = error.response?.data;
-            // Log full response to see exact backend error (e.g. validation message)
-            console.error('PDF upload error:', error.response?.status, data);
-
-            const errorMessage =
-                (typeof data?.message === 'string' && data.message) ||
-                (typeof data?.error === 'string' && data.error) ||
-                (typeof data?.msg === 'string' && data.msg) ||
-                (Array.isArray(data?.errors) && data.errors[0]?.msg && data.errors.map((e: { msg?: string }) => e.msg).join(', ')) ||
-                (data?.message && typeof data.message === 'object' && String(data.message)) ||
-                'Error processing PDF';
-
-            if (error.response) {
-                if (error.response.status === 400) {
-                    toast.error(errorMessage);
-                } else if (error.response.status === 500) {
-                    toast.error(errorMessage);
-                } else {
-                    toast.error(errorMessage);
-                }
-            } else if (error.request) {
-                toast.error('Network error. Please check your connection and try again.');
-            } else {
-                toast.error('Error processing PDF. Please try again.');
-            }
+            console.error('PDF Upload Error:', error);
+            const serverData = error.response?.data;
+            const errorMsg = serverData?.message || serverData?.error || error.message || 'Error processing PDF';
+            toast.error(errorMsg);
         } finally {
             setIsUploading(false);
-            // Reset file input
-            event.target.value = '';
+            if (event.target) event.target.value = '';
         }
     };
 
-    const handleCalculate = () => {
+    const handleCalculate = async () => {
         const xoceValue = parseFloat(xoce) || 100;
         const priceIndexValue = parseFloat(priceIndex) || 0.9168;
         const x_nppi = xoceValue * priceIndexValue;
 
-        // Get all valid bid prices
         const prices: number[] = [];
         bidders.forEach(bidder => {
-            const price = parseFloat(bidder.price);
-            if (!isNaN(price)) {
-                prices.push(price);
+            if (bidder.qualified) {
+                const price = parseFloat(bidder.price);
+                if (!isNaN(price)) {
+                    prices.push(price);
+                }
             }
         });
 
         if (prices.length === 0) {
-            setResults({ error: 'No valid bids entered.' });
+            setResults({ error: 'No valid qualified bids entered.' });
             return;
         }
 
         const n = prices.length;
         const total = prices.reduce((sum, p) => sum + p, 0);
         const xi = total / n;
-
-        // Calculate Weighted Average: WA = (XOCE * 0.2) + (Xi * 0.5) + (X_NPPI * 0.3)
         const wa = (xoceValue * 0.2) + (xi * 0.5) + (x_nppi * 0.3);
-
-        // Calculate variance and Standard Deviation
-        const variance = prices.reduce((sum, p) => sum + Math.pow(p - xi, 2), 0) / n;
+        const variance = prices.reduce((sum, p) => sum + Math.pow(p - wa, 2), 0) / n;
         const sd = Math.sqrt(variance);
-
-        // Calculate SLT (Significantly Low-Priced Tender)
         const slt = wa - sd;
 
-        // Find winner: lowest bid >= SLT
-        const eligibleBids = prices
-            .map((price, index) => ({ price, index }))
-            .filter(item => item.price >= slt)
+        const bidderStats = bidders.map((bidder) => {
+            const price = parseFloat(bidder.price);
+            const isAbove110 = !isNaN(price) && !isNaN(xoceValue) && price > (xoceValue * 1.1);
+            const isResponsive = bidder.qualified && !isNaN(price) && price >= slt && !isAbove110;
+
+            return {
+                isAbove110,
+                isResponsive,
+                rank: '-' as number | '-'
+            };
+        });
+
+        const responsiveBidders = bidderStats
+            .map((stats, index) => ({ stats, index, price: parseFloat(bidders[index].price) }))
+            .filter(item => item.stats.isResponsive)
             .sort((a, b) => a.price - b.price);
 
-        const winner = eligibleBids.length > 0
-            ? {
-                name: bidders[eligibleBids[0].index]?.name || 'Unknown',
-                price: eligibleBids[0].price
-            }
-            : { name: 'None', price: 'None' as const };
+        responsiveBidders.forEach((item, i) => {
+            bidderStats[item.index].rank = i + 1;
+        });
+
+        const winnerBid = responsiveBidders.length > 0 ? responsiveBidders[0] : null;
+        let winnerName = 'None';
+        let winnerPrice: number | 'None' = 'None';
+
+        if (winnerBid) {
+            winnerName = bidders[winnerBid.index].name;
+            winnerPrice = winnerBid.price;
+        }
 
         setResults({
             xi: xi.toFixed(4),
@@ -200,13 +204,51 @@ export const STLCalculationTab = () => {
             wa: wa.toFixed(4),
             sd: sd.toFixed(4),
             slt: slt.toFixed(4),
-            winner: winner.name,
-            winnerPrice: winner.price
+            winner: winnerName,
+            winnerPrice: winnerPrice,
+            bidderStats
         });
+
+        if (storedDataId) {
+            const bidderPayload = bidders.map(b => ({
+                name: b.name,
+                price: parseFloat(b.price) || 0,
+                finalPrice: parseFloat(b.price) || 0,
+                quotedAmount: parseFloat(b.price) || 0,
+                qualified: b.qualified
+            }));
+
+            const payload = {
+                tenderId: tenderId,
+                officialCost: parseFloat(xoce) || 0,
+                estimatedCost: parseFloat(xoce) || 0,
+                estimateCost: parseFloat(xoce) || 0,
+                xoce: parseFloat(xoce) || 0,
+                priceIndex: parseFloat(priceIndex) || 0,
+                bidders: bidderPayload,
+                xi: parseFloat(xi.toFixed(4)),
+                wa: parseFloat(wa.toFixed(4)),
+                sd: parseFloat(sd.toFixed(4)),
+                slt: parseFloat(slt.toFixed(4)),
+                winner: winnerName,
+                winnerPrice: winnerPrice === 'None' ? 0 : parseFloat(String(winnerPrice))
+            };
+
+            console.log("STL Payload being sent to:", `/stl/${storedDataId}`, payload);
+            patchData(`/stl/${storedDataId}`, payload, undefined, undefined);
+        }
+    };
+
+    const calculateDifference = (priceStr: string) => {
+        const price = parseFloat(priceStr);
+        const xoceVal = parseFloat(xoce);
+        if (isNaN(price) || isNaN(xoceVal) || xoceVal === 0) return '-';
+        const diff = ((price - xoceVal) / xoceVal) * 100;
+        return diff.toFixed(2) + '%';
     };
 
     return (
-        <div className="max-w-5xl mx-auto p-6">
+        <div className="max-w-6xl mx-auto p-6">
             <Card className="shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
                     <CardTitle className="text-2xl font-bold text-center text-gray-800">
@@ -293,6 +335,11 @@ export const STLCalculationTab = () => {
                                     <span>{uploadedFileName}</span>
                                 </div>
                             )}
+                            {tenderId && (
+                                <div className="ml-auto px-3 py-1 bg-green-100 text-green-800 rounded-md text-sm font-semibold border border-green-200 shadow-sm">
+                                    Tender ID: {tenderId}
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -310,52 +357,87 @@ export const STLCalculationTab = () => {
                             </Button>
                         </div>
 
-                    {/* Bidders Table */}
-                    <div className="border rounded-lg overflow-hidden">
-                        <div className="bg-gray-50 border-b">
-                            <div className="grid grid-cols-12 gap-4 p-3 font-semibold text-gray-700">
-                                <div className="col-span-6">Bidder Name</div>
-                                <div className="col-span-4">Tender Price</div>
-                                <div className="col-span-2 text-center">Action</div>
+                        {/* Bidders Table */}
+                        <div className="border rounded-lg overflow-hidden">
+                            <div className="bg-gray-50 border-b">
+                                <div className="grid grid-cols-12 gap-4 p-3 font-semibold text-gray-700 text-sm">
+                                    <div className="col-span-3">Name of Tenderer</div>
+                                    <div className="col-span-2">Quoted Price (Xi)</div>
+                                    <div className="col-span-1 text-center">% Above/Below</div>
+                                    <div className="col-span-2 text-center">Primary Responsiveness</div>
+                                    <div className="col-span-2 text-center">Financial Responsiveness</div>
+                                    <div className="col-span-1 text-center">Rank</div>
+                                    <div className="col-span-1 text-center">Action</div>
+                                </div>
+                            </div>
+
+                            <div className="divide-y">
+                                {bidders.map((bidder, index) => {
+                                    const stats = results && 'bidderStats' in results ? results.bidderStats[index] : null;
+                                    return (
+                                        <div key={index} className="grid grid-cols-12 gap-4 p-3 hover:bg-gray-50 transition-colors items-center">
+                                            <div className="col-span-3">
+                                                <Input
+                                                    value={bidder.name}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'name', e.target.value)}
+                                                    placeholder="Enter bidder name"
+                                                    className="w-full"
+                                                />
+                                            </div>
+                                            <div className="col-span-2">
+                                                <Input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value={bidder.price}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'price', e.target.value)}
+                                                    placeholder="Enter price"
+                                                    className="w-full"
+                                                />
+                                            </div>
+                                            <div className="col-span-1 text-center font-medium text-gray-600 text-xs">
+                                                {calculateDifference(bidder.price)}
+                                            </div>
+                                            <div className="col-span-2 flex flex-col items-center gap-1">
+                                                <div className="flex items-center gap-2">
+                                                    <Checkbox
+                                                        id={`q-${index}`}
+                                                        checked={bidder.qualified}
+                                                        onCheckedChange={(checked) => updateBidder(index, 'qualified', checked)}
+                                                    />
+                                                    <Label htmlFor={`q-${index}`} className="text-[10px] cursor-pointer">Technical</Label>
+                                                </div>
+                                                {stats?.isAbove110 && (
+                                                    <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1 rounded">
+                                                        {'>'} 10% OCE
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="col-span-2 text-center">
+                                                {stats ? (
+                                                    <span className={`text-[10px] font-bold px-2 py-1 rounded ${stats.isResponsive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                        {stats.isResponsive ? 'Responsive' : 'Non-Responsive'}
+                                                    </span>
+                                                ) : '-'}
+                                            </div>
+                                            <div className="col-span-1 text-center font-bold text-blue-600">
+                                                {stats?.rank || '-'}
+                                            </div>
+                                            <div className="col-span-1 flex justify-center">
+                                                <Button
+                                                    onClick={() => removeBidder(index)}
+                                                    variant="destructive"
+                                                    size="icon"
+                                                    disabled={bidders.length === 1}
+                                                    className="h-9 w-9"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
-
-                        <div className="divide-y">
-                            {bidders.map((bidder, index) => (
-                                <div key={index} className="grid grid-cols-12 gap-4 p-3 hover:bg-gray-50 transition-colors">
-                                    <div className="col-span-6">
-                                        <Input
-                                            value={bidder.name}
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'name', e.target.value)}
-                                            placeholder="Enter bidder name"
-                                            className="w-full"
-                                        />
-                                    </div>
-                                    <div className="col-span-4">
-                                        <Input
-                                            type="number"
-                                            step="0.01"
-                                            value={bidder.price}
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'price', e.target.value)}
-                                            placeholder="Enter price"
-                                            className="w-full"
-                                        />
-                                    </div>
-                                    <div className="col-span-2 flex justify-center">
-                                        <Button
-                                            onClick={() => removeBidder(index)}
-                                            variant="destructive"
-                                            size="sm"
-                                            disabled={bidders.length === 1}
-                                            className="w-full"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
                     </div>
 
                     {/* Calculate Button */}

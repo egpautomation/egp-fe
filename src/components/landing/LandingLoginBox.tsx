@@ -1,13 +1,15 @@
 // @ts-nocheck
 // Reusable login box: preview mode (non-submitting) for landing, functional mode for /login route
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "@/provider/AuthProvider";
+import toast from "react-hot-toast";
 
 interface LandingLoginBoxProps {
   preview?: boolean; // If true, shows preview mode (non-submitting), if false, fully functional
@@ -15,30 +17,56 @@ interface LandingLoginBoxProps {
 }
 
 export default function LandingLoginBox({ preview = true, onSubmit }: LandingLoginBoxProps) {
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { id, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [id]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (preview || !onSubmit) return;
-    
-    setIsSubmitting(true);
+    if (preview) return;
+
+    if (!formData.email || !formData.password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    setIsLoading(true);
+
+    if (onSubmit) {
+      try {
+        await onSubmit(formData.email, formData.password);
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
+    const toastId = toast.loading("Logging in...");
+
     try {
-      await onSubmit(formData.email, formData.password);
+      await login(formData.email, formData.password);
+      toast.dismiss(toastId);
+      toast.success("Successfully Logged In");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.dismiss(toastId);
+      const errorMessage = error?.response?.data?.message || error?.message || "Login failed. Please check your credentials.";
+      toast.error(errorMessage);
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
 
@@ -64,7 +92,7 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
               type="email"
               placeholder="example@yourmail.com"
               className="h-11"
-              disabled={preview || isSubmitting}
+              disabled={preview || isLoading}
               value={formData.email}
               onChange={handleInputChange}
             />
@@ -80,28 +108,26 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 className="h-11 pr-10"
-                disabled={preview || isSubmitting}
+                disabled={preview || isLoading}
                 value={formData.password}
                 onChange={handleInputChange}
               />
-              {!preview && (
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
             </div>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <Link to="/forget-password" className="font-medium text-[#4874c7] hover:underline">
-              Forget Password
+            <Link to="/forgot-password" className="font-medium text-[#4874c7] hover:underline">
+              Forget Password?
             </Link>
           </div>
           <div className="flex w-full justify-center">
@@ -110,12 +136,12 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
                 <Link to="/login">Login</Link>
               </Button>
             ) : (
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="h-11 w-[50%] text-white bg-[#4874c7] hover:bg-[#3a5da8] hover:scale-102 transition-all duration-200"
-                disabled={isSubmitting}
+                disabled={isLoading}
               >
-                {isSubmitting ? "Logging in..." : "Login"}
+                {isLoading ? "Logging in..." : "Login"}
               </Button>
             )}
           </div>

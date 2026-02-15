@@ -36,9 +36,8 @@ const Navbar = () => {
               <NavLink key={item.label} to={item.to}>
                 {({ isActive }) => (
                   <div
-                    className={`relative px-3 py-2 text-sm font-medium rounded-md transition-all duration-300 overflow-hidden group ${
-                      isActive ? "text-[#4874c7]" : "text-gray-700 hover:text-[#4874c7]"
-                    }`}
+                    className={`relative px-3 py-2 text-sm font-medium rounded-md transition-all duration-300 overflow-hidden group ${isActive ? "text-[#4874c7]" : "text-gray-700 hover:text-[#4874c7]"
+                      }`}
                   >
                     <span className="relative z-10">{item.label}</span>
                     {isActive && (
@@ -94,9 +93,8 @@ const Navbar = () => {
       </div>
 
       <div
-        className={`xl:hidden bg-white/95 backdrop-blur-md shadow-2xl overflow-hidden transition-all duration-500 ease-in-out ${
-          isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
-        }`}
+        className={`xl:hidden bg-white/95 backdrop-blur-md shadow-2xl overflow-hidden transition-all duration-500 ease-in-out ${isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+          }`}
       >
         <div className="px-4 pt-4 pb-3 space-y-2">
           {navItems.map((item, index) => (
@@ -105,17 +103,18 @@ const Navbar = () => {
               to={item.to}
               onClick={() => setIsMobileMenuOpen(false)}
               className={({ isActive }) =>
-                `group block px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 transform hover:translate-x-1 ${
-                  isActive
-                    ? "text-[#4874c7] bg-gradient-to-r from-blue-50 to-indigo-50"
-                    : "text-gray-700 hover:text-[#4874c7] hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50"
+                `group block px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 transform hover:translate-x-1 ${isActive
+                  ? "text-[#4874c7] bg-gradient-to-r from-blue-50 to-indigo-50"
+                  : "text-gray-700 hover:text-[#4874c7] hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50"
                 }`
               }
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <div className="flex items-center justify-between">
                 <span>{item.label}</span>
-                <span className="text-[#4874c7] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                <span className="text-[#4874c7] opacity-0 group-hover:opacity-100 transition-opacity">
+                  →
+                </span>
               </div>
             </NavLink>
           ))}
@@ -128,13 +127,17 @@ const Navbar = () => {
                 variant="outline"
                 className="w-full h-11 border-2 border-[#4874c7] text-[#4874c7] hover:bg-blue-50 font-medium hover:scale-102 hover:shadow-md transition-all duration-200 active:scale-95"
               >
-                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>লগ ইন</Link>
+                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                  লগ ইন
+                </Link>
               </Button>
               <Button
                 asChild
                 className="w-full h-11 text-white bg-gradient-to-r from-[#4874c7] to-[#3a5da8] hover:from-[#3a5da8] hover:to-[#2d4987] font-medium shadow-lg hover:scale-102 hover:shadow-xl transition-all duration-200 active:scale-95"
               >
-                <Link to="/registration" onClick={() => setIsMobileMenuOpen(false)}>রেজিস্ট্রেশন করুন</Link>
+                <Link to="/registration" onClick={() => setIsMobileMenuOpen(false)}>
+                  রেজিস্ট্রেশন করুন
+                </Link>
               </Button>
             </div>
           </div>

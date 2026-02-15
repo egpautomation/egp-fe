@@ -14,7 +14,11 @@ const DashboardHeader = () => {
     <div className="md:sticky md:top-0 fixed top-0 left-0 right-0 md:relative py-0.5 border-b flex justify-between items-center pr-6 bg-white z-40">
       <div className="size-16 md:hidden bg-transparent -z-10"></div>
 
-      <h3 className="md:text-2xl font-semibold hidden md:block">E-GP Tender Automation</h3>
+      <div className="px-5">
+        <Link to="/" className="flex items-center">
+              <span className="text-2xl font-bold text-[#4874c7]">ই-টেন্ডার বিডি</span>
+            </Link>
+      </div>
 
       <div className="ml-auto flex items-center gap-3 min-h-16">
         <Link

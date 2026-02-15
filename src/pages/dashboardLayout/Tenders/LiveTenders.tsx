@@ -54,7 +54,7 @@ const LiveTenders = () => {
     pageLimit
   );
   const skeleton = new Array(pageLimit).fill(Math?.random());
-console.log(tenders)
+
   const downloadPdf = () => {
     const doc = new jsPDF("l", "mm", "a4");
 
@@ -235,7 +235,7 @@ console.log(tenders)
 
   return (
     <div>
-      <TenderStatsSection />
+      {/* <TenderStatsSection /> */}
       <div className="lg:grid max-lg:grid-cols-1 md:grid-cols-2 justify-between my-5 gap-3">
         <div className="hidden lg:block">
           <div className="flex items-center gap-2">

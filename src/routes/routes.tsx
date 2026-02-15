@@ -78,6 +78,8 @@ import PgTwoTowOtmGoodsDetails from "@/pages/dashboardLayout/pg22aOtmGoods/PgTwo
 import PgTwoTowOtmGoods from "@/pages/dashboardLayout/pg22aOtmGoods/pgTwoTowOtmGoods";
 import Profile from "@/pages/dashboardLayout/Profile";
 import SuccessTest from "@/pages/SuccessTest";
+import LiveTendersFromTenderIds from "@/pages/dashboardLayout/LiveTenders/LiveTendersFromTenderIds";
+import StlCalculationPage from "@/pages/homeLayout/StlCalculationPage";
 
 
 const router = createBrowserRouter([
@@ -202,6 +204,10 @@ const router = createBrowserRouter([
         path: "/test-success",
         element: <SuccessTest />,
       },
+      {
+        path: "/stl-calculation",
+        element: <StlCalculationPage />,
+      },
     ],
   },
   {
@@ -225,6 +231,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <AtAGlance />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "live-tenders-tenderIds",
+        element: (
+          <PrivateRoute>
+            <LiveTendersFromTenderIds />
           </PrivateRoute>
         ),
       },
@@ -289,6 +303,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <CreateBulpJobOrder />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "create-job-order-single",
+        element: (
+          <PrivateRoute>
+            <CreateJobOrder />
           </PrivateRoute>
         ),
       },
