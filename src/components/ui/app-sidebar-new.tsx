@@ -124,17 +124,24 @@ export function AppSidebarNew() {
     {
       label: "At a Glance",
       path: "/dashboard",
-      role: ["admin",  "user", "moderator", "user"],
+      role: ["admin", "user", "moderator", "user"],
       icon: BarChart3,
-      children: [{ label: "At a Glance", path: "/dashboard", role: ["admin",  "user", "moderator", "user"] }],
+      children: [
+        { label: "At a Glance", path: "/dashboard", role: ["admin", "user", "moderator", "user"] },
+      ],
     },
     {
       label: "Live Tender",
       path: "/dashboard/live-tenders-tenderIds",
-      role: ["admin",  "user", "moderator", "user"],
+      role: ["admin", "user", "moderator", "user"],
       icon: BarChart3,
-       children: [{ label: "Live Tender", path: "/dashboard/live-tenders-tenderIds", role: ["admin",  "user", "moderator", "user"] }]
-      
+      children: [
+        {
+          label: "Live Tender",
+          path: "/dashboard/live-tenders-tenderIds",
+          role: ["admin", "user", "moderator", "user"],
+        },
+      ],
     },
     {
       label: "LTM",
@@ -165,7 +172,6 @@ export function AppSidebarNew() {
           path: "/dashboard/tender-preparation",
           role: ["admin", "user_agent", "user", "moderator"],
         },
-        
       ],
     },
     {
@@ -523,14 +529,16 @@ export function AppSidebarNew() {
       </div>
       {/* empty space for desktop menu */}
       <div
-        className={`${isOpen ? "w-64" : "w-16"
-          } max-md:hidden transition-all duration-500 ease-in-out`}
+        className={`${
+          isOpen ? "w-64" : "w-16"
+        } max-md:hidden transition-all duration-500 ease-in-out`}
       ></div>
 
       {/* desktop menu */}
       <motion.div
-        className={`fixed left-0 top-0 h-full bg-white border-r z-50 transition-all duration-500 ease-in-out overflow-hidden ${isOpen ? "w-64" : "w-16 max-md:w-0"
-          }`}
+        className={`fixed left-0 top-0 h-full bg-white border-r z-50 transition-all duration-500 ease-in-out overflow-hidden ${
+          isOpen ? "w-64" : "w-16 max-md:w-0"
+        }`}
         onMouseEnter={() => window.innerWidth >= 768 && setIsOpen(true)}
         onMouseLeave={() => window.innerWidth >= 768 && setIsOpen(false)}
       >
@@ -538,24 +546,28 @@ export function AppSidebarNew() {
           {/* Logo Details */}
           <div className="h-15 flex items-center relative">
             <span className="text-black text-xl font-semibold text-nowrap">
-               {isOpen ? <div>
-                {/* search bar */}
-          <motion.div
-            className={`relative mt-4 px-2 ${isOpen ? "block" : "hidden"}`}
-            // initial={{ opacity: 0, y: -20 }}
-            // animate={{ opacity: 1, y: 0 }}
-            // transition={{ duration: 0.3, delay: 2 }}
-
-          >
-            <Input
-              placeholder="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <Search size={16} className="absolute top-2.5 right-2" />
-          </motion.div>
-              </div> : <div className="h-max w-max absolute top-5 right-1 p-3 rounded-full bg-gray-100">
-                <Search size={16} className="" /></div>}
+              {isOpen ? (
+                <div>
+                  {/* search bar */}
+                  <motion.div
+                    className={`relative mt-4 px-2 ${isOpen ? "block" : "hidden"}`}
+                    // initial={{ opacity: 0, y: -20 }}
+                    // animate={{ opacity: 1, y: 0 }}
+                    // transition={{ duration: 0.3, delay: 2 }}
+                  >
+                    <Input
+                      placeholder="Search"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <Search size={16} className="absolute top-2.5 right-2" />
+                  </motion.div>
+                </div>
+              ) : (
+                <div className="h-max w-max absolute top-5 right-1 p-3 rounded-full bg-gray-100">
+                  <Search size={16} className="" />
+                </div>
+              )}
             </span>
             <div
               onClick={() => setIsOpen(!isOpen)}
@@ -564,8 +576,6 @@ export function AppSidebarNew() {
               <X />
             </div>
           </div>
-
-          
 
           {/* Navigation List */}
           <ul className="flex flex-col mt-4  ">
@@ -579,8 +589,9 @@ export function AppSidebarNew() {
               >
                 <div className="w-full">
                   <motion.div
-                    className={`flex h-12 w-full rounded-xl items-center justify-between text-decoration-none ${location.pathname === "/" ? "" : " hover:bg-gray-100"
-                      }`}
+                    className={`flex h-12 w-full rounded-xl items-center justify-between text-decoration-none ${
+                      location.pathname === "/" ? "" : " hover:bg-gray-100"
+                    }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ duration: 0.2 }}
@@ -627,15 +638,13 @@ export function AppSidebarNew() {
                 const IconComponent = route.icon || null;
                 const isActive = location.pathname === route.path;
                 const hasAccess =
-                  user?.role === "admin" ||
-                  !route?.role ||
-                  route?.role.includes(user?.role);
+                  user?.role === "admin" || !route?.role || route?.role.includes(user?.role);
 
                 if (!hasAccess) return null;
 
                 // Search Logic
                 const labelMatches = route.label.toLowerCase().includes(searchQuery.toLowerCase());
-                const matchingChildren = route.children?.some(child =>
+                const matchingChildren = route.children?.some((child) =>
                   child.label.toLowerCase().includes(searchQuery.toLowerCase())
                 );
 
@@ -664,8 +673,9 @@ export function AppSidebarNew() {
                             setOpenIndex(openIndex === idx ? null : idx);
                           }
                         }}
-                        className={`flex h-12 w-full group transition-all duration-200 rounded-xl items-center justify-between text-decoration-none ${isActive ? "" : " hover:text-[#4874c7] hover:bg-blue-50"
-                          }`}
+                        className={`flex h-12 w-full group transition-all duration-200 rounded-xl items-center justify-between text-decoration-none ${
+                          isActive ? "" : " hover:text-[#4874c7] hover:bg-blue-50"
+                        }`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         transition={{ duration: 0.4 }}
@@ -714,18 +724,18 @@ export function AppSidebarNew() {
                           >
                             {route.children
                               ?.filter(
-                                (item) =>
-                                  item?.role.includes(user?.role) ||
-                                  user?.role === "admin"
+                                (item) => item?.role.includes(user?.role) || user?.role === "admin"
                               )
-                              .filter(item => {
+                              .filter((item) => {
                                 // Filter children: Show if search is empty, OR child matches, OR parent matches
                                 if (!isSearching) return true;
-                                return item.label.toLowerCase().includes(searchQuery.toLowerCase()) || labelMatches;
+                                return (
+                                  item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                  labelMatches
+                                );
                               })
                               .map((item, childIdx) => {
-                                const childIsActive =
-                                  location.pathname === item.path;
+                                const childIsActive = location.pathname === item.path;
                                 return (
                                   <motion.div
                                     key={childIdx}
@@ -738,10 +748,11 @@ export function AppSidebarNew() {
                                   >
                                     <Link
                                       to={item.path}
-                                      className={`flex h-10 w-full rounded-lg items-center px-4 transition-all duration-200 ${childIsActive
-                                        ? "bg-black text-white"
-                                        : "text-black hover:bg-gray-100"
-                                        }`}
+                                      className={`flex h-10 w-full rounded-lg items-center px-4 transition-all duration-200 ${
+                                        childIsActive
+                                          ? "bg-black text-white"
+                                          : "text-black hover:bg-gray-100"
+                                      }`}
                                     >
                                       {/* <div className="w-2 h-2 bg-current rounded-full opacity-60 mr-3"></div> */}
                                       <div className="text-sm min-w-fit text-nowrap flex items-center justify-center">
@@ -772,13 +783,15 @@ export function AppSidebarNew() {
               })}
             </div>
 
-
             {/* Job Order Cart */}
             <div className="">
               <Link to="/dashboard/jobOrder-cart" className="w-full">
                 <motion.div
-                  className={`flex h-10 w-full rounded-xl items-center justify-between text-decoration-none ${location.pathname === "/dashboard/jobOrder-cart" ? "bg-gray-200" : " hover:bg-gray-100"
-                    }`}
+                  className={`flex h-10 w-full rounded-xl items-center justify-between text-decoration-none ${
+                    location.pathname === "/dashboard/jobOrder-cart"
+                      ? "bg-gray-200"
+                      : " hover:bg-gray-100"
+                  }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   transition={{ duration: 0.2 }}
@@ -868,8 +881,6 @@ export function AppSidebarNew() {
           </ul>
         </div>
       </motion.div>
-
-
     </div>
   );
 }
