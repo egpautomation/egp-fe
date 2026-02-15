@@ -51,42 +51,67 @@ export default function WhyChooseUs() {
       values: {
         us: {
           status: "yes",
-          text: "প্রতি কাজের Location Information, Publication, Last Selling, Opening Date, All Types Financial Criteria (Estimated Cost, Tender Security, Turnover Amount, Liquid Assets, Tender Capacity",
+          text: "শুধু পত্রিকার কাটিং নয়, সাথে সকল ফাইনান্সিয়াল ক্রাইটেরিয়া",
         },
-        others: { status: "partial", text: "শুধু নোটিস বা সীমিত" },
+        others: { status: "partial", text: "শুধুমাত্র পত্রিকার নিউজ কাটিং" },
       },
     },
     {
-      feature: "অটোমেশন (ফর্ম ফিল-আপ, BOQ, ক্যাপাসিটি)",
-      values: { us: { status: "yes", text: "আছে" }, others: { status: "partial", text: "নেই বা ম্যানুয়াল" } },
+      feature: "এলটিএম ও ওটিএম টেন্ডার ফিলাপ",
+      values: { us: { status: "yes", text: "মোবাইল অ্যাপস, ল্যাপটপ, অ্যান্ড্রয়েড ও আইওএস-এ অটোমেটিক টেন্ডার ড্রপিং" },
+       others: { status: "partial", text: "ম্যানুয়াল ফর্ম ওপেন করে ফিলাপ, সময়সাপেক্ষ" } },
+    },
+    {
+      feature: "লিমিটেশন",
+      values: { us: { status: "yes", text: "অটোমেশন সফটওয়্যারে ১০০+ টেন্ডার একসাথে কমান্ড, বিভিন্ন টেন্ডার আইডি ও কোম্পানির নাম একসাথে" }, others: { status: "partial", text: "একবারে শুধু একটি টেন্ডার নিয়ে কাজ" } },
     },
     {
       feature: "অটো ডকুমেন্ট জেনারেশন",
-      values: { us: { status: "yes", text: "আছে" }, others: { status: "no", text: "নেই" } },
+      values: { us: { status: "yes", text: "অটোমেটিকভাবে টেন্ডার ডকুমেন্ট তৈরি ও ডাউনলোড" }, others: { status: "no", text: "এই সুবিধা নেই" } },
     },
     {
-      feature: "এন্ড-টু-এন্ড ওয়ার্কফ্লো",
-      values: { us: { status: "yes", text: "আছে" }, others: { status: "partial", text: "নেই বা আংশিক" } },
+      feature: "Tender management",
+      values: { us: { status: "yes", text: "আসন্ন টেন্ডার লিস্ট, টু-ডু লিস্ট, সিকিউরিটি ট্র্যাকিং" }, others: { status: "no", text: "নেই" } },
     },
     {
-      feature: "রিয়েলটাইম নোটিফিকেশন",
-      values: { us: { status: "yes", text: "SMS + WhatsApp + Email" }, others: { status: "partial", text: "SMS/Email" } },
+      feature: "SLT ক্যালকুলেশন",
+      values: { us: { status: "yes", text: "পিডিএফ এক্সট্র্যাক্ট করে অটোমেটিক ক্যালকুলেশন" }, others: { status: "partial", text: "ম্যানুয়ালি রেট বসাতে হয়" } },
     },
     {
-      feature: "লোকাল থেকে ন্যাশনাল কভারেজ",
-      values: { us: { status: "yes", text: "লোকাল + ন্যাশনাল" }, others: { status: "partial", text: "সীমিত" } },
+      feature: "টার্নওভার ও ক্যাপাসিটি ক্যালকুলেশন",
+      values: { us: { status: "yes", text: "অটোমেটিক জেনারেট ও ডাউনলোড" }, others: { status: "no", text: "নেই" } },
     },
     {
-      feature: "ডিজিটাল ট্র্যাকিং/ড্যাশবোর্ড",
-      values: { us: { status: "yes", text: "উন্নত" }, others: { status: "partial", text: "নেই বা বেসিক" } },
+      feature: "টেন্ডার রেজিস্ট্রেশন সাপোর্ট",
+      values: { us: { status: "yes", text: "সকল ডিপার্টমেন্টে সাপোর্ট" }, others: { status: "yes", text: "প্রতিযোগীরাও করে" } },
     },
     {
-      feature: "AI বাংলা FAQ বট",
-      values: { us: { status: "yes", text: "আছে" }, others: { status: "no", text: "নেই" } },
+      feature: "কোম্পানি প্রোফাইল তৈরি",
+      values: { us: { status: "yes", text: "প্রত্যেক বিজনেসের প্রোফাইল তৈরি" }, others: { status: "yes", text: "প্রতিযোগীরাও দেয়" } },
     },
     {
-      feature: "মাসিক ফি",
-      values: { us: { status: "yes", text: "৩০০–৫০০ টাকা" }, others: { status: "partial", text: "উচ্চ ফি" } },
+      feature: "টেন্ডার সিকিউরিটি হিসাব",
+      values: { us: { status: "yes", text: "ওয়েবসাইটে ট্র্যাকিং ও সামারি" }, others: { status: "no", text: "অন্য কোথাও নেই" } },
+    },
+    {
+      feature: "ব্যাংকিং রিমাইন্ডার",
+      values: { us: { status: "yes", text: "টেন্ডার ড্রপিংয়ের শেষ সময়ের ২ দিন আগে রিমাইন্ডার" }, others: { status: "no", text: "অন্য কোথাও নেই" } },
+    },
+    {
+      feature: "লটারি ফলাফল আপডেট",
+      values: { us: { status: "yes", text: "টেন্ডার লটারি ফলাফল আপডেট" }, others: { status: "no", text: "নেই" } },
+    },
+    {
+      feature: "ইজিপি অ্যাকাউন্ট তৈরি",
+      values: { us: { status: "yes", text: "সহায়তা করে" }, others: { status: "yes", text: "প্রতিযোগীরাও করে" } },
+    },
+    {
+      feature: "ইজিপি ট্রেনিং",
+      values: { us: { status: "yes", text: "ট্রেনিং প্রদান করে" }, others: { status: "yes", text: "প্রতিযোগীরাও করে" } },
+    },
+    {
+      feature: "নতুন ট্রেড, টিন, ভ্যাট সার্ভিস",
+      values: { us: { status: "yes", text: "সার্ভিস প্রদান করে" }, others: { status: "yes", text: "প্রতিযোগীরাও করে" } },
     },
   ];
 

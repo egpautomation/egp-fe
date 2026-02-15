@@ -165,21 +165,7 @@ export function AppSidebarNew() {
           path: "/dashboard/tender-preparation",
           role: ["admin", "user_agent", "user", "moderator"],
         },
-        // {
-        //   label: "Add Contract Info",
-        //   path: "/public/tenders-preparation/create-contract-info",
-        //   role: ["admin", "user_agent", "user", "moderator"],
-        // },
-        // {
-        //   label: "Add Company Profile",
-        //   path: "/public/tenders-preparation/create-contract-information",
-        //   role: ["admin", "user_agent", "user", "moderator"],
-        // },
-        // {
-        //   label: "Add BOQ",
-        //   path: "/public/tenders-preparation/create-BOQ",
-        //   role: ["admin", "user_agent", "user", "moderator"],
-        // },
+        
       ],
     },
     {
@@ -552,22 +538,13 @@ export function AppSidebarNew() {
           {/* Logo Details */}
           <div className="h-15 flex items-center relative">
             <span className="text-black text-xl font-semibold text-nowrap">
-              E-GP {isOpen ? "Automation" : ""}
-            </span>
-            <div
-              onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden absolute top-3.5 left-48 z-50 bg-gray-100 p-2 rounded-full"
-            >
-              <X />
-            </div>
-          </div>
-
-          {/* search bar */}
+               {isOpen ? <div>
+                {/* search bar */}
           <motion.div
             className={`relative mt-4 px-2 ${isOpen ? "block" : "hidden"}`}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 2 }}
+            // initial={{ opacity: 0, y: -20 }}
+            // animate={{ opacity: 1, y: 0 }}
+            // transition={{ duration: 0.3, delay: 2 }}
 
           >
             <Input
@@ -577,6 +554,18 @@ export function AppSidebarNew() {
             />
             <Search size={16} className="absolute top-2.5 right-2" />
           </motion.div>
+              </div> : <div className="h-max w-max absolute top-5 right-1 p-3 rounded-full bg-gray-100">
+                <Search size={16} className="" /></div>}
+            </span>
+            <div
+              onClick={() => setIsOpen(!isOpen)}
+              className="md:hidden absolute top-3.5 left-48 z-50 bg-gray-100 p-2 rounded-full"
+            >
+              <X />
+            </div>
+          </div>
+
+          
 
           {/* Navigation List */}
           <ul className="flex flex-col mt-4  ">
@@ -668,26 +657,26 @@ export function AppSidebarNew() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: idx * 0.1 }}
                   >
-                    <div className="w-full">
+                    <div className="w-full ">
                       <motion.button
                         onClick={() => {
                           if (route.children) {
                             setOpenIndex(openIndex === idx ? null : idx);
                           }
                         }}
-                        className={`flex h-12 w-full rounded-xl items-center justify-between text-decoration-none ${isActive ? "" : " hover:bg-gray-100"
+                        className={`flex h-12 w-full group transition-all duration-200 rounded-xl items-center justify-between text-decoration-none ${isActive ? "" : " hover:text-[#4874c7] hover:bg-blue-50"
                           }`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 0.4 }}
                       >
                         <div className="flex gap-2 items-center">
                           <motion.div
-                            className="bg-gray-100 rounded-full p-2"
+                            className="bg-gray-100 group-hover:bg-blue-100 rounded-full p-2"
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             transition={{ duration: 0.2 }}
                           >
-                            <IconComponent className="text-black text-lg h-6 w-6 flex items-center justify-center rounded-xl" />
+                            <IconComponent className="text-black  group-hover:text-[#4874c7] text-lg h-6 w-6 flex items-center justify-center rounded-xl" />
                           </motion.div>
                           <AnimatePresence>
                             {isOpen && (
@@ -696,7 +685,7 @@ export function AppSidebarNew() {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -10 }}
                                 transition={{ duration: 0.3 }}
-                                className="text-black text-sm font-normal whitespace-nowrap"
+                                className="text-black text-sm group-hover:text-[#4874c7] font-normal whitespace-nowrap"
                               >
                                 {route.label}
                               </motion.span>
@@ -785,7 +774,7 @@ export function AppSidebarNew() {
 
 
             {/* Job Order Cart */}
-            <div className="w-full md:hidden my-2">
+            <div className="">
               <Link to="/dashboard/jobOrder-cart" className="w-full">
                 <motion.div
                   className={`flex h-10 w-full rounded-xl items-center justify-between text-decoration-none ${location.pathname === "/dashboard/jobOrder-cart" ? "bg-gray-200" : " hover:bg-gray-100"
