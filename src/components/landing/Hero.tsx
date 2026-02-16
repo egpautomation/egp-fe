@@ -52,7 +52,7 @@ export default function Hero() {
                 আপনার টেন্ডার ব্যবস্থাপনা এখন আরও সহজ, দ্রুত এবং কার্যকর
               </p>
             </div>
-            <LandingLoginBox />
+            <LandingLoginBox preview={false} />
           </div>
           <div className="lg:col-span-2 h-full flex items-start 2xl:items-end">
             <div className="rounded-2xl overflow-hidden shadow-2xl border w-full">

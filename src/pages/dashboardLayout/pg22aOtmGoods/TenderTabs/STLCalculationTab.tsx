@@ -363,7 +363,7 @@ export const STLCalculationTab = () => {
                                 <div className="grid grid-cols-12 gap-4 p-3 font-semibold text-gray-700 text-sm">
                                     <div className="col-span-3">Name of Tenderer</div>
                                     <div className="col-span-2">Quoted Price (Xi)</div>
-                                    <div className="col-span-1 text-center">% Above/Below</div>
+                                    <div className="col-span-1 text-center">Above/Below %</div>
                                     <div className="col-span-2 text-center">Primary Responsiveness</div>
                                     <div className="col-span-2 text-center">Financial Responsiveness</div>
                                     <div className="col-span-1 text-center">Rank</div>
@@ -458,34 +458,86 @@ export const STLCalculationTab = () => {
                             {'error' in results ? (
                                 <p className="text-red-600">{results.error}</p>
                             ) : (
-                                <div className="space-y-3">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="bg-white p-4 rounded border">
-                                            <p className="text-sm text-gray-600 mb-1">Average Price (Xi):</p>
-                                            <p className="text-lg font-semibold text-gray-800">{results.xi}</p>
+                                <div className="max-w-4xl mx-auto space-y-4">
+                                    {/* Input Parameters Table */}
+                                    <div className="bg-white rounded-lg border border-gray-300">
+                                        <div className="bg-gray-100 px-4 py-3 border-b border-gray-200">
+                                            <h4 className="text-sm font-semibold text-gray-700">Input Parameters</h4>
                                         </div>
-                                        <div className="bg-white p-4 rounded border">
-                                            <p className="text-sm text-gray-600 mb-1">XNPPI:</p>
-                                            <p className="text-lg font-semibold text-gray-800">{results.x_nppi}</p>
-                                        </div>
-                                        <div className="bg-white p-4 rounded border">
-                                            <p className="text-sm text-gray-600 mb-1">Weighted Average (WA):</p>
-                                            <p className="text-lg font-semibold text-gray-800">{results.wa}</p>
-                                        </div>
-                                        <div className="bg-white p-4 rounded border">
-                                            <p className="text-sm text-gray-600 mb-1">Standard Deviation (SD):</p>
-                                            <p className="text-lg font-semibold text-gray-800">{results.sd}</p>
+                                        <div className="p-4">
+                                            <table className="w-full">
+                                                <thead>
+                                                    <tr className="border-b border-gray-200">
+                                                        <th className="text-left py-2 px-4 text-sm font-semibold text-gray-700">Parameter</th>
+                                                        <th className="text-left py-2 px-4 text-sm font-semibold text-gray-700">Value</th>
+                                                        <th className="text-left py-2 px-4 text-sm font-semibold text-gray-700">Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr className="border-b border-gray-100">
+                                                        <td className="py-3 px-4 font-medium text-gray-800">XOCE</td>
+                                                        <td className="py-3 px-4">
+                                                            <span className="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded font-medium">
+                                                                {xoce}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-3 px-4 text-sm text-gray-600">Official Approved Cost Estimate</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className="py-3 px-4 font-medium text-gray-800">Price Index</td>
+                                                        <td className="py-3 px-4">
+                                                            <span className="inline-block bg-gray-100 text-gray-800 px-3 py-1 rounded font-medium">
+                                                                {priceIndex}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-3 px-4 text-sm text-gray-600">Market Price Adjustment Factor</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
-                                    <div className="bg-blue-50 p-4 rounded border border-blue-200">
-                                        <p className="text-sm text-gray-600 mb-1">Significantly Low-Priced Tender (SLT):</p>
-                                        <p className="text-2xl font-bold text-blue-700">{results.slt}</p>
+
+                                    {/* WA, SD, SLT in Single Row */}
+                                    <div className="bg-white rounded-lg border border-gray-300">
+                                        <div className="bg-gray-100 px-4 py-3 border-b border-gray-200">
+                                            <h4 className="text-sm font-semibold text-gray-700">Calculation Results</h4>
+                                        </div>
+                                        <div className="p-4">
+                                            <div className="grid grid-cols-3 gap-4">
+                                                <div className="text-center p-4 bg-gray-50 rounded border border-gray-200">
+                                                    <div className="text-xs text-gray-500 mb-2 font-medium">Weighted Average</div>
+                                                    <div className="text-xl font-semibold text-gray-800">{results.wa}</div>
+                                                    <div className="text-xs text-gray-400 mt-1">WA</div>
+                                                </div>
+                                                <div className="text-center p-4 bg-gray-50 rounded border border-gray-200">
+                                                    <div className="text-xs text-gray-500 mb-2 font-medium">Standard Deviation</div>
+                                                    <div className="text-xl font-semibold text-gray-800">{results.sd}</div>
+                                                    <div className="text-xs text-gray-400 mt-1">SD</div>
+                                                </div>
+                                                <div className="text-center p-4 bg-gray-50 rounded border border-gray-200">
+                                                    <div className="text-xs text-gray-500 mb-2 font-medium">Significantly Low Price</div>
+                                                    <div className="text-xl font-semibold text-gray-800">{results.slt}</div>
+                                                    <div className="text-xs text-gray-400 mt-1">SLT</div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="bg-green-50 p-4 rounded border border-green-200">
-                                        <p className="text-sm text-gray-600 mb-1">Winner:</p>
-                                        <p className="text-xl font-bold text-green-700">
-                                            {results.winner} {results.winnerPrice !== 'None' && `with price ${results.winnerPrice}`}
-                                        </p>
+
+                                    {/* Winner Section */}
+                                    <div className="bg-white rounded-lg border border-gray-300">
+                                        <div className="bg-gray-100 px-4 py-3 border-b border-gray-200">
+                                            <h4 className="text-sm font-semibold text-gray-700">Winning Bidder</h4>
+                                        </div>
+                                        <div className="p-4 text-center">
+                                            <p className="text-lg font-semibold text-gray-800">
+                                                {results.winner}
+                                            </p>
+                                            {results.winnerPrice !== 'None' && (
+                                                <p className="text-base text-gray-600 mt-2">
+                                                    Winning Price: <span className="font-medium">{results.winnerPrice}</span>
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             )}
