@@ -141,6 +141,16 @@ export function AppSidebarNew() {
           path: "/dashboard/live-tenders-tenderIds",
           role: ["admin", "user", "moderator", "user"],
         },
+        {
+          label: "Our Live Tender",
+          path: "/dashboard/live-tenders",
+          role: ["user", "admin", "guest", "moderator", "user_agent"],
+        },
+        {
+          label: "LTM Tenders",
+          path: "/dashboard/tenders/ltm-tenders",
+          role: ["user", "admin", "guest", "moderator", "user_agent"],
+        },
       ],
     },
     {
@@ -294,16 +304,6 @@ export function AppSidebarNew() {
           label: "Support (App Ticket)",
           path: "/dashboard/services",
           role: "user",
-        },
-        {
-          label: "All Live Tender",
-          path: "/dashboard/live-tenders",
-          role: ["user", "admin", "guest", "moderator", "user_agent"],
-        },
-        {
-          label: "LTM Tenders",
-          path: "/dashboard/tenders/ltm-tenders",
-          role: ["user", "admin", "guest", "moderator", "user_agent"],
         },
         {
           label: "All Departments",
