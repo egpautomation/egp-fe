@@ -16,8 +16,8 @@ const RecentOrder = () => {
   
  
   return (
-    <div className="shadow-xl overflow-x---scroll border border-gray-50">
-      <div className="p-3 md:py-3 md:px-5 flex justify-between gap-5 md:gap-16 max-md:flex-col">
+    <div className="shadow-xl overflow-x-scroll ">
+      <div className="p-3 md:py-3 md:px-5 flex justify-between gap-5  max-md:flex-col">
         <div>
           <h1 className="text-2xl font-semibold text-gray-600 text-nowrap">
             Recent Order
@@ -47,8 +47,8 @@ const RecentOrder = () => {
         </div>
       </div>
 
-      <div>
-        <table className="w-full mt-3 max-lg:hidden">
+      <div className="overflow-auto">
+        <table className="w-full mt-3 overflow-x-auto">
           <thead className="p-3 md:py-3 md:px-5 bg-blue-100">
             <tr>
               <th className="text-nowrap p-3 md:py-3 md:px-5 text-start text-gray-600">
@@ -103,14 +103,14 @@ const RecentOrder = () => {
           </tbody>
         </table>
       </div>
-      <MobileTableLayout orders={orders} />
+      {/* <MobileTableLayout orders={orders} /> */}
     </div>
   );
 };
 
 
 const MobileTableLayout = ({ orders }: { orders: any }) => {
-  console.log(orders);
+  
   
   // Animation variants
   const containerVariants = {
@@ -159,7 +159,7 @@ const MobileTableLayout = ({ orders }: { orders: any }) => {
     <motion.div 
       className="flex flex-col gap-6 my-8 lg:hidden"
       variants={containerVariants}
-      initial="hidden"
+
       animate="visible"
     >
       {orders?.map((item: any, idx: number) => (
