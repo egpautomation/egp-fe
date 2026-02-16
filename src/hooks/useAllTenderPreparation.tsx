@@ -23,6 +23,7 @@ const useAllTenderPreparation = (searchTerm, page, limit, userEmail) => {
         });
 
         const data = response.data;
+        console.log(data?.data)
         setData(data?.data);
         setCount(data?.count);
       } catch (error) {
