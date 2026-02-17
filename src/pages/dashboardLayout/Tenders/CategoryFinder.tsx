@@ -204,12 +204,12 @@ export default function TenderCategoryFinder() {
 
    
 
-    const url = `${config.apiBaseUrlAlt}/tenders/tenderId/${id}`;
+    const url = `${config.apiBaseUrl}/tenders/tenderId/${id}`;
     updateData(url, payload, null, handleRedirect);
   };
 
   const handleCategoryUpdate = () => {
-    const url = `${config.apiBaseUrlAlt}/tender-categories/create-category`;
+    const url = `${config.apiBaseUrl}/tender-categories/create-category`;
     createData(url, suggestionsData);
     console.log("New Category Suggestions Data:", suggestionsData);
   };

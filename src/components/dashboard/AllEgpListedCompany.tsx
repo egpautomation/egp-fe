@@ -86,7 +86,7 @@ const AllEgpListedCompany = () => {
                     </Link>
                     <DeleteDataModal
                       setReload={setReload}
-                      url={`${config.apiBaseUrlAlt}/egp-listed-company/${company?._id}`}
+                      url={`${config.apiBaseUrl}/egp-listed-company/${company?._id}`}
                     />
                   </td>
                 </tr>
@@ -252,7 +252,7 @@ const MobileTableLayout = ({
                 </Link>
                 <DeleteDataModal
                   setReload={setReload}
-                  url={`${config.apiBaseUrlAlt}/companyMigration/${item?._id}`}
+                  url={`${config.apiBaseUrl}/companyMigration/${item?._id}`}
                 />
               </div>
             </motion.div>

@@ -31,7 +31,7 @@ export default function CompnayMigrationRow({ item, idx, setReload }) {
                 </Link>
                 <DeleteDataModal
                     setReload={setReload}
-                    url={`${config.apiBaseUrlAlt}/companyMigration/${item?._id}`}
+                    url={`${config.apiBaseUrl}/companyMigration/${item?._id}`}
                 />
             </td>
         </tr>

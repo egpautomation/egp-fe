@@ -36,7 +36,7 @@ const UpdateTenderInformation = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `${config.apiBaseUrlAlt}/tenders/tenderId/${tenderId}`;
+    const url = `${config.apiBaseUrl}/tenders/tenderId/${tenderId}`;
     await updateData(url, formData, null, resetForm);
   };
 

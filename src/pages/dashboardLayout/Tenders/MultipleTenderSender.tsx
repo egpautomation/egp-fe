@@ -46,7 +46,7 @@ const MultipleTenderSender = ({ setReload }) => {
     }
   };
   const handleSubmit = () => {
-    const url = `${config.apiBaseUrlAlt}/tenders/create-multiple-tender`;
+    const url = `${config.apiBaseUrl}/tenders/create-multiple-tender`;
     createData(url, data, setReload, resetForm);
   };
 

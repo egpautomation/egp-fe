@@ -264,7 +264,7 @@ const MobileTableLayout = ({
                 </Link>
                 <DeleteDataModal
                   setReload={setReload}
-                  url={`${config.apiBaseUrlAlt}/companyMigration/${item?._id}`}
+                  url={`${config.apiBaseUrl}/companyMigration/${item?._id}`}
                 />
               </div>
             </motion.div>

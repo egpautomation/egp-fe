@@ -75,7 +75,7 @@ const UserAllAccounts = () => {
                       </Link>{" "}
                       <DeleteDataModal
                         setReload={setReload}
-                        url={`${config.apiBaseUrlAlt}/accounts/${item?._id}`}
+                        url={`${config.apiBaseUrl}/accounts/${item?._id}`}
                       />
                     </td>
                   </tr>

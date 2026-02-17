@@ -72,7 +72,7 @@ const JobOrderCart = () => {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(
-        `${config.apiBaseUrlAlt}/jobOrder-cart/${id}`,
+        `${config.apiBaseUrl}/jobOrder-cart/${id}`,
         { withCredentials: true }
       );
     } catch (error) {

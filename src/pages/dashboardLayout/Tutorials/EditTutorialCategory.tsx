@@ -26,7 +26,7 @@ const EditTutorialCategory = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updateUrl = `${config.apiBaseUrlAlt}/tutorials-categories/${id}`;
+    const updateUrl = `${config.apiBaseUrl}/tutorials-categories/${id}`;
     await updateData(updateUrl, newFormData, setReload);
   };
 

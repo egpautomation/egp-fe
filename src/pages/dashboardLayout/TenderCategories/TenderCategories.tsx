@@ -38,7 +38,7 @@ const TenderCategories = () => {
 
     const handleDelete = async (id) => {
         const toastId = toast.loading("Loading...");
-        const url = `${config.apiBaseUrlAlt}/tender-categories/delete-category/${id}`;
+        const url = `${config.apiBaseUrl}/tender-categories/delete-category/${id}`;
         try {
 
             const response = await axios.delete(url, { withCredentials: false });

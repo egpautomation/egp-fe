@@ -87,7 +87,7 @@ const PromoCodes = () => {
                       </Link>
                       <DeleteDataModal
                         setReload={setReload}
-                        url={`${config.apiBaseUrlAlt}/companyMigration/${item?._id}`}
+                        url={`${config.apiBaseUrl}/companyMigration/${item?._id}`}
                       />
                     </td>
                   </tr>

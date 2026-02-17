@@ -16,7 +16,7 @@ export const config = {
   /** Main API base URL (auth, most CRUD) */
   apiBaseUrl: getEnv('VITE_API_BASE_URL'),
   /** Alternate API (some endpoints on Vercel) */
-  apiBaseUrlAlt: getEnv('VITE_API_BASE_URL_ALT'),
+  apiBaseUrlAlt: getEnv('VITE_API_BASE_URL'), // Using main API for alt as well per user request
   /** Exin / AllTender API */
   exinApiBaseUrl: getEnv('VITE_EXIN_API_BASE_URL'),
   /** TTI server */

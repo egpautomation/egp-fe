@@ -94,7 +94,7 @@ const Departments = () => {
                         </Link>
                         <DeleteDataModal
                           setReload={setReload}
-                          url={`${config.apiBaseUrlAlt}/departments/${item?._id}`}
+                          url={`${config.apiBaseUrl}/departments/${item?._id}`}
                         />
                       </td>
                     </tr>

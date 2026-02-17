@@ -218,7 +218,7 @@ const TenderExtractor = ({ data, setReload }) => {
       selectedTenderCategory: categoryItem ? categoryItem.Value : "Not found",
     };
 
-    const url = `${config.apiBaseUrlAlt}/tenders/tenderId/${data?.tenderId}`;
+    const url = `${config.apiBaseUrl}/tenders/tenderId/${data?.tenderId}`;
     await updateData(url, simplified, setReload);
 
     // const blob = new Blob([JSON.stringify(simplified, null, 2)], {

@@ -10,7 +10,7 @@ import { Link, useParams } from "react-router-dom";
 
 const ViewEgpListedCompany = () => {
   const { id } = useParams();
-  const url = `${config.apiBaseUrlAlt}/egp-listed-company/${id}`;
+  const url = `${config.apiBaseUrl}/egp-listed-company/${id}`;
   const { data: formData } = useSingleData(url);
   return (
     <div className="min-h-lvh py-5 pb-10">

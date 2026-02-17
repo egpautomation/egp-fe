@@ -83,7 +83,7 @@ const TutorialCategories = () => {
                         </Link>
                         <DeleteDataModal
                           setReload={setReload}
-                          url={`${config.apiBaseUrlAlt}/tutorials-categories/${item?._id}`}
+                          url={`${config.apiBaseUrl}/tutorials-categories/${item?._id}`}
                         />
                       </td>
                     </tr>

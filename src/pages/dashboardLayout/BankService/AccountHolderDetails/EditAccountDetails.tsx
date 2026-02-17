@@ -27,7 +27,7 @@ const UpdateAccountHolderInformation = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updateUrl = `${config.apiBaseUrlAlt}/accounts/${id}`;
+    const updateUrl = `${config.apiBaseUrl}/accounts/${id}`;
     await updateData(updateUrl, newFormData);
   };
 

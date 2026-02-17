@@ -161,7 +161,7 @@ const UsersCompanyMigrations = () => {
                       </Link>
                       <DeleteDataModal
                         setReload={setReload}
-                        url={`${config.apiBaseUrlAlt}/companyMigration/${item?._id}`}
+                        url={`${config.apiBaseUrl}/companyMigration/${item?._id}`}
                       />
                     </td>
                   </tr>
@@ -352,7 +352,7 @@ const MobileTableLayout = ({
                 </Link>
                 <DeleteDataModal
                   setReload={setReload}
-                  url={`${config.apiBaseUrlAlt}/companyMigration/${item?._id}`}
+                  url={`${config.apiBaseUrl}/companyMigration/${item?._id}`}
                 />
               </div>
             </motion.div>

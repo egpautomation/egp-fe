@@ -26,7 +26,7 @@ const EditDepartmentInformation = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updateUrl = `${config.apiBaseUrlAlt}/departments/${id}`;
+    const updateUrl = `${config.apiBaseUrl}/departments/${id}`;
     await updateData(updateUrl, newFormData);
   };
 

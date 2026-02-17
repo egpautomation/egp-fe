@@ -113,7 +113,7 @@ const UpdateTenderDataEntry = () => {
       const data = await response.json();
  
       if ((data?.status == "success") && (data?.code === 200)) {
-        const url = `${config.apiBaseUrlAlt}/tender-dataEntry/${tenderData?.tender_id}`;
+        const url = `${config.apiBaseUrl}/tender-dataEntry/${tenderData?.tender_id}`;
         const response = await axios.delete(url, { withCredentials: false });
         if (response.status === 200) {
           toast.dismiss(toastId);

@@ -31,7 +31,7 @@ const JobOrder = () => {
   }, [statusFilter]);
 
   const handleStatusChange = (value, data) => {
-    const url = `${config.apiBaseUrlAlt}/jobOrder/update-status`;
+    const url = `${config.apiBaseUrl}/jobOrder/update-status`;
     const updatedData = {
       orderId: data?.orderId,
       jobId: data?.jobId,

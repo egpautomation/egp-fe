@@ -39,7 +39,7 @@ const UpdateJsonTender = () => {
     }
   };
   const handleSubmit = () => {
-    const url = `${config.apiBaseUrlAlt}/tenders/tenderId/${data?.tenderId}`;
+    const url = `${config.apiBaseUrl}/tenders/tenderId/${data?.tenderId}`;
     updateData(url, data, null, resetForm);
   };
 
