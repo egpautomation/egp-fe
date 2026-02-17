@@ -80,6 +80,7 @@ import Profile from "@/pages/dashboardLayout/Profile";
 import SuccessTest from "@/pages/SuccessTest";
 import LiveTendersFromTenderIds from "@/pages/dashboardLayout/LiveTenders/LiveTendersFromTenderIds";
 import StlCalculationPage from "@/pages/homeLayout/StlCalculationPage";
+import PrivacyPolicy from "@/pages/homeLayout/PrivacyAndPolicy";
 
 
 const router = createBrowserRouter([
@@ -126,6 +127,10 @@ const router = createBrowserRouter([
       {
         path: "/blogs",
         element: <Blogs />,
+      },
+      {
+        path: "/privacy-policy",
+        element: <PrivacyPolicy />,
       },
       {
         path: "/stl-calculation",
