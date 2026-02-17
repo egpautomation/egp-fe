@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import XLSX from 'xlsx-js-style';
 
 interface DownloadsTabProps {
     ongoingContracts: any[];
@@ -229,8 +230,8 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
         }
     };
 
-    // Download Tender List as CSV
-    const handleDownloadTenderListCSV = () => {
+    // Download Tender List as Excel (Styled)
+    const handleDownloadTenderListExcel = () => {
         try {
             // Get years from saved turnover data
             const validYears = turnoverData.map(item => item.period);
@@ -247,7 +248,10 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                 return (a.tenderId || '').localeCompare(b.tenderId || '');
             });
 
-            // Create CSV headers
+            // 1. Create a new workbook
+            const wb = XLSX.utils.book_new();
+
+            // 2. Define headers and metadata
             const headers = [
                 'Financial Year',
                 'S. No.',
@@ -260,54 +264,72 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                 'Status'
             ];
 
-            // Create CSV rows
-            const rows = sortedContracts.map((contract, index) => [
+            // 3. Prepare data rows
+            const dataRows = sortedContracts.map((contract, index) => [
                 contract.financialYear || 'N/A',
                 index + 1,
                 contract.tenderId || 'N/A',
                 contract.packageNo || 'N/A',
                 contract.procuringEntityName || 'N/A',
-                `"${(contract.descriptionOfWorks || 'N/A').replace(/"/g, '""')}"`, // Escape quotes
+                contract.descriptionOfWorks || 'N/A',
                 contract.jvShare || 'N/A',
-                parseFloat(contract.actualPaymentJvShare || 0).toFixed(2),
+                parseFloat(contract.actualPaymentJvShare || 0), // Number for Excel
                 contract.Status_Complite_ongoing || 'N/A'
             ]);
 
-            // Create metadata header rows
-            const metadataRows = [
-                ['Tender List & Summary Report'],
-                [''],
-                ['Company:', companyName || 'N/A'],
-                ['Email:', egpEmail || 'N/A'],
-                ['Tender ID:', String(tenderId || 'N/A')],
-                [''],
-                [''] // Empty row before table headers
+            // 4. Construct the worksheet data array (Metadata + Headers + Data)
+            const wsData = [
+                [{ v: 'Tender List & Summary Report', s: { font: { bold: true, sz: 16, color: { rgb: "333333" } } } }],
+                [], // Empty row
+                [{ v: 'Company:', s: { font: { bold: true } } }, companyName || 'N/A'],
+                [{ v: 'Email:', s: { font: { bold: true } } }, egpEmail || 'N/A'],
+                [{ v: 'Tender ID:', s: { font: { bold: true } } }, String(tenderId || 'N/A')],
+                [], // Empty row
+                headers.map(h => ({ v: h, s: { font: { bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "4F81BD" } }, alignment: { horizontal: "center" } } })), // Styled Header Row
+                ...dataRows.map((row, rowIndex) => row.map((cell, cellIndex) => ({
+                    v: cell,
+                    s: {
+                        alignment: { wrapText: true, vertical: "top" },
+                        border: {
+                            top: { style: "thin", color: { rgb: "CCCCCC" } },
+                            bottom: { style: "thin", color: { rgb: "CCCCCC" } },
+                            left: { style: "thin", color: { rgb: "CCCCCC" } },
+                            right: { style: "thin", color: { rgb: "CCCCCC" } }
+                        },
+                        fill: rowIndex % 2 === 0 ? { fgColor: { rgb: "F9FAFB" } } : undefined // Alternating row color
+                    }
+                })))
             ];
 
-            // Combine metadata, headers and data rows
-            const csvContent = [
-                ...metadataRows.map(row => row.join(',')),
-                headers.join(','),
-                ...rows.map(row => row.join(','))
-            ].join('\n');
+            // 5. Create worksheet
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-            // Create blob and download
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
+            // 6. Set column widths
+            ws['!cols'] = [
+                { wch: 15 }, // Financial Year
+                { wch: 8 },  // S. No.
+                { wch: 20 }, // Tender ID
+                { wch: 20 }, // Package No
+                { wch: 30 }, // Procuring Entity
+                { wch: 50 }, // Description (Wide)
+                { wch: 12 }, // JV Share
+                { wch: 20 }, // Payment Amount
+                { wch: 15 }  // Status
+            ];
 
-            link.setAttribute('href', url);
-            link.setAttribute('download', `${companyName}_TenderListSummary_${tenderId}.csv`);
-            link.style.visibility = 'hidden';
+            // Merge title row
+            if (!ws['!merges']) ws['!merges'] = [];
+            ws['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } });
 
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // 7. Add worksheet to workbook
+            XLSX.utils.book_append_sheet(wb, ws, "Tender List");
 
-            URL.revokeObjectURL(url);
+            // 8. Write file
+            XLSX.writeFile(wb, `${companyName}_TenderListSummary_${tenderId}.xlsx`);
+
         } catch (error) {
-            console.error('Error generating CSV:', error);
-            alert('Failed to generate CSV. Please try again.');
+            console.error('Error generating Excel:', error);
+            alert('Failed to generate Excel. Please try again.');
         }
     };
 
@@ -585,12 +607,12 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                                 <p>• Data Source: <span className="font-semibold">Saved Turnover Years</span></p>
                             </div>
                             <Button
-                                onClick={handleDownloadTenderListCSV}
+                                onClick={handleDownloadTenderListExcel}
                                 className="w-full"
                                 variant="default"
                             >
                                 <Download className="w-4 h-4 mr-2" />
-                                Download Tender List CSV
+                                Download Tender List Excel
                             </Button>
                         </div>
                     </CardContent>
