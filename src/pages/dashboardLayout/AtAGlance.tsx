@@ -2,6 +2,7 @@
 
 import EmergencyTender from "@/components/dashboard/AtAGlance/EmergencyTender";
 import Greetings from "@/components/dashboard/AtAGlance/Greetings";
+import TenderOpeningCalendar from "@/components/dashboard/AtAGlance/OpeningDateTender";
 import OrderStats from "@/components/dashboard/AtAGlance/OrderStats";
 import RecentOrder from "@/components/dashboard/AtAGlance/RecentOrder";
 
@@ -11,7 +12,10 @@ const AtAGlance = () => {
     <Greetings />
     <OrderStats />
     <RecentOrder />
-    <EmergencyTender />
+    <div className="my-16">
+      <TenderOpeningCalendar />
+    </div>
+    
    </section>
   );
 };

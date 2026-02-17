@@ -210,7 +210,7 @@ const PgTwoTowOtmGoods = () => {
 
     return result;
   }, [data]);
-  console.log(groupedData)
+ 
 
   // Final submit to backend
   const handleFinalSubmit = async () => {
@@ -221,7 +221,7 @@ const PgTwoTowOtmGoods = () => {
 
     const url = `${config.apiBaseUrl}/jobOrder-cart/create-multiple-jobOrderCart`;
     createData(url, OTMGoods, setReload, setReset);
-    console.log(groupedData);
+   
   };
   return (
     <div className="min-h-lvh p-5">
@@ -297,14 +297,14 @@ const PgTwoTowOtmGoods = () => {
         </div>
 
         {/* Table Section - Desktop */}
-        <div className="overflow-x-auto mt-5">
+        <div className=" overflow-x-auto mt-5">
           {!loading &&
             groupedData?.length > 0 &&
             groupedData?.map((item) => (
               <Fragment key={item.closingDate}>
                 {/* Group Header Row */}
-                <div className="mb-12">
-                  <div className="flex items-center gap-2">
+                <div className="hidden lg:block mb-12">
+                  <div className=" flex items-center gap-2">
                     <Calendar className="h-6 w-6 text-blue-600" />
                     <p className="font-semibold text-blue-900 text-2xl">
                       Closing Date: {item.closingDate}
@@ -317,7 +317,9 @@ const PgTwoTowOtmGoods = () => {
                         key={idx}
                         value={item?.orgName}
                       >
-                        <AccordionTrigger>{item?.orgName} &nbsp; &nbsp; &nbsp;({item?.tenders?.length}) Tenders</AccordionTrigger>
+                        <AccordionTrigger>
+                          {item?.orgName} &nbsp; &nbsp; &nbsp;({item?.tenders?.length}) Tenders
+                        </AccordionTrigger>
                         <AccordionContent className="w-full overflow-x-auto">
                           {
                             <table className="w-full max-lg:hidden overflow-x-auto">
@@ -329,7 +331,11 @@ const PgTwoTowOtmGoods = () => {
                                         colSpan={10}
                                         className="p-2 font-bold text-primary text-lg"
                                       >
-                                        Tender ID: {tender.tenderId} <span className="inline-block  font-normal">Description: {tender?.items[0]?.descriptionOfWorks}</span>
+                                        Tender ID: {tender.tenderId}{" "}
+                                       
+                                        <span className="inline-block  font-normal">
+                                          Description: {tender?.items[0]?.descriptionOfWorks}
+                                        </span>
                                       </td>
                                     </tr>
 
@@ -481,127 +487,155 @@ const PgTwoTowOtmGoods = () => {
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-blue-600" />
                       <span className="font-semibold text-blue-900 text-sm">
-                        Closing: {closingDate}
+                        Closing: {items?.closingDate}
                       </span>
-                      <span className="text-xs text-blue-600">({items.length})</span>
                     </div>
                   </div>
 
                   {/* Tender Cards for this group */}
-                  {/* {items.map((item, idx) => (
-                    <div key={item._id} className="bg-white border rounded-lg p-4 shadow-sm">
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="flex items-center gap-2">
-                          <span className="bg-primary text-primary-foreground px-2 py-1 rounded text-sm font-semibold">
-                            #{idx + 1}
-                          </span>
-                          <span className="font-semibold text-lg">ID: {item?.tenderId}</span>
-                        </div>
-                        <Link to={`/dashboard/tenderdashboard/${item?._id}`}>
-                          <LayoutDashboard
-                            className="cursor-pointer hover:text-primary"
-                            size={24}
-                          />
-                        </Link>
-                      </div>
 
-                      <div className="space-y-2 text-sm">
-                        
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Date:</span>
-                          <span className="font-medium">
-                            {item?.createdAt
-                              ? new Date(item.createdAt).toLocaleDateString("en-GB", {
-                                  day: "2-digit",
-                                  month: "short",
-                                  year: "numeric",
-                                })
-                              : "N/A"}
-                          </span>
-                        </div>
+                  <Accordion type="single" collapsible defaultValue="shipping" className="w-full">
+                    {items?.organizations?.map((item, idx) => (
+                      <AccordionItem
+                        className="bg-gray-100 mb-4 px-2 rounded"
+                        key={idx}
+                        value={item?.orgName}
+                      >
+                        <AccordionTrigger>
+                         
+                          {item?.orgName} &nbsp; &nbsp; &nbsp;({item?.tenders?.length}) Tenders
+                        </AccordionTrigger>
+                        <AccordionContent className="w-full overflow-x-auto">
+                         
+                          {item?.tenders?.map((tender, idx) => (
+                            <div key={idx}>
+                              {" "}
+                              <div>
+                                <span className="font-semibold text-lg">
+                                  ID: {tender?.tenderId}
+                                </span>
+                              </div>
+                             
+                              {tender?.items?.map((item, idx) => <div key={idx} className="bg-white border rounded-lg p-4 shadow-sm">
+                            <div className="flex justify-between items-start mb-3">
+                              <div className="flex items-center gap-2">
+                                <span className="bg-primary text-primary-foreground px-2 py-1 rounded text-sm font-semibold">
+                                  #{idx + 1}
+                                </span>
+                                <span className="font-semibold text-lg">ID: {item?.tenderId}</span>
+                              </div>
+                              <Link to={`/dashboard/tenderdashboard/${item?._id}`}>
+                                <LayoutDashboard
+                                  className="cursor-pointer hover:text-primary"
+                                  size={24}
+                                />
+                              </Link>
+                            </div>
 
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">EGP Email:</span>
-                          <span className="font-medium text-xs break-all">{item?.egpEmail}</span>
-                        </div>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Date:</span>
+                                <span className="font-medium">
+                                  {item?.createdAt
+                                    ? new Date(item.createdAt).toLocaleDateString("en-GB", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                      })
+                                    : "N/A"}
+                                </span>
+                              </div>
 
-                        
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Company:</span>
-                          <span className="font-medium text-xs">
-                            {item?.egpCompanyName || "N/A"}
-                          </span>
-                        </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">EGP Email:</span>
+                                <span className="font-medium text-xs break-all">
+                                  {item?.egpEmail}
+                                </span>
+                              </div>
 
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Tender Type:</span>
-                          <span className="font-medium">{item?.tenderType}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Method:</span>
-                          <span className="font-medium">{item?.tenderMethod || "N/A"}</span>
-                        </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Company:</span>
+                                <span className="font-medium text-xs">
+                                  {item?.egpCompanyName || "N/A"}
+                                </span>
+                              </div>
 
-                       
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">Line of Credit:</span>
-                          <Select
-                            value={item?.lineOfCredit || ""}
-                            onValueChange={(value) => handleUpdate(item._id, "lineOfCredit", value)}
-                            disabled={updating[`${item._id}-lineOfCredit`]}
-                          >
-                            <SelectTrigger className="w-20 h-8">
-                              <SelectValue placeholder="Select" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Yes">Yes</SelectItem>
-                              <SelectItem value="No">No</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Tender Type:</span>
+                                <span className="font-medium">{item?.tenderType}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Method:</span>
+                                <span className="font-medium">{item?.tenderMethod || "N/A"}</span>
+                              </div>
 
-                        
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">Pay Order:</span>
-                          <Select
-                            value={item?.payOrderStatus || ""}
-                            onValueChange={(value) =>
-                              handleUpdate(item._id, "payOrderStatus", value)
-                            }
-                            disabled={updating[`${item._id}-payOrderStatus`]}
-                          >
-                            <SelectTrigger className="w-20 h-8">
-                              <SelectValue placeholder="Select" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Yes">Yes</SelectItem>
-                              <SelectItem value="No">No</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
+                              <div className="flex justify-between items-center">
+                                <span className="text-gray-600">Line of Credit:</span>
+                                <Select
+                                  value={item?.lineOfCredit || ""}
+                                  onValueChange={(value) =>
+                                    handleUpdate(item._id, "lineOfCredit", value)
+                                  }
+                                  disabled={updating[`${item._id}-lineOfCredit`]}
+                                >
+                                  <SelectTrigger className="w-20 h-8">
+                                    <SelectValue placeholder="Select" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Yes">Yes</SelectItem>
+                                    <SelectItem value="No">No</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
 
-                       
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">Working Status:</span>
-                          <Select
-                            value={item?.status || ""}
-                            onValueChange={(value) => handleUpdate(item._id, "status", value)}
-                            disabled={updating[`${item._id}-status`]}
-                          >
-                            <SelectTrigger className="w-32 h-8">
-                              <SelectValue placeholder="Select" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="under_preparation">Under Preparation</SelectItem>
-                              <SelectItem value="wait_for_submit">Wait for Submit</SelectItem>
-                              <SelectItem value="submitted">Submitted</SelectItem>
-                              <SelectItem value="archived">Archived</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </div>
-                  ))} */}
+                              <div className="flex justify-between items-center">
+                                <span className="text-gray-600">Pay Order:</span>
+                                <Select
+                                  value={item?.payOrderStatus || ""}
+                                  onValueChange={(value) =>
+                                    handleUpdate(item._id, "payOrderStatus", value)
+                                  }
+                                  disabled={updating[`${item._id}-payOrderStatus`]}
+                                >
+                                  <SelectTrigger className="w-20 h-8">
+                                    <SelectValue placeholder="Select" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Yes">Yes</SelectItem>
+                                    <SelectItem value="No">No</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+
+                              <div className="flex justify-between items-center">
+                                <span className="text-gray-600">Working Status:</span>
+                                <Select
+                                  value={item?.status || ""}
+                                  onValueChange={(value) => handleUpdate(item._id, "status", value)}
+                                  disabled={updating[`${item._id}-status`]}
+                                >
+                                  <SelectTrigger className="w-32 h-8">
+                                    <SelectValue placeholder="Select" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="under_preparation">
+                                      Under Preparation
+                                    </SelectItem>
+                                    <SelectItem value="wait_for_submit">Wait for Submit</SelectItem>
+                                    <SelectItem value="submitted">Submitted</SelectItem>
+                                    <SelectItem value="archived">Archived</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                          </div>)}
+                            </div>
+                          ))}
+                          
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
                 </div>
               ))}
 
