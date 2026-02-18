@@ -1,18 +1,13 @@
 "use client";
 
-import React from "react";
+
 import {
   Bell,
-  Settings,
   BarChart3,
   FileCheck,
   GraduationCap,
-  ChevronDown,
-  Info,
   Zap,
   LayoutDashboard,
-  ClipboardList,
-  UserPlus,
   Box,
 } from "lucide-react";
 import {
@@ -224,7 +219,7 @@ export default function ServicesMainList() {
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
             আপনার জন্য সার্ভিস ক্যাটেগরি
           </h2>
-         
+
         </header>
 
         {/* Level 1: Category Accordion */}
@@ -267,7 +262,7 @@ export default function ServicesMainList() {
                         <AccordionContent className="pb-5 px-3">
                           <div className="flex gap-4 p-5 bg-white border border-slate-100 rounded-xl shadnow-0 border-none">
                             <div className="mt-1">
-                              
+
                             </div>
                             <p className="text-slate-600 leading-relaxed text-sm md:text-base">
                               {service.description}
