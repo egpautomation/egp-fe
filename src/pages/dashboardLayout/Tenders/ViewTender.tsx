@@ -491,7 +491,7 @@ const ViewTender = () => {
         </div>
 
         {/* Hero Section */}
-        <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <Card className="bg-white text-gray-900 shadow-lg border border-gray-200">
           <CardContent className="p-8">
             <div className="flex items-start justify-between">
               <div className="space-y-2 flex-1">
@@ -500,14 +500,14 @@ const ViewTender = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-white hover:bg-white/20"
+                    className="text-gray-600 hover:bg-gray-100"
                     onClick={() => copyToClipboard(formData?.tenderId)}
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
-                <p className="text-lg opacity-90">{formData?.organization || "No Organization"}</p>
-                <p className="text-sm opacity-75">{formData?.descriptionOfWorks || "No description available"}</p>
+                <p className="text-lg text-gray-700">{formData?.organization || "No Organization"}</p>
+                <p className="text-sm text-gray-500">{formData?.descriptionOfWorks || "No description available"}</p>
               </div>
               {formData?.tenderStatus && (
                 <Badge className={`${getStatusColor(formData?.tenderStatus)} text-white px-4 py-2 text-base`}>
@@ -518,17 +518,17 @@ const ViewTender = () => {
 
             {/* Key Highlights */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <p className="text-sm opacity-75">Estimated Cost</p>
-                <p className="text-2xl font-bold mt-1">{formatCurrency(formData?.estimatedCost)}</p>
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <p className="text-sm text-gray-500">Estimated Cost</p>
+                <p className="text-2xl font-bold mt-1 text-gray-900">{formatCurrency(formData?.estimatedCost)}</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <p className="text-sm opacity-75">Last Selling Date</p>
-                <p className="text-xl font-semibold mt-1">{lastSelling}</p>
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <p className="text-sm text-gray-500">Last Selling Date</p>
+                <p className="text-xl font-semibold mt-1 text-gray-900">{lastSelling}</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <p className="text-sm opacity-75">Closing Date</p>
-                <p className="text-xl font-semibold mt-1">{openingDateTime}</p>
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <p className="text-sm text-gray-500">Closing Date</p>
+                <p className="text-xl font-semibold mt-1 text-gray-900">{openingDateTime}</p>
               </div>
             </div>
           </CardContent>

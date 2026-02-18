@@ -1,7 +1,8 @@
 // @ts-nocheck
 import React, { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, ChevronDown, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 
 // --- Mock Data ---
 const mockPreviewData = {
@@ -612,1183 +613,1358 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
         {/* ========== PART 1 ========== */}
 
         {/* Main Header - Part 1 - Responsive */}
-        <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 shadow-md">
-          <h2 className="text-sm sm:text-base md:text-lg font-bold">
-            Tenderer Information Form (e-PW2A-2/e-PW2A-3) - Part - 1
+        <Collapsible className="mb-4 sm:mb-6 group">
+          <CollapsibleTrigger className="w-full">
+            <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 shadow-md flex items-center justify-between transition-all duration-300 hover:bg-blue-700">
+              <h2 className="text-sm sm:text-base md:text-lg font-bold">
+                Tenderer Information Form (e-PW2A-2/e-PW2A-3) - Part - 1
+              </h2>
+              <ChevronDown className="h-5 w-5 transition-transform duration-300 group-data-[state=open]:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+            <div className="border border-t-0 border-gray-300">
+
+              {/* Section 1: Eligibility Information - Responsive */}
+              <Collapsible className="w-full group/sub">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-800">
+                      1. Eligibility Information of the Tenderer (ITT Clauses 5 & 27)
+                    </h3>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/sub:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  {/* Responsive Table Wrapper */}
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-full">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                            Description
+                          </th>
+                          <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                            Tenderer's Response
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="hover:bg-gray-50">
+                          <CopyableCell value="1.1 Name of the Tenderer / JVCA Partner:" />
+                          <CopyableCell value={data.tendererInfo.name} />
+                        </tr>
+                        <tr className="hover:bg-gray-50">
+                          <CopyableCell value="1.2 Registered e-mail ID of the Tenderer / JVCA Partner:" />
+                          <CopyableCell value={data.tendererInfo.email} />
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Section: Key Activities for Joint Venture */}
+              <Collapsible className="w-full border-t border-gray-300 group/jv">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <div>
+                      <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                        Key Activity(ies) for Joint Venture (e-PW2A-3)
+                      </h3>
+                      <p className="text-xs text-gray-600 mt-1 break-words">
+                        1.4 Key Activity(ies) for which it is intended to be joint ventured, if it can be specified (ITT Sub Clause 17.2)
+                      </p>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-600 flex-shrink-0 ml-2 transition-transform duration-300 group-data-[state=open]/jv:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-1/3">
+                          Elements of Activity
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-2/3">
+                          Brief description of Activity
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.jointVentureActivities.map((item, idx) => (
+                        <tr key={idx} className="hover:bg-gray-50">
+                          <CopyableCell value={item.element} />
+                          <CopyableCell value={item.description} />
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </CollapsibleContent>
+              </Collapsible>
+
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* ========== PART 2 ========== */}
+
+        {/* Main Header - Part 2 */}
+        <Collapsible className="mb-4 sm:mb-6 mt-6 sm:mt-8 group/part2">
+          <CollapsibleTrigger className="w-full">
+            <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg shadow-md flex items-center justify-between transition-all duration-300 hover:bg-blue-700">
+              <h2 className="text-sm sm:text-base md:text-lg font-bold">
+                Tenderer Information Form (e-PW2A-2/e-PW2A-3) - Part - 2
+              </h2>
+              <ChevronDown className="h-5 w-5 transition-transform duration-300 group-data-[state=open]/part2:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+            <div className="border border-t-0 border-gray-300">
+
+              {/* Section 2: Qualification Information */}
+              <Collapsible className="w-full group/qual">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                      2. Qualification Information of the Tenderer (ITT Clause 29)
+                    </h3>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/qual:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-1/2">
+                          Description
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-1/2">
+                          Tenderer's Response
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="hover:bg-gray-50">
+                        <CopyableCell value="2.1 Name of the Tenderer / JVCA Partner:" />
+                        <CopyableCell value={data.tendererInfo.name} />
+                      </tr>
+                      <tr className="hover:bg-gray-50">
+                        <CopyableCell value="2.2 Registered e-mail ID of the Tenderer / JVCA Partner:" />
+                        <CopyableCell value={data.tendererInfo.email} />
+                      </tr>
+                      <tr className="hover:bg-gray-50">
+                        <CopyableCell value="2.3 General Experience in Construction Works of Tenderer: (State years of experience)" />
+                        <CopyableCell value={data.qualificationInfo.generalExperience} />
+                      </tr>
+                    </tbody>
+                  </table>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Section 2.4: Specific Experience */}
+              <Collapsible className="w-full border-t border-gray-300 group/spec">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                      2.4 Specific Experience in Construction Works of Tenderer
+                    </h3>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/spec:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-max">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Contract No
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Name of Contract
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Role in Contract
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Award date
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Completion date
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            total Contract Value
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Procuring Entity Name Address Id / fax e-mail
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Brief description with justifications of the similarity compared to the PE's requirements
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.specificExperience.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-gray-50">
+                            <CopyableCell value={item.contractNo} className="text-xs" />
+                            <CopyableCell value={item.name} className="text-xs" />
+                            <CopyableCell value={item.role} className="text-xs" />
+                            <CopyableCell value={item.awardDate} className="text-xs" />
+                            <CopyableCell value={item.completionDate} className="text-xs" />
+                            <CopyableCell value={item.totalValue} className="text-xs" />
+                            <CopyableCell value={item.procuringEntity} className="text-xs" />
+                            <CopyableCell value={item.briefDescription} className="text-xs" />
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* ========== PART 3A ========== */}
+
+        {/* Main Header - Part 3A */}
+        <Collapsible className="mb-4 sm:mb-6 mt-6 sm:mt-8 group/part3a">
+          <CollapsibleTrigger className="w-full">
+            <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg shadow-md flex items-center justify-between transition-all duration-300 hover:bg-blue-700">
+              <h2 className="text-sm sm:text-base md:text-lg font-bold">
+                Tenderer Information Form (e-PW2A-2/e-PW2A-3) - Part - 3A
+              </h2>
+              <ChevronDown className="h-5 w-5 transition-transform duration-300 group-data-[state=open]/part3a:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+            <div className="border border-t-0 border-gray-300">
+
+              {/* Section 2.5: Average annual construction turnover - Option 1 */}
+              <Collapsible className="w-full group/opt1">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <div>
+                      <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                        2.5 Average annual construction turnover
+                      </h3>
+                      <p className="text-xs text-gray-600 mt-1">2.5.1 Option 1</p>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/opt1:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Period or Year
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Amount and Currency
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Amount in Equivalent BDT
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.turnoverOption1.map((item, idx) => (
+                        <tr key={idx} className="hover:bg-gray-50">
+                          <CopyableCell value={item.period} />
+                          <CopyableCell value={item.amountCurrency} />
+                          <CopyableCell
+                            value={item.amountBDT
+                              ?.toString()
+                              .replace(/BDT/gi, "")
+                              .replace(/,/g, "")
+                              .trim()}
+                          />
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </CollapsibleContent>
+              </Collapsible>
+
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* ========== PART 3B ========== */}
+
+        {/* Main Header - Part 3B */}
+        <Collapsible className="mb-4 sm:mb-6 mt-6 sm:mt-8 group/part3b">
+          <CollapsibleTrigger className="w-full">
+            <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg shadow-md flex items-center justify-between transition-all duration-300 hover:bg-blue-700">
+              <h2 className="text-sm sm:text-base md:text-lg font-bold">
+                Tenderer Information Form (e-PW2A-2/e-PW2A-3) - Part - 3B
+              </h2>
+              <ChevronDown className="h-5 w-5 transition-transform duration-300 group-data-[state=open]/part3b:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+            <div className="border border-t-0 border-gray-300">
+
+              {/* Section 2.5: Average annual construction turnover - Option 2 */}
+              <Collapsible className="w-full group/opt2">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <div>
+                      <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                        2.5 Average annual construction turnover
+                      </h3>
+                      <p className="text-xs text-gray-600 mt-1">2.5.2 Option 2</p>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/opt2:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-max">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            S. No.
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Tender ID
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Package No
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Procuring Entity
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 w-64 min-w-[200px]">
+                            Description of Works
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            JV Share (%)
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Payment Amount
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Status
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.turnoverOption2.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-gray-50">
+                            <CopyableCell value={item.sl} className="text-xs" />
+                            <CopyableCell value={item.tenderId} className="text-xs" />
+                            <CopyableCell value={item.packageNo} className="text-xs" />
+                            <CopyableCell value={item.procuringEntity} className="text-xs" />
+                            <CopyableCell value={item.description} className="text-xs" />
+                            <CopyableCell value={item.jvShare} className="text-xs" />
+                            <CopyableCell value={item.paymentAmount} className="text-xs" />
+                            <CopyableCell value={item.status} className="text-xs" />
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* ========== PART 4 ========== */}
+
+        {/* Main Header - Part 4 */}
+        <Collapsible className="mb-4 sm:mb-6 mt-6 sm:mt-8 group/part4">
+          <CollapsibleTrigger className="w-full">
+            <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg shadow-md flex items-center justify-between transition-all duration-300 hover:bg-blue-700">
+              <h2 className="text-sm sm:text-base md:text-lg font-bold">
+                Tenderer Information Form (e-PW2A-2/e-PW2A-3) - Part - 4
+              </h2>
+              <ChevronDown className="h-5 w-5 transition-transform duration-300 group-data-[state=open]/part4:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+            <div className="border border-t-0 border-gray-300">
+
+              {/* Section 2.6: Liquid assets */}
+              <Collapsible className="w-full group/liquid">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <div>
+                      <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                        2.6 Liquid assets available to meet the construction cash flow
+                      </h3>
+                      <p className="text-xs text-gray-600 mt-1">
+                        Liquid assets available to meet the construction cash flow (ITT Sub Clause: 14.1(c))
+                      </p>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/liquid:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-20">
+                          No.
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Source of Financing
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Amount Available
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.liquidAssets.map((item, idx) => (
+                        <tr key={idx} className="hover:bg-gray-50">
+                          <CopyableCell value={item.no} />
+                          <CopyableCell value={item.source} />
+                          <CopyableCell value={item.amount} />
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Section 2.7: Contact Details */}
+              <Collapsible className="w-full border-t border-gray-300 group/contact">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <div>
+                      <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                        2.7 Contact Details
+                      </h3>
+                      <p className="text-xs text-gray-600 mt-1 break-words">
+                        Contact Details (ITT Sub Clause 29.1 (e))
+                      </p>
+                      <p className="text-xs text-gray-600 mt-1 break-words">
+                        Name, address, and other contact details of Tenderer's Bankers and other Procuring Entity(s) that may provide references, if contacted by the Procuring Entity
+                      </p>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/contact:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-1/3">
+                          Description
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-2/3">
+                          Details
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="hover:bg-gray-50">
+                        <CopyableCell value="Bank Address for Contact Details" />
+                        <CopyableCell value={companyData?.bankAddress || 'N/A'} />
+                      </tr>
+                    </tbody>
+                  </table>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Section 2.8: Key Personnel */}
+              <Collapsible className="w-full border-t border-gray-300 group/personnel">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <div>
+                      <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                        2.8 Qualifications and experience of key technical and administrative personnel proposed for Contract administration and management
+                      </h3>
+                      <p className="text-xs text-gray-600 mt-1">
+                        Qualifications and experience of key technical and administrative personnel proposed for Contract administration and management (ITT Sub Clause 29.1(c))
+                      </p>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/personnel:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Name
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Position
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Years of General Experience
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Years of Specific Experience
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.keyPersonnel.map((item, idx) => (
+                        <tr key={idx} className="hover:bg-gray-50">
+                          <CopyableCell value={item.name} />
+                          <CopyableCell value={item.position} />
+                          <CopyableCell value={item.generalExp} />
+                          <CopyableCell value={item.specificExp} />
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </CollapsibleContent>
+              </Collapsible>
+
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* ========== PART 5 ========== */}
+
+        {/* Main Header - Part 5 */}
+        <Collapsible className="mb-4 sm:mb-6 mt-6 sm:mt-8 group/part5">
+          <CollapsibleTrigger className="w-full">
+            <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg shadow-md flex items-center justify-between transition-all duration-300 hover:bg-blue-700">
+              <h2 className="text-sm sm:text-base md:text-lg font-bold">
+                Tenderer Information Form (e-PW2A-2/e-PW2A-3) - Part - 5
+              </h2>
+              <ChevronDown className="h-5 w-5 transition-transform duration-300 group-data-[state=open]/part5:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+            <div className="border border-t-0 border-gray-300">
+
+              {/* Section 2.9: Equipment */}
+              <Collapsible className="w-full group/equip">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                      2.9 Major Construction Equipment proposed to carry out the Contract (ITT Sub Clause 29.1(f))
+                    </h3>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/equip:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Item of Equipment
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Condition
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Owned, leased or to be purchased
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.equipment.map((item, idx) => (
+                        <tr key={idx} className="hover:bg-gray-50">
+                          <CopyableCell value={item.item} />
+                          <CopyableCell value={item.condition} />
+                          <CopyableCell value={item.ownership} />
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </CollapsibleContent>
+              </Collapsible>
+
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* ========== SUBCONTRACTOR INFORMATION ========== */}
+
+        {/* Subcontractor Header - Green */}
+        <Collapsible className="mb-4 sm:mb-6 mt-6 sm:mt-8 group/subcon">
+          <CollapsibleTrigger className="w-full">
+            <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg border-l-4 border-green-600 flex items-center justify-between transition-all duration-300 hover:bg-green-200">
+              <h2 className="text-sm sm:text-base md:text-lg font-bold text-green-800">
+                Subcontractor Information (Form e-PW2A-4)
+              </h2>
+              <ChevronDown className="h-5 w-5 text-green-800 transition-transform duration-300 group-data-[state=open]/subcon:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+            <div className="border border-t-0 border-gray-300">
+
+              {/* Subcontractor Eligibility Information */}
+              <Collapsible className="w-full group/subelig">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                      Eligibility Information of the Subcontractor (ITT Clauses 5 & 27)
+                    </h3>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/subelig:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-24">
+                          Sr. No.
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Description
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Tenderer's Response
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="hover:bg-gray-50">
+                        <CopyableCell value="1." />
+                        <CopyableCell value="Name of the Subcontractor:" />
+                        <CopyableCell value="N/A" />
+                      </tr>
+                      <tr className="hover:bg-gray-50">
+                        <CopyableCell value="2." />
+                        <CopyableCell value="Registered e-mail ID of the Subcontractor:" />
+                        <CopyableCell value="N/A" />
+                      </tr>
+                    </tbody>
+                  </table>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Section 2.1: Key Activities for Subcontracting */}
+              <Collapsible className="w-full border-t border-gray-300 group/subact">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                      2.1 Key Activity(ies) for which it is intended to be Subcontracted (ITT Sub Clause 18.1)
+                    </h3>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/subact:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-24">
+                          Sr. No.
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Elements of Activity
+                        </th>
+                        <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                          Brief description of Activity
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.subcontractorActivities.map((item, idx) => (
+                        <tr key={idx} className="hover:bg-gray-50">
+                          <CopyableCell value={item.srNo} />
+                          <CopyableCell value={item.element} />
+                          <CopyableCell value={item.description} />
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Section 2.2: List of Similar Contracts */}
+              <Collapsible className="w-full border-t border-gray-300 group/subcont">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                      2.2 List of Similar Contracts in which the proposed Subcontractor had been engaged
+                    </h3>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/subcont:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-max">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            SL No.
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Name of Contract and Year of Execution
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Value of Contract
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Name of Procuring Entity
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Contact Person and contact details
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Type of Work performed
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.subcontractorContracts.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-gray-50">
+                            <CopyableCell value={item.slNo} className="text-xs" />
+                            <CopyableCell value={item.nameAndYear} className="text-xs" />
+                            <CopyableCell value={item.value} className="text-xs" />
+                            <CopyableCell value={item.procuringEntity} className="text-xs" />
+                            <CopyableCell value={item.contactPerson} className="text-xs" />
+                            <CopyableCell value={item.typeOfWork} className="text-xs" />
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* ========== PERSONNEL INFORMATION ========== */}
+
+        {/* Personnel Header - Green */}
+        <Collapsible className="mb-4 sm:mb-6 mt-6 sm:mt-8 group/personnel">
+          <CollapsibleTrigger className="w-full">
+            <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg border-l-4 border-green-600 flex items-center justify-between transition-all duration-300 hover:bg-green-200">
+              <div>
+                <h2 className="text-sm sm:text-base md:text-lg font-bold text-green-800">
+                  Personnel Information (Form e-PW2A-5)
+                </h2>
+                <p className="text-xs sm:text-sm text-green-700 mt-1">
+                  [This form should be completed for each person proposed by the Tenderer in Form e-PW2A-2 & e-PW2A-3, where applicable]
+                </p>
+              </div>
+              <ChevronDown className="h-5 w-5 text-green-800 transition-transform duration-300 group-data-[state=open]/personnel:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+            <div className="border border-t-0 border-gray-300">
+
+              {/* Personnel Proposed Position and Personal Data */}
+              <Collapsible className="w-full group/pos">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                      Proposed Position and Personal Data
+                    </h3>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/pos:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-max">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Proposed Position
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Proposed Candidate (Prime/Partner)
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Name
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Date of Birth
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Years of general experience
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            National ID Number
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Years of employment with the Tenderer
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Professional Qualifications
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.personnelData.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-gray-50">
+                            <CopyableCell value={item.position} className="text-xs" />
+                            <CopyableCell value={item.candidateType} className="text-xs" />
+                            <CopyableCell value={item.name} className="text-xs" />
+                            <CopyableCell value={item.dob} className="text-xs" />
+                            <CopyableCell value={item.generalExp} className="text-xs" />
+                            <CopyableCell value={item.nationalId} className="text-xs" />
+                            <CopyableCell value={item.employmentYears} className="text-xs" />
+                            <CopyableCell value={item.qualifications} className="text-xs" />
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Present Employment Section */}
+              <Collapsible className="w-full border-t border-gray-300 group/present">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                      Present Employment [to be completed only if not employed by the Tenderer]
+                    </h3>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/present:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-max">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Name of Firm or Entity (working under)
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Address of Firm or Entity (working under)
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Years with present Procuring Entity
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Tel No.
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Fax No.
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            e-mail address
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Line manager/personnel officer
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.presentEmployment.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-gray-50">
+                            <CopyableCell value={item.firmName} className="text-xs" />
+                            <CopyableCell value={item.address} className="text-xs" />
+                            <CopyableCell value={item.yearsWithEntity} className="text-xs" />
+                            <CopyableCell value={item.tel} className="text-xs" />
+                            <CopyableCell value={item.fax} className="text-xs" />
+                            <CopyableCell value={item.email} className="text-xs" />
+                            <CopyableCell value={item.lineManager} className="text-xs" />
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Professional Experience Section */}
+              <Collapsible className="w-full border-t border-gray-300 group/profexp">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <div>
+                      <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                        Professional Experience
+                      </h3>
+                      <p className="text-xs text-gray-600 mt-1">
+                        Summarize professional experience over the last twenty years, in reverse chronological order. Indicate particular technical and managerial experience relevant to the project.
+                      </p>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/profexp:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-max">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Sr No.
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            From
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            To
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Company / Project / Position / Relevant technical and managerial experience
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Project
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Position
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Relevant technical and managerial experience
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.professionalExperience.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-gray-50">
+                            <CopyableCell value={item.srNo} className="text-xs" />
+                            <CopyableCell value={item.from} className="text-xs" />
+                            <CopyableCell value={item.to} className="text-xs" />
+                            <CopyableCell value={item.companyProjectPosition} className="text-xs" />
+                            <CopyableCell value={item.project} className="text-xs" />
+                            <CopyableCell value={item.position} className="text-xs" />
+                            <CopyableCell value={item.relevantExperience} className="text-xs" />
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* ========== TENDERER'S CAPACITY INFORMATION ========== */}
+
+        {/* Capacity Header - Green */}
+        <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 border-l-4 border-green-600">
+          <h2 className="text-sm sm:text-base md:text-lg font-bold text-green-800">
+            Tenderer's Capacity Information (Form e-PW2A-6)
           </h2>
         </div>
 
-        {/* Section 1: Eligibility Information - Responsive */}
-        <div className="mb-4 sm:mb-6 overflow-hidden">
-          <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-            <h3 className="text-xs sm:text-sm font-semibold text-gray-800">
-              1. Eligibility Information of the Tenderer (ITT Clauses 5 & 27)
-            </h3>
-          </div>
-
-          {/* Responsive Table Wrapper */}
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse min-w-full">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Description
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Tenderer's Response
-                  </th>
+        {/* Capacity Information Table */}
+        <div className="border border-gray-300 mb-4 sm:mb-6">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                  Period
+                </th>
+                <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                  Maximum Value of Works performed in one year within last 5 Years from IFT date
+                </th>
+                <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
+                  Value of Remaining Works or Current Commitment
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.capacityInfo.map((item, idx) => (
+                <tr key={idx} className="hover:bg-gray-50">
+                  <CopyableCell value={item.period} />
+                  <CopyableCell value={item.maxValue} />
+                  <CopyableCell value={item.remainingValue} />
                 </tr>
-              </thead>
-              <tbody>
-                <tr className="hover:bg-gray-50">
-                  <CopyableCell value="1.1 Name of the Tenderer / JVCA Partner:" />
-                  <CopyableCell value={data.tendererInfo.name} />
-                </tr>
-                <tr className="hover:bg-gray-50">
-                  <CopyableCell value="1.2 Registered e-mail ID of the Tenderer / JVCA Partner:" />
-                  <CopyableCell value={data.tendererInfo.email} />
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Section: Key Activities for Joint Venture */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                Key Activity(ies) for Joint Venture (e-PW2A-3)
-              </h3>
-              <p className="text-xs text-gray-600 mt-1 break-words">
-                1.4 Key Activity(ies) for which it is intended to be joint ventured, if it can be specified (ITT Sub Clause 17.2)
-              </p>
-            </div>
-
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-1/3">
-                    Elements of Activity
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-2/3">
-                    Brief description of Activity
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.jointVentureActivities.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <CopyableCell value={item.element} />
-                    <CopyableCell value={item.description} />
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* ========== PART 2 ========== */}
-
-          {/* Main Header - Part 2 */}
-          <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 shadow-md">
-            <h2 className="text-sm sm:text-base md:text-lg font-bold">
-              Tenderer Information Form (e-PW2A-2/e-PW2A-3) - Part - 2
-            </h2>
-          </div>
-
-          {/* Section 2: Qualification Information */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                2. Qualification Information of the Tenderer (ITT Clause 29)
-              </h3>
-            </div>
-
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-1/2">
-                    Description
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-1/2">
-                    Tenderer's Response
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="hover:bg-gray-50">
-                  <CopyableCell value="2.1 Name of the Tenderer / JVCA Partner:" />
-                  <CopyableCell value={data.tendererInfo.name} />
-                </tr>
-                <tr className="hover:bg-gray-50">
-                  <CopyableCell value="2.2 Registered e-mail ID of the Tenderer / JVCA Partner:" />
-                  <CopyableCell value={data.tendererInfo.email} />
-                </tr>
-                <tr className="hover:bg-gray-50">
-                  <CopyableCell value="2.3 General Experience in Construction Works of Tenderer: (State years of experience)" />
-                  <CopyableCell value={data.qualificationInfo.generalExperience} />
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Section 2.4: Specific Experience */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                2.4 Specific Experience in Construction Works of Tenderer
-              </h3>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-max">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Contract No
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Name of Contract
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Role in Contract
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Award date
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Completion date
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      total Contract Value
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Procuring Entity Name Address Id / fax e-mail
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Brief description with justifications of the similarity compared to the PE's requirements
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.specificExperience.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <CopyableCell value={item.contractNo} className="text-xs" />
-                      <CopyableCell value={item.name} className="text-xs" />
-                      <CopyableCell value={item.role} className="text-xs" />
-                      <CopyableCell value={item.awardDate} className="text-xs" />
-                      <CopyableCell value={item.completionDate} className="text-xs" />
-                      <CopyableCell value={item.totalValue} className="text-xs" />
-                      <CopyableCell value={item.procuringEntity} className="text-xs" />
-                      <CopyableCell value={item.briefDescription} className="text-xs" />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ========== PART 3A ========== */}
-
-          {/* Main Header - Part 3A */}
-          <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 shadow-md">
-            <h2 className="text-sm sm:text-base md:text-lg font-bold">
-              Tenderer Information Form (e-PW2A-2/e-PW2A-3) - Part - 3A
-            </h2>
-          </div>
-
-          {/* Section 2.5: Average annual construction turnover - Option 1 */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                2.5 Average annual construction turnover
-              </h3>
-              <p className="text-xs text-gray-600 mt-1">2.5.1 Option 1</p>
-            </div>
-
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Period or Year
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Amount and Currency
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Amount in Equivalent BDT
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.turnoverOption1.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <CopyableCell value={item.period} />
-                    <CopyableCell value={item.amountCurrency} />
-                    <CopyableCell
-                      value={item.amountBDT
-                        ?.toString()
-                        .replace(/BDT/gi, "")
-                        .replace(/,/g, "")
-                        .trim()}
-                    />
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* ========== PART 3B ========== */}
-
-          {/* Main Header - Part 3B */}
-          <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 shadow-md">
-            <h2 className="text-sm sm:text-base md:text-lg font-bold">
-              Tenderer Information Form (e-PW2A-2/e-PW2A-3) - Part - 3B
-            </h2>
-          </div>
-
-          {/* Section 2.5: Average annual construction turnover - Option 2 */}
-          {/* Section 2.5: Average annual construction turnover - Option 2 */}
-          {/* Section 2.5: Average annual construction turnover - Option 2 */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                2.5 Average annual construction turnover
-              </h3>
-              <p className="text-xs text-gray-600 mt-1">2.5.2 Option 2</p>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-max">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      S. No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Tender ID
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Package No
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Procuring Entity
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 w-64 min-w-[200px]">
-                      Description of Works
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      JV Share (%)
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Payment Amount
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.turnoverOption2.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <CopyableCell value={item.sl} className="text-xs" />
-                      <CopyableCell value={item.tenderId} className="text-xs" />
-                      <CopyableCell value={item.packageNo} className="text-xs" />
-                      <CopyableCell value={item.procuringEntity} className="text-xs" />
-                      <CopyableCell value={item.description} className="text-xs" />
-                      <CopyableCell value={item.jvShare} className="text-xs" />
-                      <CopyableCell value={item.paymentAmount} className="text-xs" />
-                      <CopyableCell value={item.status} className="text-xs" />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ========== PART 4 ========== */}
-
-          {/* Main Header - Part 4 */}
-          <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 shadow-md">
-            <h2 className="text-sm sm:text-base md:text-lg font-bold">
-              Tenderer Information Form (e-PW2A-2/e-PW2A-3) - Part - 4
-            </h2>
-          </div>
-
-          {/* Section 2.6: Liquid assets */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                2.6 Liquid assets available to meet the construction cash flow
-              </h3>
-              <p className="text-xs text-gray-600 mt-1">
-                Liquid assets available to meet the construction cash flow (ITT Sub Clause: 14.1(c))
-              </p>
-            </div>
-
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-20">
-                    No.
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Source of Financing
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Amount Available
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.liquidAssets.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <CopyableCell value={item.no} />
-                    <CopyableCell value={item.source} />
-                    <CopyableCell value={item.amount} />
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Section 2.7: Contact Details */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                2.7 Contact Details
-              </h3>
-              <p className="text-xs text-gray-600 mt-1 break-words">
-                Contact Details (ITT Sub Clause 29.1 (e))
-              </p>
-              <p className="text-xs text-gray-600 mt-1 break-words">
-                Name, address, and other contact details of Tenderer's Bankers and other Procuring Entity(s) that may provide references, if contacted by the Procuring Entity
-              </p>
-            </div>
-
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-1/3">
-                    Description
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-2/3">
-                    Details
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="hover:bg-gray-50">
-                  <CopyableCell value="Bank Address for Contact Details" />
-                  <CopyableCell value={companyData?.bankAddress || 'N/A'} />
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Section 2.8: Key Personnel */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                2.8 Qualifications and experience of key technical and administrative personnel proposed for Contract administration and management
-              </h3>
-              <p className="text-xs text-gray-600 mt-1">
-                Qualifications and experience of key technical and administrative personnel proposed for Contract administration and management (ITT Sub Clause 29.1(c))
-              </p>
-            </div>
-
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Name
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Position
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Years of General Experience
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Years of Specific Experience
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.keyPersonnel.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <CopyableCell value={item.name} />
-                    <CopyableCell value={item.position} />
-                    <CopyableCell value={item.generalExp} />
-                    <CopyableCell value={item.specificExp} />
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* ========== PART 5 ========== */}
-
-          {/* Main Header - Part 5 */}
-          <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 shadow-md">
-            <h2 className="text-sm sm:text-base md:text-lg font-bold">
-              Tenderer Information Form (e-PW2A-2/e-PW2A-3) - Part - 5
-            </h2>
-          </div>
-
-          {/* Section 2.9: Equipment */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                2.9 Major Construction Equipment proposed to carry out the Contract (ITT Sub Clause 29.1(f))
-              </h3>
-            </div>
-
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Item of Equipment
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Condition
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Owned, leased or to be purchased
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.equipment.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <CopyableCell value={item.item} />
-                    <CopyableCell value={item.condition} />
-                    <CopyableCell value={item.ownership} />
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* ========== SUBCONTRACTOR INFORMATION ========== */}
-
-          {/* Subcontractor Header - Green */}
-          <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 border-l-4 border-green-600">
-            <h2 className="text-sm sm:text-base md:text-lg font-bold text-green-800">
-              Subcontractor Information (Form e-PW2A-4)
-            </h2>
-          </div>
-
-          {/* Subcontractor Eligibility Information */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                Eligibility Information of the Subcontractor (ITT Clauses 5 & 27)
-              </h3>
-            </div>
-
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-24">
-                    Sr. No.
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Description
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Tenderer's Response
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="hover:bg-gray-50">
-                  <CopyableCell value="1." />
-                  <CopyableCell value="Name of the Subcontractor:" />
-                  <CopyableCell value="N/A" />
-                </tr>
-                <tr className="hover:bg-gray-50">
-                  <CopyableCell value="2." />
-                  <CopyableCell value="Registered e-mail ID of the Subcontractor:" />
-                  <CopyableCell value="N/A" />
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Section 2.1: Key Activities for Subcontracting */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                2.1 Key Activity(ies) for which it is intended to be Subcontracted (ITT Sub Clause 18.1)
-              </h3>
-            </div>
-
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-24">
-                    Sr. No.
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Elements of Activity
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Brief description of Activity
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.subcontractorActivities.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <CopyableCell value={item.srNo} />
-                    <CopyableCell value={item.element} />
-                    <CopyableCell value={item.description} />
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Section 2.2: List of Similar Contracts */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                2.2 List of Similar Contracts in which the proposed Subcontractor had been engaged
-              </h3>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-max">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      SL No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Name of Contract and Year of Execution
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Value of Contract
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Name of Procuring Entity
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Contact Person and contact details
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Type of Work performed
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.subcontractorContracts.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <CopyableCell value={item.slNo} className="text-xs" />
-                      <CopyableCell value={item.nameAndYear} className="text-xs" />
-                      <CopyableCell value={item.value} className="text-xs" />
-                      <CopyableCell value={item.procuringEntity} className="text-xs" />
-                      <CopyableCell value={item.contactPerson} className="text-xs" />
-                      <CopyableCell value={item.typeOfWork} className="text-xs" />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ========== PERSONNEL INFORMATION ========== */}
-
-          {/* Personnel Header - Green */}
-          <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 border-l-4 border-green-600">
-            <h2 className="text-sm sm:text-base md:text-lg font-bold text-green-800">
-              Personnel Information (Form e-PW2A-5)
-            </h2>
-            <p className="text-xs sm:text-sm text-green-700 mt-1">
-              [This form should be completed for each person proposed by the Tenderer in Form e-PW2A-2 & e-PW2A-3, where applicable]
-            </p>
-          </div>
-
-          {/* Personnel Proposed Position and Personal Data */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                Proposed Position and Personal Data
-              </h3>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-max">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Proposed Position
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Proposed Candidate (Prime/Partner)
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Name
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Date of Birth
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Years of general experience
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      National ID Number
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Years of employment with the Tenderer
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Professional Qualifications
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.personnelData.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <CopyableCell value={item.position} className="text-xs" />
-                      <CopyableCell value={item.candidateType} className="text-xs" />
-                      <CopyableCell value={item.name} className="text-xs" />
-                      <CopyableCell value={item.dob} className="text-xs" />
-                      <CopyableCell value={item.generalExp} className="text-xs" />
-                      <CopyableCell value={item.nationalId} className="text-xs" />
-                      <CopyableCell value={item.employmentYears} className="text-xs" />
-                      <CopyableCell value={item.qualifications} className="text-xs" />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Present Employment Section */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                Present Employment [to be completed only if not employed by the Tenderer]
-              </h3>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-max">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Name of Firm or Entity (working under)
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Address of Firm or Entity (working under)
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Years with present Procuring Entity
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Tel No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Fax No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      e-mail address
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Line manager/personnel officer
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.presentEmployment.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <CopyableCell value={item.firmName} className="text-xs" />
-                      <CopyableCell value={item.address} className="text-xs" />
-                      <CopyableCell value={item.yearsWithEntity} className="text-xs" />
-                      <CopyableCell value={item.tel} className="text-xs" />
-                      <CopyableCell value={item.fax} className="text-xs" />
-                      <CopyableCell value={item.email} className="text-xs" />
-                      <CopyableCell value={item.lineManager} className="text-xs" />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Professional Experience Section */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                Professional Experience
-              </h3>
-              <p className="text-xs text-gray-600 mt-1">
-                Summarize professional experience over the last twenty years, in reverse chronological order. Indicate particular technical and managerial experience relevant to the project.
-              </p>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-max">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Sr No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      From
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      To
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Company / Project / Position / Relevant technical and managerial experience
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Project
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Position
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Relevant technical and managerial experience
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.professionalExperience.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <CopyableCell value={item.srNo} className="text-xs" />
-                      <CopyableCell value={item.from} className="text-xs" />
-                      <CopyableCell value={item.to} className="text-xs" />
-                      <CopyableCell value={item.companyProjectPosition} className="text-xs" />
-                      <CopyableCell value={item.project} className="text-xs" />
-                      <CopyableCell value={item.position} className="text-xs" />
-                      <CopyableCell value={item.relevantExperience} className="text-xs" />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ========== TENDERER'S CAPACITY INFORMATION ========== */}
-
-          {/* Capacity Header - Green */}
-          <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 border-l-4 border-green-600">
-            <h2 className="text-sm sm:text-base md:text-lg font-bold text-green-800">
-              Tenderer's Capacity Information (Form e-PW2A-6)
-            </h2>
-          </div>
-
-          {/* Capacity Information Table */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Period
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Maximum Value of Works performed in one year within last 5 Years from IFT date
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300">
-                    Value of Remaining Works or Current Commitment
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.capacityInfo.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <CopyableCell value={item.period} />
-                    <CopyableCell value={item.maxValue} />
-                    <CopyableCell value={item.remainingValue} />
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* ========== ONGOING WORKS ========== */}
-
-          {/* Ongoing Works Header - Green */}
-          <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 border-l-4 border-green-600">
-            <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-green-800">
-              List of On-Going Works / Current Commitment Under any Organization as a Sole Tenderer (If Tenderer participated as individual) - (Form e-PW2A-6A)
-            </h2>
-          </div>
-
-          {/* Ongoing Works Section */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                (A) List of On-Going Works / Current Commitment Under any Organization as a Sole Tenderer (If Tenderer participated as individual)
-              </h3>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-max">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      SL No. Ref No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      TID or Ref. No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Contract Amount
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Date of issuance of NOA / Signing of Contract
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Intended Completion Date of contract
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Name of the PE & its Organization
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Payment Received
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Value of remaining Works/Current Commitment (I-J-7)
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Work Completion Certificate File Name
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Payment Certificate File Name
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.ongoingWorks.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <CopyableCell value={item.slNo} className="text-xs" />
-                      <CopyableCell value={item.tidRefNo} className="text-xs" />
-                      <CopyableCell value={item.contractAmount} className="text-xs" />
-                      <CopyableCell value={item.dateOfNOA} className="text-xs" />
-                      <CopyableCell value={item.intendedCompletion} className="text-xs" />
-                      <CopyableCell value={item.peOrganization} className="text-xs" />
-                      <CopyableCell value={item.paymentReceived} className="text-xs" />
-                      <CopyableCell value={item.remainingValue} className="text-xs" />
-                      <CopyableCell value={item.workCompletionCertificate} className="text-xs" />
-                      <CopyableCell value={item.paymentCertificate} className="text-xs" />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Section (B): JV Partner Ongoing Works */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                (B) List of On-Going Works / Current Commitment Under any Organization as JV Partner (If Tenderer participated as individual)
-              </h3>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-max">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      SL No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      TID or Ref. No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Contract Amount
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Tenderer's portion in the contract amount
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Date of issuance of NOA/ Signing of Contract
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Intended Completion Date of contract
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Name of the PE & its Organization
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Payment Received as JV Partner
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Value of remaining Works/Current Commitment 9=(I-8)
-                    </th>
-
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Work Completion Certificate File Name
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Payment Certificate File Name
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.ongoingWorksJVPartner.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <CopyableCell value={item.slNo} className="text-xs" />
-                      <CopyableCell value={item.tidRefNo} className="text-xs" />
-                      <CopyableCell value={item.contractAmount} className="text-xs" />
-                      <CopyableCell value={item.tendererPortion} className="text-xs" />
-                      <CopyableCell value={item.dateOfNOA} className="text-xs" />
-                      <CopyableCell value={item.intendedCompletion} className="text-xs" />
-                      <CopyableCell value={item.peOrganization} className="text-xs" />
-                      <CopyableCell value={item.paymentReceived} className="text-xs" />
-                      <CopyableCell value={item.remainingValue} className="text-xs" />
-                      <CopyableCell value={item.workCompletionCertificate} className="text-xs" />
-                      <CopyableCell value={item.paymentCertificate} className="text-xs" />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ========== ONGOING WORKS - JV ========== */}
-
-          {/* Ongoing Works JV Header - Green */}
-          <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 border-l-4 border-green-600">
-            <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-green-800">
-              List of On-Going Works / Current Commitment Under any Organization as a Sole Tenderer (If Tenderer participated as JV) - (Form e-PW2A-6A)
-            </h2>
-          </div>
-
-          {/* Section (A): JV Sole Tenderer */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                (A) List of On-Going Works / Current Commitment Under any Organization as a Sole Tenderer (If Tenderer participated as JV)
-              </h3>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-max">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      SL No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      JV Partner Name
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      TID or Ref. No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Contract Amount
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Date of issuance of NOA/ Signing of Contract
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Intended Completion Date of contract
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Name of the PE & its Organization
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Payment Received
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Value of remaining Works/Current Commitment 9=(I-8)
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Upload Contract Agreement /NOA
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.ongoingWorksJVSole.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <CopyableCell value={item.slNo} className="text-xs" />
-                      <CopyableCell value={item.jvPartnerName} className="text-xs" />
-                      <CopyableCell value={item.tidRefNo} className="text-xs" />
-                      <CopyableCell value={item.contractAmount} className="text-xs" />
-                      <CopyableCell value={item.dateOfNOA} className="text-xs" />
-                      <CopyableCell value={item.intendedCompletion} className="text-xs" />
-                      <CopyableCell value={item.peOrganization} className="text-xs" />
-                      <CopyableCell value={item.paymentReceived} className="text-xs" />
-                      <CopyableCell value={item.remainingValue} className="text-xs" />
-                      <CopyableCell value={item.uploadContract} className="text-xs" />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Section (B): JV Information */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                (B) List of On-Going Works / Current Commitment Under any Organization for JV Information (If Tenderer participated as JV)
-              </h3>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-max">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      SL No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      JV Partner Name
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      TID or Ref. No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Contract Amount
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Tenderer's portion in the contract amount
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Date of issuance of NOA/ Signing of Contract
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Intended Completion Date of contract
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Name of the PE & its Organization
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Payment Received as JV Partner
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Value of remaining Works/ Current Commitment 10=(5-9)
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Upload Contract Agreement /NOA
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.ongoingWorksJVInfo.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <CopyableCell value={item.slNo} className="text-xs" />
-                      <CopyableCell value={item.jvPartnerName} className="text-xs" />
-                      <CopyableCell value={item.tidRefNo} className="text-xs" />
-                      <CopyableCell value={item.contractAmount} className="text-xs" />
-                      <CopyableCell value={item.tendererPortion} className="text-xs" />
-                      <CopyableCell value={item.dateOfNOA} className="text-xs" />
-                      <CopyableCell value={item.intendedCompletion} className="text-xs" />
-                      <CopyableCell value={item.peOrganization} className="text-xs" />
-                      <CopyableCell value={item.paymentReceived} className="text-xs" />
-                      <CopyableCell value={item.remainingValue} className="text-xs" />
-                      <CopyableCell value={item.uploadContract} className="text-xs" />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ========== ACTIVITIES FORM ========== */}
-
-          {/* Activities Form Header - Green */}
-          <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 border-l-4 border-green-600">
-            <h2 className="text-sm sm:text-base md:text-lg font-bold text-green-800">
-              Activities Form
-            </h2>
-          </div>
-
-          {/* Activities Form Section */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                Activities Form
-              </h3>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse min-w-max">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Sr. No.
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Activity Name
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Description
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Physical Progress (%)
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Sectional Name
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Duration of Activity Start and End [Insert days from Commencement Date]
-                    </th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                      Activity Duration (In Days)
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.activitiesForm.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <CopyableCell value={item.srNo} className="text-xs" />
-                      <CopyableCell value={item.activityName} className="text-xs" />
-                      <CopyableCell value={item.description} className="text-xs" />
-                      <CopyableCell value={item.physicalProgress} className="text-xs" />
-                      <CopyableCell value={item.sectionalName} className="text-xs" />
-                      <CopyableCell value={item.duration} className="text-xs" />
-                      <CopyableCell value={item.activityDuration} className="text-xs" />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ========== ENVIRONMENTAL AND SOCIAL SPECIFICATIONS ========== */}
-
-          {/* ES Specifications Header - Green */}
-          <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 border-l-4 border-green-600">
-            <h2 className="text-sm sm:text-base md:text-lg font-bold text-green-800">
-              Environmental and Social (ES) Specifications
-            </h2>
-          </div>
-
-          {/* ES Specifications Section */}
-          <div className="border border-gray-300 mb-4 sm:mb-6">
-            <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
-              <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                Environmental and Social Aspects
-              </h3>
-            </div>
-
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-1/2">
-                    ES Specifications
-                  </th>
-                  <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-1/2">
-                    Tenderer's Response
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="hover:bg-gray-50">
-                  <CopyableCell value={data.esSpecifications.description} className="align-top" />
-                  <CopyableCell value={data.esSpecifications.response} className="align-top" />
-                </tr>
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
+
+        {/* ========== ONGOING WORKS ========== */}
+
+        {/* Ongoing Works Header - Green */}
+        <Collapsible className="mb-4 sm:mb-6 mt-6 sm:mt-8 group/ongoing">
+          <CollapsibleTrigger className="w-full">
+            <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg border-l-4 border-green-600 flex items-center justify-between transition-all duration-300 hover:bg-green-200">
+              <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-green-800">
+                List of On-Going Works / Current Commitment Under any Organization as a Sole Tenderer (If Tenderer participated as individual) - (Form e-PW2A-6A)
+              </h2>
+              <ChevronDown className="h-5 w-5 text-green-800 transition-transform duration-300 group-data-[state=open]/ongoing:rotate-180" />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+            <div className="border border-t-0 border-gray-300">
+
+              {/* Ongoing Works Section */}
+              <Collapsible className="w-full group/ongoinga">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                      (A) List of On-Going Works / Current Commitment Under any Organization as a Sole Tenderer (If Tenderer participated as individual)
+                    </h3>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/ongoinga:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-max">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            SL No. Ref No.
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            TID or Ref. No.
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Contract Amount
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Date of issuance of NOA / Signing of Contract
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Intended Completion Date of contract
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Name of the PE & its Organization
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Payment Received
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Value of remaining Works/Current Commitment (I-J-7)
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Work Completion Certificate File Name
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Payment Certificate File Name
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.ongoingWorks.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-gray-50">
+                            <CopyableCell value={item.slNo} className="text-xs" />
+                            <CopyableCell value={item.tidRefNo} className="text-xs" />
+                            <CopyableCell value={item.contractAmount} className="text-xs" />
+                            <CopyableCell value={item.dateOfNOA} className="text-xs" />
+                            <CopyableCell value={item.intendedCompletion} className="text-xs" />
+                            <CopyableCell value={item.peOrganization} className="text-xs" />
+                            <CopyableCell value={item.paymentReceived} className="text-xs" />
+                            <CopyableCell value={item.remainingValue} className="text-xs" />
+                            <CopyableCell value={item.workCompletionCertificate} className="text-xs" />
+                            <CopyableCell value={item.paymentCertificate} className="text-xs" />
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Section (B): JV Partner Ongoing Works */}
+              <Collapsible className="w-full border-t border-gray-300 group/ongoingb">
+                <CollapsibleTrigger className="w-full">
+                  <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+                      (B) List of On-Going Works / Current Commitment Under any Organization as JV Partner (If Tenderer participated as individual)
+                    </h3>
+                    <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/ongoingb:rotate-180" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-max">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            SL No.
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            TID or Ref. No.
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Contract Amount
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Tenderer's portion in the contract amount
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Date of issuance of NOA/ Signing of Contract
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Intended Completion Date of contract
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Name of the PE & its Organization
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Payment Received as JV Partner
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Value of remaining Works/Current Commitment 9=(I-8)
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Work Completion Certificate File Name
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                            Payment Certificate File Name
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.ongoingWorksJVPartner.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-gray-50">
+                            <CopyableCell value={item.slNo} className="text-xs" />
+                            <CopyableCell value={item.tidRefNo} className="text-xs" />
+                            <CopyableCell value={item.contractAmount} className="text-xs" />
+                            <CopyableCell value={item.tendererPortion} className="text-xs" />
+                            <CopyableCell value={item.dateOfNOA} className="text-xs" />
+                            <CopyableCell value={item.intendedCompletion} className="text-xs" />
+                            <CopyableCell value={item.peOrganization} className="text-xs" />
+                            <CopyableCell value={item.paymentReceived} className="text-xs" />
+                            <CopyableCell value={item.remainingValue} className="text-xs" />
+                            <CopyableCell value={item.workCompletionCertificate} className="text-xs" />
+                            <CopyableCell value={item.paymentCertificate} className="text-xs" />
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+
+      {/* ========== ONGOING WORKS - JV ========== */}
+
+      {/* Ongoing Works JV Header - Green */}
+      <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 border-l-4 border-green-600">
+        <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-green-800">
+          List of On-Going Works / Current Commitment Under any Organization as a Sole Tenderer (If Tenderer participated as JV) - (Form e-PW2A-6A)
+        </h2>
+      </div>
+
+      {/* Section (A): JV Sole Tenderer */}
+      <div className="border border-gray-300 mb-4 sm:mb-6">
+        <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
+          <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+            (A) List of On-Going Works / Current Commitment Under any Organization as a Sole Tenderer (If Tenderer participated as JV)
+          </h3>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse min-w-max">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  SL No.
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  JV Partner Name
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  TID or Ref. No.
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Contract Amount
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Date of issuance of NOA/ Signing of Contract
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Intended Completion Date of contract
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Name of the PE & its Organization
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Payment Received
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Value of remaining Works/Current Commitment 9=(I-8)
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Upload Contract Agreement /NOA
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.ongoingWorksJVSole.map((item, idx) => (
+                <tr key={idx} className="hover:bg-gray-50">
+                  <CopyableCell value={item.slNo} className="text-xs" />
+                  <CopyableCell value={item.jvPartnerName} className="text-xs" />
+                  <CopyableCell value={item.tidRefNo} className="text-xs" />
+                  <CopyableCell value={item.contractAmount} className="text-xs" />
+                  <CopyableCell value={item.dateOfNOA} className="text-xs" />
+                  <CopyableCell value={item.intendedCompletion} className="text-xs" />
+                  <CopyableCell value={item.peOrganization} className="text-xs" />
+                  <CopyableCell value={item.paymentReceived} className="text-xs" />
+                  <CopyableCell value={item.remainingValue} className="text-xs" />
+                  <CopyableCell value={item.uploadContract} className="text-xs" />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Section (B): JV Information */}
+      <div className="border border-gray-300 mb-4 sm:mb-6">
+        <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
+          <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+            (B) List of On-Going Works / Current Commitment Under any Organization for JV Information (If Tenderer participated as JV)
+          </h3>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse min-w-max">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  SL No.
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  JV Partner Name
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  TID or Ref. No.
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Contract Amount
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Tenderer's portion in the contract amount
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Date of issuance of NOA/ Signing of Contract
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Intended Completion Date of contract
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Name of the PE & its Organization
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Payment Received as JV Partner
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Value of remaining Works/ Current Commitment 10=(5-9)
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Upload Contract Agreement /NOA
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.ongoingWorksJVInfo.map((item, idx) => (
+                <tr key={idx} className="hover:bg-gray-50">
+                  <CopyableCell value={item.slNo} className="text-xs" />
+                  <CopyableCell value={item.jvPartnerName} className="text-xs" />
+                  <CopyableCell value={item.tidRefNo} className="text-xs" />
+                  <CopyableCell value={item.contractAmount} className="text-xs" />
+                  <CopyableCell value={item.tendererPortion} className="text-xs" />
+                  <CopyableCell value={item.dateOfNOA} className="text-xs" />
+                  <CopyableCell value={item.intendedCompletion} className="text-xs" />
+                  <CopyableCell value={item.peOrganization} className="text-xs" />
+                  <CopyableCell value={item.paymentReceived} className="text-xs" />
+                  <CopyableCell value={item.remainingValue} className="text-xs" />
+                  <CopyableCell value={item.uploadContract} className="text-xs" />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ========== ACTIVITIES FORM ========== */}
+
+      {/* Activities Form Header - Green */}
+      <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 border-l-4 border-green-600">
+        <h2 className="text-sm sm:text-base md:text-lg font-bold text-green-800">
+          Activities Form
+        </h2>
+      </div>
+
+      {/* Activities Form Section */}
+      <div className="border border-gray-300 mb-4 sm:mb-6">
+        <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
+          <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+            Activities Form
+          </h3>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse min-w-max">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Sr. No.
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Activity Name
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Description
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Physical Progress (%)
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Sectional Name
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Duration of Activity Start and End [Insert days from Commencement Date]
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                  Activity Duration (In Days)
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.activitiesForm.map((item, idx) => (
+                <tr key={idx} className="hover:bg-gray-50">
+                  <CopyableCell value={item.srNo} className="text-xs" />
+                  <CopyableCell value={item.activityName} className="text-xs" />
+                  <CopyableCell value={item.description} className="text-xs" />
+                  <CopyableCell value={item.physicalProgress} className="text-xs" />
+                  <CopyableCell value={item.sectionalName} className="text-xs" />
+                  <CopyableCell value={item.duration} className="text-xs" />
+                  <CopyableCell value={item.activityDuration} className="text-xs" />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ========== ENVIRONMENTAL AND SOCIAL SPECIFICATIONS ========== */}
+
+      {/* ES Specifications Header - Green */}
+      <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg mb-0 mt-6 sm:mt-8 border-l-4 border-green-600">
+        <h2 className="text-sm sm:text-base md:text-lg font-bold text-green-800">
+          Environmental and Social (ES) Specifications
+        </h2>
+      </div>
+
+      {/* ES Specifications Section */}
+      <div className="border border-gray-300 mb-4 sm:mb-6">
+        <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
+          <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
+            Environmental and Social Aspects
+          </h3>
+        </div>
+
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-1/2">
+                ES Specifications
+              </th>
+              <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border border-gray-300 w-1/2">
+                Tenderer's Response
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="hover:bg-gray-50">
+              <CopyableCell value={data.esSpecifications.description} className="align-top" />
+              <CopyableCell value={data.esSpecifications.response} className="align-top" />
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );

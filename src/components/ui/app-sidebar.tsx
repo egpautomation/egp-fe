@@ -46,17 +46,17 @@ export function AppSidebar() {
     {
       label: "Job Order",
       path: "/dashboard",
-      role: ["admin","user_agent"],
+      role: ["admin", "user_agent", "moderator"],
       children: [{
-          label: "Create Job Order(BulK)",
-          path: "/dashboard/create-job-order-bulk",
-          role: ["admin","user_agent","user","moderator"],
-        },],
+        label: "Create Job Order(BulK)",
+        path: "/dashboard/create-job-order-bulk",
+        role: ["admin", "user_agent", "user", "moderator"],
+      },],
     },
     {
       label: "Services",
       path: "/dashboard",
-      role: ["guest", "user", "moderator", "admin","user_agent"],
+      role: ["guest", "user", "moderator", "admin", "user_agent"],
       children: [
         {
           label: "Egp Listed Company",
@@ -77,7 +77,7 @@ export function AppSidebar() {
         {
           label: "My Job Order",
           path: "/dashboard/job-order/me",
-          role: ["guest", "user", "moderator", "admin","user_agent"],
+          role: ["guest", "user", "moderator", "admin", "user_agent"],
         },
         {
           label: "All Job Order",
@@ -87,13 +87,13 @@ export function AppSidebar() {
         {
           label: "Update Job Order",
           path: "/public/job-order/update-status",
-          role: ["admin","user","moderator", "guest"],
+          role: ["admin", "user", "moderator", "guest"],
         },
-        
+
         {
           label: "Egp Pass Email",
           path: "/dashboard/egp-pass-email",
-          role: ["admin","user_agent"],
+          role: ["admin", "user_agent"],
         },
         {
           label: "Add A Service",
@@ -179,12 +179,12 @@ export function AppSidebar() {
         {
           label: "All Live Tender",
           path: "/dashboard/live-tenders",
-          role: ["user", "admin", "guest", "moderator","user_agent"],
+          role: ["user", "admin", "guest", "moderator", "user_agent"],
         },
         {
           label: "LTM Tenders",
           path: "/dashboard/tenders/ltm-tenders",
-          role: ["user", "admin", "guest", "moderator","user_agent"],
+          role: ["user", "admin", "guest", "moderator", "user_agent"],
         },
         {
           label: "All Departments",
@@ -204,7 +204,7 @@ export function AppSidebar() {
         {
           label: "Payment",
           path: "/dashboard/payment",
-          role: ["admin","user_agent"],
+          role: ["admin", "user_agent"],
         },
         // {
         //   label: "Upload File",
@@ -363,7 +363,7 @@ export function AppSidebar() {
       path: "/dashboard/tender-data-entry",
       role: ["admin"],
       children: [
-        
+
         {
           label: "Tender Data Entry(TTI)",
           path: "/dashboard/tender-data-entry-tti",
@@ -391,7 +391,7 @@ export function AppSidebar() {
           path: "/dashboard/tender-data-entry",
           role: ["guest", "user", "moderator", "admin"],
         },
-        
+
         {
           label: "(ALL) Update Data Entry",
           path: "/dashboard/update-tender-data-entry",
@@ -456,7 +456,7 @@ export function AppSidebar() {
       path: "/dashboard/tender-data-entry",
       role: ["guest", "user", "moderator", "admin"],
       children: [
-       
+
         {
           label: "Tender Ids",
           path: "/public/tender-tenderIds",
@@ -477,7 +477,7 @@ export function AppSidebar() {
           path: "/public/tender-tenderIds-ostetm",
           role: ["guest", "user", "moderator", "admin"],
         },
-        
+
       ],
     },
   ];
@@ -540,26 +540,26 @@ function DashboardRoutes({ route, openIndex, setOpenIndex, index }) {
       {(user?.role === "admin" ||
         !route?.role ||
         route?.role.includes(user?.role)) && (
-        <CollapsibleTrigger className="flex gap-2 items-center font-semibold cursor-pointer py-1">
-          {openIndex === index ? (
-            <div className="flex items-center gap-2">
-              <SquareMinus
-                className={`${!route?.children && "text-gray-600"}`}
-                size={20}
-              />
-              <p>{route?.label}</p>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <SquarePlus
-                className={`${!route?.children && "text-gray-600"}`}
-                size={20}
-              />
-              <p>{route?.label}</p>
-            </div>
-          )}
-        </CollapsibleTrigger>
-      )}
+          <CollapsibleTrigger className="flex gap-2 items-center font-semibold cursor-pointer py-1">
+            {openIndex === index ? (
+              <div className="flex items-center gap-2">
+                <SquareMinus
+                  className={`${!route?.children && "text-gray-600"}`}
+                  size={20}
+                />
+                <p>{route?.label}</p>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <SquarePlus
+                  className={`${!route?.children && "text-gray-600"}`}
+                  size={20}
+                />
+                <p>{route?.label}</p>
+              </div>
+            )}
+          </CollapsibleTrigger>
+        )}
       {route?.children
         ?.filter(
           (item) => item?.role.includes(user?.role) || user?.role === "admin"
