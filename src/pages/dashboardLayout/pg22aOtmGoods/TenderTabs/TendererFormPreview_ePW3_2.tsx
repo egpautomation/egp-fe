@@ -83,9 +83,7 @@ const mockPreviewData = {
   ],
   // Part 4
   liquidAssets: [
-    { no: "1", source: "Bank Credit Line - AB Bank Limited", amount: "BDT 200,000,000" },
-    { no: "2", source: "Internal Cash Reserves", amount: "BDT 150,000,000" },
-    { no: "3", source: "Investment Portfolio Liquidation", amount: "BDT 80,000,000" },
+    { no: "1", source: "Bank Credit Line - AB Bank Limited", amount: "200000000" },
   ],
   contactDetails: "AB Bank Limited, Corporate Branch, Gulshan-1, Dhaka-1212. Contact Person: Mr. Rahman Ahmed, Manager Corporate Banking. Tel: +880-2-9876543, Fax: +880-2-9876544, Email: corporate@abbank.com.bd",
   keyPersonnel: [
@@ -393,7 +391,7 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
     ? [{
       no: "1",
       source: companyData?.bankName ? `Bank Credit Line - ${companyData.bankName}` : "Bank Credit Line",
-      amount: `BDT ${Number(currentTender.liquidAssets).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+      amount: currentTender.liquidAssets.toString()
     }]
     : mockPreviewData.liquidAssets;
 
@@ -774,50 +772,102 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                 </CollapsibleTrigger>
                 <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
                   <div className="overflow-x-auto">
-                    <table className="w-full border-collapse min-w-max">
-                      <thead>
-                        <tr className="bg-gray-100">
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            Contract No
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            Name of Contract
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            Role in Contract
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            Award date
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            Completion date
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            total Contract Value
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            Procuring Entity Name Address Id / fax e-mail
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            Brief description with justifications of the similarity compared to the PE's requirements
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {data.specificExperience.map((item, idx) => (
-                          <tr key={idx} className="hover:bg-gray-50">
-                            <CopyableCell value={item.contractNo} className="text-xs" />
-                            <CopyableCell value={item.name} className="text-xs" />
-                            <CopyableCell value={item.role} className="text-xs" />
-                            <CopyableCell value={item.awardDate} className="text-xs" />
-                            <CopyableCell value={item.completionDate} className="text-xs" />
-                            <CopyableCell value={item.totalValue} className="text-xs" />
-                            <CopyableCell value={item.procuringEntity} className="text-xs" />
-                            <CopyableCell value={item.briefDescription} className="text-xs" />
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    {/* Pagination Logic */}
+                    {(() => {
+                      const itemsPerPage = 5;
+                      const [currentPage, setCurrentPage] = useState(1);
+                      const totalItems = data.specificExperience.length;
+                      const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+                      const startIndex = (currentPage - 1) * itemsPerPage;
+                      const currentItems = data.specificExperience.slice(startIndex, startIndex + itemsPerPage);
+
+                      return (
+                        <>
+                          <table className="w-full border-collapse min-w-max">
+                            <thead>
+                              <tr className="bg-gray-100">
+                                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                                  Contract No
+                                </th>
+                                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                                  Name of Contract
+                                </th>
+                                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                                  Role in Contract
+                                </th>
+                                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                                  Award date
+                                </th>
+                                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                                  Completion date
+                                </th>
+                                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                                  total Contract Value
+                                </th>
+                                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                                  Procuring Entity Name Address Id / fax e-mail
+                                </th>
+                                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
+                                  brief description
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {currentItems.map((item, idx) => (
+                                <tr key={idx} className="hover:bg-gray-50">
+                                  <CopyableCell value={item.contractNo} />
+                                  <CopyableCell value={item.name} />
+                                  <CopyableCell value={item.role} />
+                                  <CopyableCell value={item.awardDate} />
+                                  <CopyableCell value={item.completionDate} />
+                                  <CopyableCell value={item.totalValue} />
+                                  <CopyableCell value={item.procuringEntity} />
+                                  <CopyableCell value={item.briefDescription} />
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+
+                          {/* Pagination Controls */}
+                          {totalPages > 1 && (
+                            <div className="flex justify-between items-center py-3 px-4 bg-gray-50 border-t border-gray-200">
+                              <span className="text-sm text-gray-600">
+                                Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, totalItems)} of {totalItems} entries
+                              </span>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                  disabled={currentPage === 1}
+                                  className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  Previous
+                                </button>
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                  <button
+                                    key={page}
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`px-3 py-1 text-sm border rounded ${currentPage === page
+                                      ? 'bg-blue-600 text-white border-blue-600'
+                                      : 'bg-white border-gray-300 hover:bg-gray-100'
+                                      }`}
+                                  >
+                                    {page}
+                                  </button>
+                                ))}
+                                <button
+                                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                  disabled={currentPage === totalPages}
+                                  className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  Next
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
                   </div>
                 </CollapsibleContent>
               </Collapsible>
@@ -1611,7 +1661,7 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                             Date of issuance of NOA / Signing of Contract
                           </th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            Intended Completion Date of contract
+                            Work Completion Date of contract
                           </th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
                             Name of the PE & its Organization
@@ -1623,7 +1673,7 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                             Value of remaining Works/Current Commitment (I-J-7)
                           </th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            Work Completion Certificate File Name
+                            Work Completion Certificate File Name/NOA
                           </th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
                             Payment Certificate File Name
@@ -1682,7 +1732,7 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                             Date of issuance of NOA/ Signing of Contract
                           </th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            Intended Completion Date of contract
+                            Work Completion Date of contract
                           </th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
                             Name of the PE & its Organization
@@ -1694,7 +1744,7 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                             Value of remaining Works/Current Commitment 9=(I-8)
                           </th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            Work Completion Certificate File Name
+                            Work Completion Certificate File Name/NOA
                           </th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
                             Payment Certificate File Name
@@ -1765,7 +1815,7 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   Date of issuance of NOA/ Signing of Contract
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                  Intended Completion Date of contract
+                  Work Completion Date of contract
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
                   Name of the PE & its Organization
@@ -1832,7 +1882,7 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   Date of issuance of NOA/ Signing of Contract
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                  Intended Completion Date of contract
+                  Work Completion Date of contract
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
                   Name of the PE & its Organization

@@ -100,7 +100,8 @@ export const TendererFormPreview = ({
   assessedCapacity,
   maxFinancialYear,
   savedContractId, // New Prop
-  onSave // New Prop
+  onSave, // New Prop
+  financialInfo // New Prop
 }) => {
   const data = mockTendererFormData;
 
@@ -804,7 +805,75 @@ export const TendererFormPreview = ({
             </tbody>
           </table>
         </Section>
+
+        {/* Part 5: Financial Information */}
+        <Section title="Part 5: Financial Information">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-2 font-semibold w-1/2">Description</th>
+                <th className="p-2 font-semibold text-right w-1/2">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b">
+                <td className="p-2">Estimated Cost</td>
+                <td className="p-2 text-right">{financialInfo?.estimatedCost ? `BDT ${Number(financialInfo.estimatedCost).toLocaleString('en-IN', { minimumFractionDigits: 0 })}` : 'N/A'}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="p-2">Document Price</td>
+                <td className="p-2 text-right">{financialInfo?.documentPrice ? `BDT ${Number(financialInfo.documentPrice).toLocaleString('en-IN', { minimumFractionDigits: 0 })}` : 'N/A'}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="p-2">Tender Security</td>
+                <td className="p-2 text-right">{financialInfo?.tenderSecurity ? `BDT ${Number(financialInfo.tenderSecurity).toLocaleString('en-IN', { minimumFractionDigits: 0 })}` : 'N/A'}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="p-2">Turnover Amount</td>
+                <td className="p-2 text-right">{financialInfo?.turnoverAmount ? `BDT ${Number(financialInfo.turnoverAmount).toLocaleString('en-IN', { minimumFractionDigits: 0 })}` : 'N/A'}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="p-2">Liquid Assets</td>
+                <td className="p-2 text-right">{financialInfo?.liquidAssets ? `BDT ${Number(financialInfo.liquidAssets).toLocaleString('en-IN', { minimumFractionDigits: 0 })}` : 'N/A'}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="p-2">Tender Capacity</td>
+                <td className="p-2 text-right">{financialInfo?.tenderCapacity ? `BDT ${Number(financialInfo.tenderCapacity).toLocaleString('en-IN', { minimumFractionDigits: 0 })}` : 'N/A'}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="p-2">Minimum Year of Similar Work</td>
+                <td className="p-2 text-right">{financialInfo?.yearofsimilarexperience || 'N/A'}</td>
+              </tr>
+              {financialInfo?.typesOfSimilarNature && financialInfo.typesOfSimilarNature.includes(" : ") ? (
+                <>
+                  <tr className="border-b">
+                    <td className="p-2">Types of Similar Nature</td>
+                    <td className="p-2 text-right">{financialInfo.typesOfSimilarNature.split(" : ")[0]}</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-2">Type of Similar Nature Value</td>
+                    <td className="p-2 text-right">{financialInfo.typesOfSimilarNature.split(" : ")[1]}</td>
+                  </tr>
+                </>
+              ) : (
+                <tr className="border-b">
+                  <td className="p-2">Types of Similar Nature</td>
+                  <td className="p-2 text-right">{financialInfo?.typesOfSimilarNature || 'N/A'}</td>
+                </tr>
+              )}
+              <tr className="border-b">
+                <td className="p-2">JVCA</td>
+                <td className="p-2 text-right">{financialInfo?.jvca || 'N/A'}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="p-2">General Experience</td>
+                <td className="p-2 text-right">{financialInfo?.generalExperience || 'N/A'}</td>
+              </tr>
+            </tbody>
+          </table>
+        </Section>
       </div>
+
 
       {/* Part 5: Experience and Commitments */}
       <Section title="Part 5: Experience and Commitments">

@@ -548,19 +548,19 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
               <FormField id="contractSigningDate" label="Contract Signing Date">
                 <Input name="contractSigningDate" type="date" value={formData.contractSigningDate} onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
-              <FormField id="commencementDate" label="Commencement Date *">
+              <FormField id="commencementDate" label="Work Order Date *">
                 <Input required name="commencementDate" type="date" value={formData.commencementDate} onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="contractStartDate" label="Contract Start Date ">
                 <Input name="contractStartDate" type="date" value={formData.contractStartDate} onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
-              <FormField id="intendedCompletionDate" label="Intended Completion Date *">
+              <FormField id="intendedCompletionDate" label="Work Completion Date *">
                 <Input required name="intendedCompletionDate" type="date" value={formData.intendedCompletionDate} onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="contractEndDate" label="Contract End Date">
                 <Input name="contractEndDate" type="date" value={formData.contractEndDate} onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
-              <FormField id="contractPeriodExtendedUpTo" label="Contract Extended Up To *">
+              <FormField id="contractPeriodExtendedUpTo" label="Time Extension Date *">
                 <Input required name="contractPeriodExtendedUpTo" type="date" value={formData.contractPeriodExtendedUpTo} onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="contractValue" label="Contract Value (Initial) *">
@@ -641,7 +641,7 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
                 </SelectContent>
               </Select>
             </FormField>
-            <FormField id="workCompletationCertificateFileName" label="Work Completion Certificate File Name *">
+            <FormField id="workCompletationCertificateFileName" label="Work Completion Certificate File Name/NOA *">
               <Input required name="workCompletationCertificateFileName" value={formData.workCompletationCertificateFileName} onChange={(e) => handleChange(e.target.name, e.target.value)} />
             </FormField>
             <FormField id="paymentCertificateFileName" label="Payment Certificate File Name">

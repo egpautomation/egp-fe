@@ -210,9 +210,9 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
 
     // Validate required fields (marked with *)
     const requiredFields = [
-      { key: 'commencementDate', label: 'Commencement Date' },
-      { key: 'intendedCompletionDate', label: 'Intended Completion Date' },
-      { key: 'contractPeriodExtendedUpTo', label: 'Contract Extended Up To' },
+      { key: 'commencementDate', label: 'Work Order Date' },
+      { key: 'intendedCompletionDate', label: 'Work Completion Date' },
+      { key: 'contractPeriodExtendedUpTo', label: 'Time Extension Date' },
       { key: 'contractValue', label: 'Contract Value' },
       { key: 'financialYear', label: 'Financial Year' },
       { key: 'Name_Of_Contractor', label: 'Name of Contractor' },
@@ -220,7 +220,7 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
       { key: 'paymentAmount', label: 'Payment Amount' },
       { key: 'jvShare', label: 'JV Share' },
       { key: 'Status_Complite_ongoing', label: 'Status' },
-      { key: 'workCompletationCertificateFileName', label: 'Work Completion Certificate File Name' },
+      { key: 'workCompletationCertificateFileName', label: 'Work Completion Certificate File Name/NOA' },
     ];
 
     for (const field of requiredFields) {
@@ -495,19 +495,19 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
               <FormField id="contractSigningDate" label="Contract Signing Date">
                 <Input name="contractSigningDate" type="date" value={formData.contractSigningDate} onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
-              <FormField id="commencementDate" label="Commencement Date *">
+              <FormField id="commencementDate" label="Work Order Date *">
                 <Input required name="commencementDate" type="date" value={formData.commencementDate} onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="contractStartDate" label="Contract Start Date ">
                 <Input name="contractStartDate" type="date" value={formData.contractStartDate} onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
-              <FormField id="intendedCompletionDate" label="Intended Completion Date *">
+              <FormField id="intendedCompletionDate" label="Work Completion Date *">
                 <Input required name="intendedCompletionDate" type="date" value={formData.intendedCompletionDate} onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="contractEndDate" label="Contract End Date">
                 <Input name="contractEndDate" type="date" value={formData.contractEndDate} onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
-              <FormField id="contractPeriodExtendedUpTo" label="Contract Extended Up To *">
+              <FormField id="contractPeriodExtendedUpTo" label="Time Extension Date *">
                 <Input required name="contractPeriodExtendedUpTo" type="date" value={formData.contractPeriodExtendedUpTo} onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="contractValue" label="Contract Value (Initial) *">
@@ -588,7 +588,7 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
                 </SelectContent>
               </Select>
             </FormField>
-            <FormField id="workCompletationCertificateFileName" label="Work Completion Certificate File Name *">
+            <FormField id="workCompletationCertificateFileName" label="Work Completion Certificate File Name/NOA *">
               <Input required name="workCompletationCertificateFileName" value={formData.workCompletationCertificateFileName} onChange={(e) => handleChange(e.target.name, e.target.value)} />
             </FormField>
             <FormField id="paymentCertificateFileName" label="Payment Certificate File Name">

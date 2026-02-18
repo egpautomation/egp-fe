@@ -13,6 +13,7 @@ import { TenderInformationForm } from "./TenderTabs/Tender_Information_Form";
 import { UpdateTenderInformationForm } from "./TenderTabs/Update_Tender_Information_Form";
 import { TendererFormPreview } from "./TenderTabs/TendererFormPreview";
 import { TendererFormPreview_ePW3_2 } from "./TenderTabs/TendererFormPreview_ePW3_2";
+import UpdateTenderDialog from "@/components/dashboard/UpdateTenderDialog";
 import { DownloadsTab } from "./TenderTabs/DownloadsTab";
 import { LineOfCreditTab } from "./TenderTabs/LineOfCreditTab";
 import { STLCalculationTab } from "./TenderTabs/STLCalculationTab";
@@ -39,6 +40,7 @@ const PgTwoTowOtmGoodsDetails = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [isReloading, setIsReloading] = useState(false);
   const [selectedContractIdForEdit, setSelectedContractIdForEdit] = useState(null);
+  const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
 
   // Shared state for Tender Capacity inputs (for real-time preview updates)
   // Shared state for Tender Capacity inputs (for real-time preview updates)
@@ -294,6 +296,7 @@ const PgTwoTowOtmGoodsDetails = () => {
           maxFinancialYear={currentTender?.FinancialYearofMaximumvalue}
           savedContractId={currentTender?.experienceContractId}
           onSave={handleSaveExperienceContract}
+          financialInfo={liveTenderData}
         />
       ),
     },
@@ -312,6 +315,7 @@ const PgTwoTowOtmGoodsDetails = () => {
         currentTender={{ ...currentTender, liquidAssets: liveTenderData?.liquidAssets || currentTender?.liquidAssets }}
         companyData={companyData}
         ongoingContracts={ongoingContracts}
+        financialInfo={currentTender}
       />,
     },
     {
@@ -566,20 +570,25 @@ const PgTwoTowOtmGoodsDetails = () => {
               <h3 className="text-base sm:text-lg text-gray-600 mt-1">Tender ID: {currentTender.tenderId}</h3>
             )}
           </div>
-          <Button
-            onClick={() => {
-              setIsReloading(true);
-              setContractReload(prev => prev + 1);
-              setTenderReload(prev => prev + 1); // Also reload tender preparation data
-              setTimeout(() => setIsReloading(false), 1000);
-            }}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            <RefreshCw className={`w-4 h-4 transition-transform duration-1000 ${isReloading ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">Reload Data</span>
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => {
+                setIsReloading(true);
+                setContractReload(prev => prev + 1);
+                setTenderReload(prev => prev + 1); // Also reload tender preparation data
+                setTimeout(() => setIsReloading(false), 1000);
+              }}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`w-4 h-4 transition-transform duration-1000 ${isReloading ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Reload Data</span>
+            </Button>
+            <Button onClick={() => setUpdateDialogOpen(true)} variant="outline" size="sm" className="flex items-center gap-2">
+              Update Tender Info
+            </Button>
+          </div>
         </div>
 
         <div className="border-b border-gray-200 mb-4 sm:mb-6">
@@ -608,6 +617,25 @@ const PgTwoTowOtmGoodsDetails = () => {
           </div>
         </div>
       </div>
+      {currentTender && (
+        <UpdateTenderDialog
+          open={updateDialogOpen}
+          onOpenChange={setUpdateDialogOpen}
+          tenderId={currentTender._id}
+          initialData={{
+            turnoverAmount: currentTender.turnoverAmount,
+            liquidAssets: currentTender.liquidAssets,
+            tenderCapacity: currentTender.tenderCapacity,
+            yearofsimilarexperience: currentTender.yearofsimilarexperience,
+            typesOfSimilarNature: currentTender.typesOfSimilarNature,
+            jvca: currentTender.jvca,
+          }}
+          onSuccess={() => {
+            setTenderReload((prev) => prev + 1);
+            setContractReload((prev) => prev + 1);
+          }}
+        />
+      )}
     </div>
   );
 };
