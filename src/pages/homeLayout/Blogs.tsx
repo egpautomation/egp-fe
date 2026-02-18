@@ -3,52 +3,7 @@
 import { FiArrowRight, FiCalendar, FiClock, FiTag, FiTrendingUp } from "react-icons/fi"
 import { Link } from "react-router-dom"
 
-const blogs = [
-  {
-    id: "blog-1",
-    title: "LTM, OTM, OSTETM: কোন টেন্ডার টাইপ আপনার জন্য সেরা?",
-    excerpt:
-      "LTM, OTM এবং OSTETM টেন্ডারের পার্থক্য, যোগ্যতার শর্ত এবং সঠিক কৌশল নিয়ে বিস্তারিত গাইড।",
-    category: "Tender Basics",
-    date: "১২ ফেব্রুয়ারি ২০২৬",
-    readTime: "৬ মিনিট",
-    image:
-      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=1400&auto=format&fit=crop",
-  },
-  {
-    id: "blog-2",
-    title: "টেন্ডার ডকুমেন্ট চেকলিস্ট: সাবমিশনের আগে ১০টি জরুরি বিষয়",
-    excerpt:
-      "ডকুমেন্ট মিসিং, ভুল ম্যাপিং, BOQ ত্রুটি—এই সাধারণ ভুলগুলো এড়াতে একটি বাস্তবসম্মত চেকলিস্ট।",
-    category: "Document Preparation",
-    date: "৯ ফেব্রুয়ারি ২০২৬",
-    readTime: "৮ মিনিট",
-    image:
-      "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=1400&auto=format&fit=crop",
-  },
-  {
-    id: "blog-3",
-    title: "SLT Calculation সহজভাবে: কীভাবে স্মার্ট রেট কোট করবেন",
-    excerpt:
-      "SLT কী, কেন গুরুত্বপূর্ণ, এবং কিভাবে ডেটা-ভিত্তিক কোটেশন দিলে জয়ের সম্ভাবনা বাড়ে।",
-    category: "Calculation",
-    date: "৫ ফেব্রুয়ারি ২০২৬",
-    readTime: "৭ মিনিট",
-    image:
-      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1400&auto=format&fit=crop",
-  },
-  {
-    id: "blog-4",
-    title: "টেন্ডার ট্র্যাকিং অটোমেশন: ছোট টিমে বড় ফলাফল",
-    excerpt:
-      "কম জনবল নিয়ে কীভাবে টেন্ডার ডেডলাইন, নোটিফিকেশন, এবং অর্ডার স্ট্যাটাস দক্ষভাবে ম্যানেজ করবেন।",
-    category: "Productivity",
-    date: "২ ফেব্রুয়ারি ২০২৬",
-    readTime: "৫ মিনিট",
-    image:
-      "https://images.unsplash.com/photo-1556761175-4b46a572b786?q=80&w=1400&auto=format&fit=crop",
-  },
-]
+
 
 export default function Blogs() {
   return (
