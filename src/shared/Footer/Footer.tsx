@@ -122,7 +122,7 @@ const Footer = () => {
               © {new Date().getFullYear()} ই-টেন্ডার বিডি. All rights reserved.
             </p>
             <div className="flex gap-6">
-              <Link to="/#" className="text-sm text-gray-600 hover:text-[#4874c7] transition-colors">
+              <Link to="/privacy-policy" className="text-sm text-gray-600 hover:text-[#4874c7] transition-colors">
                 Privacy Policy
               </Link>
               <Link to="/#" className="text-sm text-gray-600 hover:text-[#4874c7] transition-colors">
