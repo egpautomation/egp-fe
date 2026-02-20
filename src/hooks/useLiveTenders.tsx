@@ -19,8 +19,24 @@ const useLiveTenders = (searchTerm = "", page = 1, limit = 20) => {
                 )}&page=${page}&limit=${limit}`;
                 const response = await fetch(url);
                 const data = await response.json();
-                setTenders(data?.data ?? data ?? []);
-                setTendersCount(data?.total ?? data?.count ?? data?.data?.length ?? 0);
+
+                // Handle: { data: [...], total/count: N }  or  [...] directly
+                // or  { tenders: [...] }  or  { result: [...] }
+                const list =
+                    data?.data ??
+                    data?.tenders ??
+                    data?.result ??
+                    (Array.isArray(data) ? data : []);
+
+                const count =
+                    data?.total ??
+                    data?.count ??
+                    data?.totalCount ??
+                    list.length ??
+                    0;
+
+                setTenders(list);
+                setTendersCount(count);
             } catch (error) {
                 console.error("Error fetching live tenders:", error);
             } finally {

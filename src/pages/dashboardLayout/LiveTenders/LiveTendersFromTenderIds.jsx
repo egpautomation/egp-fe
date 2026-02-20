@@ -247,6 +247,7 @@ export default function LiveTendersFromTenderIds() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [showImport, setShowImport] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [currentPage, setCurrentPage] = useState(
     Number(searchParams.get("page")) || 1
   );
@@ -278,16 +279,17 @@ export default function LiveTendersFromTenderIds() {
 
   /* ── Delete ── */
   const handleDelete = async (id) => {
-    if (!window.confirm("এই tender delete করতে চান?")) return;
     const toastId = toast.loading("Deleting…");
     try {
       await axios.delete(`${LIVE_TENDERS_API}/${id}`);
       toast.dismiss(toastId);
       toast.success("Deleted ✓");
+      setConfirmDeleteId(null);
       setReload((r) => r + 1);
     } catch (err) {
       toast.dismiss(toastId);
       toast.error(err?.response?.data?.message ?? "Delete failed");
+      setConfirmDeleteId(null);
     }
   };
 
@@ -477,13 +479,30 @@ export default function LiveTendersFromTenderIds() {
 
                   {/* Action */}
                   <td className="px-4 py-3 text-center">
-                    <button
-                      onClick={() => handleDelete(item?._id)}
-                      title="Delete"
-                      className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-700 transition"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                    {confirmDeleteId === item?._id ? (
+                      <div className="flex items-center justify-center gap-1">
+                        <button
+                          onClick={() => handleDelete(item?._id)}
+                          className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white transition"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(null)}
+                          className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmDeleteId(item?._id)}
+                        title="Delete"
+                        className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-700 transition"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
