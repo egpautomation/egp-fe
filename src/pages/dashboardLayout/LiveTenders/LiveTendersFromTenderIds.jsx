@@ -20,16 +20,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Pagination from "@/shared/Pagination/Pagination";
 import useLiveTenders, { LIVE_TENDERS_API } from "@/hooks/useLiveTenders";
+import { formatDate } from "@/lib/formateDate";
 
 /* ─────────────────────────────────────────────── */
 /*  Helpers                                        */
 /* ─────────────────────────────────────────────── */
-
-/** Safely format a date string like "03-Feb-2026" or ISO */
-function fmtDate(dateStr, timeStr = "") {
-  if (!dateStr) return "—";
-  return timeStr ? `${dateStr}  ${timeStr}` : dateStr;
-}
 
 /** Badge colours per procurement nature */
 const natureColors = {
@@ -322,7 +317,7 @@ export default function LiveTendersFromTenderIds() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              placeholder="Tender ID / Title / Organization…"
+              placeholder="Tender ID / Brief Description / Organization…"
               className="pl-8 h-9 text-sm w-64"
             />
             {searchTerm && (
@@ -373,10 +368,10 @@ export default function LiveTendersFromTenderIds() {
                 Tender ID
               </th>
               <th className="px-4 py-3 text-left whitespace-nowrap min-w-[220px]">
-                Title / Nature
+                Brief Description
               </th>
               <th className="px-4 py-3 text-left whitespace-nowrap min-w-[200px]">
-                Ministry / Org / PE
+                Ministry / Org / PE / Location
               </th>
               <th className="px-4 py-3 text-center whitespace-nowrap">
                 Type / Method
@@ -385,7 +380,7 @@ export default function LiveTendersFromTenderIds() {
                 Publishing
               </th>
               <th className="px-4 py-3 text-center whitespace-nowrap">
-                Closing
+                Opening
               </th>
               <th className="px-4 py-3 text-center whitespace-nowrap rounded-tr-xl">
                 Action
@@ -429,7 +424,7 @@ export default function LiveTendersFromTenderIds() {
                   {/* Title / Nature */}
                   <td className="px-4 py-3">
                     <p className="font-medium text-gray-800 leading-snug line-clamp-2 max-w-[280px]">
-                      {item?.title ?? "—"}
+                      {item?.BriefDescriptionofWorks ?? item?.title ?? "—"}
                     </p>
                     {item?.procurementNature && (
                       <div className="mt-1">
@@ -449,19 +444,22 @@ export default function LiveTendersFromTenderIds() {
                     {item?.pe && (
                       <p className="text-gray-500">{item.pe}</p>
                     )}
+                    {item?.locationDistrict && (
+                      <p className="text-indigo-600 font-medium">District: {item.locationDistrict}</p>
+                    )}
                   </td>
 
                   {/* Type / Method */}
                   <td className="px-4 py-3 text-center text-xs whitespace-nowrap">
-                    <p className="font-medium text-gray-700">{item?.type ?? "—"}</p>
+                    <p className="font-medium text-gray-700">{item?.ProcurementType ?? item?.type ?? "—"}</p>
                     <p className="text-gray-500 text-[11px]">
-                      {item?.method ?? ""}
+                      {item?.procurementMethod ?? item?.method ?? ""}
                     </p>
                   </td>
 
                   {/* Publishing */}
                   <td className="px-4 py-3 text-center text-xs whitespace-nowrap text-gray-700">
-                    <p>{item?.publishingDate ?? "—"}</p>
+                    <p>{formatDate(item?.publicationDateTime ?? item?.publishingDate, "dd-MMM-yyyy hh:mm a")}</p>
                     {item?.publishingTime && (
                       <p className="text-gray-500">{item.publishingTime}</p>
                     )}
@@ -470,7 +468,7 @@ export default function LiveTendersFromTenderIds() {
                   {/* Closing */}
                   <td className="px-4 py-3 text-center text-xs whitespace-nowrap">
                     <p className="font-medium text-red-600">
-                      {item?.closingDate ?? "—"}
+                      {formatDate(item?.openingDateTime ?? item?.closingDate, "dd-MMM-yyyy hh:mm a")}
                     </p>
                     {item?.closingTime && (
                       <p className="text-red-400">{item.closingTime}</p>
