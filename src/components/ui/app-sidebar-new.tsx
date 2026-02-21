@@ -133,13 +133,18 @@ export function AppSidebarNew() {
     {
       label: "Live Tender",
       path: "/dashboard/live-tenders-tenderIds",
-      role: ["admin", "user", "moderator", "user"],
+      role: ["admin", "moderator"],
       icon: BarChart3,
       children: [
         {
+          label: "Live Tenders",
+          path: "/dashboard/live-tenders-tenderIds?page=1&limit=20",
+          role: ["admin", "moderator"],
+        },
+        {
           label: "Live Tender",
-          path: "/dashboard/live-tenders-tenderIds",
-          role: ["admin", "user", "moderator", "user"],
+          path: "/dashboard/live-tender",
+          role: ["user", "admin", "guest", "moderator", "user_agent"],
         },
         {
           label: "Our Live Tender",
@@ -745,8 +750,8 @@ export function AppSidebarNew() {
                                     <Link
                                       to={item.path}
                                       className={`flex h-10 w-full rounded-lg items-center px-4 transition-all duration-200 ${childIsActive
-                                          ? "bg-black text-white"
-                                          : "text-black hover:bg-gray-100"
+                                        ? "bg-black text-white"
+                                        : "text-black hover:bg-gray-100"
                                         }`}
                                     >
                                       {/* <div className="w-2 h-2 bg-current rounded-full opacity-60 mr-3"></div> */}
@@ -783,8 +788,8 @@ export function AppSidebarNew() {
               <Link to="/dashboard/jobOrder-cart" className="w-full">
                 <motion.div
                   className={`flex h-10 w-full rounded-xl items-center justify-between text-decoration-none ${location.pathname === "/dashboard/jobOrder-cart"
-                      ? "bg-gray-200"
-                      : " hover:bg-gray-100"
+                    ? "bg-gray-200"
+                    : " hover:bg-gray-100"
                     }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}

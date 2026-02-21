@@ -248,7 +248,7 @@ export const STLCalculationTab = () => {
     };
 
     return (
-        <div className="max-w-6xl mx-auto p-6">
+        <div className="max-w-6xl mx-auto p-2 sm:p-4 md:p-6">
             <Card className="shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
                     <CardTitle className="text-2xl font-bold text-center text-gray-800">
@@ -256,7 +256,7 @@ export const STLCalculationTab = () => {
                     </CardTitle>
                 </CardHeader>
 
-                <CardContent className="p-6 space-y-6">
+                <CardContent className="p-3 sm:p-4 md:p-6 space-y-6">
                     {/* Input Section */}
                     <div className="grid md:grid-cols-2 gap-6">
                         {/* XOCE Input */}
@@ -293,18 +293,16 @@ export const STLCalculationTab = () => {
                     </div>
 
                     {/* PDF Upload Section */}
-                    <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                                    Upload PDF to Extract Bidder Data
-                                </h3>
-                                <p className="text-sm text-gray-600">
-                                    Upload a PDF file containing bidder names and prices. The system will automatically extract and populate the data.
-                                </p>
-                            </div>
+                    <div className="space-y-4 p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div>
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-1">
+                                Upload PDF to Extract Bidder Data
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                                Upload a PDF file containing bidder names and prices. The system will automatically extract and populate the data.
+                            </p>
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-wrap items-center gap-3">
                             <Label
                                 htmlFor="pdf-upload"
                                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 transition-colors"
@@ -330,13 +328,13 @@ export const STLCalculationTab = () => {
                                 className="hidden"
                             />
                             {uploadedFileName && !isUploading && (
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                    <FileText className="w-4 h-4" />
-                                    <span>{uploadedFileName}</span>
+                                <div className="flex items-center gap-2 text-sm text-gray-600 min-w-0">
+                                    <FileText className="w-4 h-4 shrink-0" />
+                                    <span className="truncate max-w-[180px] sm:max-w-xs">{uploadedFileName}</span>
                                 </div>
                             )}
                             {tenderId && (
-                                <div className="ml-auto px-3 py-1 bg-green-100 text-green-800 rounded-md text-sm font-semibold border border-green-200 shadow-sm">
+                                <div className="px-3 py-1 bg-green-100 text-green-800 rounded-md text-sm font-semibold border border-green-200 shadow-sm">
                                     Tender ID: {tenderId}
                                 </div>
                             )}
@@ -345,98 +343,100 @@ export const STLCalculationTab = () => {
 
                     {/* Bidders Section */}
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-xl font-bold text-gray-800">Bidders and Tender Prices</h3>
+                        <div className="flex items-center justify-between gap-2">
+                            <h3 className="text-base sm:text-xl font-bold text-gray-800">Bidders and Tender Prices</h3>
                             <Button
                                 onClick={addBidder}
-                                className="flex items-center gap-2"
+                                className="flex items-center gap-2 shrink-0"
                                 variant="outline"
                             >
                                 <Plus className="w-4 h-4" />
-                                Add Bidder
+                                <span className="hidden sm:inline">Add Bidder</span>
+                                <span className="sm:hidden">Add</span>
                             </Button>
                         </div>
 
-                        {/* Bidders Table */}
-                        <div className="border rounded-lg overflow-hidden">
-                            <div className="bg-gray-50 border-b">
-                                <div className="grid grid-cols-12 gap-4 p-3 font-semibold text-gray-700 text-sm">
-                                    <div className="col-span-3">Name of Tenderer</div>
-                                    <div className="col-span-2">Quoted Price (Xi)</div>
-                                    <div className="col-span-1 text-center">Above/Below %</div>
-                                    <div className="col-span-2 text-center">Primary Responsiveness</div>
-                                    <div className="col-span-2 text-center">Financial Responsiveness</div>
-                                    <div className="col-span-1 text-center">Rank</div>
-                                    <div className="col-span-1 text-center">Action</div>
-                                </div>
-                            </div>
-
-                            <div className="divide-y">
-                                {bidders.map((bidder, index) => {
-                                    const stats = results && 'bidderStats' in results ? results.bidderStats[index] : null;
-                                    return (
-                                        <div key={index} className="grid grid-cols-12 gap-4 p-3 hover:bg-gray-50 transition-colors items-center">
-                                            <div className="col-span-3">
-                                                <Input
-                                                    value={bidder.name}
-                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'name', e.target.value)}
-                                                    placeholder="Enter bidder name"
-                                                    className="w-full"
-                                                />
-                                            </div>
-                                            <div className="col-span-2">
-                                                <Input
-                                                    type="number"
-                                                    step="0.01"
-                                                    value={bidder.price}
-                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'price', e.target.value)}
-                                                    placeholder="Enter price"
-                                                    className="w-full"
-                                                />
-                                            </div>
-                                            <div className="col-span-1 text-center font-medium text-gray-600 text-xs">
-                                                {calculateDifference(bidder.price)}
-                                            </div>
-                                            <div className="col-span-2 flex flex-col items-center gap-1">
-                                                <div className="flex items-center gap-2">
-                                                    <Checkbox
-                                                        id={`q-${index}`}
-                                                        checked={bidder.qualified}
-                                                        onCheckedChange={(checked) => updateBidder(index, 'qualified', checked)}
+                        {/* Bidders Table — horizontally scrollable on mobile */}
+                        <div className="border rounded-lg overflow-x-auto">
+                            <table className="w-full min-w-[700px] text-sm">
+                                <thead className="bg-gray-50 border-b">
+                                    <tr>
+                                        <th className="text-left p-3 font-semibold text-gray-700 text-xs w-[22%]">Name of Tenderer</th>
+                                        <th className="text-left p-3 font-semibold text-gray-700 text-xs w-[15%]">Quoted Price (Xi)</th>
+                                        <th className="text-center p-3 font-semibold text-gray-700 text-xs w-[9%]">Δ%</th>
+                                        <th className="text-center p-3 font-semibold text-gray-700 text-xs w-[16%]">Primary Resp.</th>
+                                        <th className="text-center p-3 font-semibold text-gray-700 text-xs w-[16%]">Financial Resp.</th>
+                                        <th className="text-center p-3 font-semibold text-gray-700 text-xs w-[10%]">Rank</th>
+                                        <th className="text-center p-3 font-semibold text-gray-700 text-xs w-[12%]">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y">
+                                    {bidders.map((bidder, index) => {
+                                        const stats = results && 'bidderStats' in results ? results.bidderStats[index] : null;
+                                        return (
+                                            <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                                <td className="p-2">
+                                                    <Input
+                                                        value={bidder.name}
+                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'name', e.target.value)}
+                                                        placeholder="Enter bidder name"
+                                                        className="w-full"
                                                     />
-                                                    <Label htmlFor={`q-${index}`} className="text-[10px] cursor-pointer">Technical</Label>
-                                                </div>
-                                                {stats?.isAbove110 && (
-                                                    <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1 rounded">
-                                                        {'>'} 10% OCE
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className="col-span-2 text-center">
-                                                {stats ? (
-                                                    <span className={`text-[10px] font-bold px-2 py-1 rounded ${stats.isResponsive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                                        {stats.isResponsive ? 'Responsive' : 'Non-Responsive'}
-                                                    </span>
-                                                ) : '-'}
-                                            </div>
-                                            <div className="col-span-1 text-center font-bold text-blue-600">
-                                                {stats?.rank || '-'}
-                                            </div>
-                                            <div className="col-span-1 flex justify-center">
-                                                <Button
-                                                    onClick={() => removeBidder(index)}
-                                                    variant="destructive"
-                                                    size="icon"
-                                                    disabled={bidders.length === 1}
-                                                    className="h-9 w-9"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                                                </td>
+                                                <td className="p-2">
+                                                    <Input
+                                                        type="number"
+                                                        step="0.01"
+                                                        value={bidder.price}
+                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateBidder(index, 'price', e.target.value)}
+                                                        placeholder="Price"
+                                                        className="w-full"
+                                                    />
+                                                </td>
+                                                <td className="p-2 text-center font-medium text-gray-600 text-xs whitespace-nowrap">
+                                                    {calculateDifference(bidder.price)}
+                                                </td>
+                                                <td className="p-2">
+                                                    <div className="flex flex-col items-center gap-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <Checkbox
+                                                                id={`q-${index}`}
+                                                                checked={bidder.qualified}
+                                                                onCheckedChange={(checked) => updateBidder(index, 'qualified', checked)}
+                                                            />
+                                                            <Label htmlFor={`q-${index}`} className="text-[10px] cursor-pointer">Technical</Label>
+                                                        </div>
+                                                        {stats?.isAbove110 && (
+                                                            <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1 rounded whitespace-nowrap">&gt; 10% OCE</span>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="p-2 text-center">
+                                                    {stats ? (
+                                                        <span className={`text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap ${stats.isResponsive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                            {stats.isResponsive ? 'Responsive' : 'Non-Responsive'}
+                                                        </span>
+                                                    ) : <span className="text-gray-400">-</span>}
+                                                </td>
+                                                <td className="p-2 text-center font-bold text-blue-600">
+                                                    {stats?.rank || '-'}
+                                                </td>
+                                                <td className="p-2 text-center">
+                                                    <Button
+                                                        onClick={() => removeBidder(index)}
+                                                        variant="destructive"
+                                                        size="icon"
+                                                        disabled={bidders.length === 1}
+                                                        className="h-8 w-8"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -503,7 +503,7 @@ export const STLCalculationTab = () => {
                                             <h4 className="text-sm font-semibold text-gray-700">Calculation Results</h4>
                                         </div>
                                         <div className="p-4">
-                                            <div className="grid grid-cols-3 gap-4">
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                                 <div className="text-center p-4 bg-gray-50 rounded border border-gray-200">
                                                     <div className="text-xs text-gray-500 mb-2 font-medium">Weighted Average</div>
                                                     <div className="text-xl font-semibold text-gray-800">{results.wa}</div>

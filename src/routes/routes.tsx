@@ -69,6 +69,7 @@ import TenderCategoryFinder from "@/pages/dashboardLayout/Tenders/CategoryFinder
 import TenderCategories from "@/pages/dashboardLayout/TenderCategories/TenderCategories";
 import CreateBulpJobOrder from "@/pages/dashboardLayout/JobOrder/CreateBulpJobOrder";
 import TTIRoute from "@/shared/TTIRoute/TTIRoute";
+import RoleRoute from "@/shared/RoleRoute/RoleRoute";
 
 import SkippedTenders from "@/pages/dashboardLayout/Tenders/SkippedTenders";
 import CreateContactInfo from "@/pages/dashboardLayout/TenderPreparation/CreateContactInfo";
@@ -79,6 +80,7 @@ import PgTwoTowOtmGoods from "@/pages/dashboardLayout/pg22aOtmGoods/pgTwoTowOtmG
 import Profile from "@/pages/dashboardLayout/Profile";
 import SuccessTest from "@/pages/SuccessTest";
 import LiveTendersFromTenderIds from "@/pages/dashboardLayout/LiveTenders/LiveTendersFromTenderIds";
+import LiveTender from "@/pages/dashboardLayout/LiveTenders/LiveTender";
 import StlCalculationPage from "@/pages/homeLayout/StlCalculationPage";
 import PrivacyPolicy from "@/pages/homeLayout/PrivacyAndPolicy";
 
@@ -242,8 +244,16 @@ const router = createBrowserRouter([
       {
         path: "live-tenders-tenderIds",
         element: (
-          <PrivateRoute>
+          <RoleRoute allowedRoles={["admin", "moderator"]}>
             <LiveTendersFromTenderIds />
+          </RoleRoute>
+        ),
+      },
+      {
+        path: "live-tender",
+        element: (
+          <PrivateRoute>
+            <LiveTender />
           </PrivateRoute>
         ),
       },

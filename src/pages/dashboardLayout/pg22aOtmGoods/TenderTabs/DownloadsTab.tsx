@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { Download, FileText, TrendingUp, BarChart3, Briefcase } from 'lucide-react';
+import { Download, FileText, TrendingUp, BarChart3, Briefcase, FileSpreadsheet, FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import jsPDF from 'jspdf';
@@ -230,6 +230,108 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
         }
     };
 
+    // Download Ongoing Contracts as Excel
+    const handleDownloadOngoingExcel = () => {
+        try {
+            const wb = XLSX.utils.book_new();
+
+            // Group by financial year
+            const groupedByYear = ongoingContracts.reduce((acc, contract) => {
+                const year = contract.financialYear || 'Unknown';
+                if (!acc[year]) acc[year] = [];
+                acc[year].push(contract);
+                return acc;
+            }, {});
+            const sortedYears = Object.keys(groupedByYear).sort((a, b) => b.localeCompare(a));
+
+            const headerStyle = { font: { bold: true, color: { rgb: 'FFFFFF' } }, fill: { fgColor: { rgb: '34495E' } }, alignment: { horizontal: 'center', wrapText: true } };
+            const subHeaderStyle = { font: { bold: true, color: { rgb: '1A1A1A' } }, fill: { fgColor: { rgb: 'DCE6F1' } }, alignment: { horizontal: 'center' } };
+            const totalStyle = { font: { bold: true }, fill: { fgColor: { rgb: 'DCDCDC' } }, alignment: { horizontal: 'right' } };
+            const border = { top: { style: 'thin', color: { rgb: 'CCCCCC' } }, bottom: { style: 'thin', color: { rgb: 'CCCCCC' } }, left: { style: 'thin', color: { rgb: 'CCCCCC' } }, right: { style: 'thin', color: { rgb: 'CCCCCC' } } };
+            const c = (v, s = {}) => ({ v, s: { ...s, border } });
+
+            const headers = ['Tender ID', 'Package No', 'Procuring Entity', 'Description of Works', 'Commencement', 'End Date', 'Revised Contract Value (BDT)', 'Payment Amount (BDT)', 'JV Share (%)', 'N Year', 'Remaining Works (BDT)', 'Works in Hand (BDT)', 'Works in Hand / N Year (BDT)'];
+
+            const wsData: any[] = [
+                [{ v: 'Ongoing Works Summary Report', s: { font: { bold: true, sz: 16 } } }],
+                [],
+                [{ v: 'Company:', s: { font: { bold: true } } }, companyName],
+                [{ v: 'Email:', s: { font: { bold: true } } }, egpEmail],
+                [{ v: 'Tender ID:', s: { font: { bold: true } } }, String(tenderId || 'N/A')],
+                [],
+            ];
+
+            let grandTotal = 0;
+
+            sortedYears.forEach(year => {
+                const contracts = groupedByYear[year];
+                wsData.push([{ v: `Financial Year: ${year}`, s: subHeaderStyle }]);
+                wsData.push(headers.map(h => ({ v: h, s: headerStyle })));
+
+                const yearTotals = { revisedValue: 0, payment: 0, remainingWorks: 0, worksInHand: 0, worksInHandPerNYear: 0 };
+
+                contracts.forEach((contract, idx) => {
+                    const worksInHand = parseFloat(contract.WorksInHand || 0);
+                    const nYear = parseFloat(contract.nYear || 0);
+                    const worksInHandPerNYear = nYear > 0 ? worksInHand / nYear : 0;
+                    yearTotals.revisedValue += parseFloat(contract.revisedContractValue || 0);
+                    yearTotals.payment += parseFloat(contract.actualPaymentJvShare || 0);
+                    yearTotals.remainingWorks += parseFloat(contract.RemainingWorks || 0);
+                    yearTotals.worksInHand += worksInHand;
+                    yearTotals.worksInHandPerNYear += worksInHandPerNYear;
+                    const rowBg = idx % 2 === 0 ? { fill: { fgColor: { rgb: 'F9FAFB' } } } : {};
+                    wsData.push([
+                        c(contract.tenderId || 'N/A', rowBg),
+                        c(contract.packageNo || 'N/A', rowBg),
+                        c(contract.procuringEntityName || 'N/A', rowBg),
+                        c(contract.descriptionOfWorks || 'N/A', { ...rowBg, alignment: { wrapText: true } }),
+                        c(formatDate(contract.commencementDate), { ...rowBg, alignment: { horizontal: 'center' } }),
+                        c(formatDate(contract.contractEndDate), { ...rowBg, alignment: { horizontal: 'center' } }),
+                        c(parseFloat(contract.revisedContractValue || 0), { ...rowBg, alignment: { horizontal: 'right' } }),
+                        c(parseFloat(contract.actualPaymentJvShare || 0), { ...rowBg, alignment: { horizontal: 'right' } }),
+                        c(contract.jvShare || 'N/A', { ...rowBg, alignment: { horizontal: 'center' } }),
+                        c(contract.nYear || 'N/A', { ...rowBg, alignment: { horizontal: 'center' } }),
+                        c(parseFloat(contract.RemainingWorks || 0), { ...rowBg, alignment: { horizontal: 'right' } }),
+                        c(worksInHand, { ...rowBg, alignment: { horizontal: 'right' } }),
+                        c(parseFloat(worksInHandPerNYear.toFixed(2)), { ...rowBg, alignment: { horizontal: 'right' } }),
+                    ]);
+                });
+
+                grandTotal += yearTotals.worksInHandPerNYear;
+
+                wsData.push([
+                    { v: `Total for ${year}`, s: { ...totalStyle, alignment: { horizontal: 'right' } } },
+                    { v: '', s: { border } }, { v: '', s: { border } }, { v: '', s: { border } }, { v: '', s: { border } }, { v: '', s: { border } },
+                    { v: yearTotals.revisedValue, s: totalStyle },
+                    { v: yearTotals.payment, s: totalStyle },
+                    { v: '', s: { border } }, { v: '', s: { border } },
+                    { v: yearTotals.remainingWorks, s: totalStyle },
+                    { v: yearTotals.worksInHand, s: totalStyle },
+                    { v: parseFloat(yearTotals.worksInHandPerNYear.toFixed(2)), s: totalStyle },
+                ]);
+                wsData.push([]);
+            });
+
+            // Grand Total
+            wsData.push([
+                { v: 'GRAND TOTAL — Works in Hand / N Year', s: { font: { bold: true, sz: 11 }, fill: { fgColor: { rgb: 'FFEB3B' } }, border } },
+                ...Array(11).fill({ v: '', s: { border } }),
+                { v: parseFloat(grandTotal.toFixed(2)), s: { font: { bold: true, sz: 11 }, fill: { fgColor: { rgb: 'FFEB3B' } }, alignment: { horizontal: 'right' }, border } },
+            ]);
+
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            ws['!cols'] = [{ wch: 14 }, { wch: 14 }, { wch: 28 }, { wch: 50 }, { wch: 14 }, { wch: 14 }, { wch: 22 }, { wch: 22 }, { wch: 10 }, { wch: 10 }, { wch: 22 }, { wch: 22 }, { wch: 25 }];
+            if (!ws['!merges']) ws['!merges'] = [];
+            ws['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 6 } });
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Ongoing Works');
+            XLSX.writeFile(wb, `${companyName}_OngoingWorks_${tenderId}.xlsx`);
+        } catch (error) {
+            console.error('Error generating Excel:', error);
+            alert('Failed to generate Excel. Please try again.');
+        }
+    };
+
     // Download Tender List as Excel (Styled)
     const handleDownloadTenderListExcel = () => {
         try {
@@ -330,6 +432,114 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
         } catch (error) {
             console.error('Error generating Excel:', error);
             alert('Failed to generate Excel. Please try again.');
+        }
+    };
+
+    // Download Tender List as PDF
+    const handlePrintTenderList = () => {
+        try {
+            const doc = new jsPDF('landscape');
+            let currentY = addPDFHeader(doc, 'Tender List & Summary Report');
+
+            // Get years from saved turnover data
+            const validYears = turnoverData.map(item => item.period);
+            const filteredContracts = completedContracts.filter(contract =>
+                validYears.includes(contract.financialYear)
+            );
+
+            // Group by financial year
+            const groupedByYear = filteredContracts.reduce((acc, contract) => {
+                const year = contract.financialYear || 'Unknown';
+                if (!acc[year]) acc[year] = [];
+                acc[year].push(contract);
+                return acc;
+            }, {});
+
+            const sortedYears = Object.keys(groupedByYear).sort((a, b) => b.localeCompare(a));
+            let grandTotalPayment = 0;
+            let slNo = 1;
+
+            sortedYears.forEach((year, yearIndex) => {
+                const contracts = groupedByYear[year];
+
+                doc.setFontSize(11);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Financial Year: ${year}`, 14, currentY + 4);
+                currentY += 8;
+
+                const yearTableData = contracts.map(contract => {
+                    const payment = parseFloat(contract.actualPaymentJvShare || 0);
+                    grandTotalPayment += payment;
+                    return [
+                        slNo++,
+                        contract.tenderId || 'N/A',
+                        contract.packageNo || 'N/A',
+                        contract.procuringEntityName || 'N/A',
+                        contract.descriptionOfWorks || 'N/A',
+                        contract.jvShare || 'N/A',
+                        payment.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                        contract.Status_Complite_ongoing || 'N/A',
+                    ];
+                });
+
+                const yearTotal = contracts.reduce((sum, c) => sum + parseFloat(c.actualPaymentJvShare || 0), 0);
+                yearTableData.push([
+                    { content: `Sub Total (${year})`, colSpan: 6, styles: { fontStyle: 'bold', halign: 'right', fillColor: [220, 220, 220] } },
+                    { content: yearTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), styles: { fontStyle: 'bold', halign: 'right', fillColor: [220, 220, 220] } },
+                    { content: '', styles: { fillColor: [220, 220, 220] } },
+                ]);
+
+                autoTable(doc, {
+                    startY: currentY,
+                    head: [['Sl.', 'Tender ID', 'Package No', 'Procuring Entity', 'Description of Works', 'JV Share (%)', 'Payment Amount (BDT)', 'Status']],
+                    body: yearTableData,
+                    theme: 'grid',
+                    headStyles: { fillColor: [52, 73, 94], textColor: 255, fontStyle: 'bold', fontSize: 7, halign: 'center' },
+                    styles: { fontSize: 6.5, cellPadding: 1.5, overflow: 'linebreak' },
+                    columnStyles: {
+                        0: { cellWidth: 10, halign: 'center' },
+                        1: { cellWidth: 20 },
+                        2: { cellWidth: 20 },
+                        3: { cellWidth: 40 },
+                        4: { cellWidth: 80 },
+                        5: { cellWidth: 14, halign: 'center' },
+                        6: { cellWidth: 40, halign: 'right' },
+                        7: { cellWidth: 22, halign: 'center' },
+                    }
+                });
+
+                currentY = (doc as any).lastAutoTable.finalY + 8;
+                if (yearIndex < sortedYears.length - 1 && currentY > 170) {
+                    doc.addPage();
+                    currentY = 20;
+                }
+            });
+
+            // Grand Total
+            if (currentY > 170) { doc.addPage(); currentY = 20; }
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.setFillColor(52, 73, 94);
+            doc.setTextColor(255, 255, 255);
+            doc.rect(14, currentY, 267, 8, 'F');
+            doc.text('GRAND TOTAL', 16, currentY + 5.5);
+            currentY += 10;
+
+            autoTable(doc, {
+                startY: currentY,
+                body: [[
+                    { content: 'Total Payment Amount (All Years)', styles: { fontStyle: 'bold', fontSize: 9 } },
+                    { content: `BDT ${grandTotalPayment.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, styles: { fontStyle: 'bold', fontSize: 9, halign: 'right', fillColor: [255, 235, 59], textColor: [0, 0, 0] } }
+                ]],
+                theme: 'grid',
+                columnStyles: { 0: { cellWidth: 220 }, 1: { cellWidth: 67 } }
+            });
+
+            doc.save(`${companyName}_TenderListSummary_${tenderId}.pdf`);
+        } catch (error) {
+            console.error('Error generating Tender List PDF:', error);
+            alert('Failed to generate PDF. Please try again.');
         }
     };
 
@@ -575,14 +785,24 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                                 <p>• Total Ongoing: <span className="font-semibold">{ongoingContracts.length}</span></p>
                                 <p>• Showing Recent: <span className="font-semibold">{recentOngoing.length}</span></p>
                             </div>
-                            <Button
-                                onClick={handlePrintOngoing}
-                                className="w-full"
-                                variant="default"
-                            >
-                                <Download className="w-4 h-4 mr-2" />
-                                Download Ongoing Contracts PDF
-                            </Button>
+                            <div className="grid grid-cols-2 gap-2">
+                                <Button
+                                    onClick={handlePrintOngoing}
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                                    variant="default"
+                                >
+                                    <FileDown className="w-4 h-4 mr-1.5" />
+                                    PDF
+                                </Button>
+                                <Button
+                                    onClick={handleDownloadOngoingExcel}
+                                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                                    variant="default"
+                                >
+                                    <FileSpreadsheet className="w-4 h-4 mr-1.5" />
+                                    Excel
+                                </Button>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
@@ -606,17 +826,28 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                                 <p>• Filtered Years: <span className="font-semibold">{turnoverData.length}</span></p>
                                 <p>• Data Source: <span className="font-semibold">Saved Turnover Years</span></p>
                             </div>
-                            <Button
-                                onClick={handleDownloadTenderListExcel}
-                                className="w-full"
-                                variant="default"
-                            >
-                                <Download className="w-4 h-4 mr-2" />
-                                Download Tender List Excel
-                            </Button>
+                            <div className="grid grid-cols-2 gap-2">
+                                <Button
+                                    onClick={handlePrintTenderList}
+                                    className="w-full bg-red-600 hover:bg-red-700 text-white"
+                                    variant="default"
+                                >
+                                    <FileDown className="w-4 h-4 mr-1.5" />
+                                    PDF
+                                </Button>
+                                <Button
+                                    onClick={handleDownloadTenderListExcel}
+                                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                                    variant="default"
+                                >
+                                    <FileSpreadsheet className="w-4 h-4 mr-1.5" />
+                                    Excel
+                                </Button>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
+
 
                 {/* 3. Turnover History Card */}
                 <Card className="hover:shadow-lg transition-shadow">
