@@ -4,47 +4,90 @@ import { useEffect, useState } from "react";
 
 const LIVE_TENDERS_API = `${config.apiBaseUrl}/live-tenders`;
 
-const useLiveTenders = (searchTerm = "", page = 1, limit = 20) => {
+const useLiveTenders = (
+    searchTerm = "",
+    ministry = "",
+    district = "",
+    typeMethod = "",
+    page = 1,
+    limit = 20
+) => {
+    const [allTenders, setAllTenders] = useState([]);
     const [tenders, setTenders] = useState([]);
     const [tendersCount, setTendersCount] = useState(0);
     const [loading, setLoading] = useState(false);
     const [reload, setReload] = useState(0);
 
+    // 1. Fetch ALL data once (or on manual reload)
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchAllData = async () => {
             try {
                 setLoading(true);
-                const url = `${LIVE_TENDERS_API}?searchTerm=${encodeURIComponent(
-                    searchTerm
-                )}&page=${page}&limit=${limit}`;
+                // Fetch a large enough limit to get all live tenders
+                const url = `${LIVE_TENDERS_API}?limit=10000&page=1`;
                 const response = await fetch(url);
                 const data = await response.json();
 
-                // Handle: { data: [...], total/count: N }  or  [...] directly
-                // or  { tenders: [...] }  or  { result: [...] }
                 const list =
                     data?.data ??
                     data?.tenders ??
                     data?.result ??
                     (Array.isArray(data) ? data : []);
 
-                const count =
-                    data?.total ??
-                    data?.count ??
-                    data?.totalCount ??
-                    list.length ??
-                    0;
-
-                setTenders(list);
-                setTendersCount(count);
+                setAllTenders(list);
             } catch (error) {
                 console.error("Error fetching live tenders:", error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchData();
-    }, [reload, searchTerm, page, limit]);
+        fetchAllData();
+    }, [reload]);
+
+    // 2. Perform client-side filtering and pagination whenever filters or page change
+    useEffect(() => {
+        if (!allTenders || allTenders.length === 0) {
+            setTenders([]);
+            setTendersCount(0);
+            return;
+        }
+
+        // Apply filters
+        const s = searchTerm.trim().toLowerCase();
+        const m = ministry.trim().toLowerCase();
+        const d = district.trim().toLowerCase();
+        const t = typeMethod.trim().toLowerCase();
+
+        const filtered = allTenders.filter((item) => {
+            // Search term (Tender ID, Title, etc.)
+            const idStr = String(item?.tenderId || "").toLowerCase();
+            const descStr = String(item?.BriefDescriptionofWorks || item?.title || "").toLowerCase();
+            const orgStrMatch = String(item?.organization || "").toLowerCase();
+            const searchMatch = !s || idStr.includes(s) || descStr.includes(s) || orgStrMatch.includes(s);
+
+            // Ministry / Org
+            const ministryValue = String(item?.ministry || item?.organization || "").toLowerCase();
+            const ministryMatch = !m || ministryValue.includes(m);
+
+            // District
+            const districtValue = String(item?.locationDistrict || "").toLowerCase();
+            const districtMatch = !d || districtValue.includes(d);
+
+            // Type / Method
+            const typeMethodValue = String(`${item?.ProcurementType || item?.type || ""} ${item?.procurementMethod || item?.method || ""}`).toLowerCase();
+            const typeMethodMatch = !t || typeMethodValue.includes(t);
+
+            return searchMatch && ministryMatch && districtMatch && typeMethodMatch;
+        });
+
+        // Apply pagination
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        const paginatedSlice = filtered.slice(startIndex, endIndex);
+
+        setTenders(paginatedSlice);
+        setTendersCount(filtered.length);
+    }, [allTenders, searchTerm, ministry, district, typeMethod, page, limit]);
 
     return {
         tenders,

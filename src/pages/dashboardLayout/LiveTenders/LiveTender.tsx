@@ -72,16 +72,24 @@ export default function LiveTender() {
     const [tenderIdSearch, setTenderIdSearch] = useState("");
     const [debouncedTenderIdSearch, setDebouncedTenderIdSearch] = useState("");
     const [ministrySearch, setMinistrySearch] = useState("");
+    const [debouncedMinistrySearch, setDebouncedMinistrySearch] = useState("");
     const [districtSearch, setDistrictSearch] = useState("");
+    const [debouncedDistrictSearch, setDebouncedDistrictSearch] = useState("");
     const [typeMethodSearch, setTypeMethodSearch] = useState("");
+    const [debouncedTypeMethodSearch, setDebouncedTypeMethodSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
     const [pageLimit, setPageLimit] = useState(Number(searchParams.get("limit")) || 20);
 
     // Debounce
     useEffect(() => {
-        const t = setTimeout(() => setDebouncedTenderIdSearch(tenderIdSearch), 450);
+        const t = setTimeout(() => {
+            setDebouncedTenderIdSearch(tenderIdSearch);
+            setDebouncedMinistrySearch(ministrySearch);
+            setDebouncedDistrictSearch(districtSearch);
+            setDebouncedTypeMethodSearch(typeMethodSearch);
+        }, 450);
         return () => clearTimeout(t);
-    }, [tenderIdSearch]);
+    }, [tenderIdSearch, ministrySearch, districtSearch, typeMethodSearch]);
 
     // Sync URL params
     useEffect(() => {
@@ -93,27 +101,12 @@ export default function LiveTender() {
 
     const { tenders, loading, tendersCount, setReload } = useLiveTenders(
         debouncedTenderIdSearch,
+        debouncedMinistrySearch,
+        debouncedDistrictSearch,
+        debouncedTypeMethodSearch,
         currentPage,
         pageLimit
     );
-
-    const filteredTenders = useMemo(() => {
-        const m = ministrySearch.trim().toLowerCase();
-        const d = districtSearch.trim().toLowerCase();
-        const t = typeMethodSearch.trim().toLowerCase();
-
-        return (tenders || []).filter((item) => {
-            const ministryValue = String(item?.ministry || item?.organization || "").toLowerCase();
-            const districtValue = String(item?.locationDistrict || "").toLowerCase();
-            const typeMethodValue = String(`${item?.ProcurementType || item?.type || ""} ${item?.procurementMethod || item?.method || ""}`).toLowerCase();
-
-            const ministryMatch = !m || ministryValue.includes(m);
-            const districtMatch = !d || districtValue.includes(d);
-            const typeMethodMatch = !t || typeMethodValue.includes(t);
-
-            return ministryMatch && districtMatch && typeMethodMatch;
-        });
-    }, [tenders, ministrySearch, districtSearch, typeMethodSearch]);
 
     // Build tenderId → _id lookup map from stored tenders
     const { tenderIdMap, mapLoading } = useTenderIdMap();
@@ -122,10 +115,10 @@ export default function LiveTender() {
 
     const handleAddTender = async (tender) => {
         if (!tender?.tenderId) return;
-        
+
         setAddingTenderId(tender.tenderId);
         setAddStatus(prev => ({ ...prev, [tender.tenderId]: null }));
-        
+
         try {
             // Send complete tender data with all supported fields
             const payload = [{
@@ -138,9 +131,9 @@ export default function LiveTender() {
                 openingDateTime: tender.openingDateTime || tender.closingDate || '',
                 locationDistrict: tender.locationDistrict || ''
             }];
-            
+
             const response = await axiosInstance.post('/tenderIds/create-tenderIds', payload);
-            
+
             if (response.data?.success) {
                 setAddStatus(prev => ({ ...prev, [tender.tenderId]: 'success' }));
                 // Refresh the tenderIdMap to include the newly added tender
@@ -259,8 +252,8 @@ export default function LiveTender() {
                                     ))}
                                 </tr>
                             ))
-                        ) : filteredTenders?.length > 0 ? (
-                            filteredTenders.map((item, idx) => {
+                        ) : tenders?.length > 0 ? (
+                            tenders.map((item, idx) => {
                                 const matchedId = tenderIdMap.get(String(item?.tenderId ?? "").trim());
                                 const isMatched = !!matchedId;
 
@@ -347,11 +340,10 @@ export default function LiveTender() {
                                                     <button
                                                         onClick={() => handleAddTender(item)}
                                                         disabled={addingTenderId === item?.tenderId || addStatus[item?.tenderId] === 'success'}
-                                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all shadow-sm ${
-                                                            addingTenderId === item?.tenderId || addStatus[item?.tenderId] === 'success'
+                                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all shadow-sm ${addingTenderId === item?.tenderId || addStatus[item?.tenderId] === 'success'
                                                                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                                                 : 'border border-indigo-300 text-indigo-500 bg-indigo-50 hover:bg-indigo-100 hover:border-indigo-400'
-                                                        }`}
+                                                            }`}
                                                         title={addStatus[item?.tenderId] === 'success' ? "Already added" : "Add to tender IDs"}
                                                     >
                                                         <Plus size={13} />

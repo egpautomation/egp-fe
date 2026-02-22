@@ -266,6 +266,9 @@ export default function LiveTendersFromTenderIds() {
 
   const { tenders, loading, tendersCount, setReload } = useLiveTenders(
     debouncedSearch,
+    "",
+    "",
+    "",
     currentPage,
     pageLimit
   );
