@@ -1,12 +1,13 @@
 // @ts-nocheck
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { AlignJustify, X, Search, RefreshCw } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { AlignJustify, X, Search, RefreshCw, Eye, Plus, CheckCircle, AlertCircle } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import Pagination from "@/shared/Pagination/Pagination";
 import useLiveTenders from "@/hooks/useLiveTenders";
 import { formatDate } from "@/lib/formateDate";
+import axiosInstance from "@/lib/axiosInstance";
 
 /* ── Badge ── */
 const natureColors = {
@@ -24,20 +25,63 @@ function Badge({ label }) {
     );
 }
 
+/**
+ * useTenderIdMap
+ * Fetches ALL stored tenders (up to 2000) and returns a Map<tenderId, _id>
+ * so we can quickly look up whether a live-tender exists in the DB.
+ */
+function useTenderIdMap() {
+    const [tenderIdMap, setTenderIdMap] = useState(new Map());
+    const [mapLoading, setMapLoading] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+        const fetchMap = async () => {
+            try {
+                setMapLoading(true);
+                // Fetch a large batch — adjust limit if you have more tenders
+                const res = await axiosInstance.get(`/tenders?limit=2000&page=1`);
+                const list = res.data?.data ?? [];
+                if (!cancelled) {
+                    const map = new Map();
+                    list.forEach((t) => {
+                        if (t?.tenderId && t?._id) {
+                            map.set(String(t.tenderId).trim(), t._id);
+                        }
+                    });
+                    setTenderIdMap(map);
+                }
+            } catch (err) {
+                console.error("useTenderIdMap: fetch failed", err);
+            } finally {
+                if (!cancelled) setMapLoading(false);
+            }
+        };
+        fetchMap();
+        return () => { cancelled = true; };
+    }, []);
+
+    return { tenderIdMap, mapLoading };
+}
+
 /* ── Main ── */
 export default function LiveTender() {
     const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
 
-    const [searchTerm, setSearchTerm] = useState("");
-    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [tenderIdSearch, setTenderIdSearch] = useState("");
+    const [debouncedTenderIdSearch, setDebouncedTenderIdSearch] = useState("");
+    const [ministrySearch, setMinistrySearch] = useState("");
+    const [districtSearch, setDistrictSearch] = useState("");
+    const [typeMethodSearch, setTypeMethodSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
     const [pageLimit, setPageLimit] = useState(Number(searchParams.get("limit")) || 20);
 
     // Debounce
     useEffect(() => {
-        const t = setTimeout(() => setDebouncedSearch(searchTerm), 450);
+        const t = setTimeout(() => setDebouncedTenderIdSearch(tenderIdSearch), 450);
         return () => clearTimeout(t);
-    }, [searchTerm]);
+    }, [tenderIdSearch]);
 
     // Sync URL params
     useEffect(() => {
@@ -48,10 +92,73 @@ export default function LiveTender() {
     }, [currentPage, pageLimit]);
 
     const { tenders, loading, tendersCount, setReload } = useLiveTenders(
-        debouncedSearch,
+        debouncedTenderIdSearch,
         currentPage,
         pageLimit
     );
+
+    const filteredTenders = useMemo(() => {
+        const m = ministrySearch.trim().toLowerCase();
+        const d = districtSearch.trim().toLowerCase();
+        const t = typeMethodSearch.trim().toLowerCase();
+
+        return (tenders || []).filter((item) => {
+            const ministryValue = String(item?.ministry || item?.organization || "").toLowerCase();
+            const districtValue = String(item?.locationDistrict || "").toLowerCase();
+            const typeMethodValue = String(`${item?.ProcurementType || item?.type || ""} ${item?.procurementMethod || item?.method || ""}`).toLowerCase();
+
+            const ministryMatch = !m || ministryValue.includes(m);
+            const districtMatch = !d || districtValue.includes(d);
+            const typeMethodMatch = !t || typeMethodValue.includes(t);
+
+            return ministryMatch && districtMatch && typeMethodMatch;
+        });
+    }, [tenders, ministrySearch, districtSearch, typeMethodSearch]);
+
+    // Build tenderId → _id lookup map from stored tenders
+    const { tenderIdMap, mapLoading } = useTenderIdMap();
+    const [addingTenderId, setAddingTenderId] = useState(null);
+    const [addStatus, setAddStatus] = useState({});
+
+    const handleAddTender = async (tender) => {
+        if (!tender?.tenderId) return;
+        
+        setAddingTenderId(tender.tenderId);
+        setAddStatus(prev => ({ ...prev, [tender.tenderId]: null }));
+        
+        try {
+            // Send complete tender data with all supported fields
+            const payload = [{
+                tenderId: tender.tenderId,
+                BriefDescriptionofWorks: tender.BriefDescriptionofWorks || tender.title || '',
+                organization: tender.organization || '',
+                ProcurementType: tender.ProcurementType || tender.type || '',
+                procurementMethod: tender.procurementMethod || tender.method || '',
+                publicationDateTime: tender.publicationDateTime || tender.publishingDate || '',
+                openingDateTime: tender.openingDateTime || tender.closingDate || '',
+                locationDistrict: tender.locationDistrict || ''
+            }];
+            
+            const response = await axiosInstance.post('/tenderIds/create-tenderIds', payload);
+            
+            if (response.data?.success) {
+                setAddStatus(prev => ({ ...prev, [tender.tenderId]: 'success' }));
+                // Refresh the tenderIdMap to include the newly added tender
+                setTimeout(() => {
+                    window.location.reload(); // Simple refresh to update the map
+                }, 1000);
+            } else {
+                throw new Error(response.data?.message || 'Failed to add tender');
+            }
+        } catch (error) {
+            console.error('Add tender error:', error);
+            setAddStatus(prev => ({ ...prev, [tender.tenderId]: 'error' }));
+        } finally {
+            setTimeout(() => {
+                setAddingTenderId(null);
+            }, 2000);
+        }
+    };
 
     const skeleton = new Array(Math.min(pageLimit, 8)).fill(0);
 
@@ -72,25 +179,6 @@ export default function LiveTender() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    {/* Search */}
-                    <div className="relative">
-                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                        <Input
-                            value={searchTerm}
-                            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                            placeholder="Tender ID / Description / Organization…"
-                            className="pl-8 h-9 text-sm w-64"
-                        />
-                        {searchTerm && (
-                            <button
-                                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
-                                onClick={() => setSearchTerm("")}
-                            >
-                                <X size={13} />
-                            </button>
-                        )}
-                    </div>
-
                     {/* Refresh */}
                     <button
                         onClick={() => setReload((r) => r + 1)}
@@ -102,6 +190,48 @@ export default function LiveTender() {
                 </div>
             </div>
 
+            {/* Column Filters */}
+            <div className="mb-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
+                <div className="relative">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <Input
+                        value={tenderIdSearch}
+                        onChange={(e) => { setTenderIdSearch(e.target.value); setCurrentPage(1); }}
+                        placeholder="Tender ID"
+                        className="pl-8 h-9 text-sm"
+                    />
+                    {tenderIdSearch && (
+                        <button
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
+                            onClick={() => setTenderIdSearch("")}
+                        >
+                            <X size={13} />
+                        </button>
+                    )}
+                </div>
+
+                <Input
+                    value={ministrySearch}
+                    onChange={(e) => { setMinistrySearch(e.target.value); setCurrentPage(1); }}
+                    placeholder="Ministry / Organization"
+                    className="h-9 text-sm"
+                />
+
+                <Input
+                    value={districtSearch}
+                    onChange={(e) => { setDistrictSearch(e.target.value); setCurrentPage(1); }}
+                    placeholder="District"
+                    className="h-9 text-sm"
+                />
+
+                <Input
+                    value={typeMethodSearch}
+                    onChange={(e) => { setTypeMethodSearch(e.target.value); setCurrentPage(1); }}
+                    placeholder="Type / Method"
+                    className="h-9 text-sm"
+                />
+            </div>
+
             {/* Table */}
             <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
                 <table className="w-full text-sm">
@@ -110,10 +240,11 @@ export default function LiveTender() {
                             <th className="px-4 py-3 text-left whitespace-nowrap rounded-tl-xl w-10">#</th>
                             <th className="px-4 py-3 text-left whitespace-nowrap">Tender ID</th>
                             <th className="px-4 py-3 text-left whitespace-nowrap min-w-[220px]">Brief Description</th>
-                            <th className="px-4 py-3 text-left whitespace-nowrap min-w-[200px]">Ministry / Org / PE / Location</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap min-w-[200px]">Ministry / Org / PE</th>
+                            <th className="px-4 py-3 text-left whitespace-nowrap">District</th>
                             <th className="px-4 py-3 text-center whitespace-nowrap">Type / Method</th>
-                            <th className="px-4 py-3 text-center whitespace-nowrap">Publishing</th>
-                            <th className="px-4 py-3 text-center whitespace-nowrap rounded-tr-xl">Opening</th>
+                            <th className="px-4 py-3 text-center whitespace-nowrap">Publishing / Opening</th>
+                            <th className="px-4 py-3 text-center whitespace-nowrap rounded-tr-xl">Action</th>
                         </tr>
                     </thead>
 
@@ -128,75 +259,127 @@ export default function LiveTender() {
                                     ))}
                                 </tr>
                             ))
-                        ) : tenders?.length > 0 ? (
-                            tenders.map((item, idx) => (
-                                <tr
-                                    key={item?._id ?? idx}
-                                    className={`border-b border-gray-100 hover:bg-blue-50/40 transition-colors ${idx % 2 === 1 ? "bg-gray-50/60" : ""}`}
-                                >
-                                    {/* # */}
-                                    <td className="px-4 py-3 text-gray-500 text-xs">
-                                        {(currentPage - 1) * pageLimit + idx + 1}
-                                    </td>
+                        ) : filteredTenders?.length > 0 ? (
+                            filteredTenders.map((item, idx) => {
+                                const matchedId = tenderIdMap.get(String(item?.tenderId ?? "").trim());
+                                const isMatched = !!matchedId;
 
-                                    {/* Tender ID */}
-                                    <td className="px-4 py-3 font-mono font-semibold text-indigo-700 whitespace-nowrap">
-                                        {item?.tenderId ?? "—"}
-                                    </td>
+                                return (
+                                    <tr
+                                        key={item?._id ?? idx}
+                                        className={`border-b border-gray-100 hover:bg-blue-50/40 transition-colors ${idx % 2 === 1 ? "bg-gray-50/60" : ""}`}
+                                    >
+                                        {/* # */}
+                                        <td className="px-4 py-3 text-gray-500 text-xs">
+                                            {(currentPage - 1) * pageLimit + idx + 1}
+                                        </td>
 
-                                    {/* Description / Nature */}
-                                    <td className="px-4 py-3">
-                                        <p className="font-medium text-gray-800 leading-snug line-clamp-2 max-w-[280px]">
-                                            {item?.BriefDescriptionofWorks ?? item?.title ?? "—"}
-                                        </p>
-                                        {item?.procurementNature && (
-                                            <div className="mt-1">
-                                                <Badge label={item.procurementNature} />
-                                            </div>
-                                        )}
-                                    </td>
+                                        {/* Tender ID */}
+                                        <td className="px-4 py-3 font-mono font-semibold text-indigo-700 whitespace-nowrap">
+                                            {item?.tenderId ?? "—"}
+                                        </td>
 
-                                    {/* Ministry / Org / PE / Location */}
-                                    <td className="px-4 py-3 text-xs text-gray-700 leading-relaxed max-w-[220px]">
-                                        {item?.ministry && <p className="text-gray-500">{item.ministry}</p>}
-                                        {item?.organization && <p className="font-medium">{item.organization}</p>}
-                                        {item?.pe && <p className="text-gray-500">{item.pe}</p>}
-                                        {item?.locationDistrict && (
-                                            <p className="text-indigo-600 font-medium">District: {item.locationDistrict}</p>
-                                        )}
-                                    </td>
+                                        {/* Description / Nature */}
+                                        <td className="px-4 py-3">
+                                            <p className="font-medium text-gray-800 leading-snug line-clamp-2 max-w-[280px]">
+                                                {item?.BriefDescriptionofWorks ?? item?.title ?? "—"}
+                                            </p>
+                                            {item?.procurementNature && (
+                                                <div className="mt-1">
+                                                    <Badge label={item.procurementNature} />
+                                                </div>
+                                            )}
+                                        </td>
 
-                                    {/* Type / Method */}
-                                    <td className="px-4 py-3 text-center text-xs whitespace-nowrap">
-                                        <p className="font-medium text-gray-700">{item?.ProcurementType ?? item?.type ?? "—"}</p>
-                                        <p className="text-gray-500 text-[11px]">{item?.procurementMethod ?? item?.method ?? ""}</p>
-                                    </td>
+                                        {/* Ministry / Org / PE */}
+                                        <td className="px-4 py-3 text-xs text-gray-700 leading-relaxed max-w-[200px]">
+                                            {item?.ministry && <p className="text-gray-500">{item.ministry}</p>}
+                                            {item?.organization && <p className="font-medium">{item.organization}</p>}
+                                            {item?.pe && <p className="text-gray-500">{item.pe}</p>}
+                                        </td>
 
-                                    {/* Publishing */}
-                                    <td className="px-4 py-3 text-center text-xs whitespace-nowrap text-gray-700">
-                                        {formatDate(item?.publicationDateTime ?? item?.publishingDate, "dd-MMM-yyyy hh:mm a")}
-                                    </td>
+                                        {/* District */}
+                                        <td className="px-4 py-3 text-xs text-gray-700">
+                                            {item?.locationDistrict ? (
+                                                <p className="font-medium text-indigo-600">{item.locationDistrict}</p>
+                                            ) : (
+                                                <span className="text-gray-400">—</span>
+                                            )}
+                                        </td>
 
-                                    {/* Opening/Closing */}
-                                    <td className="px-4 py-3 text-center text-xs whitespace-nowrap">
-                                        <p className="font-medium text-red-600">
-                                            {formatDate(item?.openingDateTime ?? item?.closingDate, "dd-MMM-yyyy hh:mm a")}
-                                        </p>
-                                    </td>
-                                </tr>
-                            ))
+                                        {/* Type / Method */}
+                                        <td className="px-4 py-3 text-center text-xs whitespace-nowrap">
+                                            <p className="font-medium text-gray-700">{item?.ProcurementType ?? item?.type ?? "—"}</p>
+                                            <p className="text-gray-500 text-[11px]">{item?.procurementMethod ?? item?.method ?? ""}</p>
+                                        </td>
+
+                                        {/* Publishing / Opening */}
+                                        <td className="px-4 py-3 text-center text-xs whitespace-nowrap">
+                                            <p className="font-medium text-gray-700">
+                                                {formatDate(item?.publicationDateTime ?? item?.publishingDate, "dd-MMM-yyyy hh:mm a")}
+                                            </p>
+                                            <p className="text-red-600 font-medium">
+                                                {formatDate(item?.openingDateTime ?? item?.closingDate, "dd-MMM-yyyy hh:mm a")}
+                                            </p>
+                                        </td>
+
+                                        {/* Action */}
+                                        <td className="px-4 py-3 text-center whitespace-nowrap">
+                                            {mapLoading ? (
+                                                <div className="inline-block h-5 w-16 rounded animate-pulse bg-gray-200" />
+                                            ) : isMatched ? (
+                                                <button
+                                                    onClick={() => navigate(`/dashboard/view-tender/${matchedId}`)}
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-emerald-500 hover:bg-emerald-600 text-white transition-colors shadow-sm"
+                                                    title="View stored tender details"
+                                                >
+                                                    <Eye size={13} />
+                                                    View
+                                                </button>
+                                            ) : (
+                                                <div className="flex items-center justify-center gap-1">
+                                                    {addStatus[item?.tenderId] === 'success' && (
+                                                        <CheckCircle size={16} className="text-green-500" title="Successfully added" />
+                                                    )}
+                                                    {addStatus[item?.tenderId] === 'error' && (
+                                                        <AlertCircle size={16} className="text-red-500" title="Failed to add" />
+                                                    )}
+                                                    <button
+                                                        onClick={() => handleAddTender(item)}
+                                                        disabled={addingTenderId === item?.tenderId || addStatus[item?.tenderId] === 'success'}
+                                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all shadow-sm ${
+                                                            addingTenderId === item?.tenderId || addStatus[item?.tenderId] === 'success'
+                                                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                                : 'border border-indigo-300 text-indigo-500 bg-indigo-50 hover:bg-indigo-100 hover:border-indigo-400'
+                                                        }`}
+                                                        title={addStatus[item?.tenderId] === 'success' ? "Already added" : "Add to tender IDs"}
+                                                    >
+                                                        <Plus size={13} />
+                                                        {addingTenderId === item?.tenderId ? 'Adding...' : addStatus[item?.tenderId] === 'success' ? 'Added' : 'Add'}
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            })
                         ) : (
                             <tr>
                                 <td colSpan={7} className="text-center py-16 text-gray-400">
                                     <div className="flex flex-col items-center gap-2">
                                         <AlignJustify size={32} className="opacity-30" />
                                         <p className="text-sm">No tenders found</p>
-                                        {searchTerm && (
+                                        {(tenderIdSearch || ministrySearch || districtSearch || typeMethodSearch) && (
                                             <button
-                                                onClick={() => setSearchTerm("")}
+                                                onClick={() => {
+                                                    setTenderIdSearch("");
+                                                    setMinistrySearch("");
+                                                    setDistrictSearch("");
+                                                    setTypeMethodSearch("");
+                                                }}
                                                 className="text-xs text-indigo-500 hover:underline"
                                             >
-                                                Clear search
+                                                Clear filters
                                             </button>
                                         )}
                                     </div>

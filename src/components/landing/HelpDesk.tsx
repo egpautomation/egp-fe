@@ -52,7 +52,7 @@ export default function HelpDesk() {
           আপনার যেকোনো সমস্যা সমাধানে আমাদের সাপোর্ট টিম প্রস্তুত।
           </h2>
         </div>
-        <div className="max-w-3xl mx-auto mb-10">
+        {/* <div className="max-w-3xl mx-auto mb-10">
           <form
             className="group flex flex-col sm:flex-row items-stretch gap-3 sm:gap-0"
             onSubmit={(e) => e.preventDefault()}
@@ -69,7 +69,7 @@ export default function HelpDesk() {
               সাহায্য নিন
             </Button>
           </form>
-        </div>
+        </div> */}
 
         <div className="grid lg:grid-cols-2 max-w-6xl mx-auto gap-6 lg:gap-8">
           {helpCards.map((card) => (

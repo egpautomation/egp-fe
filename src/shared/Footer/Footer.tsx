@@ -33,28 +33,18 @@ const Footer = () => {
             </p>
             <div className="flex gap-3">
               <a
-                href="#"
+                href="https://web.facebook.com/etenderinfo"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#4874c7] hover:bg-[#4874c7] hover:text-white transition-all duration-200 hover:scale-110"
                 aria-label="Facebook"
               >
                 <FaFacebook className="w-5 h-5" />
               </a>
               <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#4874c7] hover:bg-[#4874c7] hover:text-white transition-all duration-200 hover:scale-110"
-                aria-label="Twitter"
-              >
-                <FaTwitter className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#4874c7] hover:bg-[#4874c7] hover:text-white transition-all duration-200 hover:scale-110"
-                aria-label="LinkedIn"
-              >
-                <FaLinkedin className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
+                href="https://www.youtube.com/@eTender_BD"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#4874c7] hover:bg-[#4874c7] hover:text-white transition-all duration-200 hover:scale-110"
                 aria-label="YouTube"
               >
@@ -102,11 +92,11 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-gray-600">
                 <HiMail className="w-5 h-5 text-[#4874c7] shrink-0 mt-0.5" />
-                <span>info@etenderbd.com</span>
+                <span>support@etenderbd.com</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-gray-600">
                 <HiPhone className="w-5 h-5 text-[#4874c7] shrink-0 mt-0.5" />
-                <span>+880 1XXX-XXXXXX</span>
+                <span>01926-959331</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-gray-600">
                 <HiLocationMarker className="w-5 h-5 text-[#4874c7] shrink-0 mt-0.5" />

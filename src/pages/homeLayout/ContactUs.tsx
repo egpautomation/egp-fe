@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { FormEvent, useRef, useState } from "react"
 import { HiChatAlt2, HiClock, HiLocationMarker, HiMail, HiPhone, HiUsers } from "react-icons/hi"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,6 +6,52 @@ import { Input } from "@/components/ui/input"
 export default function ContactUs() {
   const formRef = useRef<HTMLFormElement | null>(null)
   const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState("")
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setSubmitError("")
+    setIsSubmitting(true)
+
+    const formData = new FormData(event.currentTarget)
+    const payload = {
+      name: String(formData.get("fullName") || "").trim(),
+      email: String(formData.get("email") || "").trim(),
+      phone: String(formData.get("phone") || "").trim(),
+      topic: String(formData.get("topic") || "").trim(),
+      message: String(formData.get("message") || "").trim(),
+    }
+
+    try {
+      const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL || ""
+      const apiBaseUrl = rawApiBaseUrl.replace(/\/+$/, "")
+      const endpoint = apiBaseUrl.endsWith("/api/v1")
+        ? `${apiBaseUrl}/contact/`
+        : `${apiBaseUrl}/api/v1/contact/`
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data?.success) {
+        throw new Error(data?.message || "বার্তা পাঠাতে সমস্যা হয়েছে")
+      }
+
+      formRef.current?.reset()
+      setIsSuccessOpen(true)
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "বার্তা পাঠানো যায়নি")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   const highlights = [
     {
@@ -80,12 +126,14 @@ export default function ContactUs() {
             <form
               ref={formRef}
               className="mt-6 grid gap-4"
-              onSubmit={(event) => {
-                event.preventDefault()
-                formRef.current?.reset()
-                setIsSuccessOpen(true)
-              }}
+              onSubmit={handleSubmit}
             >
+              {submitError && (
+                <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+                  {submitError}
+                </p>
+              )}
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700" htmlFor="fullName">
@@ -93,9 +141,11 @@ export default function ContactUs() {
                   </label>
                   <Input
                     id="fullName"
+                    name="fullName"
                     type="text"
                     placeholder="আপনার পূর্ণ নাম"
                     className="h-11 bg-white"
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -104,6 +154,7 @@ export default function ContactUs() {
                   </label>
                   <Input
                     id="companyName"
+                    name="companyName"
                     type="text"
                     placeholder="কোম্পানির নাম"
                     className="h-11 bg-white"
@@ -118,9 +169,11 @@ export default function ContactUs() {
                   </label>
                   <Input
                     id="email"
+                    name="email"
                     type="email"
                     placeholder="example@email.com"
                     className="h-11 bg-white"
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -129,9 +182,11 @@ export default function ContactUs() {
                   </label>
                   <Input
                     id="phone"
+                    name="phone"
                     type="tel"
                     placeholder="+880 1XXX-XXXXXX"
                     className="h-11 bg-white"
+                    required
                   />
                 </div>
               </div>
@@ -142,6 +197,7 @@ export default function ContactUs() {
                 </label>
                 <Input
                   id="topic"
+                  name="topic"
                   type="text"
                   placeholder="যে বিষয়ে জানতে চান"
                   className="h-11 bg-white"
@@ -154,9 +210,11 @@ export default function ContactUs() {
                 </label>
                 <textarea
                   id="message"
+                  name="message"
                   rows={5}
                   placeholder="আপনার বার্তা লিখুন..."
                   className="w-full rounded-md border border-slate-200/70 bg-white px-3 py-2 text-sm text-gray-700 shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+                  required
                 />
               </div>
 
@@ -166,9 +224,10 @@ export default function ContactUs() {
                 </p>
                 <Button
                   type="submit"
+                  disabled={isSubmitting}
                   className="h-11 rounded-full px-8 text-white bg-[#4874c7] hover:bg-[#3a5da8] transition-all duration-200"
                 >
-                  বার্তা পাঠান
+                  {isSubmitting ? "পাঠানো হচ্ছে..." : "বার্তা পাঠান"}
                 </Button>
               </div>
             </form>
@@ -184,11 +243,11 @@ export default function ContactUs() {
                 </li>
                 <li className="flex items-start gap-2">
                   <HiPhone className="w-5 h-5 text-[#4874c7] mt-0.5" />
-                  <span>+880 1XXX-XXXXXX</span>
+                  <span>01926-959331</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <HiLocationMarker className="w-5 h-5 text-[#4874c7] mt-0.5" />
-                  <span>বনানী, ঢাকা-১২১৩</span>
+                  <span>চাঁদপুর</span>
                 </li>
               </ul>
             </div>
@@ -207,7 +266,7 @@ export default function ContactUs() {
             <div className="rounded-2xl border border-slate-200/70 bg-white/90 p-6 shadow-lg backdrop-blur-sm">
               <h4 className="text-lg font-semibold text-gray-900">অফিস লোকেশন</h4>
               <p className="mt-2 text-sm text-gray-600">
-                রোড ১২, হাউস ৭২, বনানী, ঢাকা
+                চাঁদপুর
               </p>
               <div className="mt-4 rounded-xl border border-slate-200/70 bg-blue-50/60 p-4 text-sm text-slate-600">
                 ম্যাপ ভিউয়ের জন্য এখানে একটি লোকেশন কার্ড দেখানো হবে।

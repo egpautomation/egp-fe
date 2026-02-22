@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDown, ChevronRight, Menu, X, BookOpen, List } from "lucide-react";
 import { content } from "node_modules/html2canvas-pro/dist/types/css/property-descriptors/content";
 

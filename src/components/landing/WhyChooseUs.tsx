@@ -4,6 +4,7 @@ import { Check, Minus, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { FiHelpCircle } from "react-icons/fi";
 import { FaBell } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 export default function WhyChooseUs() {
   const highlights = [
@@ -11,31 +12,37 @@ export default function WhyChooseUs() {
       title: "নতুন টেন্ডার নোটিশ",
       description:
         "eGP থেকে প্রাপ্ত নতুন টেন্ডার  + TDS থেকে সংগৃহীত ফাইন্যান্সিয়াল ক্রাইটেরিয়া  +  প্রাক্কলিত মূল্য একসাথে",
+      blogLink: "/blogs#egp-tender-guide",
     },
     {
       title: "টেন্ডার SLT Calculation",
       description:
         "টেন্ডার সাবমিশনের পূর্বে নির্ভুল SLT ক্যালকুলেশনের মাধ্যমে আত্মবিশ্বাসের সাথে সঠিক ও প্রতিযোগিতামূলক রেট কোট করার সুবিধা।",
+      blogLink: "/blogs#slt-calculation",
     },
     {
       title: "LTM, OTM টেন্ডার eGP ‍তে অটো সাবমিশন",
       description:
         "টেন্ডার I Agree করা হতে শুরু করে ফর্ম ফিল-আপ, টেডার ডকুমেন্ট ম্যাপিং, BOQ রেট সিন করা সহ Encript পর্যন্ত eGP তে অটো সাবমিশন (মোবাইল এপস এবং পিসি সফটওয়্যার) সার্ভিস",
+      blogLink: "/blogs#tender-auto-sumission-in-egp",
     },
     {
       title: "অটো ডকুমেন্ট জেনারেশন",
       description:
         "টেন্ডারের চাহিদা অনুযায়ী সকল ধরনের অফিসিয়াল টেমপ্লেট (Authorized Letter, Code of Conduct, JV Agreement ইত্যাদি) স্বয়ংক্রিয়ভাবে তৈরি করুন।",
+      blogLink: "/blogs#auto-document-generation",
     },
    
     {
       title: "টেন্ডার ম্যানেজমেন্ট",
       description:
         "আসন্ন টেন্ডারগুলো TO DO লিষ্ট করা, টেন্ডার প্রিপারেশন এর কাজ ম্যনেজমেন্ট, টেন্ডার সিকিউরিটির তথ্য ট্রেকিং, আগামী সম্পাহের টেন্ডার গুলোর তালিকা সুস্জ্জিত রিপোর্ট, সাবমিট করার টেন্ডার লটারির ফলাফল দেখা।",
+      blogLink: "/blogs#tender-management",
     },
      {
       title: "রিয়েলটাইম নোটিফিকেশন",
       description: "WhatsApp, Email এর মাধ্যেমে আপনার পছেন্দের টেন্ডার তালিকা প্রেরণ",
+      blogLink: "/blogs#realtime-notification",
     },
     
   ];
@@ -157,12 +164,14 @@ export default function WhyChooseUs() {
                 </div>
               </div>
               <div className="mt-4 flex justify-end">
-                <Button
-                  type="button"
-                  className="h-10 rounded-full px-6 text-white bg-[#4874c7] hover:bg-[#3a5da8] hover:text-base transition-all duration-200"
-                >
-                  বিস্তারিত
-                </Button>
+                <Link to={card.blogLink}>
+                  <Button
+                    type="button"
+                    className="h-10 rounded-full px-6 text-white bg-[#4874c7] hover:bg-[#3a5da8] hover:text-base transition-all duration-200"
+                  >
+                    বিস্তারিত
+                  </Button>
+                </Link>
               </div>
             </div>
             </div>

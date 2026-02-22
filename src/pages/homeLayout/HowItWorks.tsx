@@ -146,7 +146,7 @@ export default function HowItWorks() {
                   </span>
                 </div>
                 <Link
-                  to="#"
+                  to="/blogs"
                   className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#4874c7] hover:text-[#3a5da8] transition-colors"
                 >
                   বিস্তারিত পড়ুন <FiArrowRight className="h-4 w-4" />
