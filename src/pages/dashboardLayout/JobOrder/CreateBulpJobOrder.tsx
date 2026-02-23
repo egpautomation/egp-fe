@@ -4,15 +4,27 @@ import UserEgpMail from "@/components/dashboard/UserEgpMail";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { createData } from "@/lib/createData";
+import { updateData } from "@/lib/updateData";
 import { AuthContext } from "@/provider/AuthProvider";
 import { CartContext } from "@/provider/CartContext";
+import useAllDepartments from "@/hooks/useAllDepartments";
 import { X } from "lucide-react";
 import { useContext, useState } from "react";
 
 export default function CreateBulpJobOrder() {
   const { user } = useContext(AuthContext);
   const { setReload } = useContext(CartContext);
+  const { transformedDepartments: AGENCIES } = useAllDepartments();
+  const [ltmLicenseNameCode, setLtmLicenseNameCode] = useState("");
   const [formData, setFormData] = useState({
     userMail: user?.email,
     egpMail: "",
@@ -69,8 +81,36 @@ export default function CreateBulpJobOrder() {
       return;
     }
 
-    const url = `${config.apiBaseUrl}/jobOrder-cart/create-multiple-jobOrderCart`;
-    createData(url, orders, setReload, setReset);
+    if (!ltmLicenseNameCode) {
+      alert("Please select Short Name (LtmLicenseNameCode)");
+      return;
+    }
+
+    const url1 = `${config.apiBaseUrl}/jobOrder-cart/create-multiple-jobOrderCart`;
+    
+    // Call first API - Bulk Job Order
+    const result = await createData(url1, orders, null, null);
+    
+    // If first API succeeds, call second API for each tenderId
+    if (result?.success) {
+      // Collect unique tenderIds from orders
+      const uniqueTenderIds = [...new Set(orders.map(order => order.tenderId))];
+      
+      // Data to update for each tender
+      const tenderUpdateData = {
+        LtmLicenseNameCode: ltmLicenseNameCode,
+      };
+      
+      // Call PUT API for each unique tenderId
+      for (const tenderId of uniqueTenderIds) {
+        const url2 = `${config.apiBaseUrl}/tenders/tenderId/${tenderId}`;
+        await updateData(url2, tenderUpdateData, null, null);
+      }
+      
+      // Reset after both APIs complete
+      setReset();
+      setReload((prev) => prev + 1);
+    }
   };
 
   return (
@@ -115,6 +155,26 @@ export default function CreateBulpJobOrder() {
             placeholder="Enter Liquid Assets Amount"
             className="mt-2"
           />
+        </div>
+
+        <div className="max-sm:w-full sm:w-[220px]">
+          <Label htmlFor="ltmLicenseNameCode">
+            Short Name<span className="text-red-700">*</span>
+          </Label>
+          <Select value={ltmLicenseNameCode} onValueChange={setLtmLicenseNameCode}>
+            <SelectTrigger className="mt-2 w-full">
+              <SelectValue placeholder="Select short" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {AGENCIES.map((agency) => (
+                  <SelectItem key={agency.value} value={agency.value}>
+                    {agency.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="max-sm:w-full">

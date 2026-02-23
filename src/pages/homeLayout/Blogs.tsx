@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { ChevronDown, ChevronRight, Menu, X, BookOpen, List } from "lucide-react";
 import { content } from "node_modules/html2canvas-pro/dist/types/css/property-descriptors/content";
+import SeoMeta from "@/components/seo/SeoMeta";
 
 const Blogs = () => {
   const [activeBlogId, setActiveBlogId] = useState("egp-tender-guide");
@@ -1450,7 +1451,14 @@ const Blogs = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white font-sans text-[#333]">
+    <>
+      <SeoMeta
+        title="Blogs | E-GP Tender Automation"
+        description="Read practical guides and expert blogs on eGP tender notice analysis, LTM/OTM submission workflows, and tender preparation in Bangladesh."
+        canonicalPath="/blogs"
+      />
+
+      <div className="flex flex-col min-h-screen bg-white font-sans text-[#333]">
       {/* MOBILE HEADER */}
       <div className="md:hidden flex items-center justify-between p-4 bg-white border-b sticky top-0 z-50 ">
         <div className="flex items-center gap-2 text-blue-600 font-bold uppercase tracking-tight">
@@ -1627,7 +1635,8 @@ const Blogs = () => {
           </nav>
         </aside>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

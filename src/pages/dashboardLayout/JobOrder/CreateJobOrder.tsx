@@ -6,8 +6,18 @@ import UserEgpMail from "@/components/dashboard/UserEgpMail";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import useAllDepartments from "@/hooks/useAllDepartments";
 import useAllUserJobOrderCart from "@/hooks/useUserJobOrderCart";
 import { createData } from "@/lib/createData";
+import { updateData } from "@/lib/updateData";
 import { AuthContext } from "@/provider/AuthProvider";
 import { CartContext } from "@/provider/CartContext";
 import { MoveLeft } from "lucide-react";
@@ -19,6 +29,8 @@ import toast from "react-hot-toast";
 const CreateJobOrder = () => {
   const { user } = useContext(AuthContext);
   const { setReload } = useContext(CartContext);
+  const { transformedDepartments: AGENCIES } = useAllDepartments();
+  const [ltmLicenseNameCode, setLtmLicenseNameCode] = useState("");
   const [formData, setFormData] = useState({
     userMail: user?.email,
     egpMail: "",
@@ -57,10 +69,16 @@ const CreateJobOrder = () => {
       activityDate1: "",
       activityDate2: "",
     });
+    setLtmLicenseNameCode("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!ltmLicenseNameCode) {
+      toast.error("Please select Short Name");
+      return;
+    }
+
     const url = `${config.apiBaseUrl}/jobOrder-cart/create-jobOrderCart`;
 
     const toastId = toast.loading("Adding to cart...");
@@ -102,6 +120,13 @@ const CreateJobOrder = () => {
       toast.dismiss(toastId);
 
       if (data.success) {
+        const tenderUpdateUrl = `${config.apiBaseUrl}/tenders/tenderId/${formData.tenderId}`;
+        await updateData(
+          tenderUpdateUrl,
+          { LtmLicenseNameCode: ltmLicenseNameCode },
+          null,
+          null
+        );
         toast.success("Added to cart successfully!");
         setReload((prev) => prev + 1);
         handleReset();
@@ -153,19 +178,39 @@ const CreateJobOrder = () => {
               />
             </div>
 
-            {/* Liquid Assets Tender Amount */}
-            <div className="">
-              <Label htmlFor="liquidAssets">
-                Liquid Assets Tender Amount
-              </Label>
-              <Input
-                type="number"
-                name="liquidAssetsTenderAmount"
-                onChange={handleInputChange}
-                value={formData.liquidAssetsTenderAmount}
-                placeholder="Liquid Assets Tender Amount (From Bank)"
-                className="mt-2"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_220px] gap-4">
+              {/* Liquid Assets Tender Amount */}
+              <div>
+                <Label htmlFor="liquidAssets">Liquid Assets Tender Amount</Label>
+                <Input
+                  type="number"
+                  name="liquidAssetsTenderAmount"
+                  onChange={handleInputChange}
+                  value={formData.liquidAssetsTenderAmount}
+                  placeholder="Liquid Assets Tender Amount (From Bank)"
+                  className="mt-2"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="ltmLicenseNameCode">
+                  Short Name<span className="text-red-700">*</span>
+                </Label>
+                <Select value={ltmLicenseNameCode} onValueChange={setLtmLicenseNameCode}>
+                  <SelectTrigger className="mt-2 w-full">
+                    <SelectValue placeholder="Select short" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {AGENCIES.map((agency) => (
+                        <SelectItem key={agency.value} value={agency.value}>
+                          {agency.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {/* Bank Name */}

@@ -87,6 +87,37 @@ const PgTwoTowOtmGoodsDetails = () => {
   const { egpListedCompanies, loading: companyLoading } = useAllEgpListedCompanies(egpEmail || 'SKIP'); // Pass dummy string to prevent error if empty
   const companyData = egpListedCompanies?.[0];
 
+  const companyDisplayName = companyData?.companyName || currentTender?.egpCompanyName || "Company Name";
+
+  const mappingRows = useMemo(() => {
+    if (!companyData) return [];
+
+    const normalizeValue = (value) => {
+      if (value === null || value === undefined) return "";
+      return String(value).trim();
+    };
+
+    const rows = [
+      { mapList: "VAT Certificate (ITT 23.1(f))", fileName: normalizeValue(companyData?.vat) },
+      { mapList: "Valid Trade License (ITT 23.1(e))", fileName: normalizeValue(companyData?.trade) },
+      { mapList: "TIN Certificate (ITT 23.1(f))", fileName: normalizeValue(companyData?.tin) },
+      { mapList: "TIN Return Certificate", fileName: normalizeValue(companyData?.tinReturnCertificate) },
+      { mapList: "VAT Return Certificate", fileName: normalizeValue(companyData?.vatReturnCertificate) },
+      { mapList: "Authorization Letter", fileName: normalizeValue(companyData?.autho) },
+      { mapList: "NID", fileName: normalizeValue(companyData?.nid) },
+      { mapList: "Equipment List", fileName: normalizeValue(companyData?.equipment) },
+      { mapList: "Manpower List", fileName: normalizeValue(companyData?.manpower) },
+      { mapList: "Audit Report", fileName: normalizeValue(companyData?.updateAuditReportFileName) },
+    ].filter((item) => item.fileName);
+
+    const departmentRows = Object.entries(companyData?.departmentLicenses || {}).map(([dept, file]) => ({
+      mapList: `${dept} License Certificate`,
+      fileName: normalizeValue(file),
+    })).filter((item) => item.fileName);
+
+    return [...rows, ...departmentRows];
+  }, [companyData]);
+
   // Fetch contract information from API using companyId
   // This bypasses the company lookup in backend and queries directly by companyId
   const companyId = companyData?.companyUniqueEGP_ID;
@@ -375,7 +406,44 @@ const PgTwoTowOtmGoodsDetails = () => {
     {
       id: 7,
       name: "Mapping",
-      content: (<div className="bg-green-50 p-4 rounded-lg"><h3 className="font-semibold text-green-800 mb-2">Mapping</h3></div>),
+      content: (
+        <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+          <div className="border-b border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50 px-4 sm:px-6 py-4">
+            <h3 className="text-2xl sm:text-3xl font-semibold text-slate-800 tracking-tight">{companyDisplayName}</h3>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">Document Mapping Sheet</p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[620px] text-sm">
+              <thead>
+                <tr className="bg-slate-100 border-b border-slate-300">
+                  <th className="w-1/2 px-4 sm:px-6 py-3 text-left font-semibold text-slate-700">Map List</th>
+                  <th className="w-1/2 px-4 sm:px-6 py-3 text-left font-semibold text-slate-700">File Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mappingRows.length > 0 ? (
+                  mappingRows.map((row, index) => (
+                    <tr
+                      key={`${row.mapList}-${index}`}
+                      className="border-b border-slate-200 odd:bg-white even:bg-slate-50/40"
+                    >
+                      <td className="px-4 sm:px-6 py-2.5 text-slate-800">{row.mapList}</td>
+                      <td className="px-4 sm:px-6 py-2.5 text-slate-700 break-all">{row.fileName}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={2} className="px-4 sm:px-6 py-10 text-center text-slate-500">
+                      No mapping document found for this company.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ),
     },
     {
       id: 8,

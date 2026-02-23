@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import SeoMeta from "@/components/seo/SeoMeta"
 import { Label } from "@/components/ui/label"
-import { Trash2, Plus, Upload, FileText, Loader2 } from "lucide-react"
+import { Trash2, Plus, Upload, FileText, Loader2, TrendingUp } from "lucide-react"
 import axiosInstance from "@/lib/axiosInstance"
 import { toast } from "react-hot-toast"
 import { patchData } from "@/lib/updateData"
@@ -237,21 +238,135 @@ export default function StlCalculation() {
     return `${diff.toFixed(2)}%`
   }
 
-  return (
-    <div className="container h-full mx-auto lg:px-10 px-4 py-10 lg:py-16">
-      <section className="max-w-4xl mx-auto text-center mb-10">
-        <p className="text-sm font-semibold uppercase tracking-wide text-[#4874c7] animate-fade-in">
-          STL Calculation
-        </p>
-        <h2 className="mt-2 text-gray-900 animate-slide-up">
-          PPR 2025 Tender Calculation Sheet
-        </h2>
-        <p className="mt-3 text-base text-gray-600 animate-slide-up" style={{ animationDelay: "100ms" }}>
-          XOCE, Price Index এবং বিডারদের রেট দিয়ে স্বয়ংক্রিয়ভাবে SLT ও Winner হিসাব করুন।
-        </p>
-      </section>
+  const qualifiedPrices = bidders
+    .filter((bidder) => bidder.qualified)
+    .map((bidder) => parseFloat(bidder.price))
+    .filter((price) => !isNaN(price))
 
-      <div className="max-w-6xl mx-auto">
+  const xoceValue = parseFloat(xoce) || 0
+  const priceIndexValue = parseFloat(priceIndex) || 0
+  const xNppiLive = xoceValue * priceIndexValue
+  const minBid = qualifiedPrices.length > 0 ? Math.min(...qualifiedPrices) : 0
+  const maxBid = qualifiedPrices.length > 0 ? Math.max(...qualifiedPrices) : 0
+  const xiLive =
+    qualifiedPrices.length > 0
+      ? qualifiedPrices.reduce((sum, price) => sum + price, 0) / qualifiedPrices.length
+      : 0
+
+  const waPreview = xoceValue * 0.2 + xiLive * 0.5 + xNppiLive * 0.3
+  const variancePreview =
+    qualifiedPrices.length > 0
+      ? qualifiedPrices.reduce((sum, price) => sum + Math.pow(price - waPreview, 2), 0) / qualifiedPrices.length
+      : 0
+  const sdPreview = Math.sqrt(variancePreview)
+  const sltPreview = waPreview - sdPreview
+
+  const hasResult = results && !("error" in results)
+  const waDisplay = hasResult ? results.wa : waPreview.toFixed(4)
+  const sdDisplay = hasResult ? results.sd : sdPreview.toFixed(4)
+  const sltDisplay = hasResult ? results.slt : sltPreview.toFixed(4)
+
+  const statsCards = [
+    {
+      title: "Weighted Average",
+      badge: "WA",
+      value: waDisplay,
+      valueClass: "text-[#1f6fd5]",
+      badgeClass: "bg-blue-100 text-blue-700",
+      iconClass: "text-[#1f6fd5]",
+      rows: [
+        { label: "Min Bid", value: minBid.toFixed(4), className: "text-red-500" },
+        { label: "Average Xi", value: xiLive.toFixed(4), className: "text-amber-500" },
+        { label: "Max Bid", value: maxBid.toFixed(4), className: "text-green-600" },
+      ],
+    },
+    {
+      title: "Standard Deviation",
+      badge: "SD",
+      value: sdDisplay,
+      valueClass: "text-[#2f9b57]",
+      badgeClass: "bg-green-100 text-green-700",
+      iconClass: "text-[#2f9b57]",
+      rows: [
+        { label: "XOCE", value: xoceValue.toFixed(4), className: "text-red-500" },
+        { label: "xNPPI", value: xNppiLive.toFixed(4), className: "text-amber-500" },
+        { label: "Qualified", value: String(qualifiedPrices.length), className: "text-green-600" },
+      ],
+    },
+    {
+      title: "Significantly Low Tender",
+      badge: "SLT",
+      value: sltDisplay,
+      valueClass: "text-[#1f6fd5]",
+      badgeClass: "bg-indigo-100 text-indigo-700",
+      iconClass: "text-[#1f6fd5]",
+      rows: [
+        { label: "Price Index", value: priceIndexValue.toFixed(4), className: "text-red-500" },
+        { label: "WA", value: waDisplay, className: "text-amber-500" },
+        { label: "SD", value: sdDisplay, className: "text-green-600" },
+      ],
+    },
+  ]
+
+  return (
+    <>
+      <SeoMeta
+        title="STL Calculation | E-GP Tender Automation"
+        description="Calculate WA, SD and SLT with bidder pricing for Bangladesh eGP tenders using the STL calculator aligned with PPR 2025 workflow."
+        canonicalPath="/stl-calculation"
+      />
+
+      <div className="container h-full mx-auto lg:px-10 px-4 py-10 lg:py-16">
+        <section className="max-w-4xl mx-auto text-center mb-10">
+          <p className="text-sm font-semibold uppercase tracking-wide text-[#4874c7] animate-fade-in">
+            STL Calculation
+          </p>
+          <h2 className="mt-2 text-gray-900 animate-slide-up">
+            PPR 2025 Tender Calculation Sheet
+          </h2>
+          <p className="mt-3 text-base text-gray-600 animate-slide-up" style={{ animationDelay: "100ms" }}>
+            XOCE, Price Index এবং বিডারদের রেট দিয়ে স্বয়ংক্রিয়ভাবে SLT ও Winner হিসাব করুন।
+          </p>
+        </section>
+
+        <div className="max-w-6xl mx-auto">
+        <div className="grid gap-4 md:grid-cols-3 mb-6">
+          {statsCards.map((card) => (
+            <Card
+              key={card.badge}
+              className="border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+            >
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <p className="text-base font-semibold text-slate-800">{card.title}</p>
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${card.badgeClass}`}>
+                      {card.badge}
+                    </span>
+                  </div>
+                  <TrendingUp className={`h-4 w-4 ${card.iconClass}`} />
+                </div>
+
+                <div className="py-5 text-center">
+                  <p className={`text-5xl font-bold tracking-tight ${card.valueClass}`}>{card.value}</p>
+                  <p className="mt-2 text-sm text-slate-500">
+                    {hasResult ? "Calculated from current bidder data" : "Live preview from current inputs"}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 text-center">
+                  {card.rows.map((row) => (
+                    <div key={row.label}>
+                      <p className={`text-sm font-semibold ${row.className}`}>{row.value}</p>
+                      <p className="text-[11px] text-slate-500">{row.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
         <Card className="shadow-xl border border-slate-200/70 bg-white/95">
           <CardHeader className="bg-linear-to-r from-blue-50 to-indigo-50 border-b">
             <CardTitle className="text-2xl font-bold text-center text-gray-800">
@@ -538,7 +653,8 @@ export default function StlCalculation() {
             )}
           </CardContent>
         </Card>
+        </div>
       </div>
-    </div>
+    </>
   )
 }

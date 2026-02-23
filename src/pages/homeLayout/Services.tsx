@@ -6,6 +6,7 @@
 // import ServicesExtra from "@/components/services-components/ServicesExtra"
 import ServicesHero from "@/components/services-components/ServicesHero"
 import ServicesMainList from "@/components/services-components/ServicesMainList"
+import SeoMeta from "@/components/seo/SeoMeta"
 // import { useEffect, useRef, useState } from "react"
 
 // const HIGHLIGHT_DELAY_AFTER_CLICK_MS = 400
@@ -94,14 +95,22 @@ export default function Services() {
   // }
 
   return (
-    <div className="container h-full mx-auto lg:px-10 px-4">
-      <ServicesHero />
-      <ServicesMainList  />
-      {/* <ServicesExtra /> */}
-      {/* <ServicesDetailsSection activeServiceId={activeServiceId} onScrollActiveChange={handleScrollActiveChange} /> */}
-      {/* <ServicesUnique /> */}
-      {/* <ServicesCatalog /> */}
-      {/* <ServicesCTA /> */}
-    </div>
+    <>
+      <SeoMeta
+        title="Services | E-GP Tender Automation"
+        description="Explore all E-GP tender automation services including tender notice analysis, STL tools, and submission support for contractors in Bangladesh."
+        canonicalPath="/services"
+      />
+
+      <div className="container h-full mx-auto lg:px-10 px-4">
+        <ServicesHero />
+        <ServicesMainList  />
+        {/* <ServicesExtra /> */}
+        {/* <ServicesDetailsSection activeServiceId={activeServiceId} onScrollActiveChange={handleScrollActiveChange} /> */}
+        {/* <ServicesUnique /> */}
+        {/* <ServicesCatalog /> */}
+        {/* <ServicesCTA /> */}
+      </div>
+    </>
   )
 }

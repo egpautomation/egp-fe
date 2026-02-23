@@ -211,10 +211,6 @@ const router = createBrowserRouter([
         path: "/test-success",
         element: <SuccessTest />,
       },
-      {
-        path: "/stl-calculation",
-        element: <StlCalculationPage />,
-      },
     ],
   },
   {
@@ -326,6 +322,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <CreateJobOrder />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "stl-calculation",
+        element: (
+          <PrivateRoute>
+            <StlCalculationPage />
           </PrivateRoute>
         ),
       },
