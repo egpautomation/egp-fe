@@ -1,6 +1,10 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # Legacy URL redirects (SEO)
+  RewriteRule ^includes/egp/TTI_V1/?$ /services [R=301,L]
+  RewriteRule ^includes/egp/LTM_V1/?$ /services [R=301,L]
   
   # Disable Multiviews to prevent conflicts with rewriting
   Options -MultiViews

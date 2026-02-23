@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { createBrowserRouter } from "react-router-dom";
+import { Navigate, createBrowserRouter } from "react-router-dom";
 
 import App from "@/App";
 import Root from "@/layouts/Root";
@@ -113,6 +113,14 @@ const router = createBrowserRouter([
       {
         path: "/about-us",
         element: <AboutUs />,
+      },
+      {
+        path: "/includes/egp/TTI_V1",
+        element: <Navigate to="/services" replace />,
+      },
+      {
+        path: "/includes/egp/LTM_V1",
+        element: <Navigate to="/services" replace />,
       },
       {
         path: "/services",
