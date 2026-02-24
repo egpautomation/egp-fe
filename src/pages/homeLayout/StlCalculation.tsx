@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import SeoMeta from "@/components/seo/SeoMeta"
 import { Label } from "@/components/ui/label"
-import { Trash2, Plus, Upload, FileText, Loader2, TrendingUp } from "lucide-react"
+import { Trash2, Plus, Upload, FileText, Loader2 } from "lucide-react"
 import axiosInstance from "@/lib/axiosInstance"
 import { toast } from "react-hot-toast"
 import { patchData } from "@/lib/updateData"
@@ -33,6 +33,33 @@ interface CalculationResults {
     rank: number | "-"
   }[]
 }
+
+const staticSummaryTables = [
+  {
+    name: "Works xNPPI",
+    rows: [
+      { label: "Min", wa: "0.9310", sd: "0.9310", slt: "0.9310" },
+      { label: "Max", wa: "0.9310", sd: "0.9310", slt: "0.9310" },
+      { label: "Average", wa: "0.9310", sd: "0.9310", slt: "0.9310" },
+    ],
+  },
+  {
+    name: "Goods xNPPI",
+    rows: [
+      { label: "Min", wa: "0.9160", sd: "0.9160", slt: "0.9160" },
+      { label: "Max", wa: "0.9160", sd: "0.9160", slt: "0.9160" },
+      { label: "Average", wa: "0.9160", sd: "0.9160", slt: "0.9160" },
+    ],
+  },
+  {
+    name: "Services xNPPI",
+    rows: [
+      { label: "Min", wa: "0.9040", sd: "0.9040", slt: "0.9040" },
+      { label: "Max", wa: "0.9040", sd: "0.9040", slt: "0.9040" },
+      { label: "Average", wa: "0.9040", sd: "0.9040", slt: "0.9040" },
+    ],
+  },
+]
 
 export default function StlCalculation() {
   const [xoce, setXoce] = useState("100")
@@ -238,76 +265,6 @@ export default function StlCalculation() {
     return `${diff.toFixed(2)}%`
   }
 
-  const qualifiedPrices = bidders
-    .filter((bidder) => bidder.qualified)
-    .map((bidder) => parseFloat(bidder.price))
-    .filter((price) => !isNaN(price))
-
-  const xoceValue = parseFloat(xoce) || 0
-  const priceIndexValue = parseFloat(priceIndex) || 0
-  const xNppiLive = xoceValue * priceIndexValue
-  const minBid = qualifiedPrices.length > 0 ? Math.min(...qualifiedPrices) : 0
-  const maxBid = qualifiedPrices.length > 0 ? Math.max(...qualifiedPrices) : 0
-  const xiLive =
-    qualifiedPrices.length > 0
-      ? qualifiedPrices.reduce((sum, price) => sum + price, 0) / qualifiedPrices.length
-      : 0
-
-  const waPreview = xoceValue * 0.2 + xiLive * 0.5 + xNppiLive * 0.3
-  const variancePreview =
-    qualifiedPrices.length > 0
-      ? qualifiedPrices.reduce((sum, price) => sum + Math.pow(price - waPreview, 2), 0) / qualifiedPrices.length
-      : 0
-  const sdPreview = Math.sqrt(variancePreview)
-  const sltPreview = waPreview - sdPreview
-
-  const hasResult = results && !("error" in results)
-  const waDisplay = hasResult ? results.wa : waPreview.toFixed(4)
-  const sdDisplay = hasResult ? results.sd : sdPreview.toFixed(4)
-  const sltDisplay = hasResult ? results.slt : sltPreview.toFixed(4)
-
-  const statsCards = [
-    {
-      title: "Weighted Average",
-      badge: "WA",
-      value: waDisplay,
-      valueClass: "text-[#1f6fd5]",
-      badgeClass: "bg-blue-100 text-blue-700",
-      iconClass: "text-[#1f6fd5]",
-      rows: [
-        { label: "Min Bid", value: minBid.toFixed(4), className: "text-red-500" },
-        { label: "Average Xi", value: xiLive.toFixed(4), className: "text-amber-500" },
-        { label: "Max Bid", value: maxBid.toFixed(4), className: "text-green-600" },
-      ],
-    },
-    {
-      title: "Standard Deviation",
-      badge: "SD",
-      value: sdDisplay,
-      valueClass: "text-[#2f9b57]",
-      badgeClass: "bg-green-100 text-green-700",
-      iconClass: "text-[#2f9b57]",
-      rows: [
-        { label: "XOCE", value: xoceValue.toFixed(4), className: "text-red-500" },
-        { label: "xNPPI", value: xNppiLive.toFixed(4), className: "text-amber-500" },
-        { label: "Qualified", value: String(qualifiedPrices.length), className: "text-green-600" },
-      ],
-    },
-    {
-      title: "Significantly Low Tender",
-      badge: "SLT",
-      value: sltDisplay,
-      valueClass: "text-[#1f6fd5]",
-      badgeClass: "bg-indigo-100 text-indigo-700",
-      iconClass: "text-[#1f6fd5]",
-      rows: [
-        { label: "Price Index", value: priceIndexValue.toFixed(4), className: "text-red-500" },
-        { label: "WA", value: waDisplay, className: "text-amber-500" },
-        { label: "SD", value: sdDisplay, className: "text-green-600" },
-      ],
-    },
-  ]
-
   return (
     <>
       <SeoMeta
@@ -331,39 +288,34 @@ export default function StlCalculation() {
 
         <div className="max-w-6xl mx-auto">
         <div className="grid gap-4 md:grid-cols-3 mb-6">
-          {statsCards.map((card) => (
-            <Card
-              key={card.badge}
-              className="border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+          {staticSummaryTables.map((table) => (
+            <div
+              key={table.name}
+              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
             >
-              <CardContent className="p-5">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <p className="text-base font-semibold text-slate-800">{card.title}</p>
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${card.badgeClass}`}>
-                      {card.badge}
-                    </span>
-                  </div>
-                  <TrendingUp className={`h-4 w-4 ${card.iconClass}`} />
-                </div>
+              <div className="bg-[#1e57b3] px-4 py-3">
+                <h3 className="text-base font-semibold text-white">{table.name}</h3>
+              </div>
 
-                <div className="py-5 text-center">
-                  <p className={`text-5xl font-bold tracking-tight ${card.valueClass}`}>{card.value}</p>
-                  <p className="mt-2 text-sm text-slate-500">
-                    {hasResult ? "Calculated from current bidder data" : "Live preview from current inputs"}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 text-center">
-                  {card.rows.map((row) => (
-                    <div key={row.label}>
-                      <p className={`text-sm font-semibold ${row.className}`}>{row.value}</p>
-                      <p className="text-[11px] text-slate-500">{row.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[300px] text-sm">
+                  <thead>
+                    <tr className="bg-slate-100 text-slate-700">
+                      <th className="px-3 py-2 text-left font-semibold">Type</th>
+                      <th className="px-3 py-2 text-left font-semibold">Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {table.rows.map((row) => (
+                      <tr key={row.label} className="border-t border-slate-200">
+                        <td className="px-3 py-2 font-medium text-slate-800">{row.label}</td>
+                        <td className="px-3 py-2 text-[#1f6fd5] font-semibold">{row.wa}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           ))}
         </div>
 

@@ -1,25 +1,46 @@
 // @ts-nocheck
 import { config } from "@/lib/config";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import useAllTenders from "@/hooks/useAllTenders";
-import { AlignJustify, Filter, Printer, ExternalLink } from "lucide-react";
-import { useEffect, useState } from "react";
+import useAllTenderDepartments from "@/hooks/useAllTenderDepartments";
+import useAllTenderCategories from "@/hooks/getAllTenderCategories";
+import {
+  Search,
+  X,
+  ChevronDown,
+  Eye,
+  Bookmark,
+  Copy,
+  Share2,
+  Calendar,
+  MapPin,
+  Building2,
+  Tag,
+  Filter,
+  ExternalLink,
+} from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import Pagination from "@/shared/Pagination/Pagination";
+import { formatDate } from "@/lib/formateDate";
+import { motion } from "framer-motion";
+import districts from "@/utils/districts";
 import TenderStatsSection from "./TenderStatsSection";
 import ViewTender from "./ViewTender";
 import { DatePickerWithRange } from "@/components/mainlayout/DatePickerWithRage";
-import { TenderMethodComboBox } from "@/components/mainlayout/Tenders/TenderMethodComboBox";
-import { TenderDepartmentsComboBox } from "@/components/mainlayout/Tenders/TenderDepartmentComboBox";
-import { TenderCategoriesComboBox } from "@/components/mainlayout/Tenders/TenderCategoriesDepartments";
-import { TenderLocationsComboBox } from "@/components/mainlayout/Tenders/TenderLocationComboBox";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import Pagination from "@/shared/Pagination/Pagination";
-import { format } from "date-fns";
-import { formatDate } from "@/lib/formateDate";
-import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import MobileTableLayout from "@/components/ui/mobile-table-layout";
-import { motion } from "framer-motion";
+
+const METHODS = ["LTM", "OTM", "OSTETM", "RFQ"];
+const SOURCES = ["e-GP", "Manual Entry"];
 
 const LiveTenders = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,25 +56,164 @@ const LiveTenders = () => {
     to: "",
   });
 
-  const [method, setMethod] = useState("");
-  const [department, setDepartment] = useState("");
-  const [category, setCategory] = useState("");
-  const [location, setLocation] = useState("");
-  const navigate = useNavigate();
+  // Multi-select filter states
+  const [selectedDepartments, setSelectedDepartments] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedLocations, setSelectedLocations] = useState([]);
+  const [selectedMethods, setSelectedMethods] = useState([]);
+  const [selectedSources, setSelectedSources] = useState([]);
 
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  // Search within filters
+  const [deptSearch, setDeptSearch] = useState("");
+  const [catSearch, setCatSearch] = useState("");
+  const [locSearch, setLocSearch] = useState("");
+
+  const { departments } = useAllTenderDepartments();
+  const { categories } = useAllTenderCategories();
+  const [filterCounts, setFilterCounts] = useState({
+    departments: [],
+    categories: [],
+    locations: [],
+    methods: [],
+  });
+
   const { tenders, loading, tendersCount } = useAllTenders(
     searchTerm,
     date?.from,
     date?.to,
-    method,
-    department,
-    category,
-    location,
+    selectedMethods.join(","),
+    selectedDepartments.join(","),
+    selectedCategories.join(","),
+    selectedLocations.join(","),
     currentPage,
     pageLimit
   );
   const skeleton = new Array(pageLimit).fill(Math?.random());
+
+  const hasActiveFilters =
+    selectedDepartments.length > 0 ||
+    selectedCategories.length > 0 ||
+    selectedLocations.length > 0 ||
+    selectedMethods.length > 0 ||
+    selectedSources.length > 0 ||
+    searchTerm;
+
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setSelectedDepartments([]);
+    setSelectedCategories([]);
+    setSelectedLocations([]);
+    setSelectedMethods([]);
+    setSelectedSources([]);
+    setCurrentPage(1);
+  };
+
+  const toggleSelection = (setter, list, value) => {
+    if (list.includes(value)) {
+      setter(list.filter((item) => item !== value));
+    } else {
+      setter([...list, value]);
+    }
+    setCurrentPage(1);
+  };
+
+  const filteredDepartments = useMemo(() => {
+    if (!deptSearch) return departments;
+    return departments.filter((d) =>
+      d.name?.toLowerCase().includes(deptSearch.toLowerCase())
+    );
+  }, [departments, deptSearch]);
+
+  const filteredCategories = useMemo(() => {
+    if (!catSearch) return categories;
+    return categories.filter((c) =>
+      c.name?.toLowerCase().includes(catSearch.toLowerCase())
+    );
+  }, [categories, catSearch]);
+
+  const filteredLocations = useMemo(() => {
+    if (!locSearch) return districts;
+    return districts.filter((d) =>
+      d.toLowerCase().includes(locSearch.toLowerCase())
+    );
+  }, [locSearch]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const loadFilterCounts = async () => {
+      try {
+        const res = await fetch(`${config.apiBaseUrl}/tenders/tender-filter-counts`);
+        const json = await res.json();
+        if (!ignore && json?.success && json?.data) {
+          setFilterCounts({
+            departments: json.data.departments || [],
+            categories: json.data.categories || [],
+            locations: json.data.locations || [],
+            methods: json.data.methods || [],
+          });
+        }
+      } catch (error) {
+        // keep UI usable with zero-count fallback
+        console.error("Failed to load tender filter counts:", error);
+      }
+    };
+
+    loadFilterCounts();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  const departmentCountMap = useMemo(
+    () =>
+      Object.fromEntries(
+        (filterCounts?.departments || []).map((item) => [item.name, item.count || 0])
+      ),
+    [filterCounts?.departments]
+  );
+
+  const categoryCountMap = useMemo(
+    () =>
+      Object.fromEntries(
+        (filterCounts?.categories || []).map((item) => [item.name, item.count || 0])
+      ),
+    [filterCounts?.categories]
+  );
+
+  const locationCountMap = useMemo(
+    () =>
+      Object.fromEntries(
+        (filterCounts?.locations || []).map((item) => [item.name, item.count || 0])
+      ),
+    [filterCounts?.locations]
+  );
+
+  const methodCountMap = useMemo(
+    () =>
+      Object.fromEntries(
+        (filterCounts?.methods || []).map((item) => [item.name, item.count || 0])
+      ),
+    [filterCounts?.methods]
+  );
+
+  // Calculate counts from backend filter-counts API
+  const getDepartmentCount = (deptName) => {
+    return departmentCountMap?.[deptName] || 0;
+  };
+
+  const getCategoryCount = (catName) => {
+    return categoryCountMap?.[catName] || 0;
+  };
+
+  const getLocationCount = (locName) => {
+    return locationCountMap?.[locName] || 0;
+  };
+
+  const getMethodCount = (methodName) => {
+    return methodCountMap?.[methodName] || 0;
+  };
 
   const downloadPdf = () => {
     const doc = new jsPDF("l", "mm", "a4");
@@ -231,569 +391,369 @@ const LiveTenders = () => {
     setSearchParams(params);
   }, [currentPage, pageLimit]);
 
-  // console.log(tenders);
-
-  return (
-    <div>
-      {/* <TenderStatsSection /> */}
-      <div className="lg:grid max-lg:grid-cols-1 md:grid-cols-2 justify-between my-5 gap-3">
-        <div className="hidden lg:block">
-          <div className="flex items-center gap-2">
-            <AlignJustify />
-            <h1 className="text-2xl font-semibold mb-1">
-              {tendersCount} Live Tenders
-            </h1>
-          </div>
-          <Input
-            value={searchTerm}
-            placeholder="Search"
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full sm:max-w-[300px]"
-          />
-        </div>
-
-        <div className="flex justify-between w-full md:justify-end  flex-1 lg:text-right">
-          <div className="w-full">
-            <Button onClick={() => downloadPdf()} className="cursor-pointer">
-              <Printer className="" />
-              <span className="">Print as PDF</span>
-            </Button>
-          </div>
-
-          <div className="lg:hidden">
-            <Button
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="cursor-pointer"
-            >
-              <Filter className="" />
-            </Button>
-          </div>
-        </div>
+  // Filter Section Component
+  const FilterSection = ({ title, children, searchPlaceholder, searchValue, onSearchChange, count }) => (
+    <AccordionItem value={title} className="border-0">
+      <div className="mb-2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+        <AccordionTrigger className="flex items-center justify-between bg-primary px-4 py-3 text-left text-sm font-semibold text-white hover:bg-primary/90 hover:no-underline [&[data-state=open]>svg]:rotate-180">
+          <span className="flex items-center gap-2">{title}</span>
+          <span className="ml-auto mr-2 flex items-center gap-1 rounded bg-white/20 px-2 py-0.5 text-xs">
+            Browse
+            <ChevronDown className="h-3 w-3 transition-transform duration-200" />
+          </span>
+        </AccordionTrigger>
+        <AccordionContent className="px-4 pb-3 pt-2">
+          {searchPlaceholder && (
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Input
+                placeholder={searchPlaceholder}
+                value={searchValue || ""}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                className="h-9 rounded-md border-slate-200 pl-9 text-sm"
+              />
+            </div>
+          )}
+          <div className="max-h-64 overflow-y-auto pr-1">{children}</div>
+          {count !== undefined && (
+            <div className="mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">{count} items found</div>
+          )}
+        </AccordionContent>
       </div>
+    </AccordionItem>
+  );
 
-      <div className="flex items-center gap-2 flex-wrap mt-5 max-lg:hidden">
-        <TenderDepartmentsComboBox setDepartment={setDepartment} />
-        <TenderMethodComboBox setMethod={setMethod} />
-        <TenderLocationsComboBox setLocation={setLocation} />
-        <TenderCategoriesComboBox setCategory={setCategory} />
-
-        <DatePickerWithRange date={date} setDate={setDate} />
-      </div>
-
-      {/*  */}
-      {isFilterOpen && (
-        <div className="flex lg:!hidden max-md:flex-col items-center gap-2 flex-wrap mt-5">
-          <div className="lg:hidden w-full">
-            <Input
-              value={searchTerm}
-              placeholder="Search"
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
-            />
-          </div>
-
-          <TenderDepartmentsComboBox setDepartment={setDepartment} className="w-full" />
-          <TenderMethodComboBox setMethod={setMethod} className="w-full" />
-          <TenderLocationsComboBox setLocation={setLocation} className="w-full" />
-          <TenderCategoriesComboBox setCategory={setCategory} className="w-full" />
-
-          <DatePickerWithRange date={date} setDate={setDate} className="w-full" />
-        </div>
-      )}
-
-      {/*  */}
-
-      {
-        <div className="overflow-x-auto">
-          <div className="flex items-center gap-2 mt-8 lg:hidden">
-            <AlignJustify />
-            <h1 className="text-2xl font-semibold">
-              {tendersCount} Live Tenders
-            </h1>
-          </div>
-          <table className="mt-5 w-full max-lg:hidden">
-            <thead>
-              <tr className="bg-primary text-primary-foreground">
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">
-                  Tender Id
-                </th>
-
-                <th className="whitespace-nowrap px-4 py-2 text-start">
-                  Organization
-                </th>
-
-                <th className="whitespace-nowrap px-4 py-1 text-start">
-                  Description
-                </th>
-                <th className="whitespace-nowrap px-4 py-2">Location</th>
-
-                <th className="whitespace-nowrap px-4 py-2 text-start">
-                  Details
-                </th>
-
-                <th className="whitespace-nowrap px-4 py-2 text-start">
-                  Quality Criteria
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-center rounded-tr">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {!loading
-                ? tenders?.map((item, idx) => (
-                  <tr
-                    key={idx}
-                    className={` ${idx % 2 == 1 && "bg-gray-100"}`}
-                  >
-                    <td
-                      style={{ textAlign: "start", verticalAlign: "top" }}
-                      className="px-4 py-2 text-sm"
-                    >
-                      {item?.tenderId}
-                    </td>
-
-                    <td
-                      style={{ textAlign: "start", verticalAlign: "top" }}
-                      className="px-4 py-2 text-sm"
-                    >
-                      {item?.organization || item?.department}
-                    </td>
-
-                    <td
-                      style={{
-                        textAlign: "start",
-                        verticalAlign: "top",
-                      }}
-                      className="px-4 py-2 text-[12px] text-justify min-w-[200px] max-w-[300px]"
-                    >
-                      <Link
-                        className="underline text-justify whitespace-break-spaces"
-                        to={`/dashboard/view-tender/${item?._id}`}
-                      >
-                        {item?.descriptionOfWorks}
-                      </Link>
-                    </td>
-                    <td
-                      style={{ textAlign: "start", verticalAlign: "top" }}
-                      className="px-4 py-2 text-sm"
-                    >
-                      {item?.locationDistrict}
-                    </td>
-
-                    <td
-                      style={{ textAlign: "start", verticalAlign: "top" }}
-                      className="px-4 py-2 text-sm text-nowrap"
-                    >
-                      <p>
-                        {" "}
-                        <span className="font-medium text-gray-600">
-                          Last Selling Date:{" "}
-                        </span>
-                        {formatDate(item?.documentLastSelling, "MM-dd-yyyy")}
-                      </p>
-                      <p>
-                        {" "}
-                        <span className="font-medium text-gray-600">
-                          Closing Date:{" "}
-                        </span>
-                        {formatDate(item?.openingDateTime, "MM-dd-yyyy")}
-                      </p>
-                      <p>
-                        {" "}
-                        <span className="font-medium text-gray-600">
-                          Document Price:{" "}
-                        </span>
-                        {item?.documentPrice}
-                      </p>
-                      <p>
-                        {" "}
-                        <span className="font-medium text-gray-600">
-                          Tender Security:{" "}
-                        </span>
-                        {item?.tenderSecurity}
-                      </p>
-                      <p>
-                        {" "}
-                        <span className="font-medium text-gray-600">
-                          Estimated Amount:{" "}
-                        </span>
-                        {item?.estimatedCost}
-                      </p>
-                      <p>
-                        {" "}
-                        <span className="font-medium text-gray-600">
-                          Line Of Credit:{" "}
-                        </span>
-                        {item?.liquidAssets}
-                      </p>
-                    </td>
-
-                    <td
-                      style={{ textAlign: "start", verticalAlign: "top" }}
-                      className="px-4 py-2 text-sm text-nowrap"
-                    >
-                      <p>
-                        {" "}
-                        <span className="font-medium text-gray-600">
-                          General Experience:{" "}
-                        </span>
-                        {item?.generalExperience || "N/A"}
-                      </p>
-                      <p>
-                        {" "}
-                        <span className="font-medium text-gray-600">
-                          JVCA:{" "}
-                        </span>
-                        {item?.jvca || "N/A"}
-                      </p>
-                      <p>
-                        {" "}
-                        <span className="font-medium text-gray-600">
-                          Similar Nature Work:{" "}
-                        </span>
-                        {item?.similarNatureWork || "N/A"}
-                      </p>
-                      <p>
-                        {" "}
-                        <span className="font-medium text-gray-600">
-                          Turnover Amount:{" "}
-                        </span>
-                        {item?.turnoverAmount || "N/A"}
-                      </p>
-                      <p>
-                        {" "}
-                        <span className="font-medium text-gray-600">
-                          Liquid Asset:{" "}
-                        </span>
-                        {item?.liquidAssets || "N/A"}
-                      </p>
-                      <p>
-                        {" "}
-                        <span className="font-medium text-gray-600">
-                          Tender Capacity:{" "}
-                        </span>
-                        {item?.tenderCapacity || "N/A"}
-                      </p>
-                      <p className="flex items-start gap-1">
-                        <span className="font-medium text-gray-600 whitespace-nowrap">
-                          Working Location:{" "}
-                        </span>
-                        <span
-                          className="inline-block max-w-[150px] lg:max-w-[200px] truncate"
-                          title={item?.workingLocation || "N/A"}
-                        >
-                          {item?.workingLocation || "N/A"}
-                        </span>
-                      </p>
-                    </td>
-                    <td className="px-4 py-2 text-center" style={{ verticalAlign: "top" }}>
-                      <a
-                        href={`https://www.eprocure.gov.bd/resources/common/ViewTender.jsp?id=${item?.tenderId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md transition-colors duration-200"
-                        title="View on e-GP"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        e-GP
-                      </a>
-                    </td>
-                  </tr>
-                ))
-                : skeleton.map((item, idx) => (
-                  <tr key={idx}>
-                    <td
-                      colSpan={7}
-                      className={`h-20 ${idx % 2 == 1 ? "bg-gray-300" : "bg-white"
-                        }`}
-                    ></td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-          <MobileTableLayoutLiveTenders data={tenders} />
-        </div>
-      }
-      <Pagination
-        data={{
-          pageLimit,
-          setCurrentPage,
-          setPageLimit,
-          count: tendersCount,
-          currentPage,
-        }}
+  // Filter Checkbox Item
+  const FilterCheckbox = ({ label, count, checked, onCheckedChange }) => (
+    <div className="flex items-start gap-2 py-1.5">
+      <Checkbox
+        id={label}
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+        className="mt-0.5 h-4 w-4 rounded border-slate-300 data-[state=checked]:bg-primary data-[state=checked]:text-white"
       />
+      <label htmlFor={label} className="flex flex-1 cursor-pointer items-start justify-between text-sm leading-5">
+        <span className="text-slate-700">{label}</span>
+        {count !== undefined && <span className="ml-2 text-xs text-slate-400">{count}</span>}
+      </label>
     </div>
   );
-};
-
-const MobileTableLayoutLiveTenders = ({
-  data,
-}: {
-  data: any;
-}) => {
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-      scale: 0.95,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.4,
-      },
-    },
-  };
 
   return (
-    <motion.div
-      className="flex flex-col gap-6 my-8 lg:hidden"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      {data?.map((item: any, idx: number) => (
-        <motion.div
-          key={idx}
-          className="flex flex-col gap-2 border rounded-xl p-4 md:p-8 py-6"
-          variants={cardVariants}
-          whileHover={{
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-            transition: { duration: 0.2 },
-          }}
-        >
-          <div className="">
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Tender Id: </h1>
-              <h1 className="text-gray-700 text-2xl">{item?.tenderId}</h1>
-            </motion.div>
-
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.25 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Organization: </h1>
-              <h1 className="text-gray-700 ">{item?.organization || item?.department}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Description: </h1>
-              <h1 className="text-gray-700 ">
-                <Link
-                  className="underline text-justify whitespace-break-spaces"
-                  to={`/dashboard/view-tender/${item?._id}`}
-                >
-                  {item?.descriptionOfWorks}
-                </Link>
-              </h1>
-            </motion.div>
-
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.35 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Location: </h1>
-              <h1 className="text-gray-700 ">{item?.locationDistrict}</h1>
-            </motion.div>
-
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Last Selling Date: </h1>
-              <h1 className="text-gray-700 ">
-                {formatDate(item?.documentLastSelling, "MM-dd-yyyy")}
-              </h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Closing Date: </h1>
-              <h1 className="text-gray-700 ">
-                {formatDate(item?.openingDateTime, "MM-dd-yyyy")}
-              </h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Document Price: </h1>
-              <h1 className="text-gray-700 ">{item?.documentPrice}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Tender Security: </h1>
-              <h1 className="text-gray-700 ">{item?.tenderSecurity}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Estimated Amount: </h1>
-              <h1 className="text-gray-700 ">{item?.estimatedCost}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Line Of Credit: </h1>
-              <h1 className="text-gray-700 ">{item?.liquidAssets}</h1>
-            </motion.div>
-
-            {/* Quality Criteria Section */}
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.45 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">General Experience: </h1>
-              <h1 className="text-gray-700 ">{item?.generalExperience || "N/A"}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">JVCA: </h1>
-              <h1 className="text-gray-700 ">{item?.jvca || "N/A"}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.55 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Similar Nature Work: </h1>
-              <h1 className="text-gray-700 ">{item?.similarNatureWork || "N/A"}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Turnover Amount: </h1>
-              <h1 className="text-gray-700 ">{item?.turnoverAmount || "N/A"}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.65 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Liquid Asset: </h1>
-              <h1 className="text-gray-700 ">{item?.liquidAssets || "N/A"}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.7 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Tender Capacity: </h1>
-              <h1 className="text-gray-700 ">{item?.tenderCapacity || "N/A"}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-start justify-between gap-2 pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.75 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium whitespace-nowrap">Working Location: </h1>
-              <h1
-                className="text-gray-700 text-right truncate max-w-[60%]"
-                title={item?.workingLocation || "N/A"}
+    <div className="min-h-screen bg-slate-50">
+      <div className="w-full p-4 lg:p-6">
+        <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+          {/* Left Sidebar - Filters */}
+          <div className="space-y-4">
+            {/* Clear Filters Button */}
+            {hasActiveFilters && (
+              <Button
+                onClick={handleClearFilters}
+                variant="outline"
+                className="w-full justify-center gap-2 rounded-lg border-slate-300 text-slate-600 hover:bg-slate-100 hover:text-slate-800"
               >
-                {item?.workingLocation || "N/A"}
-              </h1>
-            </motion.div>
+                <X className="h-4 w-4" />
+                Clear Filters
+              </Button>
+            )}
 
-            <motion.div
-              className="flex gap-2 mt-4"
-              initial={{ opacity: 0, y: 10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 + idx * 0.05, duration: 0.3 }}
-            >
-              <a
-                href={`https://www.eprocure.gov.bd/resources/common/ViewTender.jsp?id=${item?.tenderId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md transition-colors duration-200"
-                title="View on e-GP"
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Input
+                placeholder="Search tenders, categories, organizations..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="h-11 rounded-lg border-slate-200 pl-10 pr-4 text-sm shadow-sm"
+              />
+            </div>
+
+            {/* Filter Sections */}
+            <Accordion type="multiple" defaultValue={["Organizations"]} className="space-y-2">
+              {/* Organizations */}
+              <FilterSection
+                title="Organizations"
+                searchPlaceholder="Search organizations..."
+                searchValue={deptSearch}
+                onSearchChange={setDeptSearch}
+                count={filteredDepartments?.length}
               >
-                <ExternalLink className="h-4 w-4" />
-                View on e-GP
-              </a>
-            </motion.div>
+                <div className="space-y-1">
+                  {filteredDepartments?.map((dept) => (
+                    <FilterCheckbox
+                      key={dept._id || dept.name}
+                      label={dept.name}
+                      count={getDepartmentCount(dept.name)}
+                      checked={selectedDepartments.includes(dept.name)}
+                      onCheckedChange={() => toggleSelection(setSelectedDepartments, selectedDepartments, dept.name)}
+                    />
+                  ))}
+                </div>
+              </FilterSection>
+
+              {/* Categories */}
+              <FilterSection
+                title="Categories"
+                searchPlaceholder="Search categories..."
+                searchValue={catSearch}
+                onSearchChange={setCatSearch}
+                count={filteredCategories?.length}
+              >
+                <div className="space-y-1">
+                  {filteredCategories?.map((cat) => (
+                    <FilterCheckbox
+                      key={cat._id || cat.name}
+                      label={cat.name}
+                      count={getCategoryCount(cat.name)}
+                      checked={selectedCategories.includes(cat.name)}
+                      onCheckedChange={() => toggleSelection(setSelectedCategories, selectedCategories, cat.name)}
+                    />
+                  ))}
+                </div>
+              </FilterSection>
+
+              {/* Locations */}
+              <FilterSection
+                title="Locations"
+                searchPlaceholder="Search divisions, districts, upazilas..."
+                searchValue={locSearch}
+                onSearchChange={setLocSearch}
+                count={filteredLocations?.length}
+              >
+                <div className="space-y-1">
+                  {filteredLocations?.map((loc) => (
+                    <FilterCheckbox
+                      key={loc}
+                      label={loc}
+                      count={getLocationCount(loc)}
+                      checked={selectedLocations.includes(loc)}
+                      onCheckedChange={() => toggleSelection(setSelectedLocations, selectedLocations, loc)}
+                    />
+                  ))}
+                </div>
+              </FilterSection>
+
+              {/* Tendering Method */}
+              <FilterSection title="Tendering Method" count={METHODS.length}>
+                <div className="space-y-1">
+                  {METHODS.map((method) => (
+                    <FilterCheckbox
+                      key={method}
+                      label={method}
+                      count={getMethodCount(method)}
+                      checked={selectedMethods.includes(method)}
+                      onCheckedChange={() => toggleSelection(setSelectedMethods, selectedMethods, method)}
+                    />
+                  ))}
+                </div>
+              </FilterSection>
+
+              {/* Sources */}
+              <FilterSection title="Sources" count={SOURCES.length}>
+                <div className="space-y-1">
+                  {SOURCES.map((source) => (
+                    <FilterCheckbox
+                      key={source}
+                      label={source}
+                      checked={selectedSources.includes(source)}
+                      onCheckedChange={() => toggleSelection(setSelectedSources, selectedSources, source)}
+                    />
+                  ))}
+                </div>
+              </FilterSection>
+            </Accordion>
           </div>
-        </motion.div>
-      ))}
-    </motion.div>
+
+          {/* Main Content - Tender List */}
+          <div className="space-y-4">
+            {/* Header */}
+            <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-600 text-white">
+                  <Filter className="h-5 w-5" />
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold text-slate-800">Live Tenders</h1>
+                  <p className="text-sm text-slate-500">
+                    {tendersCount} results found
+                    {hasActiveFilters && (
+                      <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Filtered</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Original Table Design */}
+            <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-primary text-primary-foreground">
+                    <th className="whitespace-nowrap px-4 py-3 text-left text-sm font-semibold rounded-tl-lg">
+                      Tender Id
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-3 text-left text-sm font-semibold">
+                      Organization
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-3 text-left text-sm font-semibold">
+                      Description
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-3 text-left text-sm font-semibold">
+                      Location
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-3 text-left text-sm font-semibold">
+                      Details
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-3 text-left text-sm font-semibold">
+                      Quality Criteria
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-3 text-center text-sm font-semibold rounded-tr-lg">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {!loading ? (
+                    tenders?.map((item, idx) => (
+                      <tr
+                        key={idx}
+                        className={`${idx % 2 === 1 ? "bg-slate-50" : "bg-white"} hover:bg-slate-100 transition-colors`}
+                      >
+                        <td className="px-4 py-3 text-sm align-top">
+                          {item?.tenderId}
+                        </td>
+                        <td className="px-4 py-3 text-sm align-top">
+                          {item?.organization || item?.department}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-justify min-w-[200px] max-w-[300px] align-top">
+                          <Link
+                            className="underline whitespace-break-spaces text-slate-700 hover:text-teal-600"
+                            to={`/dashboard/view-tender/${item?._id}`}
+                          >
+                            {item?.descriptionOfWorks}
+                          </Link>
+                        </td>
+                        <td className="px-4 py-3 text-sm align-top">
+                          {item?.locationDistrict}
+                        </td>
+                        <td className="px-4 py-3 text-sm align-top whitespace-nowrap">
+                          <p>
+                            <span className="font-medium text-slate-600">Last Selling Date: </span>
+                            {formatDate(item?.documentLastSelling, "MM-dd-yyyy")}
+                          </p>
+                          <p>
+                            <span className="font-medium text-slate-600">Closing Date: </span>
+                            {formatDate(item?.openingDateTime, "MM-dd-yyyy")}
+                          </p>
+                          <p>
+                            <span className="font-medium text-slate-600">Document Price: </span>
+                            {item?.documentPrice}
+                          </p>
+                          <p>
+                            <span className="font-medium text-slate-600">Tender Security: </span>
+                            {item?.tenderSecurity}
+                          </p>
+                          <p>
+                            <span className="font-medium text-slate-600">Estimated Amount: </span>
+                            {item?.estimatedCost}
+                          </p>
+                          <p>
+                            <span className="font-medium text-slate-600">Line Of Credit: </span>
+                            {item?.liquidAssets}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3 text-sm align-top whitespace-nowrap">
+                          <p>
+                            <span className="font-medium text-slate-600">General Experience: </span>
+                            {item?.generalExperience || "N/A"}
+                          </p>
+                          <p>
+                            <span className="font-medium text-slate-600">JVCA: </span>
+                            {item?.jvca || "N/A"}
+                          </p>
+                          <p>
+                            <span className="font-medium text-slate-600">Similar Nature Work: </span>
+                            {item?.similarNatureWork || "N/A"}
+                          </p>
+                          <p>
+                            <span className="font-medium text-slate-600">Turnover Amount: </span>
+                            {item?.turnoverAmount || "N/A"}
+                          </p>
+                          <p>
+                            <span className="font-medium text-slate-600">Liquid Asset: </span>
+                            {item?.liquidAssets || "N/A"}
+                          </p>
+                          <p>
+                            <span className="font-medium text-slate-600">Tender Capacity: </span>
+                            {item?.tenderCapacity || "N/A"}
+                          </p>
+                          <p className="flex items-start gap-1">
+                            <span className="font-medium text-slate-600 whitespace-nowrap">Working Location: </span>
+                            <span className="inline-block max-w-[150px] lg:max-w-[200px] truncate" title={item?.workingLocation || "N/A"}>
+                              {item?.workingLocation || "N/A"}
+                            </span>
+                          </p>
+                        </td>
+                        <td className="px-4 py-3 text-center align-top">
+                          <a
+                            href={`https://www.eprocure.gov.bd/resources/common/ViewTender.jsp?id=${item?.tenderId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-emerald-300 bg-gradient-to-r from-emerald-500 to-green-600 px-3.5 py-1.5 text-xs font-semibold leading-none text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:from-emerald-600 hover:to-green-700 hover:shadow-md"
+                            title="View on e-GP"
+                          >
+                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 transition-colors group-hover:bg-white/30">
+                              <ExternalLink className="h-3.5 w-3.5" />
+                            </span>
+                            <span>e-GP</span>
+                          </a>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    skeleton.map((_, idx) => (
+                      <tr key={idx}>
+                        <td
+                          colSpan={7}
+                          className={`h-20 ${idx % 2 === 1 ? "bg-slate-200" : "bg-white"}`}
+                        />
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+              
+              {!loading && tenders?.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <Filter className="mb-4 h-12 w-12 text-slate-300" />
+                  <p className="text-lg font-medium text-slate-600">No tenders found</p>
+                  <p className="mt-1 text-sm text-slate-500">Try adjusting your filters or search criteria</p>
+                  {hasActiveFilters && (
+                    <Button onClick={handleClearFilters} variant="outline" className="mt-4">Clear all filters</Button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Pagination */}
+            {tendersCount > 0 && (
+              <Pagination
+                data={{
+                  pageLimit,
+                  setCurrentPage,
+                  setPageLimit,
+                  count: tendersCount,
+                  currentPage,
+                }}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
