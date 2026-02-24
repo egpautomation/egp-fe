@@ -89,35 +89,6 @@ const PgTwoTowOtmGoodsDetails = () => {
 
   const companyDisplayName = companyData?.companyName || currentTender?.egpCompanyName || "Company Name";
 
-  const mappingRows = useMemo(() => {
-    if (!companyData) return [];
-
-    const normalizeValue = (value) => {
-      if (value === null || value === undefined) return "";
-      return String(value).trim();
-    };
-
-    const rows = [
-      { mapList: "VAT Certificate (ITT 23.1(f))", fileName: normalizeValue(companyData?.vat) },
-      { mapList: "Valid Trade License (ITT 23.1(e))", fileName: normalizeValue(companyData?.trade) },
-      { mapList: "TIN Certificate (ITT 23.1(f))", fileName: normalizeValue(companyData?.tin) },
-      { mapList: "TIN Return Certificate", fileName: normalizeValue(companyData?.tinReturnCertificate) },
-      { mapList: "VAT Return Certificate", fileName: normalizeValue(companyData?.vatReturnCertificate) },
-      { mapList: "Authorization Letter", fileName: normalizeValue(companyData?.autho) },
-      { mapList: "NID", fileName: normalizeValue(companyData?.nid) },
-      { mapList: "Equipment List", fileName: normalizeValue(companyData?.equipment) },
-      { mapList: "Manpower List", fileName: normalizeValue(companyData?.manpower) },
-      { mapList: "Audit Report", fileName: normalizeValue(companyData?.updateAuditReportFileName) },
-    ].filter((item) => item.fileName);
-
-    const departmentRows = Object.entries(companyData?.departmentLicenses || {}).map(([dept, file]) => ({
-      mapList: `${dept} License Certificate`,
-      fileName: normalizeValue(file),
-    })).filter((item) => item.fileName);
-
-    return [...rows, ...departmentRows];
-  }, [companyData]);
-
   // Fetch contract information from API using companyId
   // This bypasses the company lookup in backend and queries directly by companyId
   const companyId = companyData?.companyUniqueEGP_ID;
@@ -221,6 +192,71 @@ const PgTwoTowOtmGoodsDetails = () => {
       return acc + worksInHandPerNYear;
     }, 0);
   }, [ongoingContracts]);
+
+  // Calculate mapping rows for document mapping table
+  const mappingRows = useMemo(() => {
+    if (!companyData) return [];
+
+    const normalizeValue = (value) => {
+      if (value === null || value === undefined || value === "") return "N/A";
+      return String(value).trim() || "N/A";
+    };
+
+    const rows = [
+      { mapList: "Trade Certificate", fileName: normalizeValue(companyData?.trade || companyData?.tradeCertificate) },
+      { mapList: "TIN Certificate", fileName: normalizeValue(companyData?.tin) },
+      { mapList: "TIN Return Certificate", fileName: normalizeValue(companyData?.tinReturnCertificate) },
+      { mapList: "VAT Certificate", fileName: normalizeValue(companyData?.vat) },
+      { mapList: "VAT Return Certificate", fileName: normalizeValue(companyData?.vatReturnCertificate) },
+      { mapList: "Authorization Letter", fileName: normalizeValue(companyData?.autho) },
+      { mapList: "NID", fileName: normalizeValue(companyData?.nid) },
+      { mapList: "Equipment List", fileName: normalizeValue(companyData?.equipment) },
+      { mapList: "Manpower List", fileName: normalizeValue(companyData?.manpower) },
+      { mapList: "Audit Report", fileName: normalizeValue(companyData?.updateAuditReportFileName) },
+    ];
+
+    const departmentRows = Object.entries(companyData?.departmentLicenses || {}).map(([dept, file]) => ({
+      mapList: `${dept} License Certificate`,
+      fileName: normalizeValue(file),
+    }));
+
+    // Get best years from turnover history (top years by amount)
+    const bestYears = yearlyTotals
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 3)
+      .map(y => y.year);
+
+    // Find contracts from best years and extract certificate file names
+    const certificateRows = [];
+    if (completedContracts && bestYears.length > 0) {
+      bestYears.forEach((year) => {
+        const yearContracts = completedContracts.filter(
+          contract => contract.financialYear === year
+        );
+
+        yearContracts.forEach((contract, contractIndex) => {
+          const wccFile = contract?.workCompletationCertificateFileName;
+          const pcFile = contract?.paymentCertificateFileName;
+
+          if (wccFile) {
+            certificateRows.push({
+              mapList: `Work Completion Certificate (${year} - ${contractIndex + 1})`,
+              fileName: normalizeValue(wccFile),
+            });
+          }
+
+          if (pcFile) {
+            certificateRows.push({
+              mapList: `Payment Certificate (${year} - ${contractIndex + 1})`,
+              fileName: normalizeValue(pcFile),
+            });
+          }
+        });
+      });
+    }
+
+    return [...rows, ...departmentRows, ...certificateRows];
+  }, [companyData, yearlyTotals, completedContracts]);
 
   // Prepare Turnover Data for Preview from SAVED tender preparation data
   const turnoverData = useMemo(() => {
