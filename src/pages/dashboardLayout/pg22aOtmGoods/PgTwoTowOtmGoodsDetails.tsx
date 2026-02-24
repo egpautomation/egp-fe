@@ -221,7 +221,7 @@ const PgTwoTowOtmGoodsDetails = () => {
     }));
 
     // Get best years from turnover history (top years by amount)
-    const bestYears = yearlyTotals
+    const bestYears = [...yearlyTotals]
       .sort((a, b) => b.amount - a.amount)
       .slice(0, 3)
       .map(y => y.year);
