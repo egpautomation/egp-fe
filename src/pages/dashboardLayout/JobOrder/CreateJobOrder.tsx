@@ -39,8 +39,6 @@ const CreateJobOrder = () => {
     SLOfCredit: "",
     liquidAssetsTenderAmount: "",
     bankName: "",
-    equipment: "",
-    manpower: "",
     activityDate1: "",
     activityDate2: "",
   });
@@ -64,8 +62,6 @@ const CreateJobOrder = () => {
       SLOfCredit: "",
       liquidAssetsTenderAmount: "",
       bankName: "",
-      equipment: "",
-      manpower: "",
       activityDate1: "",
       activityDate2: "",
     });
@@ -98,8 +94,6 @@ const CreateJobOrder = () => {
         formData.liquidAssetsTenderAmount || ""
       );
       formDataToSend.append("bankName", formData.bankName || "");
-      formDataToSend.append("equipment", formData.equipment || "");
-      formDataToSend.append("manpower", formData.manpower || "");
       formDataToSend.append("activityDate1", formData.activityDate1 || "");
       formDataToSend.append("activityDate2", formData.activityDate2 || "");
       formDataToSend.append("serviceId", "1001");
@@ -222,32 +216,6 @@ const CreateJobOrder = () => {
                 onChange={handleInputChange}
                 value={formData.bankName}
                 placeholder="Enter Bank Name"
-                className="mt-2"
-              />
-            </div>
-
-            {/* Equipment */}
-            <div className="">
-              <Label htmlFor="equipment">Equipment</Label>
-              <Input
-                type="text"
-                name="equipment"
-                onChange={handleInputChange}
-                value={formData.equipment}
-                placeholder="Enter Equipment"
-                className="mt-2"
-              />
-            </div>
-
-            {/* Manpower */}
-            <div className="">
-              <Label htmlFor="manpower">Manpower</Label>
-              <Input
-                type="text"
-                name="manpower"
-                onChange={handleInputChange}
-                value={formData.manpower}
-                placeholder="Enter Manpower"
                 className="mt-2"
               />
             </div>
