@@ -789,49 +789,6 @@ export function AppSidebarNew() {
               })}
             </div>
 
-            {/* Job Order Cart */}
-            <div className="">
-              <Link to="/dashboard/jobOrder-cart" className="w-full">
-                <motion.div
-                  className={`flex h-10 w-full rounded-xl items-center justify-between text-decoration-none ${location.pathname === "/dashboard/jobOrder-cart"
-                    ? "bg-gray-200"
-                    : " hover:bg-gray-100"
-                    }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="flex gap-2 items-center w-full">
-                    <motion.div
-                      className="bg-gray-100 rounded-full p-2 relative"
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ShoppingCart size={24} />
-                      {JobOrderCount > 0 && (
-                        <p className="rounded-full text-[10px] h-5 w-5 text-white flex justify-center items-center bg-red-500 absolute -top-1 -right-2">
-                          {JobOrderCount}
-                        </p>
-                      )}
-                    </motion.div>
-                    <AnimatePresence>
-                      {isOpen && (
-                        <motion.span
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -10 }}
-                          transition={{ duration: 0.3 }}
-                          className="text-black text-sm font-normal whitespace-nowrap"
-                        >
-                          Job Order Cart
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </motion.div>
-              </Link>
-            </div>
-
             {/* Logout Button */}
             <motion.li
               className="relative mb-2 group"

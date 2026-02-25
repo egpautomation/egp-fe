@@ -58,6 +58,7 @@ import Departments from "@/pages/dashboardLayout/Departments/Departments";
 import CreateDepartment from "@/pages/dashboardLayout/Departments/CreateDepartment";
 import EditDepartmentInformation from "@/pages/dashboardLayout/Departments/EditDepartment";
 import CreateTutorialCategory from "@/pages/dashboardLayout/Tutorials/CreateTutorialCategory";
+import Profile from "@/pages/dashboardLayout/Profile/Profile";
 import TutorialCategories from "@/pages/dashboardLayout/Tutorials/TutorialCategories";
 import EditTutorialCategory from "@/pages/dashboardLayout/Tutorials/EditTutorialCategory";
 import UpdateTenderDataEntry from "@/pages/dashboardLayout/TenderDataEntry/UpdateDataEntry";
@@ -77,7 +78,6 @@ import CreateCompanyProfile from "@/pages/dashboardLayout/TenderPreparation/Crea
 import CreateBOQ from "@/pages/dashboardLayout/TenderPreparation/CreateBOQ";
 import PgTwoTowOtmGoodsDetails from "@/pages/dashboardLayout/pg22aOtmGoods/PgTwoTowOtmGoodsDetails";
 import PgTwoTowOtmGoods from "@/pages/dashboardLayout/pg22aOtmGoods/pgTwoTowOtmGoods";
-import Profile from "@/pages/dashboardLayout/Profile";
 import SuccessTest from "@/pages/SuccessTest";
 import LiveTendersFromTenderIds from "@/pages/dashboardLayout/LiveTenders/LiveTendersFromTenderIds";
 import LiveTender from "@/pages/dashboardLayout/LiveTenders/LiveTender";
@@ -330,6 +330,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <CreateJobOrder />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <PrivateRoute>
+            <Profile />
           </PrivateRoute>
         ),
       },

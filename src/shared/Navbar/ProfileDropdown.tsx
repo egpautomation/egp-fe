@@ -35,6 +35,12 @@ export function ProfileDropdown() {
           >
             Dashboard
           </Link>
+          <Link
+            to="/dashboard/profile"
+            className="block w-full px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-[#4874c7] transition-colors"
+          >
+            Profile
+          </Link>
           <button
             type="button"
             onClick={handleLogout}

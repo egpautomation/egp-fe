@@ -1,5 +1,5 @@
 // @ts-nocheck
-
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,11 +34,16 @@ const NavbarSmallDevice = () => {
             <h1>{user?.email}</h1>
           </SheetDescription>
         </SheetHeader>
-
-
-        <SheetFooter>
+        <SheetFooter className="flex flex-col gap-2 mt-4">
           <SheetClose asChild>
-            {user && <Button onClick={() => logout()} variant={"destructive"} >Log Out</Button>}
+            {user && (
+              <Link to="/dashboard/profile" className="w-full">
+                <Button variant={"outline"} className="w-full">Profile</Button>
+              </Link>
+            )}
+          </SheetClose>
+          <SheetClose asChild>
+            {user && <Button onClick={() => logout()} variant={"destructive"} className="w-full">Log Out</Button>}
           </SheetClose>
         </SheetFooter>
       </SheetContent>
