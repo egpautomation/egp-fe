@@ -90,6 +90,7 @@ const useLiveTenders = (
     }, [allTenders, searchTerm, ministry, district, typeMethod, page, limit]);
 
     return {
+        allTenders,
         tenders,
         setTenders,
         tendersCount,

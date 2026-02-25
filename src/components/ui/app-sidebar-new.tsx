@@ -174,11 +174,7 @@ export function AppSidebarNew() {
           path: "/dashboard/create-job-order-bulk",
           role: ["admin", "user_agent", "user", "moderator"],
         },
-        {
-          label: "STL Calculation",
-          path: "/dashboard/stl-calculation",
-          role: ["admin", "user_agent", "user", "moderator"],
-        },
+
       ],
     },
     {
@@ -190,6 +186,11 @@ export function AppSidebarNew() {
         {
           label: "Add Tender Preparation",
           path: "/dashboard/tender-preparation",
+          role: ["admin", "user_agent", "user", "moderator"],
+        },
+        {
+          label: "STL Calculation",
+          path: "/dashboard/stl-calculation",
           role: ["admin", "user_agent", "user", "moderator"],
         },
       ],

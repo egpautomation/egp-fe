@@ -40,7 +40,6 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 const METHODS = ["LTM", "OTM", "OSTETM", "RFQ"];
-const SOURCES = ["e-GP", "Manual Entry"];
 
 const LiveTenders = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -61,7 +60,6 @@ const LiveTenders = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [selectedMethods, setSelectedMethods] = useState([]);
-  const [selectedSources, setSelectedSources] = useState([]);
 
   // Search within filters
   const [deptSearch, setDeptSearch] = useState("");
@@ -77,7 +75,7 @@ const LiveTenders = () => {
     methods: [],
   });
 
-  const { tenders, loading, tendersCount } = useAllTenders(
+  const { fetchAllTenders, tenders, loading, tendersCount } = useAllTenders(
     searchTerm,
     date?.from,
     date?.to,
@@ -95,7 +93,6 @@ const LiveTenders = () => {
     selectedCategories.length > 0 ||
     selectedLocations.length > 0 ||
     selectedMethods.length > 0 ||
-    selectedSources.length > 0 ||
     searchTerm;
 
   const handleClearFilters = () => {
@@ -104,7 +101,6 @@ const LiveTenders = () => {
     setSelectedCategories([]);
     setSelectedLocations([]);
     setSelectedMethods([]);
-    setSelectedSources([]);
     setCurrentPage(1);
   };
 
@@ -215,22 +211,23 @@ const LiveTenders = () => {
     return methodCountMap?.[methodName] || 0;
   };
 
-  const downloadPdf = () => {
+  const downloadPdf = async () => {
     const doc = new jsPDF("l", "mm", "a4");
 
     const tableColumn = [
       "Tender ID",
       "Department",
-       "Description",
+      "Description",
       "Location",
       "Details",
       "Quality criteria",
-     
-    ];
-    
-    const tableRows = [];
 
-    tenders.forEach((item) => {
+    ];
+
+    const tableRows = [];
+    const allTenders = await fetchAllTenders();
+
+    allTenders.forEach((item) => {
       const tenderIdAndMore = [
         `${item?.tenderId || "N/A"}`,
         `${item?.procurementType || "N/A"}`,
@@ -269,7 +266,7 @@ const LiveTenders = () => {
         item?.locationDistrict,
         details,
         others,
-       
+
       ];
       tableRows.push(rowData);
     });
@@ -550,20 +547,6 @@ const LiveTenders = () => {
                   ))}
                 </div>
               </FilterSection>
-
-              {/* Sources */}
-              <FilterSection title="Sources" count={SOURCES.length}>
-                <div className="space-y-1">
-                  {SOURCES.map((source) => (
-                    <FilterCheckbox
-                      key={source}
-                      label={source}
-                      checked={selectedSources.includes(source)}
-                      onCheckedChange={() => toggleSelection(setSelectedSources, selectedSources, source)}
-                    />
-                  ))}
-                </div>
-              </FilterSection>
             </Accordion>
           </div>
 
@@ -584,6 +567,18 @@ const LiveTenders = () => {
                     )}
                   </p>
                 </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={downloadPdf}
+                  variant="outline"
+                  className="h-9 text-sm gap-1.5"
+                  disabled={loading || tendersCount === 0}
+                >
+                  <ExternalLink size={14} className="rotate-180" />
+                  Print Table
+                </Button>
               </div>
             </div>
 
@@ -725,7 +720,7 @@ const LiveTenders = () => {
                   )}
                 </tbody>
               </table>
-              
+
               {!loading && tenders?.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                   <Filter className="mb-4 h-12 w-12 text-slate-300" />

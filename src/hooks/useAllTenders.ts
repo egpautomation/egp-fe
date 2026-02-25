@@ -18,13 +18,31 @@ const useAllTenders = (
   const [reload, setReload] = useState(0);
 
   useEffect(() => {
-    
+
     const result = async () => {
       try {
         setLoading(true);
-        const response = await import("@/lib/axiosInstance").then(m => m.default.get(
-          `/tenders?searchTerm=${searchTerm}&from=${from}&to=${to}&method=${method}&department=${department}&category=${category}&location=${location}&page=${page}&limit=${limit}`
-        ));
+        // Clean up department names by removing "(XXX)" because backend regex search fails on unescaped parentheses
+        const cleanDepartment = department
+          ? department
+            .split(",")
+            .map((d) => d.replace(/\s*\([^)]*\)/g, "").trim())
+            .join(",")
+          : "";
+
+        const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders', {
+          params: {
+            searchTerm,
+            from,
+            to,
+            method,
+            department: cleanDepartment,
+            category,
+            location,
+            page,
+            limit
+          }
+        }));
         setTenders(response.data?.data);
         setTendersCount(response.data?.count);
       } catch (error) {
@@ -47,7 +65,37 @@ const useAllTenders = (
     limit,
   ]);
 
+  const fetchAllTenders = async () => {
+    try {
+      const cleanDepartment = department
+        ? department
+          .split(",")
+          .map((d) => d.replace(/\s*\([^)]*\)/g, "").trim())
+          .join(",")
+        : "";
+
+      const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders', {
+        params: {
+          searchTerm,
+          from,
+          to,
+          method,
+          department: cleanDepartment,
+          category,
+          location,
+          page: 1,
+          limit: 10000
+        }
+      }));
+      return response.data?.data || [];
+    } catch (error) {
+      console.error("Error fetching all tenders for print:", error);
+      return [];
+    }
+  };
+
   return {
+    fetchAllTenders,
     tenders,
     setTenders,
     tendersCount,

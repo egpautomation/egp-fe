@@ -26,7 +26,8 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex-shrink-0">
-            <Link to="/" className="flex items-center">
+            <Link to="/" className="flex items-center gap-2">
+              <img src="/logo.png" alt="eGP Tender Automation Logo" className="h-20 w-auto" />
               <span className="text-2xl font-bold text-[#4874c7]">ই-টেন্ডার বিডি</span>
             </Link>
           </div>
