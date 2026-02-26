@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { AlignJustify, X, Search, RefreshCw, Eye, Plus, CheckCircle, AlertCircle } from "lucide-react";
+import { AlignJustify, X, Search, RefreshCw, Eye, Plus, CheckCircle, AlertCircle, Calendar } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import Pagination from "@/shared/Pagination/Pagination";
@@ -77,6 +77,9 @@ export default function LiveTender() {
     const [debouncedDistrictSearch, setDebouncedDistrictSearch] = useState("");
     const [typeMethodSearch, setTypeMethodSearch] = useState("");
     const [debouncedTypeMethodSearch, setDebouncedTypeMethodSearch] = useState("");
+    const [publishingDateSearch, setPublishingDateSearch] = useState(searchParams.get("publishingDate") || "");
+    const [debouncedPublishingDateSearch, setDebouncedPublishingDateSearch] = useState(publishingDateSearch);
+
     const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
     const [pageLimit, setPageLimit] = useState(Number(searchParams.get("limit")) || 20);
 
@@ -87,17 +90,23 @@ export default function LiveTender() {
             setDebouncedMinistrySearch(ministrySearch);
             setDebouncedDistrictSearch(districtSearch);
             setDebouncedTypeMethodSearch(typeMethodSearch);
+            setDebouncedPublishingDateSearch(publishingDateSearch);
         }, 450);
         return () => clearTimeout(t);
-    }, [tenderIdSearch, ministrySearch, districtSearch, typeMethodSearch]);
+    }, [tenderIdSearch, ministrySearch, districtSearch, typeMethodSearch, publishingDateSearch]);
 
     // Sync URL params
     useEffect(() => {
-        const p = new URLSearchParams();
-        p.set("page", currentPage);
-        p.set("limit", pageLimit);
+        const p = new URLSearchParams(window.location.search);
+        p.set("page", String(currentPage));
+        p.set("limit", String(pageLimit));
+        if (publishingDateSearch) {
+            p.set("publishingDate", publishingDateSearch);
+        } else {
+            p.delete("publishingDate");
+        }
         setSearchParams(p, { replace: true });
-    }, [currentPage, pageLimit]);
+    }, [currentPage, pageLimit, publishingDateSearch]);
 
     const { tenders, loading, tendersCount, setReload } = useLiveTenders(
         debouncedTenderIdSearch,
@@ -105,7 +114,8 @@ export default function LiveTender() {
         debouncedDistrictSearch,
         debouncedTypeMethodSearch,
         currentPage,
-        pageLimit
+        pageLimit,
+        debouncedPublishingDateSearch
     );
 
     // Build tenderId → _id lookup map from stored tenders
@@ -171,7 +181,16 @@ export default function LiveTender() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                    {publishingDateSearch && (
+                        <div className="flex items-center gap-2 bg-primary/10 text-primary text-sm font-semibold px-3 py-1.5 rounded-xl border border-primary/20">
+                            <Calendar size={14} />
+                            Publishing Date: {publishingDateSearch}
+                            <button onClick={() => setPublishingDateSearch("")} className="hover:text-red-500 hover:bg-red-50 p-0.5 rounded-full transition ml-1" title="Clear Date Filter">
+                                <X size={14} />
+                            </button>
+                        </div>
+                    )}
                     {/* Refresh */}
                     <button
                         onClick={() => setReload((r) => r + 1)}
@@ -341,8 +360,8 @@ export default function LiveTender() {
                                                         onClick={() => handleAddTender(item)}
                                                         disabled={addingTenderId === item?.tenderId || addStatus[item?.tenderId] === 'success'}
                                                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all shadow-sm ${addingTenderId === item?.tenderId || addStatus[item?.tenderId] === 'success'
-                                                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                                : 'border border-indigo-300 text-indigo-500 bg-indigo-50 hover:bg-indigo-100 hover:border-indigo-400'
+                                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                            : 'border border-indigo-300 text-indigo-500 bg-indigo-50 hover:bg-indigo-100 hover:border-indigo-400'
                                                             }`}
                                                         title={addStatus[item?.tenderId] === 'success' ? "Already added" : "Add to tender IDs"}
                                                     >

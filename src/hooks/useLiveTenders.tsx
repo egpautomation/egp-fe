@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
+import { formatDate } from "@/lib/formateDate";
 
 const LIVE_TENDERS_API = `${config.apiBaseUrl}/live-tenders`;
 
@@ -10,7 +11,8 @@ const useLiveTenders = (
     district = "",
     typeMethod = "",
     page = 1,
-    limit = 20
+    limit = 20,
+    publishingDate = ""
 ) => {
     const [allTenders, setAllTenders] = useState([]);
     const [tenders, setTenders] = useState([]);
@@ -57,6 +59,7 @@ const useLiveTenders = (
         const m = ministry.trim().toLowerCase();
         const d = district.trim().toLowerCase();
         const t = typeMethod.trim().toLowerCase();
+        const pDate = publishingDate.trim().toLowerCase();
 
         const filtered = allTenders.filter((item) => {
             // Search term (Tender ID, Title, etc.)
@@ -77,7 +80,23 @@ const useLiveTenders = (
             const typeMethodValue = String(`${item?.ProcurementType || item?.type || ""} ${item?.procurementMethod || item?.method || ""}`).toLowerCase();
             const typeMethodMatch = !t || typeMethodValue.includes(t);
 
-            return searchMatch && ministryMatch && districtMatch && typeMethodMatch;
+            // Publishing Date (robust date comparison against "dd-MMM-yyyy" format from API `item?.publicationDateTime`)
+            let publishingDateMatch = true;
+            if (publishingDate) {
+                try {
+                    const itemPublishing = item?.publicationDateTime || item?.publishingDate || "";
+                    if (itemPublishing) {
+                        const parsedItemDate = formatDate(itemPublishing, "dd-MMM-yyyy").toLowerCase();
+                        publishingDateMatch = parsedItemDate === pDate;
+                    } else {
+                        publishingDateMatch = false;
+                    }
+                } catch (e) {
+                    publishingDateMatch = false;
+                }
+            }
+
+            return searchMatch && ministryMatch && districtMatch && typeMethodMatch && publishingDateMatch;
         });
 
         // Apply pagination
@@ -87,7 +106,7 @@ const useLiveTenders = (
 
         setTenders(paginatedSlice);
         setTendersCount(filtered.length);
-    }, [allTenders, searchTerm, ministry, district, typeMethod, page, limit]);
+    }, [allTenders, searchTerm, ministry, district, typeMethod, page, limit, publishingDate]);
 
     return {
         allTenders,

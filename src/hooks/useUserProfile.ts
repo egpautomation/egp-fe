@@ -1,28 +1,28 @@
 // @ts-nocheck
-import { config } from "@/lib/config";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { AuthContext } from "@/provider/AuthProvider";
+import axiosInstance from "@/lib/axiosInstance";
 
 const useUserProfile = () => {
+    const authContext = useContext(AuthContext) as any;
+    const user = authContext?.user;
+
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [reload, setReload] = useState(0);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
+            if (!user?.email) return;
+
             try {
                 setLoading(true);
-                const url = `${config.apiBaseUrl}/user/get-single-user`;
-                const response = await fetch(url, {
-                    method: "GET",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
+                const response = await axiosInstance.get("/user/get-single-user", {
+                    params: { email: user.email },
                 });
-                const result = await response.json();
 
-                if (result?.success) {
-                    setUserData(result?.user || null);
+                if (response?.data?.success) {
+                    setUserData(response?.data?.data || response?.data?.user || null);
                 }
             } catch (error) {
                 console.error("Error fetching user profile:", error);
@@ -31,7 +31,7 @@ const useUserProfile = () => {
             }
         };
         fetchUserProfile();
-    }, [reload]);
+    }, [reload, user?.email]);
 
     return {
         userData,
