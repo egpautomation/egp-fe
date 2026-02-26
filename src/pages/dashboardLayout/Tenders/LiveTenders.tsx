@@ -439,9 +439,9 @@ const LiveTenders = () => {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="w-full p-4 lg:p-6">
-        <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-          {/* Left Sidebar - Filters */}
-          <div className="space-y-4">
+        <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
+          {/* Left Sidebar - Filters - now moved to right via grid order */}
+          <div className="space-y-4 lg:order-2">
             {/* Clear Filters Button */}
             {hasActiveFilters && (
               <Button
@@ -550,8 +550,8 @@ const LiveTenders = () => {
             </Accordion>
           </div>
 
-          {/* Main Content - Tender List */}
-          <div className="space-y-4">
+          {/* Main Content - Tender List - now on left */}
+          <div className="space-y-4 lg:order-1">
             {/* Header */}
             <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
               <div className="flex items-center gap-3">

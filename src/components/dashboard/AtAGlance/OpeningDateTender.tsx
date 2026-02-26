@@ -478,7 +478,7 @@ const SimpleTenderCalendar = () => {
             <CardTitle className="text-slate-600 text-xl font-medium">
               Latest Tender
             </CardTitle>
-            <Button variant="link" className="text-[#4874c7] font-bold p-0 h-auto">
+            <Button variant="link" className="text-[#4874c7] font-bold p-0 h-auto" onClick={() => navigate("/dashboard/live-tenders")}>
               View All
             </Button>
           </CardHeader>
