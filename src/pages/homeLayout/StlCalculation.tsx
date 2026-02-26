@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import SeoMeta from "@/components/seo/SeoMeta"
+import { Helmet } from "react-helmet-async"
 import { Label } from "@/components/ui/label"
 import { Trash2, Plus, Upload, FileText, Loader2 } from "lucide-react"
 import axiosInstance from "@/lib/axiosInstance"
@@ -267,11 +267,36 @@ export default function StlCalculation() {
 
   return (
     <>
-      <SeoMeta
-        title="STL Calculation | E-GP Tender Automation"
-        description="Calculate WA, SD and SLT with bidder pricing for Bangladesh eGP tenders using the STL calculator aligned with PPR 2025 workflow."
-        canonicalPath="/stl-calculation"
-      />
+      <Helmet>
+        <title>STL Calculation for eGP Tender | Tender Evaluation Bangladesh</title>
+        <meta 
+          name="description" 
+          content="STL calculation tool for Bangladesh government tenders including RHD, LGED, PWD evaluation method, financial comparison, lowest bidder analysis and CPTU rules." 
+        />
+        <meta 
+          name="keywords" 
+          content="STL calculation bd, tender evaluation Bangladesh, eGP tender guide, RHD evaluation method, LGED financial comparison, PWD tender evaluation, BWDB tender analysis, lowest bidder calculation bd, BOQ comparison bd, government tender financial rules, CPTU evaluation system, tender eligibility criteria, L1 bidder calculation, contractor evaluation bd, supplier comparison method, technical evaluation bd, financial proposal analysis bd, eGP result analysis, NOA award process, procurement law bd, পাবলিক প্রকিউরমেন্ট আইন, টেন্ডার মূল্যায়ন পদ্ধতি" 
+        />
+        <link rel="canonical" href="https://etenderbd.com/stl-calculation" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="STL Calculation for eGP Tender" />
+        <meta 
+          property="og:description" 
+          content="Accurate STL calculation tool for Bangladesh government tenders." 
+        />
+        <meta property="og:url" content="https://etenderbd.com/stl-calculation" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="eTenderBD" />
+        
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="STL Calculation for eGP Tender" />
+        <meta 
+          name="twitter:description" 
+          content="Accurate STL calculation tool for Bangladesh government tenders." 
+        />
+      </Helmet>
 
       <div className="container h-full mx-auto lg:px-10 px-4 py-10 lg:py-16">
         <section className="max-w-4xl mx-auto text-center mb-10">

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { ChevronDown, ChevronRight, Menu, X, BookOpen, List } from "lucide-react";
 import { content } from "node_modules/html2canvas-pro/dist/types/css/property-descriptors/content";
-import SeoMeta from "@/components/seo/SeoMeta";
+import { Helmet } from "react-helmet-async";
 
 const Blogs = () => {
   const [activeBlogId, setActiveBlogId] = useState("egp-tender-guide");
@@ -1452,11 +1452,36 @@ const Blogs = () => {
 
   return (
     <>
-      <SeoMeta
-        title="Blogs | E-GP Tender Automation"
-        description="Read practical guides and expert blogs on eGP tender notice analysis, LTM/OTM submission workflows, and tender preparation in Bangladesh."
-        canonicalPath="/blogs"
-      />
+      <Helmet>
+        <title>Bangladesh Tender Blog | e-GP Registration, NOA & Tender Guide</title>
+        <meta 
+          name="description" 
+          content="Read Bangladesh tender blog updates including eGP registration guide, tender submission steps, NOA meaning, procurement guidelines BD and daily tender notice updates." 
+        />
+        <meta 
+          name="keywords" 
+          content="eGP registration guide bd, tender ID search bd, NOA meaning in tender, RHD tender process, LGED tender guide, PWD tender submission bd, BWDB tender notice bd, procurement guidelines bd, eGP corrigendum bd, tender result bd, contract award notice bd, L1 bidder bd, STL explanation bd, government procurement law bd, ministry tender update bd, e tender news bd, Bangladesh contractor guide, supplier guide bd, BOQ analysis bd, tender document download bd, আজকের টেন্ডার, সরকারি ইজিপি গাইড" 
+        />
+        <link rel="canonical" href="https://etenderbd.com/blog" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="Bangladesh Tender Blog & eGP Guide" />
+        <meta 
+          property="og:description" 
+          content="Informational blog about Bangladesh government tenders and eGP process." 
+        />
+        <meta property="og:url" content="https://etenderbd.com/blog" />
+        <meta property="og:type" content="blog" />
+        <meta property="og:site_name" content="eTenderBD" />
+        
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Bangladesh Tender Blog & eGP Guide" />
+        <meta 
+          name="twitter:description" 
+          content="Informational blog about Bangladesh government tenders and eGP process." 
+        />
+      </Helmet>
 
       <div className="flex flex-col min-h-screen bg-white font-sans text-[#333]">
       {/* MOBILE HEADER */}

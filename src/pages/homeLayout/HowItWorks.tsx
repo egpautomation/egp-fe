@@ -4,6 +4,7 @@ import { FiArrowRight, FiClock, FiTrendingUp } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { FiCalendar, FiTag } from "react-icons/fi";
+import { Helmet } from "react-helmet-async";
 
 export default function HowItWorks() {
   const blogs = [
@@ -54,9 +55,41 @@ export default function HowItWorks() {
   ];
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-linear-to-br from-[#4874c7]/5 via-white to-[#4874c7]/10">
+    <>
+      <Helmet>
+        <title>How e-GP Portal Works | e-GP Registration & Tender Submission Guide</title>
+        <meta 
+          name="description" 
+          content="Complete guide on Bangladesh eGP portal registration, RHD, LGED, PWD tender submission process, tender ID search, CPTU rules and document download steps." 
+        />
+        <meta 
+          name="keywords" 
+          content="eGP registration Bangladesh, eGP portal guide bd, tender submission guide, tender ID search, CPTU guidelines, online bidding Bangladesh, RHD tender submission, LGED eGP process, PWD tender process, BWDB tender submission, eGP login process, contractor registration bd, supplier registration eGP, tender security submission, e tender document upload, BOQ submission process, government procurement rules bd, NOA process Bangladesh, tender evaluation method bd, eGP dashboard guide, ministry tender process, পাবলিক প্রকিউরমেন্ট রুলস, ইজিপি রেজিস্ট্রেশন গাইড, টেন্ডার সাবমিশন পদ্ধতি" 
+        />
+        <link rel="canonical" href="https://etenderbd.com/how-it-works" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="How e-GP Portal Works Bangladesh" />
+        <meta 
+          property="og:description" 
+          content="Step-by-step guide to eGP registration and tender submission process in Bangladesh." 
+        />
+        <meta property="og:url" content="https://etenderbd.com/how-it-works" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="eTenderBD" />
+        
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="How e-GP Portal Works Bangladesh" />
+        <meta 
+          name="twitter:description" 
+          content="Step-by-step guide to eGP registration and tender submission process in Bangladesh." 
+        />
+      </Helmet>
+
+      <div className="min-h-screen">
+        {/* Hero Section */}
+        <section className="relative overflow-hidden bg-linear-to-br from-[#4874c7]/5 via-white to-[#4874c7]/10">
         <div className="container mx-auto px-4 py-16 lg:py-24">
           <div className="max-w-4xl mx-auto text-center">
             <p className="text-sm font-semibold uppercase tracking-wide text-[#4874c7] animate-fade-in">
@@ -156,6 +189,7 @@ export default function HowItWorks() {
           ))}
         </section>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

@@ -42,7 +42,7 @@ export default function Hero() {
   return (
     <section className="w-full">
       {/* SEO H1 - visually hidden but available for search engines */}
-      <h1 className="sr-only">Bangladesh e-GP Tender Portal & Daily Government Tender Updates</h1>
+      <h1 className="sr-only">Latest Bangladesh Government Tenders & e-GP Notices</h1>
       <div className="mx-auto py-10 lg:py-16">
         <div className="grid lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-1 space-y-6 mx-auto lg:flex-none lg:items-start">

@@ -6,7 +6,7 @@
 // import ServicesExtra from "@/components/services-components/ServicesExtra"
 import ServicesHero from "@/components/services-components/ServicesHero"
 import ServicesMainList from "@/components/services-components/ServicesMainList"
-import SeoMeta from "@/components/seo/SeoMeta"
+import { Helmet } from "react-helmet-async"
 // import { useEffect, useRef, useState } from "react"
 
 // const HIGHLIGHT_DELAY_AFTER_CLICK_MS = 400
@@ -96,11 +96,36 @@ export default function Services() {
 
   return (
     <>
-      <SeoMeta
-        title="Services | E-GP Tender Automation"
-        description="Explore all E-GP tender automation services including tender notice analysis, STL tools, and submission support for contractors in Bangladesh."
-        canonicalPath="/services"
-      />
+      <Helmet>
+        <title>Our Tender Services | Daily Tender Updates & Subscription BD</title>
+        <meta 
+          name="description" 
+          content="Daily Bangladesh tender updates including RHD, LGED, PWD, BWDB, ministry tenders, procurement alerts, STL calculation support and contract award updates." 
+        />
+        <meta 
+          name="keywords" 
+          content="daily tender updates bd, tender alerts Bangladesh, tender subscription bd, public procurement bd, Bangladesh tender opportunities, RHD daily tender, LGED tender alert, PWD tender subscription, BWDB tender notice, ministry procurement bd, eGP support service, STL calculation support, tender analysis bd, contract award notice bd, tender result bd, lowest bidder calculation, construction tender bd, supply tender Bangladesh, government bids bd, e tender consultancy bd, contractor support service, supplier support bd, BOQ analysis bd, tender tracking service, সরকারি টেন্ডার সার্ভিস" 
+        />
+        <link rel="canonical" href="https://etenderbd.com/services" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="Tender Services Bangladesh" />
+        <meta 
+          property="og:description" 
+          content="Daily Bangladesh government tender alerts and procurement updates." 
+        />
+        <meta property="og:url" content="https://etenderbd.com/services" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="eTenderBD" />
+        
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Tender Services Bangladesh" />
+        <meta 
+          name="twitter:description" 
+          content="Daily Bangladesh government tender alerts and procurement updates." 
+        />
+      </Helmet>
 
       <div className="container h-full mx-auto lg:px-10 px-4">
         <ServicesHero />

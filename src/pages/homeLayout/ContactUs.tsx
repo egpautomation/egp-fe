@@ -2,6 +2,7 @@ import { FormEvent, useRef, useState } from "react"
 import { HiChatAlt2, HiClock, HiLocationMarker, HiMail, HiPhone, HiUsers } from "react-icons/hi"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Helmet } from "react-helmet-async"
 
 export default function ContactUs() {
   const formRef = useRef<HTMLFormElement | null>(null)
@@ -72,8 +73,40 @@ export default function ContactUs() {
   ]
 
   return (
-    <div className="w-full">
-      <section className="mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
+    <>
+      <Helmet>
+        <title>Contact e Tender BD | e-GP Helpdesk & Tender Support</title>
+        <meta 
+          name="description" 
+          content="Get support for Bangladesh eGP registration, RHD, LGED, PWD tender submission help, STL calculation assistance and procurement queries." 
+        />
+        <meta 
+          name="keywords" 
+          content="eGP helpdesk bd, tender support Bangladesh, RHD tender help, LGED tender support, PWD tender assistance, BWDB tender help, eGP login support, tender document download help, procurement support bd, contractor helpdesk bd, supplier support bd, government bidding support, STL support bd, tender consultancy Bangladesh, ইজিপি সাপোর্ট, টেন্ডার হেল্পলাইন বাংলাদেশ" 
+        />
+        <link rel="canonical" href="https://etenderbd.com/contact" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="Contact e Tender BD" />
+        <meta 
+          property="og:description" 
+          content="Get support for Bangladesh eGP tenders and procurement queries." 
+        />
+        <meta property="og:url" content="https://etenderbd.com/contact" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="eTenderBD" />
+        
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Contact e Tender BD" />
+        <meta 
+          name="twitter:description" 
+          content="Get support for Bangladesh eGP tenders and procurement queries." 
+        />
+      </Helmet>
+
+      <div className="w-full">
+        <section className="mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-[#4874c7] animate-fade-in">
             যোগাযোগ করুন
@@ -327,6 +360,7 @@ export default function ContactUs() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   )
 }
