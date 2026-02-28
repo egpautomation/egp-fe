@@ -133,7 +133,7 @@ export function AppSidebarNew() {
     {
       label: "Live Tender",
       path: "/dashboard/live-tenders-tenderIds",
-      role: ["admin", "moderator"],
+      role: ["admin", "moderator", "user_agent"],
       icon: BarChart3,
       children: [
         {

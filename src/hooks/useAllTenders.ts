@@ -9,6 +9,7 @@ const useAllTenders = (
   department = "",
   category = "",
   location = "",
+  procurementNature = "",
   page = 1,
   limit = 20
 ) => {
@@ -39,6 +40,7 @@ const useAllTenders = (
             department: cleanDepartment,
             category,
             location,
+            procurementNature,
             page,
             limit
           }
@@ -61,6 +63,7 @@ const useAllTenders = (
     department,
     category,
     location,
+    procurementNature,
     page,
     limit,
   ]);
@@ -83,6 +86,7 @@ const useAllTenders = (
           department: cleanDepartment,
           category,
           location,
+          procurementNature,
           page: 1,
           limit: 10000
         }

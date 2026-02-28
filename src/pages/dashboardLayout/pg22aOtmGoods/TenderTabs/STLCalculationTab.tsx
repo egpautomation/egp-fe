@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, Plus, Trash2, FileText, Loader2 } from 'lucide-react';
+import { Upload, Plus, Trash2, FileText, Loader2, Info } from 'lucide-react';
 import axiosInstance from '@/lib/axiosInstance';
 import { toast } from 'react-hot-toast';
 import { patchData } from '@/lib/updateData';
@@ -257,6 +257,15 @@ export const STLCalculationTab = () => {
                 </CardHeader>
 
                 <CardContent className="p-3 sm:p-4 md:p-6 space-y-6">
+                    <div className="p-5 rounded-2xl border border-blue-100 bg-linear-to-br from-blue-50/80 to-indigo-50/50 backdrop-blur-sm flex items-start gap-4 text-left shadow-sm">
+                        <div className="bg-blue-100 p-2 rounded-lg">
+                            <Info className="w-5 h-5 text-[#4874c7] flex-shrink-0" />
+                        </div>
+                        <p className="text-sm sm:text-base leading-relaxed text-slate-700">
+                            <span className="font-bold text-[#4874c7] block mb-1">দায়স্বীকার (Disclaimer):</span>
+                            নিম্নে NPPI ফ্যাক্টর ও সংশ্লিষ্ট তথ্যসমূহ ডাটাবেইজে সংরক্ষিত পূর্ববর্তী উপাত্তের ভিত্তিতে আনুমানিকভাবে নির্ধারণ করা হয়েছে। এটি কোনো নির্দিষ্ট eGP ভ্যালুর সাথে সম্পূর্ণ সামঞ্জস্যপূর্ণ হবে—এমন নিশ্চয়তা প্রদান করে না। প্রকৃত NPPI মান অধিদপ্তর, কাজের ধরন, কাজের লোকেশন, ক্রয় পদ্ধতি, ক্রয়ের ধরণ এবং পূর্ববর্তী কার্যাদেশের মূল্যের উপর নির্ভর করে Central Procurement Technical Unit (CPTU) কর্তৃক নির্ধারিত হয়ে থাকে। অতএব, প্রদর্শিত তথ্যসমূহ কেবলমাত্র ধারণা প্রদানের উদ্দেশ্যে উপস্থাপিত এবং চূড়ান্ত বা বাধ্যতামূলক মান হিসেবে গণ্য করা যাবে না।
+                        </p>
+                    </div>
                     {/* Input Section */}
                     <div className="grid md:grid-cols-2 gap-6">
                         {/* XOCE Input */}

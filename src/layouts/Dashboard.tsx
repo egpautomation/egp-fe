@@ -15,7 +15,7 @@ const Dashboard = () => {
       <SidebarProvider>
         <AppSidebarNew />
 
-        <main className=" w-full overflow-x-auto ">
+        <main className=" w-full overflow-x-auto pt-16 md:pt-0">
           <DashboardHeader />
           <div className=" px-5">
             <Outlet />

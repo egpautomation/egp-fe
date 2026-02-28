@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { AlignJustify, X, Search, RefreshCw, Eye, Plus, CheckCircle, AlertCircle, Calendar } from "lucide-react";
+import { AlignJustify, X, Search, RefreshCw, Eye, Plus, CheckCircle, AlertCircle, Calendar, ExternalLink } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import Pagination from "@/shared/Pagination/Pagination";
@@ -337,39 +337,53 @@ export default function LiveTender() {
 
                                         {/* Action */}
                                         <td className="px-4 py-3 text-center whitespace-nowrap">
-                                            {mapLoading ? (
-                                                <div className="inline-block h-5 w-16 rounded animate-pulse bg-gray-200" />
-                                            ) : isMatched ? (
-                                                <button
-                                                    onClick={() => navigate(`/dashboard/view-tender/${matchedId}`)}
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-emerald-500 hover:bg-emerald-600 text-white transition-colors shadow-sm"
-                                                    title="View stored tender details"
+                                            <div className="flex items-center justify-center gap-2">
+                                                {/* e-GP Button */}
+                                                <a
+                                                    href={`https://www.eprocure.gov.bd/resources/common/ViewTender.jsp?id=${item?.tenderId}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="group inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-emerald-300 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-all shadow-sm"
+                                                    title="View on e-GP"
                                                 >
-                                                    <Eye size={13} />
-                                                    View
-                                                </button>
-                                            ) : (
-                                                <div className="flex items-center justify-center gap-1">
-                                                    {addStatus[item?.tenderId] === 'success' && (
-                                                        <CheckCircle size={16} className="text-green-500" title="Successfully added" />
-                                                    )}
-                                                    {addStatus[item?.tenderId] === 'error' && (
-                                                        <AlertCircle size={16} className="text-red-500" title="Failed to add" />
-                                                    )}
+                                                    <ExternalLink size={13} />
+                                                    e-GP
+                                                </a>
+
+                                                {mapLoading ? (
+                                                    <div className="inline-block h-5 w-16 rounded animate-pulse bg-gray-200" />
+                                                ) : isMatched ? (
                                                     <button
-                                                        onClick={() => handleAddTender(item)}
-                                                        disabled={addingTenderId === item?.tenderId || addStatus[item?.tenderId] === 'success'}
-                                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all shadow-sm ${addingTenderId === item?.tenderId || addStatus[item?.tenderId] === 'success'
-                                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                            : 'border border-indigo-300 text-indigo-500 bg-indigo-50 hover:bg-indigo-100 hover:border-indigo-400'
-                                                            }`}
-                                                        title={addStatus[item?.tenderId] === 'success' ? "Already added" : "Add to tender IDs"}
+                                                        onClick={() => navigate(`/dashboard/view-tender/${matchedId}`)}
+                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-primary hover:bg-primary/90 text-white transition-colors shadow-sm"
+                                                        title="View stored tender details"
                                                     >
-                                                        <Plus size={13} />
-                                                        {addingTenderId === item?.tenderId ? 'Adding...' : addStatus[item?.tenderId] === 'success' ? 'Added' : 'Add'}
+                                                        <Eye size={13} />
+                                                        View
                                                     </button>
-                                                </div>
-                                            )}
+                                                ) : (
+                                                    <div className="flex items-center justify-center gap-1">
+                                                        {addStatus[item?.tenderId] === 'success' && (
+                                                            <CheckCircle size={16} className="text-green-500" title="Successfully added" />
+                                                        )}
+                                                        {addStatus[item?.tenderId] === 'error' && (
+                                                            <AlertCircle size={16} className="text-red-500" title="Failed to add" />
+                                                        )}
+                                                        <button
+                                                            onClick={() => handleAddTender(item)}
+                                                            disabled={addingTenderId === item?.tenderId || addStatus[item?.tenderId] === 'success'}
+                                                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all shadow-sm ${addingTenderId === item?.tenderId || addStatus[item?.tenderId] === 'success'
+                                                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                                : 'border border-indigo-300 text-indigo-500 bg-indigo-50 hover:bg-indigo-100 hover:border-indigo-400'
+                                                                }`}
+                                                            title={addStatus[item?.tenderId] === 'success' ? "Already added" : "Add to tender IDs"}
+                                                        >
+                                                            <Plus size={13} />
+                                                            {addingTenderId === item?.tenderId ? 'Adding...' : addStatus[item?.tenderId] === 'success' ? 'Added' : 'Add'}
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 );

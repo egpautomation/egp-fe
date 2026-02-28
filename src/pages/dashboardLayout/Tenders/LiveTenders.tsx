@@ -10,8 +10,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import useAllTenders from "@/hooks/useAllTenders";
-import useAllTenderDepartments from "@/hooks/useAllTenderDepartments";
-import useAllTenderCategories from "@/hooks/getAllTenderCategories";
+// import useAllTenderDepartments from "@/hooks/useAllTenderDepartments";
+// import useAllTenderCategories from "@/hooks/getAllTenderCategories";
 import {
   Search,
   X,
@@ -60,22 +60,25 @@ const LiveTenders = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [selectedMethods, setSelectedMethods] = useState([]);
+  const [selectedProcurementNatures, setSelectedProcurementNatures] = useState([]);
 
   // Search within filters
   const [deptSearch, setDeptSearch] = useState("");
   const [catSearch, setCatSearch] = useState("");
   const [locSearch, setLocSearch] = useState("");
+  const [procSearch, setProcSearch] = useState("");
 
-  const { departments } = useAllTenderDepartments();
-  const { categories } = useAllTenderCategories();
+  // const { departments } = useAllTenderDepartments();
+  // const { categories } = useAllTenderCategories();
   const [filterCounts, setFilterCounts] = useState({
     departments: [],
     categories: [],
     locations: [],
     methods: [],
+    procurementNatures: [],
   });
 
-  const { fetchAllTenders, tenders, loading, tendersCount } = useAllTenders(
+  const { fetchAllTenders, tenders, loading, setLoading, tendersCount } = useAllTenders(
     searchTerm,
     date?.from,
     date?.to,
@@ -83,6 +86,7 @@ const LiveTenders = () => {
     selectedDepartments.join(","),
     selectedCategories.join(","),
     selectedLocations.join(","),
+    selectedProcurementNatures.join(","),
     currentPage,
     pageLimit
   );
@@ -101,6 +105,7 @@ const LiveTenders = () => {
     setSelectedCategories([]);
     setSelectedLocations([]);
     setSelectedMethods([]);
+    setSelectedProcurementNatures([]);
     setCurrentPage(1);
   };
 
@@ -114,44 +119,93 @@ const LiveTenders = () => {
   };
 
   const filteredDepartments = useMemo(() => {
-    if (!deptSearch) return departments;
-    return departments.filter((d) =>
+    const list = filterCounts.departments || [];
+    if (!deptSearch) return list;
+    return list.filter((d) =>
       d.name?.toLowerCase().includes(deptSearch.toLowerCase())
     );
-  }, [departments, deptSearch]);
+  }, [filterCounts.departments, deptSearch]);
 
   const filteredCategories = useMemo(() => {
-    if (!catSearch) return categories;
-    return categories.filter((c) =>
+    const list = filterCounts.categories || [];
+    if (!catSearch) return list;
+    return list.filter((c) =>
       c.name?.toLowerCase().includes(catSearch.toLowerCase())
     );
-  }, [categories, catSearch]);
+  }, [filterCounts.categories, catSearch]);
 
   const filteredLocations = useMemo(() => {
-    if (!locSearch) return districts;
-    return districts.filter((d) =>
+    const list = filterCounts.locations?.map(l => l.name) || [];
+    if (!locSearch) return list;
+    return list.filter((d) =>
       d.toLowerCase().includes(locSearch.toLowerCase())
     );
-  }, [locSearch]);
+  }, [filterCounts.locations, locSearch]);
+
+  const filteredProcurementNatures = useMemo(() => {
+    const list = filterCounts.procurementNatures || [];
+    if (!procSearch) return list;
+    return list.filter((p) =>
+      p.name?.toLowerCase().includes(procSearch.toLowerCase())
+    );
+  }, [filterCounts.procurementNatures, procSearch]);
+
+  const displayTenders = useMemo(() => {
+    let list = tenders || [];
+
+    // Client-side filter for Nature since backend might ignore it
+    if (selectedProcurementNatures.length > 0) {
+      list = list.filter(t => selectedProcurementNatures.includes(t.procurementNature));
+    }
+
+    return list;
+  }, [tenders, selectedProcurementNatures]);
 
   useEffect(() => {
     let ignore = false;
 
     const loadFilterCounts = async () => {
       try {
-        const res = await fetch(`${config.apiBaseUrl}/tenders/tender-filter-counts`);
-        const json = await res.json();
-        if (!ignore && json?.success && json?.data) {
+        setLoading(true);
+        // Fetch all relevant tenders to calculate accurate counts locally
+        const allTenders = await fetchAllTenders();
+
+        if (!ignore && allTenders) {
+          const deptCounts = {};
+          const catCounts = {};
+          const locCounts = {};
+          const methCounts = {};
+          const procCounts = {};
+
+          allTenders.forEach(tender => {
+            const d = tender.organization || tender.department;
+            if (d) deptCounts[d] = (deptCounts[d] || 0) + 1;
+
+            const c = tender.category;
+            if (c) catCounts[c] = (catCounts[c] || 0) + 1;
+
+            const l = tender.locationDistrict;
+            if (l) locCounts[l] = (locCounts[l] || 0) + 1;
+
+            const m = tender.procurementMethod;
+            if (m) methCounts[m] = (methCounts[m] || 0) + 1;
+
+            const p = tender.procurementNature;
+            if (p) procCounts[p] = (procCounts[p] || 0) + 1;
+          });
+
           setFilterCounts({
-            departments: json.data.departments || [],
-            categories: json.data.categories || [],
-            locations: json.data.locations || [],
-            methods: json.data.methods || [],
+            departments: Object.entries(deptCounts).map(([name, count]) => ({ name, count })),
+            categories: Object.entries(catCounts).map(([name, count]) => ({ name, count })),
+            locations: Object.entries(locCounts).map(([name, count]) => ({ name, count })),
+            methods: Object.entries(methCounts).map(([name, count]) => ({ name, count })),
+            procurementNatures: Object.entries(procCounts).map(([name, count]) => ({ name, count })),
           });
         }
       } catch (error) {
-        // keep UI usable with zero-count fallback
-        console.error("Failed to load tender filter counts:", error);
+        console.error("Failed to calculate filter counts:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -209,6 +263,11 @@ const LiveTenders = () => {
 
   const getMethodCount = (methodName) => {
     return methodCountMap?.[methodName] || 0;
+  };
+
+  const getNatureCount = (natureName) => {
+    const item = filterCounts.procurementNatures.find(p => p.name === natureName);
+    return item ? item.count : 0;
   };
 
   const downloadPdf = async () => {
@@ -547,6 +606,27 @@ const LiveTenders = () => {
                   ))}
                 </div>
               </FilterSection>
+
+              {/* Nature */}
+              <FilterSection
+                title="Nature"
+                searchPlaceholder="Search nature..."
+                searchValue={procSearch}
+                onSearchChange={setProcSearch}
+                count={filteredProcurementNatures?.length}
+              >
+                <div className="space-y-1">
+                  {filteredProcurementNatures?.map((proc) => (
+                    <FilterCheckbox
+                      key={proc.name}
+                      label={proc.name}
+                      count={proc.count}
+                      checked={selectedProcurementNatures.includes(proc.name)}
+                      onCheckedChange={() => toggleSelection(setSelectedProcurementNatures, selectedProcurementNatures, proc.name)}
+                    />
+                  ))}
+                </div>
+              </FilterSection>
             </Accordion>
           </div>
 
@@ -582,8 +662,68 @@ const LiveTenders = () => {
               </div>
             </div>
 
+            {/* Mobile Cards */}
+            <div className="lg:hidden space-y-4">
+              {displayTenders?.map((item, idx) => (
+                <div key={idx} className="bg-white rounded-xl border p-4 shadow-sm space-y-3">
+                  {/* Card content goes here */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-slate-500">Tender ID: {item?.tenderId}</span>
+                    <a
+                      href={`https://www.eprocure.gov.bd/resources/common/ViewTender.jsp?id=${item?.tenderId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-full border border-emerald-300 bg-gradient-to-r from-emerald-500 to-green-600 px-2 py-1 text-xs font-semibold leading-none text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:from-emerald-600 hover:to-green-700 hover:shadow-md"
+                      title="View on e-GP"
+                    >
+                      <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white/20 transition-colors group-hover:bg-white/30">
+                        <ExternalLink className="h-2.5 w-2.5" />
+                      </span>
+                      <span>e-GP</span>
+                    </a>
+                  </div>
+                  <h3 className="text-base font-semibold text-slate-800">
+                    <Link
+                      className="underline whitespace-break-spaces text-slate-700 hover:text-teal-600"
+                      to={`/dashboard/view-tender/${item?._id}`}
+                    >
+                      {item?.descriptionOfWorks}
+                    </Link>
+                  </h3>
+                  <p className="text-sm text-slate-600">
+                    <span className="font-medium">Organization:</span> {item?.organization || item?.department}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    <span className="font-medium">Location:</span> {item?.locationDistrict}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
+                    <p><span className="font-medium">Last Selling Date:</span> {formatDate(item?.documentLastSelling, "MM-dd-yyyy")}</p>
+                    <p><span className="font-medium">Closing Date:</span> {formatDate(item?.openingDateTime, "MM-dd-yyyy")}</p>
+                    <p><span className="font-medium">Document Price:</span> {item?.documentPrice}</p>
+                    <p><span className="font-medium">Tender Security:</span> {item?.tenderSecurity}</p>
+                    <p><span className="font-medium">Estimated Amount:</span> {item?.estimatedCost}</p>
+                    <p><span className="font-medium">Line Of Credit:</span> {item?.liquidAssets}</p>
+                  </div>
+                  <div className="text-xs text-slate-600">
+                    <p><span className="font-medium">General Experience:</span> {item?.generalExperience || "N/A"}</p>
+                    <p><span className="font-medium">JVCA:</span> {item?.jvca || "N/A"}</p>
+                    <p><span className="font-medium">Similar Nature Work:</span> {item?.similarNatureWork || "N/A"}</p>
+                    <p><span className="font-medium">Turnover Amount:</span> {item?.turnoverAmount || "N/A"}</p>
+                    <p><span className="font-medium">Liquid Asset:</span> {item?.liquidAssets || "N/A"}</p>
+                    <p><span className="font-medium">Tender Capacity:</span> {item?.tenderCapacity || "N/A"}</p>
+                    <p className="flex items-start gap-1">
+                      <span className="font-medium whitespace-nowrap">Working Location:</span>
+                      <span className="inline-block max-w-[150px] truncate" title={item?.workingLocation || "N/A"}>
+                        {item?.workingLocation || "N/A"}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             {/* Original Table Design */}
-            <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm hidden lg:block">
               <table className="w-full">
                 <thead>
                   <tr className="bg-primary text-primary-foreground">
@@ -612,7 +752,7 @@ const LiveTenders = () => {
                 </thead>
                 <tbody>
                   {!loading ? (
-                    tenders?.map((item, idx) => (
+                    displayTenders?.map((item, idx) => (
                       <tr
                         key={idx}
                         className={`${idx % 2 === 1 ? "bg-slate-50" : "bg-white"} hover:bg-slate-100 transition-colors`}
