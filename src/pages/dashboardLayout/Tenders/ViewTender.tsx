@@ -120,6 +120,7 @@ const ViewTender = () => {
       ["Procurement Type", formData?.procurementType || "N/A"],
       ["Procurement Nature", formData?.procurementNature || "N/A"],
       ["Procurement Method", formData?.procurementMethod || "N/A"],
+      ["Tender Category", formData?.tenderCategory || formData?.category || formData?.tender_subCategories || "N/A"],
       ["Package No", formData?.packageNo || "N/A"],
     ];
 
@@ -591,7 +592,7 @@ const ViewTender = () => {
 
           {/* Tender Details - Now beside Financial Information */}
           <InfoCard icon={FileText} title="Tender Details">
-            <DataField label="Tender Category" value={formData?.tender_subCategories} />
+            <DataField label="Tender Category" value={formData?.tenderCategory || formData?.category || formData?.tender_subCategories} />
             <div className="pt-4 border-t border-gray-100">
               <p className="text-sm font-medium text-gray-600 mb-2">Description of Works:</p>
               <p className="text-sm text-gray-900 whitespace-pre-wrap">{formData?.descriptionOfWorks || "N/A"}</p>

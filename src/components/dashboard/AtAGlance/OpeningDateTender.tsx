@@ -28,7 +28,7 @@ const LtmWingsBreakdown = () => {
   // Group LTM tenders by organization (Wings Breakdown)
   const getWingsBreakdown = (tenders: any[]) => {
     if (!tenders || tenders.length === 0) return [];
-    
+
     const counts: Record<string, number> = {};
     tenders.forEach((t: any) => {
       const org = t.organization || t.department || "Other";
@@ -154,15 +154,15 @@ const ClosingDateWingsBreakdown = () => {
   // Filter tender preparation data by closing date (openingDateTime field)
   const filterTendersByClosingDate = (targetDateStr: string) => {
     if (!tenderPreparationData || tenderPreparationData.length === 0) return [];
-    
+
     return tenderPreparationData.filter((item: any) => {
       // Use openingDateTime as the closing date from tender preparation data
       const rawClosingDate = item.openingDateTime || "";
       if (!rawClosingDate) return false;
-      
+
       const closingDate = parseClosingDate(rawClosingDate);
       if (!closingDate) return false;
-      
+
       const closingDateStr = format(closingDate, "dd-MMM-yyyy");
       return closingDateStr.toLowerCase() === targetDateStr.toLowerCase();
     });
@@ -174,7 +174,7 @@ const ClosingDateWingsBreakdown = () => {
   // Group tenders by organization (Wings Breakdown)
   const getWingsBreakdown = (tenders: any[]) => {
     if (tenders.length === 0) return [];
-    
+
     const counts: Record<string, number> = {};
     tenders.forEach((t: any) => {
       const org = t.organization || t.egpCompanyName || t.egpEmail || "Other";
@@ -331,6 +331,7 @@ const SimpleTenderCalendar = () => {
   const [thisWeekTenders, setThisWeekTenders] = React.useState([]);
   const [thisMonthTenders, setThisMonthTenders] = React.useState([]);
   const [myAreaTenders, setMyAreaTenders] = React.useState([]);
+  const [categoryGroups, setCategoryGroups] = React.useState<{ name: string, count: number }[]>([]);
   const [weekLoading, setWeekLoading] = React.useState(false);
   const { userData } = useUserProfile();
 
@@ -383,9 +384,24 @@ const SimpleTenderCalendar = () => {
           }
         });
 
+        // Group by category
+        const catMap: Record<string, number> = {};
+        list.forEach((t) => {
+          const cat = t.tenderCategory || t.category || t.tender_subCategories || "General Construction";
+          // Split by semicolon if it's a list
+          const parts = String(cat).split(";").map(s => s.trim()).filter(Boolean);
+          parts.forEach(p => {
+            catMap[p] = (catMap[p] || 0) + 1;
+          });
+        });
+        const catArray = Object.entries(catMap)
+          .map(([name, count]) => ({ name, count }))
+          .sort((a, b) => b.count - a.count);
+
         setThisWeekTenders(weekFiltered);
         setThisMonthTenders(monthFiltered);
         setMyAreaTenders(areaFiltered);
+        setCategoryGroups(catArray);
       } catch (err) {
         console.error("Failed to fetch tenders:", err);
       } finally {
@@ -486,7 +502,7 @@ const SimpleTenderCalendar = () => {
           <CardContent className="px-4 pb-4">
             <Tabs defaultValue="this-week" className="w-full">
               {/* Tabs Navigation */}
-              <TabsList className="grid w-full grid-cols-3 bg-slate-200/50 rounded-lg p-1 h-12 mb-4">
+              <TabsList className="grid w-full grid-cols-4 bg-slate-200/50 rounded-lg p-1 h-12 mb-4">
                 <TabsTrigger
                   value="this-week"
                   className="rounded-md data-[state=active]:bg-white data-[state=active]:text-[#4874c7] data-[state=active]:shadow-sm text-slate-500 font-semibold"
@@ -504,6 +520,12 @@ const SimpleTenderCalendar = () => {
                   className="rounded-md data-[state=active]:bg-white data-[state=active]:text-[#4874c7] data-[state=active]:shadow-sm text-slate-500 font-semibold"
                 >
                   In My Area
+                </TabsTrigger>
+                <TabsTrigger
+                  value="by-category"
+                  className="rounded-md data-[state=active]:bg-white data-[state=active]:text-[#4874c7] data-[state=active]:shadow-sm text-slate-500 font-semibold"
+                >
+                  By Category
                 </TabsTrigger>
               </TabsList>
 
@@ -660,6 +682,53 @@ const SimpleTenderCalendar = () => {
                             </div>
                             <div className="col-span-3 text-right text-xs text-slate-500 font-medium whitespace-nowrap pt-1">
                               {tender.locationDistrict || "—"}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </ScrollArea>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="by-category" className="mt-0">
+                <Card className="border-none shadow-none bg-white rounded-xl overflow-hidden">
+                  <div className="grid grid-cols-12 bg-slate-50/50 px-4 py-3 border-b border-slate-100">
+                    <span className="col-span-1 text-[11px] font-bold text-slate-400 uppercase">#</span>
+                    <span className="col-span-8 text-[11px] font-bold text-slate-400 uppercase">Category Name</span>
+                    <span className="col-span-3 text-right text-[11px] font-bold text-slate-400 uppercase">Tenders</span>
+                  </div>
+                  <ScrollArea className="h-70">
+                    <div className="divide-y divide-slate-50">
+                      {weekLoading ? (
+                        Array(5).fill(0).map((_, i) => (
+                          <div key={i} className="grid grid-cols-12 px-4 py-4 items-start gap-2">
+                            <div className="col-span-1 h-3 bg-slate-200 rounded animate-pulse" />
+                            <div className="col-span-8 h-3 bg-slate-200 rounded animate-pulse" />
+                            <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
+                          </div>
+                        ))
+                      ) : categoryGroups.length === 0 ? (
+                        <div className="flex items-center justify-center py-10 text-slate-400 text-sm italic">
+                          No categories found.
+                        </div>
+                      ) : (
+                        categoryGroups.map((cat, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => navigate(`/dashboard/live-tenders?category=${encodeURIComponent(cat.name)}`)}
+                            className="grid grid-cols-12 px-4 py-4 items-center hover:bg-slate-50/60 transition-colors cursor-pointer"
+                          >
+                            <div className="col-span-1 text-sm text-slate-400 font-medium">
+                              {String(idx + 1).padStart(2, "0")}
+                            </div>
+                            <div className="col-span-8 pr-2">
+                              <p className="text-sm text-slate-700 font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                                {cat.name}
+                              </p>
+                            </div>
+                            <div className="col-span-3 text-right text-sm text-[#4874c7] font-bold">
+                              {cat.count}
                             </div>
                           </div>
                         ))

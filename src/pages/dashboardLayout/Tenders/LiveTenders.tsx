@@ -57,7 +57,9 @@ const LiveTenders = () => {
 
   // Multi-select filter states
   const [selectedDepartments, setSelectedDepartments] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState(
+    searchParams.get("category") ? [searchParams.get("category")] : []
+  );
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [selectedMethods, setSelectedMethods] = useState([]);
   const [selectedProcurementNatures, setSelectedProcurementNatures] = useState([]);
@@ -181,8 +183,13 @@ const LiveTenders = () => {
             const d = tender.organization || tender.department;
             if (d) deptCounts[d] = (deptCounts[d] || 0) + 1;
 
-            const c = tender.category;
-            if (c) catCounts[c] = (catCounts[c] || 0) + 1;
+            const c = tender.tenderCategory || tender.category || tender.tender_subCategories;
+            if (c) {
+              const parts = String(c).split(";").map(s => s.trim()).filter(Boolean);
+              parts.forEach(p => {
+                catCounts[p] = (catCounts[p] || 0) + 1;
+              });
+            }
 
             const l = tender.locationDistrict;
             if (l) locCounts[l] = (locCounts[l] || 0) + 1;
