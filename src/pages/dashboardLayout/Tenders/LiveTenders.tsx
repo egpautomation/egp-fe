@@ -180,7 +180,7 @@ const LiveTenders = () => {
           const procCounts = {};
 
           allTenders.forEach(tender => {
-            const d = tender.organization || tender.department;
+            const d = tender.organization || tender.department || tender.ministry || tender.procuringEntityName;
             if (d) deptCounts[d] = (deptCounts[d] || 0) + 1;
 
             const c = tender.tenderCategory || tender.category || tender.tender_subCategories;
