@@ -376,7 +376,13 @@ const PgTwoTowOtmGoodsDetails = () => {
         yearsOfGeneralExperience={companyData?.yearsOfGeneralExperience}
         turnoverData={turnoverData}
         tenderList={completedContracts} // Pass the completed contracts ("tender list summary")
-        specificExperienceList={filteredSpecificExperience} // Pass filtered list for specific experience
+        specificExperienceList={
+          currentTender?.experienceContractId
+            ? completedContracts.filter(c => c._id === currentTender.experienceContractId)
+            : []
+        } // Pass only the confirmed contract for specific experience
+
+        // specificExperienceList={filteredSpecificExperience}
         yearlyTotals={yearlyTotals}
         totalOngoingCommitments={totalOngoingCommitments}
         currentTender={{ ...currentTender, liquidAssets: liveTenderData?.liquidAssets || currentTender?.liquidAssets }}

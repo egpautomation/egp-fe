@@ -492,31 +492,66 @@ export const TendererFormPreview = ({
               {searchResults.map((res, idx) => (
                 <div
                   key={idx}
-                  className={`flex items-start p-2 rounded text-xs border ${res.isValid ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
+                  className={`p-3 rounded text-xs border ${res.isValid ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"
                     }`}
                 >
-                  <div className={`mr-2 font-bold ${res.isValid ? "text-green-600" : "text-red-500"}`}>
-                    {res.isValid ? "✓" : "✕"}
+                  <div className="flex items-center mb-2">
+                    <div className={`mr-2 font-bold ${res.isValid ? "text-green-600" : "text-red-500"}`}>
+                      {res.isValid ? "✓" : "✕"}
+                    </div>
+                    <div className="font-semibold text-gray-800">Tender ID: {res.id}</div>
                   </div>
-                  <div>
-                    <div className="font-semibold">ID: {res.id}</div>
-                    {!res.found ? (
-                      <div>Not found in your completed contracts history.</div>
-                    ) : (
-                      <>
-                        <div className="text-gray-600 text-[10px]">
-                          {res.contract?.descriptionOfWorks ? res.contract.descriptionOfWorks.substring(0, 60) + "..." : "No Description"}
-                        </div>
-                        {res.isValid ? (
-                          <div className="text-green-600 font-medium mt-1">Eligible for Table B</div>
-                        ) : (
-                          <div className="mt-1 font-medium">
-                            Issues: {res.reasons.join(", ")}
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
+
+                  {!res.found ? (
+                    <div className="text-gray-600 ml-6">Not found in your completed contracts history.</div>
+                  ) : (
+                    <div className="w-full overflow-x-auto">
+                      <table className="w-full text-left bg-white border border-gray-200 shadow-sm">
+                        <thead className="bg-gray-50 text-xs text-gray-600 uppercase">
+                          <tr>
+                            <th className="p-2 font-semibold">Contract No</th>
+                            <th className="p-2 font-semibold">Name of Contract</th>
+                            <th className="p-2 font-semibold">Role</th>
+                            <th className="p-2 font-semibold">Award Date</th>
+                            <th className="p-2 font-semibold">Completion Date</th>
+                            <th className="p-2 font-semibold">Value</th>
+                            <th className="p-2 font-semibold">PE Name</th>
+                            <th className="p-2 font-semibold text-center">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="text-xs text-gray-700">
+                          <tr>
+                            <td className="p-2 border-t">{res.contract?.tenderId || "N/A"}</td>
+                            <td className="p-2 border-t">{res.contract?.descriptionOfWorks ? res.contract.descriptionOfWorks.substring(0, 50) + "..." : res.contract?.ProjectName ? res.contract.ProjectName.substring(0, 50) + "..." : "N/A"}</td>
+                            <td className="p-2 border-t">{roleLabel(res.contract?.Role_in_Contract)}</td>
+                            <td className="p-2 border-t">{formatDateSafe(pickFirstTruthy(res.contract?.noaIssueDate, res.contract?.contractSigningDate, res.contract?.commencementDate))}</td>
+                            <td className="p-2 border-t">{formatDateSafe(pickFirstTruthy(res.contract?.contractPeriodExtendedUpTo, res.contract?.contractEndDate, res.contract?.intendedCompletionDate))}</td>
+                            <td className="p-2 border-t font-mono">{formatMoney(pickFirstTruthy(res.contract?.contractValue, res.contract?.revisedContractValue))}</td>
+                            <td className="p-2 border-t">{res.contract?.procuringEntityName || "N/A"}</td>
+                            <td className="p-2 border-t text-center align-middle">
+                              {res.isValid ? (
+                                <div className="flex flex-col items-center justify-center gap-1">
+                                  <span className="text-green-600 font-medium text-[10px] leading-tight">✓ Eligible</span>
+                                  <Button
+                                    size="sm"
+                                    variant={confirmedContract?._id === res.contract?._id ? "default" : "outline"}
+                                    className="h-7 text-xs px-3 py-1"
+                                    onClick={() => handleConfirm(res.contract)}
+                                  >
+                                    {confirmedContract?._id === res.contract?._id ? "Selected" : "Confirm"}
+                                  </Button>
+                                </div>
+                              ) : (
+                                <div className="text-red-600 font-medium text-[10px] leading-tight w-24 text-center">
+                                  Issues: {res.reasons.join(", ")}
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -596,10 +631,10 @@ export const TendererFormPreview = ({
           )}
         </div>
 
-      </Section>
+      </Section >
 
       {/* Part 2: Calculation of Specific Experience */}
-      <Section title="Calculation of Specific Experience (Part 2)">
+      < Section title="Calculation of Specific Experience (Part 2)" >
         <table className="w-full text-sm text-left">
           <thead className="bg-gray-100">
             <tr>
@@ -725,10 +760,10 @@ export const TendererFormPreview = ({
             })()}
           </tbody>
         </table>
-      </Section>
+      </Section >
 
       {/* Part 3 & 4 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      < div className="grid grid-cols-1 lg:grid-cols-2 gap-6" >
         <Section title="Part 3: Calculation of Minimum Average Annual Construction Turnover">
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-100"><tr><th className="p-2 font-semibold">Calculation of Minimum Average Annual Construction Turnover</th><th className="p-2 font-semibold text-right">Amount (BDT)</th></tr></thead>
@@ -872,11 +907,11 @@ export const TendererFormPreview = ({
             </tbody>
           </table>
         </Section>
-      </div>
+      </div >
 
 
       {/* Part 5: Experience and Commitments */}
-      <Section title="Part 5: Experience and Commitments">
+      < Section title="Part 5: Experience and Commitments" >
         <div>
           <h4 className="font-semibold text-md mb-2 text-gray-600">(A) Completed Works (Last 5 years)</h4>
           <div className="overflow-x-auto">
@@ -895,18 +930,18 @@ export const TendererFormPreview = ({
             </table>
           </div>
         </div>
-      </Section>
+      </Section >
 
       {/* Activities Form */}
-      <Section title="Activities Schedule">
+      < Section title="Activities Schedule" >
         <table className="w-full text-sm text-left">
           <thead className="bg-gray-100"><tr><th className="p-2 font-semibold">Activity</th><th className="p-2 font-semibold text-center">Start (Days from Possession)</th><th className="p-2 font-semibold text-center">Duration (Days)</th></tr></thead>
           <tbody>
             {data.activities.map((item, index) => (<tr key={index} className="border-b"><td className="p-2">{item.activity}</td><td className="p-2 text-center">{item.startDays}</td><td className="p-2 text-center">{item.durationDays}</td></tr>))}
           </tbody>
         </table>
-      </Section>
+      </Section >
 
-    </div>
+    </div >
   );
 };
