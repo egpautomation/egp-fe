@@ -36,6 +36,7 @@ import JobOrderCart from "@/pages/dashboardLayout/JobOrder/JobOrderCart";
 import CreatePromoCode from "@/pages/dashboardLayout/PromoCode/CreatePromoCode";
 import PromoCodes from "@/pages/dashboardLayout/PromoCode/PromoCodes";
 import LiveTenders from "@/pages/dashboardLayout/Tenders/LiveTenders";
+import PromotionalTender from "@/pages/dashboardLayout/Tenders/PromotionalTender";
 import CreateTender from "@/pages/dashboardLayout/Tenders/CreateTender";
 import ViewTender from "@/pages/dashboardLayout/Tenders/ViewTender";
 import MyJobOrder from "@/pages/dashboardLayout/JobOrder/MyJobOrder";
@@ -468,6 +469,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <LiveTenders />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "promotional-tender",
+        element: (
+          <PrivateRoute>
+            <PromotionalTender />
           </PrivateRoute>
         ),
       },

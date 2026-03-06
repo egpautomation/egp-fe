@@ -156,6 +156,11 @@ export function AppSidebarNew() {
           path: "/dashboard/tenders/ltm-tenders",
           role: ["user", "admin", "guest", "moderator", "user_agent"],
         },
+        {
+          label: "Promotional Tender",
+          path: "/dashboard/promotional-tender",
+          role: ["user", "admin", "guest", "moderator", "user_agent"],
+        },
       ],
     },
     {
