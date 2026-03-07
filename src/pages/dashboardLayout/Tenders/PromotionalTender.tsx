@@ -141,7 +141,7 @@ Check now: www.etenderbd.com`
           overflow: "linebreak",
         },
         headStyles: {
-          fillColor: [220, 38, 38], // Professional Red theme
+          fillColor: [22, 163, 74], // Green theme
           textColor: 255,
           fontSize: 10,
           fontStyle: "bold",
@@ -161,7 +161,7 @@ Check now: www.etenderbd.com`
         },
         didDrawPage: (data) => {
           doc.setFontSize(18);
-          doc.setTextColor(220, 38, 38);
+          doc.setTextColor(22, 163, 74);
           doc.setFont("helvetica", "bold");
           doc.text("Promotional Tenders Report", data.settings.margin.left, 18);
 
@@ -188,17 +188,17 @@ Check now: www.etenderbd.com`
       doc.setFont("helvetica", "bold"); // Start bold for the title part
 
       const promoLines = doc.splitTextToSize(randomPromo, doc.internal.pageSize.getWidth() - 40);
-      const boxHeight = promoLines.length * 6 + 16;
+      const boxHeight = promoLines.length * 6 + 24; // extra 8px for the link line
       const boxY = currentFinalY + 15;
 
       // Promo Box Background
-      doc.setFillColor(254, 242, 242); // Light red background
-      doc.setDrawColor(220, 38, 38);   // Solid red border
+      doc.setFillColor(240, 253, 244); // Light green background
+      doc.setDrawColor(22, 163, 74);   // Solid green border
       doc.setLineWidth(0.5);
       doc.roundedRect(14, boxY, doc.internal.pageSize.getWidth() - 28, boxHeight, 3, 3, 'FD'); // Filled and drawn with rounded corners
 
       // Promo Text
-      doc.setTextColor(185, 28, 28); // Darker red text
+      doc.setTextColor(21, 128, 61); // Darker green text
       doc.setFont("helvetica", "normal");
 
       // Print lines, optionally making the first line bold
@@ -208,6 +208,12 @@ Check now: www.etenderbd.com`
 
         doc.text(line, 20, boxY + 12 + (i * 6));
       });
+
+      // Clickable website link at the bottom of the promo box
+      const linkY = boxY + 12 + (promoLines.length * 6) + 2;
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(21, 128, 61);
+      doc.textWithLink("🌐 Visit: https://etenderbd.com", 20, linkY, { url: "https://etenderbd.com" });
 
       doc.save(`Promotional_Tenders_${getBengaliDate(selectedDate).replace(/ /g, '_')}.pdf`);
     } catch (error) {
@@ -219,9 +225,23 @@ Check now: www.etenderbd.com`
 
   useEffect(() => {
     let ignore = false;
+
+    const CACHE_KEY = "promotional_filter_counts";
+    const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+
     const loadFilterCounts = async () => {
       try {
-        // We use a direct API call here so the organization counts aren't restricted by the date filter
+        // ── STEP 1: Try cache first — instant, no API call ──
+        const cached = sessionStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { data, ts } = JSON.parse(cached);
+          if (Date.now() - ts < CACHE_TTL) {
+            if (!ignore) setFilterCounts(data);
+            return;
+          }
+        }
+
+        // ── STEP 2: Cache miss — fetch in background (no setLoading block) ──
         const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders', {
           params: { page: 1, limit: 10000 }
         }));
@@ -233,9 +253,12 @@ Check now: www.etenderbd.com`
             const d = tender.organization || tender.department || tender.ministry || tender.procuringEntityName;
             if (d) deptCounts[d] = (deptCounts[d] || 0) + 1;
           });
-          setFilterCounts({
+          const counts = {
             departments: Object.entries(deptCounts).map(([name, count]) => ({ name, count: count as number })),
-          });
+          };
+          setFilterCounts(counts);
+          // Cache for next visit
+          sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data: counts, ts: Date.now() }));
         }
       } catch (error) {
         console.error("Failed to calculate filter counts:", error);
@@ -493,6 +516,109 @@ Check now: www.etenderbd.com`
                 currentPage,
               }}
             />
+
+            {/* Notice Banner */}
+            <div className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 px-4 py-2.5 text-slate-700 text-sm font-medium shadow-sm">
+              <span className="shrink-0 font-bold">বিজ্ঞপ্তি :</span>
+              <span>দরপত্রের সকল পোর্ট দেখুন E-GP ওয়েবসাইটে</span>
+              <a
+                href="https://etenderbd.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-1 underline underline-offset-2 text-blue-600 hover:text-blue-800 transition-colors font-semibold"
+              >
+                (www.etenderbd.com)
+              </a>
+            </div>
+
+            {/* Contact Info Bar */}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-lg bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 px-4 py-2.5 text-slate-600 text-xs shadow-sm">
+              <a href="mailto:support@etenderbd.com" className="flex items-center gap-1.5 hover:text-blue-700 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                support@etenderbd.com
+              </a>
+              <a href="tel:01926959331" className="flex items-center gap-1.5 hover:text-blue-700 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                01926-959331
+              </a>
+              <span className="flex items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                ঢাকা, বাংলাদেশ
+              </span>
+              <a href="https://www.facebook.com/etenderinfo" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-blue-600 hover:text-blue-800 transition-colors font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                facebook.com/etenderinfo
+              </a>
+            </div>
+
+            {/* Promotional Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+
+              {/* Card 1 — নতুন টেন্ডার নোটিশ */}
+              <div className="rounded-xl border border-blue-200 overflow-hidden shadow-sm">
+                <div className="bg-[#318CE7] px-4 py-3">
+                  <h3 className="text-white font-bold text-base leading-snug">নতুন টেন্ডার নোটিশ – eGP + পূর্ণ ডেটা শীট</h3>
+                </div>
+                <div className="bg-white px-4 py-3 space-y-1.5">
+                  {[
+                    "কাজের লোকেশন",
+                    "প্রকাশনা তারিখ | লাস্ট সেলিং | ওপেনিং ডেট",
+                    "প্রাক্কলিত মূল্য",
+                    "টেন্ডার সিকিউরিটি",
+                    "টার্ণওভার অ্যামাউন্ট",
+                    "লিকুইড অ্যাসেটস",
+                    "টেন্ডার ক্যাপাসিটি",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-2 text-sm text-slate-700">
+                      <span className="text-green-500 mt-0.5 shrink-0">✅</span>
+                      <span>• {item}</span>
+                    </div>
+                  ))}
+                  <p className="text-sm font-bold text-slate-800 pt-2 border-t border-slate-100">
+                    অতিরিক্ত যা পাচ্ছেন – অন্যান্য ওয়েবসাইটে দেওয়া পত্রিকায় তা নেই!
+                  </p>
+                  <a
+                    href="https://etenderbd.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 mt-2 bg-[#318CE7] hover:bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+                  >
+                    এখনই দেখুন →
+                  </a>
+                </div>
+              </div>
+
+              {/* Card 2 — SLT Calculation */}
+              <div className="rounded-xl border border-blue-200 overflow-hidden shadow-sm">
+                <div className="bg-[#318CE7] px-4 py-3">
+                  <h3 className="text-white font-bold text-base leading-snug">E-GP Tender Automation – টেন্ডার প্রক্রিয়া সহজ করুন!</h3>
+                </div>
+                <div className="bg-white px-4 py-3 space-y-1.5">
+                  {[
+                    "SLT Calculation সহজ করুন",
+                    "TOR2 PDF আপলোড করে ক্যালকুলেট",
+                    "কোনো রেজিস্ট্রেশন বা পাসকোড লাগবে না",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-2 text-sm text-slate-700">
+                      <span className="text-blue-500 mt-0.5 shrink-0">●</span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                  <div className="mt-3 pt-2 border-t border-slate-100">
+                    <a
+                      href="https://etenderbd.com/stl-calculation"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex w-full items-center justify-center gap-1.5 bg-[#318CE7] hover:bg-blue-600 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
+                    >
+                      এখনই চেক করুন: www.etenderbd.com
+                    </a>
+                    <p className="text-xs text-slate-400 mt-1 text-center">www.etenderbd.com/stl-calculation</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </motion.div>
 
           {/* Sidebar Filters */}

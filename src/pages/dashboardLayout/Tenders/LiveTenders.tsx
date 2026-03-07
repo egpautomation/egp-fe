@@ -166,61 +166,75 @@ const LiveTenders = () => {
   useEffect(() => {
     let ignore = false;
 
+    const CACHE_KEY = "live_tenders_filter_counts";
+    const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+
+    const buildCounts = (allTenders: any[]) => {
+      const deptCounts = {};
+      const catCounts = {};
+      const locCounts = {};
+      const methCounts = {};
+      const procCounts = {};
+
+      allTenders.forEach(tender => {
+        const d = tender.organization || tender.department || tender.ministry || tender.procuringEntityName;
+        if (d) deptCounts[d] = (deptCounts[d] || 0) + 1;
+
+        const c = tender.tenderCategory || tender.category || tender.tender_subCategories;
+        if (c) {
+          const parts = String(c).split(";").map(s => s.trim()).filter(Boolean);
+          parts.forEach(p => { catCounts[p] = (catCounts[p] || 0) + 1; });
+        }
+
+        const l = tender.locationDistrict;
+        if (l) locCounts[l] = (locCounts[l] || 0) + 1;
+
+        const m = tender.procurementMethod;
+        if (m) methCounts[m] = (methCounts[m] || 0) + 1;
+
+        const p = tender.procurementNature;
+        if (p) procCounts[p] = (procCounts[p] || 0) + 1;
+      });
+
+      return {
+        departments: Object.entries(deptCounts).map(([name, count]) => ({ name, count })),
+        categories: Object.entries(catCounts).map(([name, count]) => ({ name, count })),
+        locations: Object.entries(locCounts).map(([name, count]) => ({ name, count })),
+        methods: Object.entries(methCounts).map(([name, count]) => ({ name, count })),
+        procurementNatures: Object.entries(procCounts).map(([name, count]) => ({ name, count })),
+      };
+    };
+
     const loadFilterCounts = async () => {
       try {
-        setLoading(true);
-        // Fetch all relevant tenders to calculate accurate counts locally
+        // ── STEP 1: Try cache first (instant load, no API call needed) ──
+        const cached = sessionStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { data, ts } = JSON.parse(cached);
+          if (Date.now() - ts < CACHE_TTL) {
+            // Cache is still valid — set immediately without any loading block
+            if (!ignore) setFilterCounts(data);
+            return; // Done — no API call needed
+          }
+        }
+
+        // ── STEP 2: Cache miss or expired — fetch in BACKGROUND without blocking ──
+        // Do NOT call setLoading(true) so the main table renders immediately
         const allTenders = await fetchAllTenders();
-
         if (!ignore && allTenders) {
-          const deptCounts = {};
-          const catCounts = {};
-          const locCounts = {};
-          const methCounts = {};
-          const procCounts = {};
-
-          allTenders.forEach(tender => {
-            const d = tender.organization || tender.department || tender.ministry || tender.procuringEntityName;
-            if (d) deptCounts[d] = (deptCounts[d] || 0) + 1;
-
-            const c = tender.tenderCategory || tender.category || tender.tender_subCategories;
-            if (c) {
-              const parts = String(c).split(";").map(s => s.trim()).filter(Boolean);
-              parts.forEach(p => {
-                catCounts[p] = (catCounts[p] || 0) + 1;
-              });
-            }
-
-            const l = tender.locationDistrict;
-            if (l) locCounts[l] = (locCounts[l] || 0) + 1;
-
-            const m = tender.procurementMethod;
-            if (m) methCounts[m] = (methCounts[m] || 0) + 1;
-
-            const p = tender.procurementNature;
-            if (p) procCounts[p] = (procCounts[p] || 0) + 1;
-          });
-
-          setFilterCounts({
-            departments: Object.entries(deptCounts).map(([name, count]) => ({ name, count })),
-            categories: Object.entries(catCounts).map(([name, count]) => ({ name, count })),
-            locations: Object.entries(locCounts).map(([name, count]) => ({ name, count })),
-            methods: Object.entries(methCounts).map(([name, count]) => ({ name, count })),
-            procurementNatures: Object.entries(procCounts).map(([name, count]) => ({ name, count })),
-          });
+          const counts = buildCounts(allTenders);
+          setFilterCounts(counts);
+          // Save to sessionStorage for next visit
+          sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data: counts, ts: Date.now() }));
         }
       } catch (error) {
         console.error("Failed to calculate filter counts:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     loadFilterCounts();
 
-    return () => {
-      ignore = true;
-    };
+    return () => { ignore = true; };
   }, []);
 
   const departmentCountMap = useMemo(
