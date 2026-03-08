@@ -65,7 +65,7 @@ const PromotionalTender = () => {
     selectedDate, // from
     selectedDate, // to
     "", // method
-    selectedDepartments.join(","), // department
+    selectedDepartments.join("||"), // department
     "", // category
     "", // location
     "", // procurementNature
@@ -226,7 +226,7 @@ Check now: www.etenderbd.com`
   useEffect(() => {
     let ignore = false;
 
-    const CACHE_KEY = "promotional_filter_counts";
+    const CACHE_KEY = "promotional_filter_counts_v2";
     const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
 
     const loadFilterCounts = async () => {
@@ -241,27 +241,19 @@ Check now: www.etenderbd.com`
           }
         }
 
-        // ── STEP 2: Cache miss — fetch in background (no setLoading block) ──
-        const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders', {
-          params: { page: 1, limit: 10000 }
-        }));
-        const allTenders = response.data?.data;
+        // ── STEP 2: Cache miss — fetch from fast backend endpoint ──
+        const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders/tender-filter-counts'));
 
-        if (!ignore && allTenders) {
-          const deptCounts: Record<string, number> = {};
-          allTenders.forEach((tender: any) => {
-            const d = tender.organization || tender.department || tender.ministry || tender.procuringEntityName;
-            if (d) deptCounts[d] = (deptCounts[d] || 0) + 1;
-          });
+        if (!ignore && response.data?.success) {
           const counts = {
-            departments: Object.entries(deptCounts).map(([name, count]) => ({ name, count: count as number })),
+            departments: response.data.data.departments || [],
           };
           setFilterCounts(counts);
           // Cache for next visit
           sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data: counts, ts: Date.now() }));
         }
       } catch (error) {
-        console.error("Failed to calculate filter counts:", error);
+        console.error("Failed to fetch filter counts:", error);
       }
     };
     loadFilterCounts();

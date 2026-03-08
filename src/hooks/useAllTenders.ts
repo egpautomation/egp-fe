@@ -23,12 +23,21 @@ const useAllTenders = (
     const result = async () => {
       try {
         setLoading(true);
-        // Clean up department names by removing "(XXX)" because backend regex search fails on unescaped parentheses
+        const depList = department.includes("||") ? department.split("||") : department.split(",");
         const cleanDepartment = department
-          ? department
-            .split(",")
-            .map((d) => d.replace(/\s*\([^)]*\)/g, "").trim())
-            .join(",")
+          ? depList
+            .map((d) => {
+              let trimmed = d.replace(/\s*\([^)]*\)/g, "").trim();
+              return trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            })
+            .join("|")
+          : "";
+
+        const catList = category.includes("||") ? category.split("||") : category.split(",");
+        const cleanCategory = category
+          ? catList
+            .map((c) => c.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+            .join("|")
           : "";
 
         const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders', {
@@ -36,11 +45,11 @@ const useAllTenders = (
             searchTerm,
             from,
             to,
-            method,
+            method: method.includes("||") ? method.split("||").join(",") : method,
             department: cleanDepartment,
-            category,
-            location,
-            procurementNature,
+            category: cleanCategory,
+            location: location.includes("||") ? location.split("||").join(",") : location,
+            procurementNature: procurementNature.includes("||") ? procurementNature.split("||").join(",") : procurementNature,
             page,
             limit
           }
@@ -70,11 +79,21 @@ const useAllTenders = (
 
   const fetchAllTenders = async () => {
     try {
+      const depList = department.includes("||") ? department.split("||") : department.split(",");
       const cleanDepartment = department
-        ? department
-          .split(",")
-          .map((d) => d.replace(/\s*\([^)]*\)/g, "").trim())
-          .join(",")
+        ? depList
+          .map((d) => {
+            let trimmed = d.replace(/\s*\([^)]*\)/g, "").trim();
+            return trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          })
+          .join("|")
+        : "";
+
+      const catList = category.includes("||") ? category.split("||") : category.split(",");
+      const cleanCategory = category
+        ? catList
+          .map((c) => c.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+          .join("|")
         : "";
 
       const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders', {
@@ -82,11 +101,11 @@ const useAllTenders = (
           searchTerm,
           from,
           to,
-          method,
+          method: method.includes("||") ? method.split("||").join(",") : method,
           department: cleanDepartment,
-          category,
-          location,
-          procurementNature,
+          category: cleanCategory,
+          location: location.includes("||") ? location.split("||").join(",") : location,
+          procurementNature: procurementNature.includes("||") ? procurementNature.split("||").join(",") : procurementNature,
           page: 1,
           limit: 10000
         }

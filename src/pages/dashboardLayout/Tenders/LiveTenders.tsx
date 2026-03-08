@@ -84,11 +84,11 @@ const LiveTenders = () => {
     searchTerm,
     date?.from,
     date?.to,
-    selectedMethods.join(","),
-    selectedDepartments.join(","),
-    selectedCategories.join(","),
-    selectedLocations.join(","),
-    selectedProcurementNatures.join(","),
+    selectedMethods.join("||"),
+    selectedDepartments.join("||"),
+    selectedCategories.join("||"),
+    selectedLocations.join("||"),
+    selectedProcurementNatures.join("||"),
     currentPage,
     pageLimit
   );
@@ -166,44 +166,8 @@ const LiveTenders = () => {
   useEffect(() => {
     let ignore = false;
 
-    const CACHE_KEY = "live_tenders_filter_counts";
+    const CACHE_KEY = "live_tenders_filter_counts_v2";
     const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
-
-    const buildCounts = (allTenders: any[]) => {
-      const deptCounts = {};
-      const catCounts = {};
-      const locCounts = {};
-      const methCounts = {};
-      const procCounts = {};
-
-      allTenders.forEach(tender => {
-        const d = tender.organization || tender.department || tender.ministry || tender.procuringEntityName;
-        if (d) deptCounts[d] = (deptCounts[d] || 0) + 1;
-
-        const c = tender.tenderCategory || tender.category || tender.tender_subCategories;
-        if (c) {
-          const parts = String(c).split(";").map(s => s.trim()).filter(Boolean);
-          parts.forEach(p => { catCounts[p] = (catCounts[p] || 0) + 1; });
-        }
-
-        const l = tender.locationDistrict;
-        if (l) locCounts[l] = (locCounts[l] || 0) + 1;
-
-        const m = tender.procurementMethod;
-        if (m) methCounts[m] = (methCounts[m] || 0) + 1;
-
-        const p = tender.procurementNature;
-        if (p) procCounts[p] = (procCounts[p] || 0) + 1;
-      });
-
-      return {
-        departments: Object.entries(deptCounts).map(([name, count]) => ({ name, count })),
-        categories: Object.entries(catCounts).map(([name, count]) => ({ name, count })),
-        locations: Object.entries(locCounts).map(([name, count]) => ({ name, count })),
-        methods: Object.entries(methCounts).map(([name, count]) => ({ name, count })),
-        procurementNatures: Object.entries(procCounts).map(([name, count]) => ({ name, count })),
-      };
-    };
 
     const loadFilterCounts = async () => {
       try {
@@ -218,17 +182,23 @@ const LiveTenders = () => {
           }
         }
 
-        // ── STEP 2: Cache miss or expired — fetch in BACKGROUND without blocking ──
-        // Do NOT call setLoading(true) so the main table renders immediately
-        const allTenders = await fetchAllTenders();
-        if (!ignore && allTenders) {
-          const counts = buildCounts(allTenders);
-          setFilterCounts(counts);
+        // ── STEP 2: Cache miss or expired — fetch from optimized backend endpoint ──
+        const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders/tender-filter-counts'));
+        
+        if (!ignore && response.data?.success) {
+          const data = {
+            departments: response.data.data.departments || [],
+            categories: response.data.data.categories || [],
+            locations: response.data.data.locations || [],
+            methods: response.data.data.methods || [],
+            procurementNatures: response.data.data.procurementNatures || [],
+          };
+          setFilterCounts(data);
           // Save to sessionStorage for next visit
-          sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data: counts, ts: Date.now() }));
+          sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
         }
       } catch (error) {
-        console.error("Failed to calculate filter counts:", error);
+        console.error("Failed to fetch filter counts:", error);
       }
     };
 
