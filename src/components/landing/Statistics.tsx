@@ -1,19 +1,18 @@
 // @ts-nocheck
 
 import { useEffect, useState } from "react";
-import useLiveTenders from "@/hooks/useLiveTenders";
+import axiosInstance from "@/lib/axiosInstance";
 
 export default function Statistics() {
-  // Fetch all live tenders (no pagination limit to get accurate count)
-  const { tenders, loading } = useLiveTenders("", "", "", "", 1, 10000);
-
   const [liveCount, setLiveCount] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [methodCounts, setMethodCounts] = useState({
     LTM: 0,
     OTM: 0,
     OSTETM: 0,
     others: 0
   });
+
   const today = new Intl.DateTimeFormat("bn-BD", {
     day: "2-digit",
     month: "long",
@@ -25,42 +24,29 @@ export default function Statistics() {
     return number.toString().replace(/\d/g, (digit) => banglaDigits[digit]);
   };
 
-  // Calculate live tenders count and method counts (openingDate >= today)
   useEffect(() => {
-    if (tenders && tenders.length > 0) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      // Filter valid tenders (openingDate >= today)
-      const validTenders = tenders.filter((tender: any) => {
-        const openingDate = new Date(tender?.openingDateTime || tender?.openingDate || tender?.closingDate);
-        if (isNaN(openingDate.getTime())) return false;
-        openingDate.setHours(0, 0, 0, 0);
-        return openingDate >= today;
-      });
-
-      // Count by method
-      const counts = { LTM: 0, OTM: 0, OSTETM: 0, others: 0 };
-
-      validTenders.forEach((tender: any) => {
-        const method = tender?.procurementMethod?.toUpperCase() ||
-          tender?.method?.toUpperCase() || '';
-
-        if (method.includes('LTM')) {
-          counts.LTM++;
-        } else if (method.includes('OTM')) {
-          counts.OTM++;
-        } else if (method.includes('OSTETM')) {
-          counts.OSTETM++;
-        } else {
-          counts.others++;
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        const res = await axiosInstance.get('/live-tenders/stats');
+        if (res.data?.success) {
+          const stats = res.data.data;
+          setLiveCount(stats.total);
+          setMethodCounts({
+            LTM: stats.LTM,
+            OTM: stats.OTM,
+            OSTETM: stats.OSTETM,
+            others: stats.others
+          });
         }
-      });
-
-      setLiveCount(validTenders.length);
-      setMethodCounts(counts);
-    }
-  }, [tenders]);
+      } catch (error) {
+        console.error("Error fetching live tender stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const stats = [
     { value: methodCounts.LTM, label: "LTM" },
