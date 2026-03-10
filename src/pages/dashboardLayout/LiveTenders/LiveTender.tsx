@@ -27,20 +27,23 @@ function Badge({ label }) {
 
 /**
  * useTenderIdMap
- * Fetches ALL stored tenders (up to 2000) and returns a Map<tenderId, _id>
- * so we can quickly look up whether a live-tender exists in the DB.
+ * Takes the current page tenders and checks which ones exist in DB.
  */
-function useTenderIdMap() {
+function useTenderIdMap(liveTenders) {
     const [tenderIdMap, setTenderIdMap] = useState(new Map());
     const [mapLoading, setMapLoading] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
         const fetchMap = async () => {
+            if (!liveTenders || liveTenders.length === 0) {
+                setTenderIdMap(new Map());
+                return;
+            }
             try {
                 setMapLoading(true);
-                // Fetch a large batch — adjust limit if you have more tenders
-                const res = await axiosInstance.get(`/tenders?limit=2000&page=1`);
+                const tenderIds = liveTenders.map(t => t.tenderId).filter(Boolean);
+                const res = await axiosInstance.post(`/tenders/check-tender-ids`, { tenderIds });
                 const list = res.data?.data ?? [];
                 if (!cancelled) {
                     const map = new Map();
@@ -59,7 +62,7 @@ function useTenderIdMap() {
         };
         fetchMap();
         return () => { cancelled = true; };
-    }, []);
+    }, [liveTenders]);
 
     return { tenderIdMap, mapLoading };
 }
@@ -118,8 +121,8 @@ export default function LiveTender() {
         debouncedPublishingDateSearch
     );
 
-    // Build tenderId → _id lookup map from stored tenders
-    const { tenderIdMap, mapLoading } = useTenderIdMap();
+    // Build tenderId → _id lookup map for current page tenders
+    const { tenderIdMap, mapLoading } = useTenderIdMap(tenders);
     const [addingTenderId, setAddingTenderId] = useState(null);
     const [addStatus, setAddStatus] = useState({});
 

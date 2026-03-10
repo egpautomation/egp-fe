@@ -184,7 +184,7 @@ const LiveTenders = () => {
 
         // ── STEP 2: Cache miss or expired — fetch from optimized backend endpoint ──
         const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders/tender-filter-counts'));
-        
+
         if (!ignore && response.data?.success) {
           const data = {
             departments: response.data.data.departments || [],
