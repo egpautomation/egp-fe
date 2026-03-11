@@ -10,6 +10,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { useContext, useState } from "react";
 import { AuthContext } from "@/provider/AuthProvider";
 import toast from "react-hot-toast";
+import { useGoogleLogin } from '@react-oauth/google';
+import { FcGoogle } from 'react-icons/fc';
 
 interface LandingLoginBoxProps {
   preview?: boolean; // If true, shows preview mode (non-submitting), if false, fully functional
@@ -17,7 +19,7 @@ interface LandingLoginBoxProps {
 }
 
 export default function LandingLoginBox({ preview = true, onSubmit }: LandingLoginBoxProps) {
-  const { login } = useContext(AuthContext);
+  const { login, googleLogin } = useContext(AuthContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -33,6 +35,42 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
       [id]: value,
     }));
   };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    if (preview) return;
+    
+    setIsLoading(true);
+    const toastId = toast.loading("Logging in with Google...");
+    
+    try {
+      // credentialResponse contains `credential` which is the id_token
+      if (credentialResponse.credential) {
+         await googleLogin(credentialResponse.credential);
+         toast.dismiss(toastId);
+         toast.success("Successfully Logged In with Google");
+         navigate("/dashboard");
+      } else if (credentialResponse.access_token) {
+         // Fallback if the implicit flow returns access_token
+         await googleLogin(credentialResponse.access_token);
+         toast.dismiss(toastId);
+         toast.success("Successfully Logged In with Google");
+         navigate("/dashboard");
+      }
+    } catch (error) {
+       toast.dismiss(toastId);
+       const errorMessage = error?.response?.data?.message || error?.message || "Google Login failed.";
+       toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const signInWithGoogle = useGoogleLogin({
+    onSuccess: handleGoogleSuccess,
+    onError: () => {
+      if (!preview) toast.error("Google Login Failed");
+    }
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -145,6 +183,31 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
               </Button>
             )}
           </div>
+          
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+
+          <div className="flex w-full justify-center">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full h-11 flex items-center justify-center gap-2"
+              onClick={() => {
+                if (!preview) signInWithGoogle();
+              }}
+              disabled={isLoading}
+            >
+              <FcGoogle className="w-5 h-5" />
+              Sign in with Google
+            </Button>
+          </div>
+
           <div className="text-center pt-2">
             <p className="text-sm text-gray-600">
               অ্যাকাউন্ট নেই?{" "}

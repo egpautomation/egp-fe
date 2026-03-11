@@ -8,6 +8,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  googleLogin: (idToken: string) => Promise<void>;
   register: (userData: RegisterData) => Promise<void>;
   logout: () => void;
   setUser: (user: User | null) => void;
@@ -38,6 +39,22 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     } catch (error) {
       console.error("Login error:", error);
+      throw error;
+    }
+  };
+
+  /**
+   * Login user via Google OAuth
+   */
+  const googleLogin = async (idToken: string): Promise<void> => {
+    try {
+      const response = await authService.googleLogin(idToken);
+      
+      if (response.data.user) {
+        setUser(response.data.user);
+      }
+    } catch (error) {
+      console.error("Google Login error:", error);
       throw error;
     }
   };
@@ -122,6 +139,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     user,
     loading,
     login,
+    googleLogin,
     register,
     logout,
     setUser,

@@ -226,6 +226,68 @@ export const login = async (email: string, password: string): Promise<LoginRespo
 };
 
 /**
+ * Login user via Google OAuth
+ * @param idToken - Google ID token
+ * @returns Login response with token and user data
+ */
+export const googleLogin = async (idToken: string): Promise<LoginResponse> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/user/google-login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ idToken }),
+    });
+
+    const data = await response.json();
+
+    console.log('Google Login response:', data);
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Google Login failed');
+    }
+
+    let token, refreshToken, user;
+
+    if (data.data) {
+      token = data.data.token;
+      refreshToken = data.data.refreshToken;
+      user = data.data.user;
+    } else {
+      token = data.token;
+      refreshToken = data.refreshToken;
+      user = data.user;
+    }
+
+    if (!token) {
+      throw new Error('No authentication token received from server');
+    }
+
+    if (!user) {
+      throw new Error('No user data received from server');
+    }
+
+    // Store tokens and user data
+    setTokens(token, refreshToken);
+    setUserData(user);
+
+    return {
+      success: true,
+      message: data.message || 'Login successful',
+      data: {
+        token,
+        refreshToken,
+        user
+      }
+    };
+  } catch (error) {
+    console.error('Google Login error:', error);
+    throw error;
+  }
+};
+
+/**
  * Register new user
  * @param userData - User registration data
  * @returns Registration response
