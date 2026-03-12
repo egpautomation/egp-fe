@@ -41,6 +41,54 @@ import autoTable from "jspdf-autotable";
 
 const METHODS = ["LTM", "OTM", "OSTETM", "RFQ"];
 
+// Filter Section Component
+const FilterSection = ({ title, children, searchPlaceholder, searchValue, onSearchChange, count }) => (
+  <AccordionItem value={title} className="border-0">
+    <div className="mb-2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <AccordionTrigger className="flex items-center justify-between bg-primary px-4 py-3 text-left text-sm font-semibold text-white hover:bg-primary/90 hover:no-underline [&[data-state=open]>svg]:rotate-180">
+        <span className="flex items-center gap-2">{title}</span>
+        <span className="ml-auto mr-2 flex items-center gap-1 rounded bg-white/20 px-2 py-0.5 text-xs">
+          Browse
+          <ChevronDown className="h-3 w-3 transition-transform duration-200" />
+        </span>
+      </AccordionTrigger>
+      <AccordionContent className="px-4 pb-3 pt-2">
+        {searchPlaceholder && (
+          <div className="relative mb-3">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Input
+              placeholder={searchPlaceholder}
+              value={searchValue || ""}
+              onChange={(e) => onSearchChange?.(e.target.value)}
+              className="h-9 rounded-md border-slate-200 pl-9 text-sm"
+            />
+          </div>
+        )}
+        <div className="max-h-64 overflow-y-auto pr-1">{children}</div>
+        {count !== undefined && (
+          <div className="mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">{count} items found</div>
+        )}
+      </AccordionContent>
+    </div>
+  </AccordionItem>
+);
+
+// Filter Checkbox Item
+const FilterCheckbox = ({ label, count, checked, onCheckedChange }) => (
+  <div className="flex items-start gap-2 py-1.5">
+    <Checkbox
+      id={label}
+      checked={checked}
+      onCheckedChange={onCheckedChange}
+      className="mt-0.5 h-4 w-4 rounded border-slate-300 data-[state=checked]:bg-primary data-[state=checked]:text-white"
+    />
+    <label htmlFor={label} className="flex flex-1 cursor-pointer items-start justify-between text-sm leading-5">
+      <span className="text-slate-700">{label}</span>
+      {count !== undefined && <span className="ml-2 text-xs text-slate-400">{count}</span>}
+    </label>
+  </div>
+);
+
 const LiveTenders = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -438,53 +486,6 @@ const LiveTenders = () => {
     setSearchParams(params);
   }, [currentPage, pageLimit]);
 
-  // Filter Section Component
-  const FilterSection = ({ title, children, searchPlaceholder, searchValue, onSearchChange, count }) => (
-    <AccordionItem value={title} className="border-0">
-      <div className="mb-2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-        <AccordionTrigger className="flex items-center justify-between bg-primary px-4 py-3 text-left text-sm font-semibold text-white hover:bg-primary/90 hover:no-underline [&[data-state=open]>svg]:rotate-180">
-          <span className="flex items-center gap-2">{title}</span>
-          <span className="ml-auto mr-2 flex items-center gap-1 rounded bg-white/20 px-2 py-0.5 text-xs">
-            Browse
-            <ChevronDown className="h-3 w-3 transition-transform duration-200" />
-          </span>
-        </AccordionTrigger>
-        <AccordionContent className="px-4 pb-3 pt-2">
-          {searchPlaceholder && (
-            <div className="relative mb-3">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <Input
-                placeholder={searchPlaceholder}
-                value={searchValue || ""}
-                onChange={(e) => onSearchChange?.(e.target.value)}
-                className="h-9 rounded-md border-slate-200 pl-9 text-sm"
-              />
-            </div>
-          )}
-          <div className="max-h-64 overflow-y-auto pr-1">{children}</div>
-          {count !== undefined && (
-            <div className="mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">{count} items found</div>
-          )}
-        </AccordionContent>
-      </div>
-    </AccordionItem>
-  );
-
-  // Filter Checkbox Item
-  const FilterCheckbox = ({ label, count, checked, onCheckedChange }) => (
-    <div className="flex items-start gap-2 py-1.5">
-      <Checkbox
-        id={label}
-        checked={checked}
-        onCheckedChange={onCheckedChange}
-        className="mt-0.5 h-4 w-4 rounded border-slate-300 data-[state=checked]:bg-primary data-[state=checked]:text-white"
-      />
-      <label htmlFor={label} className="flex flex-1 cursor-pointer items-start justify-between text-sm leading-5">
-        <span className="text-slate-700">{label}</span>
-        {count !== undefined && <span className="ml-2 text-xs text-slate-400">{count}</span>}
-      </label>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-slate-50">
