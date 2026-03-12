@@ -191,175 +191,83 @@ const MobileTableLayout = ({
   data: any;
   setReload: any;
 }) => {
-  console.log(data);
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-      scale: 0.95,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.4,
-      },
-    },
-  };
-
-  const buttonVariants = {
-    rest: {
-      scale: 1,
-      transition: { duration: 0.2 },
-    },
-    hover: {
-      scale: 1.02,
-      transition: { duration: 0.2 },
-    },
-    tap: {
-      scale: 0.98,
-      transition: { duration: 0.1 },
-    },
-  };
-
   return (
-    <motion.div
-      className="flex flex-col gap-6 my-8 lg:hidden"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <div className="flex flex-col gap-6 my-8 lg:hidden px-2">
       {data?.map((item: any, idx: number) => (
-        <motion.div
+        <div
           key={idx}
-          className="flex flex-col gap-2 border rounded-xl p-4 md:p-8 py-6"
-          variants={cardVariants}
-          whileHover={{
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-            transition: { duration: 0.2 },
-          }}
+          className="flex flex-col gap-2 border rounded-xl p-4 py-6 shadow-sm bg-white"
         >
-          <div className="">
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Status: </h1>
-              <h1 className="text-gray-700 text-2xl">{item?.status}</h1>
-            </motion.div>
-
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.25 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">E-GP Email: </h1>
-              <h1 className="text-gray-700 ">{item?.egpEmail}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Company Name: </h1>
-              <h1 className="text-gray-700 ">{item?.companyName}</h1>
-            </motion.div>
-
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.35 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">User: </h1>
-              <h1 className="text-gray-700 ">{item?.user}</h1>
-            </motion.div>
-
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.35 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Remarks: </h1>
-              <h1 className="text-gray-700 ">{item?.remarks}</h1>
-            </motion.div>
-
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Actions: </h1>
-              <div className="flex items-center gap-2 justify-center">
-                <Link
-                  to={`/dashboard/edit-company-registration/${item?._id}`}
-                  title="Edit"
-                >
-                  <SquarePen className="mt-2 hover:text-blue-600 transition-colors" size={24} />
-                </Link>
-                <Link
-                  to={
-                    item?.status?.toLowerCase() === "active"
-                      ? `/dashboard/update-company-migration/${item?._id}`
-                      : "#"
-                  }
-                  onClick={(e) => {
-                    if (item?.status?.toLowerCase() !== "active") {
-                      e.preventDefault();
-                    }
-                  }}
-                >
-                  <button
-                    disabled={item?.status?.toLowerCase() !== "active"}
-                    className={`mt-2 ${item?.status?.toLowerCase() === "active"
-                      ? "cursor-pointer text-blue-600 hover:text-blue-800"
-                      : "cursor-not-allowed text-gray-400 opacity-50"
-                      }`}
-                    title={
-                      item?.status?.toLowerCase() === "active"
-                        ? "Update"
-                        : "Update disabled - Status is not active"
-                    }
-                  >
-                    <FilePenLine size={24} />
-                  </button>
-                </Link>
-                <DeleteDataModal
-                  setReload={setReload}
-                  url={`${config.apiBaseUrl}/companyMigration/${item?._id}`}
-                />
-              </div>
-            </motion.div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Status:</span>
+            <span className="text-gray-800 break-words sm:text-right font-bold text-xl">{item?.status}</span>
           </div>
-        </motion.div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">E-GP Email:</span>
+            <span className="text-gray-800 break-all sm:text-right font-medium">{item?.egpEmail}</span>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Company Name:</span>
+            <span className="text-gray-800 break-words sm:text-right font-medium">{item?.companyName}</span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">User:</span>
+            <span className="text-gray-800 break-all sm:text-right font-medium">{item?.user}</span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Remarks:</span>
+            <span className="text-gray-800 break-words sm:text-right font-medium">{item?.remarks || "N/A"}</span>
+          </div>
+
+          <div className="flex items-center justify-between gap-2 mt-4">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Actions:</span>
+            <div className="flex items-center gap-4">
+              <a
+                href={`https://api.whatsapp.com/send?phone=${config.supportWhatsApp}&text=I am ${encodeURIComponent(
+                  item?.user
+                )}. Please Update ${encodeURIComponent(item?.egpEmail)} Information immediately.`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button className="bg-green-500 hover:bg-green-600 text-white text-xs h-8 px-3">
+                  WA
+                </Button>
+              </a>
+              <Link 
+                to={`/dashboard/edit-company-registration/${item?._id}`}
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                title="Edit"
+              >
+                <SquarePen size={22} className="text-blue-600" />
+              </Link>
+              <Link
+                to={
+                  item?.status?.toLowerCase() === "active"
+                    ? `/dashboard/update-company-migration/${item?._id}`
+                    : "#"
+                }
+                onClick={(e) => {
+                  if (item?.status?.toLowerCase() !== "active") {
+                    e.preventDefault();
+                  }
+                }}
+                className={item?.status?.toLowerCase() !== "active" ? "pointer-events-none opacity-50" : ""}
+              >
+                <FilePenLine size={22} className={item?.status?.toLowerCase() === "active" ? "text-blue-600" : "text-gray-400"} />
+              </Link>
+              <DeleteDataModal
+                setReload={setReload}
+                url={`${config.apiBaseUrl}/companyMigration/${item?._id}`}
+              />
+            </div>
+          </div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 };
 

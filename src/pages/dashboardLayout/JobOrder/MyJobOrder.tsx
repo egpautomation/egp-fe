@@ -323,161 +323,64 @@ const MyJobOrder = () => {
 };
 
 const MobileTableLayout = ({ data, handleCancelRequest }: { data: any, handleCancelRequest: any }) => {
-  // console.log(data);
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-      scale: 0.95,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.4,
-      },
-    },
-  };
-
-  const buttonVariants = {
-    rest: {
-      scale: 1,
-      transition: { duration: 0.2 },
-    },
-    hover: {
-      scale: 1.02,
-      transition: { duration: 0.2 },
-    },
-    tap: {
-      scale: 0.98,
-      transition: { duration: 0.1 },
-    },
-  };
-
   return (
-    <motion.div
-      className="flex flex-col gap-6 my-8 lg:hidden"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <div className="flex flex-col gap-6 my-8 lg:hidden px-2">
       {data?.map((item: any, idx: number) => (
-        <motion.div
+        <div
           key={idx}
-          className="flex flex-col gap-2 border rounded-xl p-4 md:p-8 py-6"
-          variants={cardVariants}
-          whileHover={{
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-            transition: { duration: 0.2 },
-          }}
+          className="flex flex-col gap-2 border rounded-xl p-4 py-6 shadow-sm bg-white"
         >
-          <div className="">
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Tender Id: </h1>
-              <h1 className="text-gray-700 text-2xl">{item?.tenderId}</h1>
-            </motion.div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Tender Id:</span>
+            <span className="text-gray-800 break-words sm:text-right font-bold text-xl">{item?.tenderId}</span>
+          </div>
 
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.25 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Ordered: </h1>
-              <h1 className="text-gray-700 ">{item?.userMail}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Egp Email: </h1>
-              <h1 className="text-gray-700 ">{item?.egpMail}</h1>
-            </motion.div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Ordered:</span>
+            <span className="text-gray-800 break-all sm:text-right font-medium">{item?.userMail}</span>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">E-GP Email:</span>
+            <span className="text-gray-800 break-all sm:text-right font-medium">{item?.egpEmail}</span>
+          </div>
 
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.35 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Bank Name: </h1>
-              <h1 className="text-gray-700 ">{item?.bankName}</h1>
-            </motion.div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Bank Name:</span>
+            <span className="text-gray-800 break-words sm:text-right font-medium">{item?.bankName}</span>
+          </div>
 
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.35 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Liquid Asset: </h1>
-              <h1 className="text-gray-700 ">
-                {item?.liquidAssetsTenderAmount}
-              </h1>
-            </motion.div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Liquid Asset:</span>
+            <span className="text-gray-800 break-words sm:text-right font-medium">{item?.liquidAssetsTenderAmount}</span>
+          </div>
 
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Status: </h1>
-              <h1 className="text-gray-700 ">
-                <span
-                  className={`border-none shadow-none rounded inline-block py-0.5 px-1.5 bg-orange-300 w-full font-semibold text-orange-900 ${item?.status === "fulfilled" &&
-                    "bg-green-300 text-green-900"
-                    } ${item?.status === "canceled" && "bg-red-400 text-red-900"
-                    }`}
-                >
-                  {" "}
-                  {item?.status}
-                </span>
-              </h1>
-            </motion.div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Status:</span>
+            <span className="text-gray-800 break-words sm:text-right">
+              <span
+                className={`inline-block py-0.5 px-2 rounded font-semibold text-sm ${
+                  item?.status === "fulfilled" ? "bg-green-100 text-green-700" :
+                  item?.status === "canceled" ? "bg-red-100 text-red-700" :
+                  "bg-orange-100 text-orange-700"
+                }`}
+              >
+                {item?.status}
+              </span>
+            </span>
+          </div>
 
-            <motion.div
-              className="flex items-center justify-center gap-2 mt-4"
-              initial={{ opacity: 0, y: 10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.45 + idx * 0.05, duration: 0.3 }}
-            >
+          <div className="flex items-center justify-between gap-2 mt-4">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Actions:</span>
+            <div className="flex items-center gap-2">
               {item?.status !== "canceled" && item?.status !== "fulfilled" ? (
                 <Button
                   variant="destructive"
                   size="sm"
                   onClick={() => handleCancelRequest(item)}
-                  className="flex items-center gap-1 w-full"
+                  className="flex items-center gap-1 h-8 text-xs"
                 >
-                  <XCircle size={16} />
+                  <XCircle size={14} />
                   Cancel Request
                 </Button>
               ) : (
@@ -485,17 +388,17 @@ const MobileTableLayout = ({ data, handleCancelRequest }: { data: any, handleCan
                   variant="outline"
                   size="sm"
                   disabled
-                  className="flex items-center gap-1 opacity-50 w-full"
+                  className="flex items-center gap-1 opacity-50 h-8 text-xs"
                 >
-                  <XCircle size={16} />
+                  <XCircle size={14} />
                   {item?.status === "canceled" ? "Canceled" : "Fulfilled"}
                 </Button>
               )}
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 };
 

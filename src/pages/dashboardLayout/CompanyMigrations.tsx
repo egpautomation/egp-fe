@@ -131,147 +131,61 @@ const MobileTableLayout = ({
   data: any;
   setReload: any;
 }) => {
-  console.log(data);
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-      scale: 0.95,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.4,
-      },
-    },
-  };
-
-  const buttonVariants = {
-    rest: {
-      scale: 1,
-      transition: { duration: 0.2 },
-    },
-    hover: {
-      scale: 1.02,
-      transition: { duration: 0.2 },
-    },
-    tap: {
-      scale: 0.98,
-      transition: { duration: 0.1 },
-    },
-  };
-
   return (
-    <motion.div
-      className="flex flex-col gap-6 my-8 lg:hidden"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <div className="flex flex-col gap-6 my-8 lg:hidden px-2">
       {data?.map((item: any, idx: number) => (
-        <motion.div
+        <div
           key={idx}
-          className="flex flex-col gap-2 border rounded-xl p-4 md:p-8 py-6"
-          variants={cardVariants}
-          whileHover={{
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-            transition: { duration: 0.2 },
-          }}
+          className="flex flex-col gap-2 border rounded-xl p-4 py-6 shadow-sm bg-white"
         >
-          <div className="">
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">User: </h1>
-              <h1 className="text-gray-700">{item?.user}</h1>
-            </motion.div>
-
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.25 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">E-GP Email: </h1>
-              <h1 className="text-gray-700 ">{item?.egpEmail}</h1>
-            </motion.div>
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Company Name: </h1>
-              <h1 className="text-gray-700 ">{item?.companyName}</h1>
-            </motion.div>
-
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.35 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Status: </h1>
-              {/* <h1 className="text-gray-700 ">{item?.status}</h1> */}
-              <h1 className="text-gray-700 ">Coming soon...</h1>
-            </motion.div>
-
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.35 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Remarks: </h1>
-              {/* <h1 className="text-gray-700 ">{item?.remarks}</h1> */}
-              <h1 className="text-gray-700 ">Coming soon...</h1>
-            </motion.div>
-
-            <motion.div
-              className="flex items-center justify-between gap-2 border-b pb-2 my-2"
-              initial={{ opacity: 0, x: -10 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 + idx * 0.05, duration: 0.3 }}
-            >
-              <h1 className="font-medium">Actions: </h1>
-              <div className="flex items-center gap-2 justify-center">
-                <Link to={`/dashboard/edit-company-registration/${item?._id}`}>
-                  <SquarePen className="mr-2 mt-2" size={24} />
-                </Link>
-                <DeleteDataModal
-                  setReload={setReload}
-                  url={`${config.apiBaseUrl}/companyMigration/${item?._id}`}
-                />
-              </div>
-            </motion.div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">User:</span>
+            <span className="text-gray-800 break-all sm:text-right font-medium">{item?.user}</span>
           </div>
-        </motion.div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">E-GP Email:</span>
+            <span className="text-gray-800 break-all sm:text-right font-medium">{item?.egpEmail}</span>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Company Name:</span>
+            <span className="text-gray-800 break-words sm:text-right font-medium">{item?.companyName}</span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Status:</span>
+            <span className="text-gray-800 break-words sm:text-right font-medium">
+              <span className={`inline-block px-2 py-0.5 rounded text-xs ${item?.status === "active" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}`}>
+                {item?.status || "Not Registered"}
+              </span>
+            </span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Remarks:</span>
+            <span className="text-gray-800 break-words sm:text-right font-medium">{item?.remarks || "N/A"}</span>
+          </div>
+
+          <div className="flex items-center justify-between gap-2 mt-4">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Actions:</span>
+            <div className="flex items-center gap-4">
+              <Link 
+                to={`/dashboard/edit-company-registration/${item?._id}`}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                title="Edit"
+              >
+                <SquarePen size={22} className="text-blue-600" />
+              </Link>
+              <DeleteDataModal
+                setReload={setReload}
+                url={`${config.apiBaseUrl}/companyMigration/${item?._id}`}
+              />
+            </div>
+          </div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 };
 
