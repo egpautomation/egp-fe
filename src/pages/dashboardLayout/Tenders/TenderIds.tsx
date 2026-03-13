@@ -6,13 +6,13 @@ import { Input } from "@/components/ui/input";
 import useAllTenderIds from "@/hooks/useAllTenderIds";
 import { formatDate } from "@/lib/formateDate";
 import Pagination from "@/shared/Pagination/Pagination";
-import { AlignJustify, X } from "lucide-react";
+import { AlignJustify, Download, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import JsonFileUploader from "./JSONConverter";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 
 const TenderIds = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -55,6 +55,45 @@ const TenderIds = () => {
     }
   };
 
+  const downloadTenderIds = async () => {
+    const toastId = toast.loading("Fetching all Tender IDs…");
+    try {
+      const res = await axiosInstance.get('/live-tenders/export-ids');
+      if (res.data?.success) {
+        const ids = res.data.data;
+        if (!ids || ids.length === 0) {
+          toast.error("No Tender IDs found.");
+          return;
+        }
+
+        // CSV generation using Blob for larger datasets
+        const csvHeader = "Tender ID\n";
+        const csvRows = ids.join("\n");
+        const csvContent = csvHeader + csvRows;
+        
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `tender_ids_full_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up the URL object
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+        
+        toast.success(`Downloaded ${ids.length} total IDs ✓`);
+      }
+    } catch (err) {
+      console.error("Export error:", err);
+      toast.error("Download failed. Make sure backend is running.");
+    } finally {
+      toast.dismiss(toastId);
+    }
+  };
+
   useEffect(() => {
     const params = new URLSearchParams();
     params.set("page", currentPage);
@@ -65,8 +104,17 @@ const TenderIds = () => {
   return (
     <div>
       <div className=" my-5 ">
-        <div className="flex gap-3 justify-between">
+        <div className="flex gap-4 items-center justify-between">
           <JsonFileUploader setReload={setReload} />
+          
+          <Button 
+            onClick={downloadTenderIds}
+            variant="outline"
+            className="flex items-center gap-2 border-primary text-primary hover:bg-primary/10"
+          >
+            <Download size={18} />
+            Download all IDs (CSV)
+          </Button>
         </div>
       </div>
       <div

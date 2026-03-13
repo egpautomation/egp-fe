@@ -51,6 +51,10 @@ const FilterSection = ({ title, children, searchPlaceholder, searchValue, onSear
     <div className="mb-2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
       <AccordionTrigger className="flex items-center justify-between bg-teal-600 px-4 py-3 text-left text-sm font-semibold text-white hover:bg-teal-700 hover:no-underline [&[data-state=open]>svg]:rotate-180 [&>svg]:text-white">
         <span className="flex items-center gap-2">{title}</span>
+        <span className="ml-auto mr-2 flex items-center gap-1 rounded bg-white/20 px-2 py-0.5 text-xs">
+          Browse
+          <ChevronDown className="h-3 w-3 transition-transform duration-200" />
+        </span>
       </AccordionTrigger>
       <AccordionContent className="px-4 pb-3 pt-2">
         {searchPlaceholder && (
@@ -98,8 +102,11 @@ const PromotionalTender = () => {
 
   const [selectedDepartments, setSelectedDepartments] = useState([]);
   const [deptSearch, setDeptSearch] = useState("");
+  const [selectedLocations, setSelectedLocations] = useState([]);
+  const [locationSearch, setLocationSearch] = useState("");
   const [filterCounts, setFilterCounts] = useState({
     departments: [],
+    locations: [],
   });
 
   const { fetchAllTenders, tenders, loading, setLoading, tendersCount } = useAllTenders(
@@ -109,11 +116,11 @@ const PromotionalTender = () => {
     "", // method
     selectedDepartments.join("||"), // department
     "", // category
-    "", // location
+    selectedLocations.join("||"), // location
     "", // procurementNature
     currentPage,
     pageLimit,
-    "openingDateTime"
+    "publicationDateTime"
   );
 
   const promotionalTexts = [
@@ -150,7 +157,7 @@ Check now: www.etenderbd.com`
         "Document Price",
         "Security",
         "Estimated Cost",
-        "Opening Date"
+        "Publication Date"
       ];
 
       const tableRows: any[] = [];
@@ -165,7 +172,7 @@ Check now: www.etenderbd.com`
           item?.documentPrice ? `BDT ${item.documentPrice}` : "N/A",
           item?.tenderSecurity ? `BDT ${item.tenderSecurity}` : "N/A",
           item?.estimatedCost ? `BDT ${item.estimatedCost}` : "N/A",
-          formatDate(item?.openingDateTime, "dd-MM-yyyy")
+          formatDate(item?.publicationDateTime, "dd-MM-yyyy")
         ];
         tableRows.push(rowData);
       });
@@ -269,7 +276,7 @@ Check now: www.etenderbd.com`
   useEffect(() => {
     let ignore = false;
 
-    const CACHE_KEY = "promotional_filter_counts_v2";
+    const CACHE_KEY = "promotional_filter_counts_v4";
     const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
 
     const loadFilterCounts = async () => {
@@ -290,6 +297,7 @@ Check now: www.etenderbd.com`
         if (!ignore && response.data?.success) {
           const counts = {
             departments: response.data.data.departments || [],
+            locations: response.data.data.locations || [],
           };
           setFilterCounts(counts);
           // Cache for next visit
@@ -303,16 +311,29 @@ Check now: www.etenderbd.com`
     return () => { ignore = true; };
   }, []);
 
-  const departmentCountMap = useMemo(
-    () => Object.fromEntries((filterCounts?.departments || []).map((item) => [item.name, item.count || 0])),
-    [filterCounts?.departments]
-  );
-
   const filteredDepartments = useMemo(() => {
     const list = filterCounts.departments || [];
     if (!deptSearch) return list;
     return list.filter((d) => d.name?.toLowerCase().includes(deptSearch.toLowerCase()));
   }, [filterCounts.departments, deptSearch]);
+
+  const filteredLocations = useMemo(() => {
+    const list = filterCounts.locations?.map(l => l.name) || [];
+    if (!locationSearch) return list;
+    return list.filter((d) =>
+      d.toLowerCase().includes(locationSearch.toLowerCase())
+    );
+  }, [filterCounts.locations, locationSearch]);
+
+  const departmentCountMap = useMemo(
+    () => Object.fromEntries((filterCounts?.departments || []).map((item) => [item.name, item.count || 0])),
+    [filterCounts?.departments]
+  );
+
+  const locationCountMap = useMemo(
+    () => Object.fromEntries((filterCounts?.locations || []).map((item) => [item.name, item.count || 0])),
+    [filterCounts?.locations]
+  );
 
   const toggleSelection = (setter, list, value) => {
     if (list.includes(value)) {
@@ -321,6 +342,14 @@ Check now: www.etenderbd.com`
       setter([...list, value]);
     }
     setCurrentPage(1);
+  };
+
+  const getDepartmentCount = (deptName) => {
+    return departmentCountMap?.[deptName] || 0;
+  };
+
+  const getLocationCount = (locName) => {
+    return locationCountMap?.[locName] || 0;
   };
 
   // Filter options
@@ -378,7 +407,7 @@ Check now: www.etenderbd.com`
           className="mb-10 text-center flex flex-col items-center"
         >
           <h1 className="text-4xl lg:text-5xl font-bold text-red-600">টেন্ডার বিজ্ঞপ্তি</h1>
-          <p className="text-red-500 mt-2 text-xl font-bold">ওপেনিং ডেট: {getBengaliDate(selectedDate)}</p>
+          <p className="text-red-500 mt-2 text-xl font-bold">প্রকাশনা তারিখ: {getBengaliDate(selectedDate)}</p>
           <Button
             onClick={downloadPdf}
             disabled={isPdfLoading}
@@ -425,7 +454,7 @@ Check now: www.etenderbd.com`
                         আনুমানিক মূল্য
                       </TableHead>
                       <TableHead className="px-4 py-4 text-slate-700 font-bold text-center">
-                        ওপেনিং ডেট
+                        প্রকাশনা তারিখ
                       </TableHead>
                     </TableRow>
                   </TableHeader>
@@ -481,7 +510,7 @@ Check now: www.etenderbd.com`
                               <span className="font-medium text-slate-700">BDT {tender.estimatedCost}</span>
                             </TableCell>
                             <TableCell className="px-4 py-4 text-center">
-                              <span className="font-medium text-red-700">{formatDate(tender.openingDateTime, "dd MMMM yyyy")}</span>
+                              <span className="font-medium text-red-700">{formatDate(tender.publicationDateTime, "dd MMMM yyyy")}</span>
                             </TableCell>
                           </motion.tr>
                         ))
@@ -626,6 +655,7 @@ Check now: www.etenderbd.com`
               <Button
                 onClick={() => {
                   setSelectedDepartments([]);
+                  setSelectedLocations([]);
                   setSelectedDate(localToday);
                   setCurrentPage(1);
                 }}
@@ -641,7 +671,11 @@ Check now: www.etenderbd.com`
               <AccordionItem value="Date Filter" className="border-0">
                 <div className="mb-2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
                   <AccordionTrigger className="flex items-center justify-between bg-teal-600 px-4 py-3 text-left text-sm font-semibold text-white hover:bg-teal-700 hover:no-underline [&[data-state=open]>svg]:rotate-180 [&>svg]:text-white">
-                    <span className="flex items-center gap-2">Opening Date</span>
+                    <span className="flex items-center gap-2">Publication Date</span>
+                    <span className="ml-auto mr-2 flex items-center gap-1 rounded bg-white/20 px-2 py-0.5 text-xs">
+                      Browse
+                      <ChevronDown className="h-3 w-3 transition-transform duration-200" />
+                    </span>
                   </AccordionTrigger>
                   <AccordionContent className="px-4 py-4">
                     <div className="relative">
@@ -672,9 +706,29 @@ Check now: www.etenderbd.com`
                     <FilterCheckbox
                       key={dept.name}
                       label={dept.name}
-                      count={departmentCountMap[dept.name]}
+                      count={getDepartmentCount(dept.name)}
                       checked={selectedDepartments.includes(dept.name)}
                       onCheckedChange={() => toggleSelection(setSelectedDepartments, selectedDepartments, dept.name)}
+                    />
+                  ))}
+                </div>
+              </FilterSection>
+
+              <FilterSection
+                title="Locations"
+                searchPlaceholder="Search locations..."
+                searchValue={locationSearch}
+                onSearchChange={setLocationSearch}
+                count={filteredLocations?.length}
+              >
+                <div className="space-y-1">
+                  {filteredLocations?.map((loc) => (
+                    <FilterCheckbox
+                      key={loc}
+                      label={loc}
+                      count={getLocationCount(loc)}
+                      checked={selectedLocations.includes(loc)}
+                      onCheckedChange={() => toggleSelection(setSelectedLocations, selectedLocations, loc)}
                     />
                   ))}
                 </div>

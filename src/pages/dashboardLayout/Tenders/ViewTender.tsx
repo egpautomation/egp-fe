@@ -26,7 +26,7 @@ const ViewTender = () => {
 
   const openingDateTime = formatDate(formData?.openingDateTime, "eee MMM dd yyyy");
   const lastSelling = formatDate(formData?.documentLastSelling, "eee MMM dd yyyy");
-  const publicationTime = formatDate(formData?.publicationDateTime, "eee MMM dd yyyy");
+  const publicationDateTime = formatDate(formData?.publicationDateTime, "eee MMM dd yyyy");
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
@@ -93,7 +93,7 @@ const ViewTender = () => {
       ["Estimated Cost", formatCurrency(formData?.estimatedCost)],
       ["Last Selling Date", lastSelling],
       ["Closing Date", openingDateTime],
-      ["Publication Date", publicationTime],
+      ["Publication Date", publicationDateTime],
     ];
 
     autoTable(doc, {
@@ -564,7 +564,7 @@ const ViewTender = () => {
 
           {/* Timeline & Dates */}
           <InfoCard icon={Calendar} title="Timeline & Dates">
-            <DataField label="Publication Date" value={publicationTime} />
+            <DataField label="Publication Date" value={publicationDateTime} />
             <DataField label="Last Selling Date" value={lastSelling} />
             <DataField label="Opening Date" value={openingDateTime} />
           </InfoCard>
