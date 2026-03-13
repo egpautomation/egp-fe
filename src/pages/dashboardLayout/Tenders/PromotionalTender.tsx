@@ -112,7 +112,8 @@ const PromotionalTender = () => {
     "", // location
     "", // procurementNature
     currentPage,
-    pageLimit
+    pageLimit,
+    "openingDateTime"
   );
 
   const promotionalTexts = [
@@ -149,7 +150,7 @@ Check now: www.etenderbd.com`
         "Document Price",
         "Security",
         "Estimated Cost",
-        "Last Selling Date"
+        "Closing Date"
       ];
 
       const tableRows: any[] = [];
@@ -164,7 +165,7 @@ Check now: www.etenderbd.com`
           item?.documentPrice ? `BDT ${item.documentPrice}` : "N/A",
           item?.tenderSecurity ? `BDT ${item.tenderSecurity}` : "N/A",
           item?.estimatedCost ? `BDT ${item.estimatedCost}` : "N/A",
-          formatDate(item?.documentLastSelling, "dd-MM-yyyy")
+          formatDate(item?.openingDateTime, "dd-MM-yyyy")
         ];
         tableRows.push(rowData);
       });
@@ -377,7 +378,7 @@ Check now: www.etenderbd.com`
           className="mb-10 text-center flex flex-col items-center"
         >
           <h1 className="text-4xl lg:text-5xl font-bold text-red-600">টেন্ডার বিজ্ঞপ্তি</h1>
-          <p className="text-red-500 mt-2 text-xl font-bold">শেষ তারিখ: {getBengaliDate(selectedDate)}</p>
+          <p className="text-red-500 mt-2 text-xl font-bold">বন্ধ হওয়ার তারিখ: {getBengaliDate(selectedDate)}</p>
           <Button
             onClick={downloadPdf}
             disabled={isPdfLoading}
@@ -424,7 +425,7 @@ Check now: www.etenderbd.com`
                         আনুমানিক মূল্য
                       </TableHead>
                       <TableHead className="px-4 py-4 text-slate-700 font-bold text-center">
-                        বিক্রির শেষ তারিখ
+                        বন্ধ হওয়ার তারিখ
                       </TableHead>
                     </TableRow>
                   </TableHeader>
@@ -480,7 +481,7 @@ Check now: www.etenderbd.com`
                               <span className="font-medium text-slate-700">BDT {tender.estimatedCost}</span>
                             </TableCell>
                             <TableCell className="px-4 py-4 text-center">
-                              <span className="font-medium text-red-700">{formatDate(tender.documentLastSelling, "dd MMMM yyyy")}</span>
+                              <span className="font-medium text-red-700">{formatDate(tender.openingDateTime, "dd MMMM yyyy")}</span>
                             </TableCell>
                           </motion.tr>
                         ))
@@ -640,7 +641,7 @@ Check now: www.etenderbd.com`
               <AccordionItem value="Date Filter" className="border-0">
                 <div className="mb-2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
                   <AccordionTrigger className="flex items-center justify-between bg-teal-600 px-4 py-3 text-left text-sm font-semibold text-white hover:bg-teal-700 hover:no-underline [&[data-state=open]>svg]:rotate-180 [&>svg]:text-white">
-                    <span className="flex items-center gap-2">Last Selling Date</span>
+                    <span className="flex items-center gap-2">Closing Date</span>
                   </AccordionTrigger>
                   <AccordionContent className="px-4 py-4">
                     <div className="relative">

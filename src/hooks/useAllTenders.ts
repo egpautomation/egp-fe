@@ -11,7 +11,8 @@ const useAllTenders = (
   location = "",
   procurementNature = "",
   page = 1,
-  limit = 20
+  limit = 20,
+  dateType = "documentLastSelling"
 ) => {
   const [tenders, setTenders] = useState([]);
   const [tendersCount, setTendersCount] = useState(0);
@@ -51,7 +52,8 @@ const useAllTenders = (
             location: location.includes("||") ? location.split("||").join(",") : location,
             procurementNature: procurementNature.includes("||") ? procurementNature.split("||").join(",") : procurementNature,
             page,
-            limit
+            limit,
+            dateType
           }
         }));
         setTenders(response.data?.data);
@@ -75,6 +77,7 @@ const useAllTenders = (
     procurementNature,
     page,
     limit,
+    dateType,
   ]);
 
   const fetchAllTenders = async () => {
@@ -107,7 +110,8 @@ const useAllTenders = (
           location: location.includes("||") ? location.split("||").join(",") : location,
           procurementNature: procurementNature.includes("||") ? procurementNature.split("||").join(",") : procurementNature,
           page: 1,
-          limit: 10000
+          limit: 10000,
+          dateType
         }
       }));
       return response.data?.data || [];

@@ -159,7 +159,7 @@ export function AppSidebarNew() {
         {
           label: "Promotional Tender",
           path: "/dashboard/promotional-tender",
-          role: ["user", "admin", "guest", "moderator", "user_agent"],
+          role: ["user", "admin", "guest", "moderator"],
         },
       ],
     },
