@@ -108,6 +108,7 @@ const LtmTenders = () => {
     procurementNatures: [],
     methods: [],
   });
+  const [isPdfLoading, setIsPdfLoading] = useState(false);
 
   const { fetchAllTenders, tenders, loading, setLoading, tendersCount } = useAllTenders(
     searchTerm,
@@ -199,7 +200,7 @@ const LtmTenders = () => {
     const loadFilterCounts = async () => {
       try {
         setLoading(true);
-        // Fetch all LTM tenders to calculate accurate counts locally
+        // Fetch all LTM tenders matching current filters to calculate accurate counts locally
         const allLtmTenders = await fetchAllTenders();
 
         if (!ignore && allLtmTenders) {
@@ -212,7 +213,7 @@ const LtmTenders = () => {
             const d = tender.organization || tender.department;
             if (d) deptCounts[d] = (deptCounts[d] || 0) + 1;
 
-            const c = tender.category;
+            const c = tender.category || tender.tenderCategory || tender.tender_subCategories;
             if (c) catCounts[c] = (catCounts[c] || 0) + 1;
 
             const l = tender.locationDistrict;
@@ -242,7 +243,13 @@ const LtmTenders = () => {
     return () => {
       ignore = true;
     };
-  }, []); // Only once on load
+  }, [
+    searchTerm,
+    selectedDepartments.length,
+    selectedCategories.length,
+    selectedLocations.length,
+    selectedProcurementNatures.length
+  ]);
 
   const departmentCountMap = useMemo(
     () =>
@@ -277,7 +284,9 @@ const LtmTenders = () => {
   };
 
   const downloadPdf = async () => {
-    const doc = new jsPDF("l", "mm", "a4");
+    setIsPdfLoading(true);
+    try {
+      const doc = new jsPDF("l", "mm", "a4");
 
     const tableColumn = [
       "Tender ID",
@@ -285,7 +294,6 @@ const LtmTenders = () => {
       "Description",
       "Location",
       "Details",
-      "Quality criteria",
     ];
 
     const tableRows = [];
@@ -323,36 +331,46 @@ const LtmTenders = () => {
         item?.descriptionOfWorks || "N/A",
         item?.locationDistrict,
         details,
-        others,
       ];
       tableRows.push(rowData);
     });
 
     autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-      startY: 25,
-      margin: { top: 20, bottom: 25, left: 10, right: 10 },
-      styles: { fontSize: 10, cellPadding: 2.5, overflow: "linebreak" },
-      columnStyles: {
-        0: { cellWidth: 30 },
-        1: { cellWidth: 40 },
-        2: { cellWidth: 70 },
-        3: { cellWidth: 30 },
-        4: { cellWidth: 60 },
-        5: { cellWidth: 47 },
-      },
-      headStyles: {
-        fillColor: [37, 37, 37],
-        textColor: 255,
-        fontSize: 12,
-        fontStyle: "bold",
-        halign: "start",
-      },
+        head: [tableColumn],
+        body: tableRows,
+        startY: 25,
+        margin: { top: 20, bottom: 25, left: 10, right: 10 },
+        theme: "grid",
+        styles: {
+          fontSize: 10,
+          cellPadding: 2.5,
+          overflow: "linebreak",
+          textColor: [0, 0, 0], // Dark black text
+        },
+        columnStyles: {
+          0: { cellWidth: 30 },
+          1: { cellWidth: 40 },
+          2: { cellWidth: 80 }, // Increased width as Quality Criteria is removed
+          3: { cellWidth: 30 },
+          4: { cellWidth: 70 }, // Increased width as Quality Criteria is removed
+        },
+        headStyles: {
+          fillColor: [255, 255, 255],
+          textColor: [0, 0, 0],
+          fontSize: 11,
+          fontStyle: "bold",
+          halign: "start",
+          lineWidth: 0.1,
+          lineColor: [200, 200, 200],
+        },
+        alternateRowStyles: {
+          fillColor: [255, 255, 255],
+        },
       didDrawPage: (data) => {
         const pageNumber = doc.internal.getNumberOfPages();
         doc.setFontSize(18);
         doc.setFont("helvetica", "bold");
+        doc.setTextColor(0, 0, 0);
         doc.text("E-GP Tender Automation (LTM Tenders)", data.settings.margin.left, 15);
 
         const dateStr = new Date().toLocaleDateString("en-GB", {
@@ -361,18 +379,24 @@ const LtmTenders = () => {
           year: "numeric",
         });
         doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0);
         doc.text(dateStr, doc.internal.pageSize.width - data.settings.margin.right - doc.getTextWidth(dateStr), 15);
 
         const pageHeight = doc.internal.pageSize.height;
         const centerX = doc.internal.pageSize.width / 2;
         doc.setFontSize(8);
-        doc.setTextColor(37, 37, 37);
+        doc.setTextColor(0, 0, 0);
         doc.text(`© ${new Date().getFullYear()} E-GP Tender Automation — All Rights Reserved.`, centerX, pageHeight - 15, { align: "center" });
         doc.text(`Page ${pageNumber}`, centerX, pageHeight - 10, { align: "center" });
       },
     });
 
-    doc.save("ltm-tenders.pdf");
+      doc.save("ltm-tenders.pdf");
+    } catch (error) {
+      console.error("PDF Generate Error:", error);
+    } finally {
+      setIsPdfLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -522,10 +546,14 @@ const LtmTenders = () => {
                   onClick={downloadPdf}
                   variant="outline"
                   className="h-9 text-sm gap-1.5"
-                  disabled={loading || tendersCount === 0}
+                  disabled={loading || tendersCount === 0 || isPdfLoading}
                 >
-                  <Printer size={14} />
-                  Print as PDF
+                  {isPdfLoading ? (
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-primary" />
+                  ) : (
+                    <Printer size={14} />
+                  )}
+                  {isPdfLoading ? "Processing..." : "Print as PDF"}
                 </Button>
               </div>
             </div>

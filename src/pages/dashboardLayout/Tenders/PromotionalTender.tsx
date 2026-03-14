@@ -182,23 +182,24 @@ Check now: www.etenderbd.com`
         body: tableRows,
         startY: 30, // Lowered start to properly clear header
         margin: { top: 25, bottom: 45, left: 14, right: 14 },
+        theme: "grid",
         styles: {
           fontSize: 9,
           cellPadding: 4,
-          textColor: [40, 40, 40],
-          lineColor: [220, 220, 220],
+          textColor: [0, 0, 0], // Dark black text
+          lineColor: [200, 200, 200],
           lineWidth: 0.1,
           overflow: "linebreak",
         },
         headStyles: {
-          fillColor: [22, 163, 74], // Green theme
-          textColor: 255,
+          fillColor: [255, 255, 255],
+          textColor: [0, 0, 0],
           fontSize: 10,
           fontStyle: "bold",
           halign: "left",
         },
         alternateRowStyles: {
-          fillColor: [250, 250, 250],
+          fillColor: [255, 255, 255],
         },
         columnStyles: {
           0: { cellWidth: 25, halign: "center", fontStyle: "bold" },
@@ -211,12 +212,12 @@ Check now: www.etenderbd.com`
         },
         didDrawPage: (data) => {
           doc.setFontSize(18);
-          doc.setTextColor(22, 163, 74);
+          doc.setTextColor(0, 0, 0);
           doc.setFont("helvetica", "bold");
           doc.text("Promotional Tenders Report", data.settings.margin.left, 18);
 
           doc.setFontSize(10);
-          doc.setTextColor(100, 100, 100);
+          doc.setTextColor(0, 0, 0);
           doc.setFont("helvetica", "normal");
           doc.text(`Generated on: ${new Date().toLocaleDateString()}`, doc.internal.pageSize.getWidth() - data.settings.margin.right, 18, { align: 'right' });
         }
@@ -276,40 +277,50 @@ Check now: www.etenderbd.com`
   useEffect(() => {
     let ignore = false;
 
-    const CACHE_KEY = "promotional_filter_counts_v4";
-    const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
-
     const loadFilterCounts = async () => {
       try {
-        // ── STEP 1: Try cache first — instant, no API call ──
-        const cached = sessionStorage.getItem(CACHE_KEY);
-        if (cached) {
-          const { data, ts } = JSON.parse(cached);
-          if (Date.now() - ts < CACHE_TTL) {
-            if (!ignore) setFilterCounts(data);
-            return;
+        setLoading(true);
+        // Fetch ALL tenders for the selected date directly to get accurate global counts for that day
+        const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders', {
+          params: {
+            from: selectedDate,
+            to: selectedDate,
+            dateType: "publicationDateTime",
+            page: 1,
+            limit: 10000
           }
-        }
+        }));
 
-        // ── STEP 2: Cache miss — fetch from fast backend endpoint ──
-        const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders/tender-filter-counts'));
+        const allTendersForDate = response.data?.data || [];
 
-        if (!ignore && response.data?.success) {
+        if (!ignore) {
+          const deptCounts = {};
+          const locCounts = {};
+
+          allTendersForDate.forEach(tender => {
+            const d = tender.organization || tender.department;
+            if (d) deptCounts[d] = (deptCounts[d] || 0) + 1;
+
+            const l = tender.locationDistrict;
+            if (l) locCounts[l] = (locCounts[l] || 0) + 1;
+          });
+
           const counts = {
-            departments: response.data.data.departments || [],
-            locations: response.data.data.locations || [],
+            departments: Object.entries(deptCounts).map(([name, count]) => ({ name, count })),
+            locations: Object.entries(locCounts).map(([name, count]) => ({ name, count })),
           };
           setFilterCounts(counts);
-          // Cache for next visit
-          sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data: counts, ts: Date.now() }));
         }
       } catch (error) {
-        console.error("Failed to fetch filter counts:", error);
+        console.error("Failed to calculate promotional filter counts:", error);
+      } finally {
+        setLoading(false);
       }
     };
+
     loadFilterCounts();
     return () => { ignore = true; };
-  }, []);
+  }, [selectedDate]); // Re-run whenever selectedDate changes
 
   const filteredDepartments = useMemo(() => {
     const list = filterCounts.departments || [];

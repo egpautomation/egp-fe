@@ -9,6 +9,7 @@ import { AuthContext } from "@/provider/AuthProvider";
 import { AlignJustify, CircleUserRound, Eye } from "lucide-react";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { formatDate } from "@/lib/formateDate";
 
 const Users = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -68,6 +69,12 @@ const Users = () => {
                 <th className="whitespace-nowrap px-4 py-2 text-start ">
                   Role
                 </th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">
+                  Wallet
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">
+                  Joined At
+                </th>
                 <th className="whitespace-nowrap px-4 py-2 text-start rounded-tr">
                   Actions
                 </th>
@@ -118,6 +125,12 @@ const Users = () => {
                         </SelectGroup>
                       </SelectContent>
                     </Select></td>
+                  <td className="px-4 py-2 text-orange-600 font-medium">
+                    ৳ {user?.wallet?.balance?.toLocaleString() || "0"}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-slate-500">
+                    {user?.createdAt ? formatDate(user.createdAt, "dd MMM, yyyy") : "N/A"}
+                  </td>
                   <td className="px-4 py-2 flex items-center justify-center">
                     <Link to={`/dashboard/users/${user?.userId}`}>
                       <Eye className="mr-2 mt-2" size={24} />

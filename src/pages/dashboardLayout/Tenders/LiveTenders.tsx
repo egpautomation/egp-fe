@@ -140,6 +140,7 @@ const LiveTenders = () => {
     currentPage,
     pageLimit
   );
+  const [isPdfLoading, setIsPdfLoading] = useState(false);
   const skeleton = new Array(pageLimit).fill(Math?.random());
 
   const hasActiveFilters =
@@ -255,6 +256,83 @@ const LiveTenders = () => {
     return () => { ignore = true; };
   }, []);
 
+  // ── NEW: Dynamic counts based on active filters ──
+  useEffect(() => {
+    let ignore = false;
+    
+    // If no filters are active, we don't need to do local counting (initial global fetch handles it)
+    if (!hasActiveFilters) {
+      // Re-fetch global counts if we cleared filters to ensure they are fresh
+      const refreshGlobalCounts = async () => {
+         const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders/tender-filter-counts'));
+         if (!ignore && response.data?.success) {
+           setFilterCounts({
+             departments: response.data.data.departments || [],
+             categories: response.data.data.categories || [],
+             locations: response.data.data.locations || [],
+             methods: response.data.data.methods || [],
+             procurementNatures: response.data.data.procurementNatures || [],
+           });
+         }
+      };
+      refreshGlobalCounts();
+      return;
+    }
+
+    const updateDynamicCounts = async () => {
+      try {
+        // Fetch ALL tenders matching current filters to count accurately
+        const allFilteredTenders = await fetchAllTenders();
+        
+        if (!ignore && allFilteredTenders) {
+          const deptMap = {};
+          const catMap = {};
+          const locMap = {};
+          const methodMap = {};
+          const natureMap = {};
+
+          allFilteredTenders.forEach(t => {
+            const d = t.organization || t.department;
+            if (d) deptMap[d] = (deptMap[d] || 0) + 1;
+
+            const c = t.category || t.tenderCategory || t.tender_subCategories;
+            if (c) catMap[c] = (catMap[c] || 0) + 1;
+
+            const l = t.locationDistrict;
+            if (l) locMap[l] = (locMap[l] || 0) + 1;
+
+            const m = t.procurementMethod;
+            if (m) methodMap[m] = (methodMap[m] || 0) + 1;
+
+            const n = t.procurementNature;
+            if (n) natureMap[n] = (natureMap[n] || 0) + 1;
+          });
+
+          setFilterCounts({
+            departments: Object.entries(deptMap).map(([name, count]) => ({ name, count })),
+            categories: Object.entries(catMap).map(([name, count]) => ({ name, count })),
+            locations: Object.entries(locMap).map(([name, count]) => ({ name, count })),
+            methods: Object.entries(methodMap).map(([name, count]) => ({ name, count })),
+            procurementNatures: Object.entries(natureMap).map(([name, count]) => ({ name, count })),
+          });
+        }
+      } catch (error) {
+        console.error("Failed to update dynamic counts:", error);
+      }
+    };
+
+    updateDynamicCounts();
+
+    return () => { ignore = true; };
+  }, [
+    searchTerm,
+    selectedDepartments.length,
+    selectedCategories.length,
+    selectedLocations.length,
+    selectedMethods.length,
+    selectedProcurementNatures.length
+  ]);
+
   const departmentCountMap = useMemo(
     () =>
       Object.fromEntries(
@@ -310,7 +388,9 @@ const LiveTenders = () => {
   };
 
   const downloadPdf = async () => {
-    const doc = new jsPDF("l", "mm", "a4");
+    setIsPdfLoading(true);
+    try {
+      const doc = new jsPDF("l", "mm", "a4");
 
     const tableColumn = [
       "Tender ID",
@@ -374,10 +454,12 @@ const LiveTenders = () => {
       body: tableRows,
       startY: 25,
       margin: { top: 20, bottom: 25, left: 10, right: 10 }, // ensures safe print area
+      theme: "grid",
       styles: {
         fontSize: 10,
         cellPadding: 2.5,
         overflow: "linebreak",
+        textColor: [0, 0, 0], // Dark black text
       },
       columnStyles: {
         0: { cellWidth: 30 }, // Tender ID
@@ -388,12 +470,16 @@ const LiveTenders = () => {
         5: { cellWidth: 47 }, // Quality criteria / Others
       },
       headStyles: {
-        fillColor: [37, 37, 37],
-        textColor: 255,
-        fontSize: 12,
+        fillColor: [255, 255, 255],
+        textColor: [0, 0, 0],
+        lineWidth: 0.1,
+        lineColor: [200, 200, 200],
+        fontSize: 11,
         fontStyle: "bold",
         halign: "start",
-        whiteSpace: "nowrap",
+      },
+      alternateRowStyles: {
+        fillColor: [255, 255, 255],
       },
 
       didDrawPage: (data) => {
@@ -401,6 +487,7 @@ const LiveTenders = () => {
 
         doc.setFontSize(18);
         doc.setFont("helvetica", "bold");
+        doc.setTextColor(0, 0, 0);
         doc.text(
           "E-GP Tender Automation (Live Tenders)",
           data.settings.margin.left,
@@ -429,7 +516,7 @@ const LiveTenders = () => {
         const line3Y = line2Y + 4;
 
         doc.setFontSize(8);
-        doc.setTextColor(37, 37, 37);
+        doc.setTextColor(0, 0, 0);
 
         doc.text(
           `© ${new Date().getFullYear()} E-GP Tender Automation — All Rights Reserved.`,
@@ -476,7 +563,12 @@ const LiveTenders = () => {
       pageBreak: "auto",
     });
 
-    doc.save("live-tenders.pdf");
+      doc.save("live-tenders.pdf");
+    } catch (error) {
+      console.error("PDF generate error:", error);
+    } finally {
+      setIsPdfLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -646,10 +738,14 @@ const LiveTenders = () => {
                   onClick={downloadPdf}
                   variant="outline"
                   className="h-9 text-sm gap-1.5"
-                  disabled={loading || tendersCount === 0}
+                  disabled={loading || tendersCount === 0 || isPdfLoading}
                 >
-                  <ExternalLink size={14} className="rotate-180" />
-                  Print Table
+                  {isPdfLoading ? (
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-primary" />
+                  ) : (
+                    <ExternalLink size={14} className="rotate-180" />
+                  )}
+                  {isPdfLoading ? "Processing..." : "Print Table"}
                 </Button>
               </div>
             </div>
