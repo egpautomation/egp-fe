@@ -1,7 +1,6 @@
-// @ts-nocheck
-import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
-import { formatDate } from "@/lib/formateDate";
+import { config } from "@/lib/config";
+import axiosInstance from "@/lib/axiosInstance";
 
 const LIVE_TENDERS_API = `${config.apiBaseUrl}/live-tenders`;
 
@@ -24,10 +23,10 @@ const useLiveTenders = (
         const fetchAllData = async () => {
             try {
                 setLoading(true);
-                const queryParams = new URLSearchParams({
-                    page: page.toString(),
-                    limit: limit.toString(),
-                });
+                const params: any = {
+                    page,
+                    limit
+                };
                 
                 const s = searchTerm.trim();
                 const m = ministry.trim();
@@ -35,25 +34,24 @@ const useLiveTenders = (
                 const t = typeMethod.trim();
                 const pDate = publishingDate.trim();
 
-                if (s) queryParams.append('search', s);
-                if (t) queryParams.append('method', t); 
-                if (m) queryParams.append('organization', m);
-                if (d) queryParams.append('locationDistrict', d);
-                if (pDate) queryParams.append('publicationDateTime', pDate);
+                if (s) params.search = s;
+                if (t) params.method = t; 
+                if (m) params.organization = m;
+                if (d) params.locationDistrict = d;
+                if (pDate) params.publicationDateTime = pDate;
 
-                const url = `${LIVE_TENDERS_API}?${queryParams.toString()}`;
-                const response = await fetch(url);
-                const data = await response.json();
+                const response = await axiosInstance.get('/live-tenders', { params });
+                const data = response.data;
 
                 const list =
-                    data?.data ??
+                    data?.data?.tenders ??
                     data?.tenders ??
                     data?.result ??
-                    (Array.isArray(data) ? data : []);
+                    (Array.isArray(data?.data) ? data.data : []);
 
                 setTenders(list);
-                setTendersCount(data?.total || list.length);
-                setAllTenders(list); // Keep interface for compatibility
+                setTendersCount(data?.data?.total || data?.total || list.length);
+                setAllTenders(list); 
             } catch (error) {
                 console.error("Error fetching live tenders:", error);
             } finally {
