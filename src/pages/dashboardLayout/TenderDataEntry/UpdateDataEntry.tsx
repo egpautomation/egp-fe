@@ -8,7 +8,7 @@ import useAllTenders from "@/hooks/useAllTenders";
 import { createData } from "@/lib/createData";
 import { formatDate } from "@/lib/formateDate";
 import Pagination from "@/shared/Pagination/Pagination";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 import { AlignJustify, SendHorizontal } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -114,7 +114,7 @@ const UpdateTenderDataEntry = () => {
  
       if ((data?.status == "success") && (data?.code === 200)) {
         const url = `${config.apiBaseUrl}/tender-dataEntry/${tenderData?.tender_id}`;
-        const response = await axios.delete(url, { withCredentials: false });
+        const response = await axiosInstance.delete(url, { withCredentials: false });
         if (response.status === 200) {
           toast.dismiss(toastId);
           toast.success("Successfully Deleted");

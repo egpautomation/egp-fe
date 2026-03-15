@@ -84,7 +84,7 @@ function JsonImportPanel({ onImportDone }) {
     setLoading(true);
     const toastId = toast.loading(`Importing ${parsed.length} tenders…`);
     try {
-      const res = await axios.post(`${LIVE_TENDERS_API}/import-json`, parsed);
+      const res = await axiosInstance.post(`${LIVE_TENDERS_API}/import-json`, parsed);
       toast.dismiss(toastId);
       toast.success(
         `✅ ${res.data?.inserted ?? parsed.length} tenders imported successfully!`
@@ -279,7 +279,7 @@ export default function LiveTendersFromTenderIds() {
   const handleDelete = async (id) => {
     const toastId = toast.loading("Deleting…");
     try {
-      await axios.delete(`${LIVE_TENDERS_API}/${id}`);
+      await axiosInstance.delete(`${LIVE_TENDERS_API}/${id}`);
       toast.dismiss(toastId);
       toast.success("Deleted ✓");
       setConfirmDeleteId(null);

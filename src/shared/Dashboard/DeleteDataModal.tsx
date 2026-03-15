@@ -9,7 +9,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -21,7 +21,7 @@ const DeleteDataModal = ({ setReload, url }) => {
     e.preventDefault();
     const toastId = toast.loading("Loading...");
     try {
-      const response = await axios.delete(url, { withCredentials: false });
+      const response = await axiosInstance.delete(url, { withCredentials: false });
       if (response.status === 200) {
         setIsOpen(false);
         toast.dismiss(toastId);

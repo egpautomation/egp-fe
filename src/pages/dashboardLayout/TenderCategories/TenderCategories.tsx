@@ -17,7 +17,7 @@ import useAllJobOrders from "@/hooks/useAllJobOrders";
 import useAllTenderCategoriesWithPagination from "@/hooks/useAllTenderCategoriesWithPagination";
 import { updateData } from "@/lib/updateData";
 import Pagination from "@/shared/Pagination/Pagination";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 import { AlignJustify, Plus, X } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -41,7 +41,7 @@ const TenderCategories = () => {
         const url = `${config.apiBaseUrl}/tender-categories/delete-category/${id}`;
         try {
 
-            const response = await axios.delete(url, { withCredentials: false });
+            const response = await axiosInstance.delete(url, { withCredentials: false });
             console.log(response)
             if (response.status === 200) {
                 setMessage("Tenders Deleted Category.");

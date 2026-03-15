@@ -38,7 +38,7 @@ const TenderIds = () => {
     const url = `${config.apiBaseUrl}/tenderIds/delete-tenderId/${id}`
     const toastId = toast.loading("Loading...");
     try {
-      const response = await axios.delete(url, { withCredentials: false });
+      const response = await axiosInstance.delete(url, { withCredentials: false });
       if (response.status === 200) {
         ;
         toast.dismiss(toastId);

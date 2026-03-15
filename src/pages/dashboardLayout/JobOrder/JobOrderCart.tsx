@@ -8,7 +8,7 @@ import useSingleData from "@/hooks/useSingleData";
 import { createData } from "@/lib/createData";
 import { AuthContext } from "@/provider/AuthProvider";
 import { CartContext } from "@/provider/CartContext";
-import axios from "axios";
+// axios import removed as it was only used for raw delete calls
 import { SquareX, RefreshCw } from "lucide-react";
 import { use, useContext, useState, useEffect, useCallback } from "react";
 import axiosInstance from "@/lib/axiosInstance";
@@ -71,9 +71,8 @@ const JobOrderCart = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(
-        `${config.apiBaseUrl}/jobOrder-cart/${id}`,
-        { withCredentials: true }
+      await axiosInstance.delete(
+        `${config.apiBaseUrl}/jobOrder-cart/${id}`
       );
     } catch (error) {
       console.error("Error:", error);
