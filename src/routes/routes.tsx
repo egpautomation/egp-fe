@@ -84,6 +84,7 @@ import LiveTendersFromTenderIds from "@/pages/dashboardLayout/LiveTenders/LiveTe
 import LiveTender from "@/pages/dashboardLayout/LiveTenders/LiveTender";
 import StlCalculationPage from "@/pages/homeLayout/StlCalculationPage";
 import PrivacyPolicy from "@/pages/homeLayout/PrivacyAndPolicy";
+import GoogleOnboarding from "@/pages/homeLayout/GoogleOnboarding";
 
 
 const router = createBrowserRouter([
@@ -142,6 +143,10 @@ const router = createBrowserRouter([
       {
         path: "/privacy-policy",
         element: <PrivacyPolicy />,
+      },
+      {
+        path: "/onboarding",
+        element: <GoogleOnboarding />,
       },
       {
         path: "/stl-calculation",

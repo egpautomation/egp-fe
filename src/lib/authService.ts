@@ -30,6 +30,7 @@ export interface User {
   phone: string;
   whatsApp: string;
   walletBalance?: number;
+  isProfileComplete?: boolean;
 }
 
 // Login Response Interface
@@ -228,9 +229,9 @@ export const login = async (email: string, password: string): Promise<LoginRespo
 /**
  * Login user via Google OAuth
  * @param idToken - Google ID token
- * @returns Login response with token and user data
+ * @returns Login response with token, user data, and onboardingRequired flag
  */
-export const googleLogin = async (idToken: string): Promise<LoginResponse> => {
+export const googleLogin = async (idToken: string): Promise<LoginResponse & { onboardingRequired?: boolean }> => {
   try {
     const response = await fetch(`${API_BASE_URL}/user/google-login`, {
       method: 'POST',
@@ -275,6 +276,7 @@ export const googleLogin = async (idToken: string): Promise<LoginResponse> => {
     return {
       success: true,
       message: data.message || 'Login successful',
+      onboardingRequired: data.onboardingRequired ?? false,
       data: {
         token,
         refreshToken,
@@ -286,6 +288,42 @@ export const googleLogin = async (idToken: string): Promise<LoginResponse> => {
     throw error;
   }
 };
+
+/**
+ * Complete profile for Google users - submit missing fields
+ * @param data - profile fields: phone, whatsApp, district, address, password (optional)
+ */
+export const completeProfile = async (data: {
+  phone: string;
+  whatsApp: string;
+  district: string;
+  address?: string;
+  password?: string;
+}): Promise<{ success: boolean; message: string; data: User }> => {
+  const token = getAccessToken();
+  const response = await fetch(`${API_BASE_URL}/user/complete-profile`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || 'Failed to complete profile');
+  }
+
+  // Update stored user data with the completed profile
+  if (result.data) {
+    setUserData(result.data);
+  }
+
+  return result;
+};
+
 
 /**
  * Register new user

@@ -8,7 +8,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  googleLogin: (idToken: string) => Promise<void>;
+  googleLogin: (idToken: string) => Promise<{ onboardingRequired?: boolean }>;
   register: (userData: RegisterData) => Promise<void>;
   logout: () => void;
   setUser: (user: User | null) => void;
@@ -46,13 +46,15 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   /**
    * Login user via Google OAuth
    */
-  const googleLogin = async (idToken: string): Promise<void> => {
+  const googleLogin = async (idToken: string): Promise<{ onboardingRequired?: boolean }> => {
     try {
       const response = await authService.googleLogin(idToken);
       
       if (response.data.user) {
         setUser(response.data.user);
       }
+
+      return { onboardingRequired: response.onboardingRequired ?? false };
     } catch (error) {
       console.error("Google Login error:", error);
       throw error;

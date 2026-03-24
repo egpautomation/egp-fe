@@ -43,18 +43,24 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
     const toastId = toast.loading("Logging in with Google...");
     
     try {
+      let result;
       // credentialResponse contains `credential` which is the id_token
       if (credentialResponse.credential) {
-         await googleLogin(credentialResponse.credential);
-         toast.dismiss(toastId);
-         toast.success("Successfully Logged In with Google");
-         navigate("/dashboard");
+         result = await googleLogin(credentialResponse.credential);
       } else if (credentialResponse.access_token) {
          // Fallback if the implicit flow returns access_token
-         await googleLogin(credentialResponse.access_token);
-         toast.dismiss(toastId);
-         toast.success("Successfully Logged In with Google");
-         navigate("/dashboard");
+         result = await googleLogin(credentialResponse.access_token);
+      }
+
+      toast.dismiss(toastId);
+      toast.success("Successfully Logged In with Google");
+
+      // If this is the first Google login, redirect to the onboarding page
+      // to collect the missing fields (phone, WhatsApp, district, etc.)
+      if (result?.onboardingRequired) {
+        navigate("/onboarding");
+      } else {
+        navigate("/dashboard");
       }
     } catch (error) {
        toast.dismiss(toastId);
