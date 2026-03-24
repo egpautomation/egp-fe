@@ -8,12 +8,20 @@ import { formatDate } from "@/lib/formateDate";
 import { AuthContext } from "@/provider/AuthProvider";
 import { useContext, useRef, useState, useEffect } from "react";
 import { useReactToPrint } from "react-to-print";
+import type { 
+  Tender, 
+  TenderPreparation, 
+  EgpListedCompany, 
+  CompanyMigration,
+  LineOfCreditTenderData 
+} from "@/types/tender";
 
 interface LineOfCreditTabProps {
-  currentTender: any;
+  currentTender: TenderPreparation; // From tender-preparation API
   egpEmail: string;
-  companyData: any;
-  companyMigration?: any;
+  companyData: EgpListedCompany | null;
+  companyMigration?: CompanyMigration | null;
+  liveTender?: Tender | null; // NEW: Pass live tender data from parent
 }
 
 export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
@@ -21,6 +29,7 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
   egpEmail,
   companyData,
   companyMigration,
+  liveTender: liveTenderProp, // Accept from parent
 }) => {
   const { user } = useContext(AuthContext);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -29,7 +38,37 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
     documentTitle: "Line-Of-Credit-Letter",
   });
 
-  console.log(currentTender);
+  // Fetch live tender data if not provided via prop
+  const { data: fetchedLiveTender } = useSingleData(
+    currentTender?.tenderId
+      ? `${config.apiBaseUrl}/tenders/tenderId/${currentTender.tenderId}`
+      : null
+  );
+
+  // Use prop if available, otherwise use fetched data
+  const liveTender = liveTenderProp || fetchedLiveTender;
+
+  // Merge data: prioritize liveTender for fields that come from Tender model
+  // Fall back to currentTender (TenderPreparation) for other fields
+  const mergedTenderData: LineOfCreditTenderData = {
+    ...currentTender,
+    // Override with live tender data (from Tender model - has the missing fields)
+    packageNo: liveTender?.packageNo || currentTender?.packageNo,
+    InvitationReferenceNo: liveTender?.InvitationReferenceNo || currentTender?.InvitationReferenceNo,
+    procuringEntityName: liveTender?.procuringEntityName || currentTender?.procuringEntityName,
+    division: liveTender?.division || currentTender?.division,
+    openingDateTime: liveTender?.openingDateTime || currentTender?.openingDateTime,
+    liquidAssets: liveTender?.liquidAssets || currentTender?.liquidAssets,
+    officialDesignation: liveTender?.officialDesignation || currentTender?.officialDesignation,
+    locationDistrict: liveTender?.locationDistrict || currentTender?.locationDistrict,
+    descriptionOfWorks: liveTender?.descriptionOfWorks || currentTender?.descriptionOfWorks,
+    procurementNature: liveTender?.procurementNature || currentTender?.procurementNature,
+    tenderId: currentTender?.tenderId || liveTender?.tenderId,
+  };
+
+  console.log('LineOfCreditTab - currentTender:', currentTender);
+  console.log('LineOfCreditTab - liveTender:', liveTender);
+  console.log('LineOfCreditTab - mergedTenderData:', mergedTenderData);
 
   const handleDownloadDoc = () => {
     const el = contentRef.current;
@@ -221,17 +260,7 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
     URL.revokeObjectURL(url);
   };
 
-  // Fetch tender data using tenderId from currentTender
-  const { data: tender } = useSingleData(
-    currentTender?.tenderId
-      ? `${config.apiBaseUrl}/tenders/tenderId/${currentTender.tenderId}`
-      : null
-  );
-
-  
-
-  // Prefer company details from tender preparation company over account holder details
-
+  // Number to words conversion for Bengali currency format
   const numberToWords = (num) => {
     const a = [
       "",
@@ -320,9 +349,9 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
               <div className="bg-white p-8 ">
                 <div className="text-center mb-6">
                   <p className="font-bold mt-2 underline text-center ">
-                    {currentTender?.procurementNature == "Goods"
-                      ? "Letter of Commitment for Bank&apos;s Undertaking for Line of Credit (Form e-PG2-7)"
-                      : "Letter of Commitment for Bank’s Undertaking for Line of Credit (Form e-PW2A-8)"}
+                    {mergedTenderData?.procurementNature == "Goods"
+                      ? "Letter of Commitment for Bank's Undertaking for Line of Credit (Form e-PG2-7)"
+                      : "Letter of Commitment for Bank's Undertaking for Line of Credit (Form e-PW2A-8)"}
                   </p>
                 </div>
 
@@ -330,20 +359,20 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
                 <div className="mb-4">
                   <p>
                     Invitation for Tender No:
-                    {currentTender?.InvitationReferenceNo || "N/A"} &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                    {mergedTenderData?.InvitationReferenceNo || "N/A"} &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
                     &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
                     Date:
-                    {formatDate(tender?.openingDateTime, "MM-dd-yyyy")}
+                    {formatDate(mergedTenderData?.openingDateTime, "MM-dd-yyyy")}
                   </p>
-                  <p>Tender Package No:{currentTender?.packageNo || "N/A"} </p>
-                  <p>Lot No : {tender?.tenderId || "N/A"} </p>
+                  <p>Tender Package No:{mergedTenderData?.packageNo || "N/A"} </p>
+                  <p>Lot No : {mergedTenderData?.tenderId || "N/A"} </p>
                   <p>
-                    To: {currentTender?.officialDesignation || "N/A"}, <br />{" "}
-                    {currentTender?.procuringEntityName
-                      ? currentTender?.procuringEntityName
-                      : currentTender?.division || "N/A"}
+                    To: {mergedTenderData?.officialDesignation || "N/A"}, <br />{" "}
+                    {mergedTenderData?.procuringEntityName
+                      ? mergedTenderData?.procuringEntityName
+                      : mergedTenderData?.division || "N/A"}
                     , <br />
-                    {currentTender?.locationDistrict ? currentTender?.locationDistrict : "N/A"}{" "}
+                    {mergedTenderData?.locationDistrict ? mergedTenderData?.locationDistrict : "N/A"}{" "}
                     <br />
                   </p>
                 </div>
@@ -360,23 +389,23 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
                         ? `${companyData?.companyName},${companyData?.companyAddress} `
                         : "[name of Tenderer] "}
                     </span>{" "}
-                    (hereinafter called “the Tenderer”) intends to submit to you its Tender
-                    (hereinafter called “the Tender”) for the execution of the{" "}
-                    {currentTender?.procurementNature == "Goods" ? "Supply" : "Works"} of{" "}
+                    (hereinafter called "the Tenderer") intends to submit to you its Tender
+                    (hereinafter called "the Tender") for the execution of the{" "}
+                    {mergedTenderData?.procurementNature == "Goods" ? "Supply" : "Works"} of{" "}
                     <span className="font-bold">
-                      {currentTender?.descriptionOfWorks
-                        ? currentTender?.descriptionOfWorks
-                        : `[description of ${currentTender?.procurementNature}]`}{" "}
+                      {mergedTenderData?.descriptionOfWorks
+                        ? mergedTenderData?.descriptionOfWorks
+                        : `[description of ${mergedTenderData?.procurementNature}]`}{" "}
                     </span>
-                    under the above Invitation for Tenders (hereinafter called “the IFT”).
+                    under the above Invitation for Tenders (hereinafter called "the IFT").
                   </p>
                 </div>
 
                 <div className="mb-4  text-justify">
                   <p className="text-justify">
-                    Furthermore, we understand that, according to your conditions, the Tenderer’s
+                    Furthermore, we understand that, according to your conditions, the Tenderer's
                     Financial Capacity i.e. Liquid Asset must be substantiated by a Letter of
-                    Commitment of Bank’s Undertaking for Line of Credit.
+                    Commitment of Bank's Undertaking for Line of Credit.
                   </p>
                 </div>
 
@@ -395,18 +424,18 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
                         : "[name of Tenderer] "}
                     </span>
                     will be provided by us with a revolving line of credit, in case awarded the
-                    Contract, for the delivery of {currentTender?.procurementNature} viz.{" "}
+                    Contract, for the delivery of {mergedTenderData?.procurementNature} viz.{" "}
                     <span className="font-bold">
-                      {currentTender?.descriptionOfWorks
-                        ? currentTender?.descriptionOfWorks
-                        : `[insert name of ${currentTender?.procurementNature}]`}{" "}
+                      {mergedTenderData?.descriptionOfWorks
+                        ? mergedTenderData?.descriptionOfWorks
+                        : `[insert name of ${mergedTenderData?.procurementNature}]`}{" "}
                     </span>{" "}
                     for an amount not less than BDT{" "}
                     <span className="font-bold">
-                      {currentTender?.liquidAssets || "[in figure]"} ({numberToWords(10000000)})
+                      {mergedTenderData?.liquidAssets || "[in figure]"} ({numberToWords(Number(mergedTenderData?.liquidAssets) || 10000000)})
                     </span>{" "}
                     for the sole purpose of the execution of the above Contract. This Revolving Line
-                    of Credit will be maintained by us until issuance of “Acceptance Certificate” by
+                    of Credit will be maintained by us until issuance of "Acceptance Certificate" by
                     the Procuring Entity.
                   </p>
                 </div>

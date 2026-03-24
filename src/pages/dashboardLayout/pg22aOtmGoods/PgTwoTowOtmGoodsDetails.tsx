@@ -649,6 +649,7 @@ const PgTwoTowOtmGoodsDetails = () => {
           egpEmail={egpEmail}
           companyData={companyData}
           companyMigration={companyMigration}
+          liveTender={liveTenderData}
         />
       ),
     },
