@@ -14,13 +14,18 @@ const RoleRoute = ({ children, allowedRoles = [] }) => {
         );
     }
 
-    if (user && allowedRoles.includes(user.role)) {
-        return children;
-    }
-
     if (user) {
-        // Authenticated but not authorized
-        return <Navigate to="/dashboard" replace />;
+        if (user.isProfileComplete === false) {
+            return <Navigate to="/onboarding" replace />;
+        }
+        
+        // Check if the user's role is in the allowedRoles array
+        if (allowedRoles.includes(user.role)) {
+            return children; // User has access
+        } else {
+            // Authenticated but not authorized
+            return <Navigate to="/dashboard" replace />;
+        }
     } else {
         // Not authenticated
         return <Navigate to="/" replace />;

@@ -11,12 +11,21 @@ const TTIRoute = ({children}) => {
   if (loading) {
     return <div>loading...</div>;
   }
-  if (user && user.role === "admin" || user.role === "tti_agent") {
-    return children;
-  }
+
+  // After loading, if user exists, check profile completion and roles
   if (user) {
-    return <Navigate to="/dashboard"></Navigate>;
+    if (user.isProfileComplete === false) {
+      return <Navigate to="/onboarding" replace />;
+    }
+
+    if (user.role === "tti" || user.role === "admin" || user.role === "superAdmin") {
+      return children;
+    } else {
+      // User exists but doesn't have the required roles
+      return <Navigate to="/dashboard"></Navigate>;
+    }
   } else {
+    // No user, redirect to login/home
     return <Navigate to="/"></Navigate>;
   }
 };

@@ -17,7 +17,14 @@ const PrivateRoute = ({ children }) => {
   }
   if (!user) {
     return <Navigate to="/"></Navigate>;
-  } else{ return children;}
+  }
+
+  // If user is logged in but hasn't completed their Google onboarding profile
+  if (user.isProfileComplete === false) {
+    return <Navigate to="/onboarding" replace />;
+  }
+  
+  return children;
  
 };
 

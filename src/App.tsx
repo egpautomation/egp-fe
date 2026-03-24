@@ -13,8 +13,11 @@ function App() {
     return <></>;
   }
 
-  // Redirect logged-in users to dashboard
+  // Redirect logged-in users to appropriate page
   if (user) {
+    if (user.isProfileComplete === false) {
+      return <Navigate to="/onboarding" replace />;
+    }
     return <Navigate to="/dashboard" replace />;
   }
 

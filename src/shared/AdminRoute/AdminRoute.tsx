@@ -11,12 +11,20 @@ const AdminRoute = ({children}) => {
   if (loading) {
     return <div>loading...</div>;
   }
-  if (user && user.role === "admin") {
-    return children;
-  }
+
   if (user) {
-    return <Navigate to="/dashboard"></Navigate>;
+    if (user.isProfileComplete === false) {
+      return <Navigate to="/onboarding" replace />;
+    }
+
+    if (user.role === "admin" || user.role === "superAdmin") {
+      return children;
+    } else {
+      // User is logged in but not admin/superAdmin
+      return <Navigate to="/dashboard"></Navigate>;
+    }
   } else {
+    // No user is logged in
     return <Navigate to="/"></Navigate>;
   }
 };
