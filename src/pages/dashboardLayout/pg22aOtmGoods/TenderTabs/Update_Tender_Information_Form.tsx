@@ -132,10 +132,10 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
   const url = `${config.apiBaseUrl}/egp-listed-company/get-by-mail?mail=${egpEmail}`
   const { data: egpListedCompany } = useSingleData(url)
 
-  // Fetch existing contracts for this company using companyId
-  const companyId = egpListedCompany?.companyUniqueEGP_ID;
-  const contractsUrl = companyId
-    ? `${config.apiBaseUrl}/contract-information?companyId=${encodeURIComponent(companyId)}&limit=100`
+  // Fetch existing contracts for this company securely using the exact egpEmail
+  // This ensures universal access to all CMS data associated with the user's email across tenders
+  const contractsUrl = egpEmail
+    ? `${config.apiBaseUrl}/contract-information?egpEmail=${encodeURIComponent(egpEmail)}&limit=1000`
     : null;
   const { data: existingContracts, loading: contractsLoading, setReload: setContractReload } = useSingleData(contractsUrl);
 

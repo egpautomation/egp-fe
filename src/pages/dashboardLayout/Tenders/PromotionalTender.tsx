@@ -157,12 +157,12 @@ Check now: www.etenderbd.com`
         "Document Price",
         "Security",
         "Estimated Cost",
-        "Publication Date"
+        "Closing Date"
       ];
 
       const tableRows: any[] = [];
-      // Fetch all underlying filtered data before printing
-      const allTenders = await fetchAllTenders();
+      // Use currently visible page data
+      const allTenders = tenders || [];
 
       allTenders.forEach((item: any) => {
         const rowData = [
@@ -172,7 +172,7 @@ Check now: www.etenderbd.com`
           item?.documentPrice ? `BDT ${item.documentPrice}` : "N/A",
           item?.tenderSecurity ? `BDT ${item.tenderSecurity}` : "N/A",
           item?.estimatedCost ? `BDT ${item.estimatedCost}` : "N/A",
-          formatDate(item?.publicationDateTime, "dd-MM-yyyy")
+          formatDate(item?.openingDateTime, "dd-MM-yyyy")
         ];
         tableRows.push(rowData);
       });
@@ -211,6 +211,8 @@ Check now: www.etenderbd.com`
           6: { cellWidth: 28, halign: "center" },
         },
         didDrawPage: (data) => {
+          const pageNumber = doc.internal.getNumberOfPages();
+
           doc.setFontSize(18);
           doc.setTextColor(0, 0, 0);
           doc.setFont("helvetica", "bold");
@@ -220,51 +222,56 @@ Check now: www.etenderbd.com`
           doc.setTextColor(0, 0, 0);
           doc.setFont("helvetica", "normal");
           doc.text(`Generated on: ${new Date().toLocaleDateString()}`, doc.internal.pageSize.getWidth() - data.settings.margin.right, 18, { align: 'right' });
+
+          const pageHeight = doc.internal.pageSize.getHeight();
+          const centerX = doc.internal.pageSize.getWidth() / 2;
+
+          const line1Y = pageHeight - 18;
+          const line2Y = line1Y + 4;
+          const line3Y = line2Y + 4;
+
+          doc.setFontSize(8);
+          doc.setTextColor(0, 0, 0);
+
+          doc.text(
+            `© ${new Date().getFullYear()} E-GP Tender Automation — All Rights Reserved.`,
+            centerX,
+            line1Y,
+            { align: "center" }
+          );
+          
+          const prefix = "Visit us: ";
+          const website = "etenderbd.com";
+          const mid = " | WhatsApp: ";
+          const whatsapp = "01926-959331";
+
+          const fullText = prefix + website + mid + whatsapp;
+          const fullWidth = doc.getTextWidth(fullText);
+          const startX = centerX - fullWidth / 2;
+
+          doc.text(prefix, startX, line2Y);
+
+          const prefixWidth = doc.getTextWidth(prefix);
+          doc.textWithLink(website, startX + prefixWidth, line2Y, {
+            url: "https://etenderbd.com",
+          });
+
+          const websiteWidth = doc.getTextWidth(website);
+          doc.text(mid, startX + prefixWidth + websiteWidth, line2Y);
+
+          const midWidth = doc.getTextWidth(mid);
+          doc.textWithLink(
+            whatsapp,
+            startX + prefixWidth + websiteWidth + midWidth,
+            line2Y,
+            {
+              url: `https://wa.me/8801926959331`,
+            }
+          );
+          doc.text(`Page ${pageNumber}`, centerX, line3Y, { align: "center" });
         }
       });
 
-      const randomPromo = promotionalTexts[Math.floor(Math.random() * promotionalTexts.length)];
-
-      const finalY = (doc as any).lastAutoTable.finalY || 30;
-
-      // Ensure there is space for the promo text box
-      if (finalY > doc.internal.pageSize.getHeight() - 60) {
-        doc.addPage();
-        (doc as any).lastAutoTable.finalY = 20;
-      }
-
-      const currentFinalY = (doc as any).lastAutoTable.finalY || 20;
-
-      doc.setFontSize(12);
-      doc.setFont("helvetica", "bold"); // Start bold for the title part
-
-      const promoLines = doc.splitTextToSize(randomPromo, doc.internal.pageSize.getWidth() - 40);
-      const boxHeight = promoLines.length * 6 + 24; // extra 8px for the link line
-      const boxY = currentFinalY + 15;
-
-      // Promo Box Background
-      doc.setFillColor(240, 253, 244); // Light green background
-      doc.setDrawColor(22, 163, 74);   // Solid green border
-      doc.setLineWidth(0.5);
-      doc.roundedRect(14, boxY, doc.internal.pageSize.getWidth() - 28, boxHeight, 3, 3, 'FD'); // Filled and drawn with rounded corners
-
-      // Promo Text
-      doc.setTextColor(21, 128, 61); // Darker green text
-      doc.setFont("helvetica", "normal");
-
-      // Print lines, optionally making the first line bold
-      promoLines.forEach((line: string, i: number) => {
-        if (i === 0) doc.setFont("helvetica", "bold");
-        else doc.setFont("helvetica", "normal");
-
-        doc.text(line, 20, boxY + 12 + (i * 6));
-      });
-
-      // Clickable website link at the bottom of the promo box
-      const linkY = boxY + 12 + (promoLines.length * 6) + 2;
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(21, 128, 61);
-      doc.textWithLink("🌐 Visit: https://etenderbd.com", 20, linkY, { url: "https://etenderbd.com" });
 
       doc.save(`Promotional_Tenders_${getBengaliDate(selectedDate).replace(/ /g, '_')}.pdf`);
     } catch (error) {
@@ -453,6 +460,9 @@ Check now: www.etenderbd.com`
                         টেন্ডার আইডি
                       </TableHead>
                       <TableHead className="px-4 py-4 text-slate-700 font-bold text-center">
+                        প্রতিষ্ঠানের নাম
+                      </TableHead>
+                      <TableHead className="px-4 py-4 text-slate-700 font-bold text-center">
                         কাজের সংক্ষিপ্ত বিবরণ
                       </TableHead>
                       <TableHead className="px-4 py-4 text-slate-700 font-bold text-center">
@@ -465,7 +475,7 @@ Check now: www.etenderbd.com`
                         আনুমানিক মূল্য
                       </TableHead>
                       <TableHead className="px-4 py-4 text-slate-700 font-bold text-center">
-                        প্রকাশনা তারিখ
+                        দরপত্র শেষ তারিখ
                       </TableHead>
                     </TableRow>
                   </TableHeader>
@@ -474,7 +484,7 @@ Check now: www.etenderbd.com`
                       {loading ? (
                         Array.from({ length: pageLimit }).map((_, idx) => (
                           <TableRow key={idx}>
-                            <TableCell colSpan={7} className="h-16">
+                            <TableCell colSpan={8} className="h-16">
                               <div className="flex items-center justify-center w-full">
                                 <div className="h-4 bg-slate-200 rounded animate-pulse w-full"></div>
                               </div>
@@ -505,6 +515,9 @@ Check now: www.etenderbd.com`
                               </div>
                             </TableCell>
                             <TableCell className="px-4 py-4 text-center">
+                              <span className="font-medium text-slate-700">{tender.organization || tender.department || "N/A"}</span>
+                            </TableCell>
+                            <TableCell className="px-4 py-4 text-center">
                               <div className="max-w-xs mx-auto">
                                 <p className="text-sm text-slate-700 line-clamp-3 leading-relaxed">
                                   {tender.descriptionOfWorks}
@@ -521,7 +534,7 @@ Check now: www.etenderbd.com`
                               <span className="font-medium text-slate-700">BDT {tender.estimatedCost}</span>
                             </TableCell>
                             <TableCell className="px-4 py-4 text-center">
-                              <span className="font-medium text-red-700">{formatDate(tender.publicationDateTime, "dd MMMM yyyy")}</span>
+                              <span className="font-medium text-red-700">{formatDate(tender.openingDateTime, "MM-dd-yyyy")}</span>
                             </TableCell>
                           </motion.tr>
                         ))

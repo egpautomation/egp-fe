@@ -297,7 +297,7 @@ const LtmTenders = () => {
     ];
 
     const tableRows = [];
-    const allTendersForPrint = await fetchAllTenders();
+    const allTendersForPrint = displayTenders || [];
 
     allTendersForPrint.forEach((item) => {
       const tenderIdAndMore = [
@@ -384,10 +384,50 @@ const LtmTenders = () => {
 
         const pageHeight = doc.internal.pageSize.height;
         const centerX = doc.internal.pageSize.width / 2;
+
+        const line1Y = pageHeight - 18;
+        const line2Y = line1Y + 4;
+        const line3Y = line2Y + 4;
+
         doc.setFontSize(8);
         doc.setTextColor(0, 0, 0);
-        doc.text(`© ${new Date().getFullYear()} E-GP Tender Automation — All Rights Reserved.`, centerX, pageHeight - 15, { align: "center" });
-        doc.text(`Page ${pageNumber}`, centerX, pageHeight - 10, { align: "center" });
+
+        doc.text(
+          `© ${new Date().getFullYear()} E-GP Tender Automation — All Rights Reserved.`,
+          centerX,
+          line1Y,
+          { align: "center" }
+        );
+        
+        const prefix = "Visit us: ";
+        const website = "etenderbd.com";
+        const mid = " | WhatsApp: ";
+        const whatsapp = "01926-959331";
+
+        const fullText = prefix + website + mid + whatsapp;
+        const fullWidth = doc.getTextWidth(fullText);
+        const startX = centerX - fullWidth / 2;
+
+        doc.text(prefix, startX, line2Y);
+
+        const prefixWidth = doc.getTextWidth(prefix);
+        doc.textWithLink(website, startX + prefixWidth, line2Y, {
+          url: "https://etenderbd.com",
+        });
+
+        const websiteWidth = doc.getTextWidth(website);
+        doc.text(mid, startX + prefixWidth + websiteWidth, line2Y);
+
+        const midWidth = doc.getTextWidth(mid);
+        doc.textWithLink(
+          whatsapp,
+          startX + prefixWidth + websiteWidth + midWidth,
+          line2Y,
+          {
+            url: `https://wa.me/8801926959331`,
+          }
+        );
+        doc.text(`Page ${pageNumber}`, centerX, line3Y, { align: "center" });
       },
     });
 

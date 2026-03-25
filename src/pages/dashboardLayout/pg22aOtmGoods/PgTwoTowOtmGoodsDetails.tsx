@@ -17,7 +17,6 @@ import UpdateTenderDialog from "@/components/dashboard/UpdateTenderDialog";
 import { DownloadsTab } from "./TenderTabs/DownloadsTab";
 import { LineOfCreditTab } from "./TenderTabs/LineOfCreditTab";
 import { STLCalculationTab } from "./TenderTabs/STLCalculationTab";
-import useAllEgpListedCompanies from "@/hooks/useAllEgpListedCompany";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -82,18 +81,16 @@ const PgTwoTowOtmGoodsDetails = () => {
     return companyMigrations.find((migration) => migration.egpEmail === egpEmail);
   }, [companyMigrations, egpEmail]);
 
-  // 2. Fetch EGP Listed Company data using the RESOLVED email
-  // Only search if we actually have an email
-  const { egpListedCompanies, loading: companyLoading } = useAllEgpListedCompanies(egpEmail || 'SKIP'); // Pass dummy string to prevent error if empty
-  const companyData = egpListedCompanies?.[0];
+  // 2. Fetch EGP Listed Company data using the exact matching email
+  const companyUrl = egpEmail ? `${config.apiBaseUrl}/egp-listed-company/get-by-mail?mail=${encodeURIComponent(egpEmail)}` : null;
+  const { data: companyData, loading: companyLoading } = useSingleData(companyUrl);
 
   const companyDisplayName = companyData?.companyName || currentTender?.egpCompanyName || "Company Name";
 
-  // Fetch contract information from API using companyId
-  // This bypasses the company lookup in backend and queries directly by companyId
-  const companyId = companyData?.companyUniqueEGP_ID;
-  const contractUrl = companyId
-    ? `${config.apiBaseUrl}/contract-information?companyId=${encodeURIComponent(companyId)}&limit=100`
+  // Fetch contract information from API using egpEmail exclusively.
+  // This enables cross-tender CMS universality by ensuring all contracts linked to this email are returned.
+  const contractUrl = egpEmail
+    ? `${config.apiBaseUrl}/contract-information?egpEmail=${encodeURIComponent(egpEmail)}&limit=1000`
     : null;
   const { data: contractData, loading: contractLoading, setReload: setContractReload } = useSingleData(contractUrl);
 

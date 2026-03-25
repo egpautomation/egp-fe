@@ -403,7 +403,7 @@ const LiveTenders = () => {
     ];
 
     const tableRows = [];
-    const allTenders = await fetchAllTenders();
+    const allTenders = displayTenders || [];
 
     allTenders.forEach((item) => {
       const tenderIdAndMore = [
@@ -526,7 +526,7 @@ const LiveTenders = () => {
         );
         // Line 2 – full text, centered with links
         const prefix = "Visit us: ";
-        const website = "egp.jubairahmad.com";
+        const website = "etenderbd.com";
         const mid = " | WhatsApp: ";
         const whatsapp = "01926-959331";
 
@@ -540,7 +540,7 @@ const LiveTenders = () => {
         // Website link
         const prefixWidth = doc.getTextWidth(prefix);
         doc.textWithLink(website, startX + prefixWidth, line2Y, {
-          url: config.egpSiteUrl,
+          url: "https://etenderbd.com",
         });
 
         // Mid text
@@ -554,7 +554,7 @@ const LiveTenders = () => {
           startX + prefixWidth + websiteWidth + midWidth,
           line2Y,
           {
-            url: `https://wa.me/${config.supportWhatsApp}`,
+            url: `https://wa.me/8801926959331`,
           }
         );
         doc.text(`Page ${pageNumber}`, centerX, line3Y, { align: "center" });

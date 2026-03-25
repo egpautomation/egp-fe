@@ -69,7 +69,11 @@ function GoogleOnboarding() {
       toast.error("অনুগ্রহ করে WhatsApp নম্বর দিন।");
       return;
     }
-    if (formData.password && formData.password.length < 6) {
+    if (!formData.password) {
+      toast.error("অনুগ্রহ করে পাসওয়ার্ড দিন।");
+      return;
+    }
+    if (formData.password.length < 6) {
       toast.error("পাসওয়ার্ড কমপক্ষে ৬ সংখ্যার হতে হবে।");
       return;
     }
@@ -85,10 +89,8 @@ function GoogleOnboarding() {
         address: formData.address || undefined,
       };
 
-      // Only include password if user filled it in
-      if (formData.password) {
-        payload.password = formData.password;
-      }
+      // Include mandatory password
+      payload.password = formData.password;
 
       const result = await authService.completeProfile(payload);
 
@@ -266,14 +268,13 @@ function GoogleOnboarding() {
               />
             </div>
 
-            {/* Password – optional, allows future email/password login */}
             <div>
               <Label htmlFor="password" className="text-sm font-medium">
-                পাসওয়ার্ড
-                <span className="ml-1 text-xs text-gray-400 font-normal">(ঐচ্ছিক)</span>
+                পাসওয়ার্ড<span className="text-red-700">*</span>
               </Label>
               <div className="relative mt-2">
                 <Input
+                  required
                   type={showPassword ? "text" : "password"}
                   name="password"
                   onChange={handleInputChange}
