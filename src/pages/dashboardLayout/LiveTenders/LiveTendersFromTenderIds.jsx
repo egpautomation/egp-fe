@@ -86,9 +86,18 @@ function JsonImportPanel({ onImportDone }) {
     try {
       const res = await axiosInstance.post(`${LIVE_TENDERS_API}/import-json`, parsed);
       toast.dismiss(toastId);
-      toast.success(
-        `✅ ${res.data?.inserted ?? parsed.length} tenders imported successfully!`
-      );
+
+      const result = res.data?.data;
+      const inserted = result?.inserted ?? 0;
+      const skipped = result?.skipped ?? 0;
+
+      if (inserted === 0 && skipped > 0) {
+        toast.error(`Rejected: All ${skipped} records are duplicates!`, { duration: 5000 });
+      } else if (skipped > 0) {
+        toast.success(`Accepted: ${inserted}, Rejected (Duplicates): ${skipped}`, { duration: 6000 });
+      } else {
+        toast.success(`All ${inserted} records imported successfully!`);
+      }
       setParsed(null);
       setFilename("");
       onImportDone?.();
