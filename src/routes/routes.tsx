@@ -85,6 +85,7 @@ import LiveTender from "@/pages/dashboardLayout/LiveTenders/LiveTender";
 import StlCalculationPage from "@/pages/homeLayout/StlCalculationPage";
 import PrivacyPolicy from "@/pages/homeLayout/PrivacyAndPolicy";
 import GoogleOnboarding from "@/pages/homeLayout/GoogleOnboarding";
+import LetterOfAuthorization from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/LetterOfAuthorization";
 
 
 const router = createBrowserRouter([
@@ -371,6 +372,7 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      
       {
         path: "tender-preparation",
         element: (
@@ -698,6 +700,10 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path:"letter-of-authorization/:id",
+    element: <LetterOfAuthorization />
+  }
 ]);
 
 export default router;

@@ -2,12 +2,10 @@
 // @ts-nocheck
 import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import useSingleData from "@/hooks/useSingleData";
 import { formatDate } from "@/lib/formateDate";
-import { AuthContext } from "@/provider/AuthProvider";
-import { useContext, useRef, useState, useEffect } from "react";
-import { useReactToPrint } from "react-to-print";
+import {  useRef,  } from "react";
+
 import type { 
   Tender, 
   TenderPreparation, 
@@ -15,6 +13,7 @@ import type {
   CompanyMigration,
   LineOfCreditTenderData 
 } from "@/types/tender";
+import LetterOfAuthorization from "./LetterOfAuthorization";
 
 interface LineOfCreditTabProps {
   currentTender: TenderPreparation; // From tender-preparation API
@@ -26,17 +25,12 @@ interface LineOfCreditTabProps {
 
 export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
   currentTender,
-  egpEmail,
   companyData,
   companyMigration,
-  liveTender: liveTenderProp, // Accept from parent
+  liveTender: liveTenderProp, 
 }) => {
-  const { user } = useContext(AuthContext);
   const contentRef = useRef<HTMLDivElement>(null);
-  const reactToPrintFn = useReactToPrint({
-    content: () => contentRef.current,
-    documentTitle: "Line-Of-Credit-Letter",
-  });
+  
 
   // Fetch live tender data if not provided via prop
   const { data: fetchedLiveTender } = useSingleData(
@@ -66,9 +60,11 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
     tenderId: currentTender?.tenderId || liveTender?.tenderId,
   };
 
-  console.log('LineOfCreditTab - currentTender:', currentTender);
-  console.log('LineOfCreditTab - liveTender:', liveTender);
-  console.log('LineOfCreditTab - mergedTenderData:', mergedTenderData);
+  // console.log('LineOfCreditTab - currentTender:', currentTender);
+  // console.log('LineOfCreditTab - liveTender:', liveTender);
+  // console.log('LineOfCreditTab - mergedTenderData:', mergedTenderData);
+
+ 
 
   const handleDownloadDoc = () => {
     const el = contentRef.current;
@@ -335,130 +331,133 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
   };
 
   return (
-    <div className="container mx-auto p-5">
-      <div className="flex flex-col gap-6">
-        {/* Preview Panel */}
-        <div className="flex justify-end gap-2">
-          <Button onClick={() => reactToPrintFn()}>Print</Button>
-          <Button onClick={handleDownloadDoc}>Download DOC</Button>
-        </div>
+   <div>
+      <div className="container mx-auto p-5">
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-end gap-2">
+            <Button onClick={handleDownloadDoc}>Download DOC</Button>
+          </div>
 
-        <div className="border rounded">
-          <div ref={contentRef} className="w-full print-content text-justify border ">
-            <div className="">
-              <div className="bg-white p-8 ">
-                <div className="text-center mb-6">
-                  <p className="font-bold mt-2 underline text-center ">
-                    {mergedTenderData?.procurementNature == "Goods"
-                      ? "Letter of Commitment for Bank's Undertaking for Line of Credit (Form e-PG2-7)"
-                      : "Letter of Commitment for Bank's Undertaking for Line of Credit (Form e-PW2A-8)"}
-                  </p>
-                </div>
+          <div className="border rounded">
+            <div ref={contentRef} className="w-full print-content text-justify border ">
+              <div className="">
+                <div className="bg-white p-8 ">
+                  <div className="text-center mb-6">
+                    <p className="font-bold mt-2 underline text-center ">
+                      {liveTender?.procurementNature == "Goods"
+                        ? "Letter of Commitment for Bank&apos;s Undertaking for Line of Credit (Form e-PG2-7)"
+                        : "Letter of Commitment for Bank’s Undertaking for Line of Credit (Form e-PW2A-8)"}
+                    </p>
+                  </div>
 
-                <br />
-                <div className="mb-4">
-                  <p>
-                    Invitation for Tender No:
-                    {mergedTenderData?.InvitationReferenceNo || "N/A"} &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
-                    &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
-                    Date:
-                    {formatDate(mergedTenderData?.openingDateTime, "MM-dd-yyyy")}
-                  </p>
-                  <p>Tender Package No:{mergedTenderData?.packageNo || "N/A"} </p>
-                  <p>Lot No : {mergedTenderData?.tenderId || "N/A"} </p>
-                  <p>
-                    To: {mergedTenderData?.officialDesignation || "N/A"}, <br />{" "}
-                    {mergedTenderData?.procuringEntityName
-                      ? mergedTenderData?.procuringEntityName
-                      : mergedTenderData?.division || "N/A"}
-                    , <br />
-                    {mergedTenderData?.locationDistrict ? mergedTenderData?.locationDistrict : "N/A"}{" "}
-                    <br />
-                  </p>
-                </div>
+                  <br />
+                  <div className="mb-4">
+                    <p>
+                      Invitation for Tender No:
+                      {liveTender?.InvitationReferenceNo || "N/A"} &nbsp; &nbsp;&nbsp;
+                      &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                      &nbsp;&nbsp; Date:
+                      {formatDate(currentTender?.openingDateTime, "MM-dd-yyyy")}
+                    </p>
+                    <p>Tender Package No:{liveTender?.packageNo || "N/A"} </p>
+                    <p>Lot No : {liveTender?.tenderId || "N/A"} </p>
+                    <p>
+                      To: {mergedTenderData?.officialDesignation ? `${mergedTenderData?.officialDesignation},${<br />}` : ""} {" "}
+                      {liveTender?.procuringEntityName
+                        ? liveTender?.procuringEntityName
+                        : liveTender?.division || "N/A"}
+                      , <br />
+                      {liveTender?.locationDistrict
+                        ? liveTender?.locationDistrict
+                        : "N/A"}{" "}
+                      <br />
+                    </p>
+                  </div>
 
-                <div className="text-center">
-                  <p className="font-bold text-center">CREDIT COMMITTMENT No: [insert number]</p>
-                </div>
+                  <div className="text-center">
+                    <p className="font-bold text-center">CREDIT COMMITTMENT No: [insert number]</p>
+                  </div>
 
-                <div className="mb-4 mt-4 text-justify">
-                  <p className="text-justify">
-                    We have been informed that{" "}
-                    <span className="font-bold">
-                      {companyData
-                        ? `${companyData?.companyName},${companyData?.companyAddress} `
-                        : "[name of Tenderer] "}
-                    </span>{" "}
-                    (hereinafter called "the Tenderer") intends to submit to you its Tender
-                    (hereinafter called "the Tender") for the execution of the{" "}
-                    {mergedTenderData?.procurementNature == "Goods" ? "Supply" : "Works"} of{" "}
-                    <span className="font-bold">
-                      {mergedTenderData?.descriptionOfWorks
-                        ? mergedTenderData?.descriptionOfWorks
-                        : `[description of ${mergedTenderData?.procurementNature}]`}{" "}
-                    </span>
-                    under the above Invitation for Tenders (hereinafter called "the IFT").
-                  </p>
-                </div>
+                  <div className="mb-4 mt-4 text-justify">
+                    <p className="text-justify">
+                      We have been informed that{" "}
+                      <span className="font-bold">
+                        {companyData
+                          ? `${companyData?.companyName},${companyData?.companyAddress} `
+                          : "[name of Tenderer] "}
+                      </span>{" "}
+                      (hereinafter called “the Tenderer”) intends to submit to you its Tender
+                      (hereinafter called “the Tender”) for the execution of the{" "}
+                      {currentTender?.procurementNature == "Goods" ? "Supply" : "Works"} of{" "}
+                      <span className="font-bold">
+                        {currentTender?.descriptionOfWorks
+                          ? currentTender?.descriptionOfWorks
+                          : `[description of ${currentTender?.procurementNature}]`}{" "}
+                      </span>
+                      under the above Invitation for Tenders (hereinafter called “the IFT”).
+                    </p>
+                  </div>
 
-                <div className="mb-4  text-justify">
-                  <p className="text-justify">
-                    Furthermore, we understand that, according to your conditions, the Tenderer's
-                    Financial Capacity i.e. Liquid Asset must be substantiated by a Letter of
-                    Commitment of Bank's Undertaking for Line of Credit.
-                  </p>
-                </div>
+                  <div className="mb-4  text-justify">
+                    <p className="text-justify">
+                      Furthermore, we understand that, according to your conditions, the Tenderer’s
+                      Financial Capacity i.e. Liquid Asset must be substantiated by a Letter of
+                      Commitment of Bank’s Undertaking for Line of Credit.
+                    </p>
+                  </div>
 
-                <div className="mb-4  text-justify">
-                  <p className="text-justify">
-                    At the request of, and arrangement with, the Tenderer, we{" "}
-                    <span className="font-bold">
-                      {companyData
-                        ? `${companyData?.bankName},${companyData?.bankAddress} `
-                        : "[name and address of the Bank] "}
-                    </span>{" "}
-                    do hereby agree and undertake that{" "}
-                    <span className="font-bold">
-                      {companyData
-                        ? `${companyData?.companyName},${companyData?.companyAddress} `
-                        : "[name of Tenderer] "}
-                    </span>
-                    will be provided by us with a revolving line of credit, in case awarded the
-                    Contract, for the delivery of {mergedTenderData?.procurementNature} viz.{" "}
-                    <span className="font-bold">
-                      {mergedTenderData?.descriptionOfWorks
-                        ? mergedTenderData?.descriptionOfWorks
-                        : `[insert name of ${mergedTenderData?.procurementNature}]`}{" "}
-                    </span>{" "}
-                    for an amount not less than BDT{" "}
-                    <span className="font-bold">
-                      {mergedTenderData?.liquidAssets || "[in figure]"} ({numberToWords(Number(mergedTenderData?.liquidAssets) || 10000000)})
-                    </span>{" "}
-                    for the sole purpose of the execution of the above Contract. This Revolving Line
-                    of Credit will be maintained by us until issuance of "Acceptance Certificate" by
-                    the Procuring Entity.
-                  </p>
-                </div>
+                  <div className="mb-4  text-justify">
+                    <p className="text-justify">
+                      At the request of, and arrangement with, the Tenderer, we{" "}
+                      <span className="font-bold">
+                        {companyData
+                          ? `${companyData?.bankName},${companyData?.bankAddress} `
+                          : "[name and address of the Bank] "}
+                      </span>{" "}
+                      do hereby agree and undertake that{" "}
+                      <span className="font-bold">
+                        {companyData
+                          ? `${companyData?.companyName},${companyData?.companyAddress} `
+                          : "[name of Tenderer] "}
+                      </span>
+                      will be provided by us with a revolving line of credit, in case awarded the
+                      Contract, for the delivery of {currentTender?.procurementNature} viz.{" "}
+                      <span className="font-bold">
+                        {currentTender?.descriptionOfWorks
+                          ? currentTender?.descriptionOfWorks
+                          : `[insert name of ${currentTender?.procurementNature}]`}{" "}
+                      </span>{" "}
+                      for an amount not less than BDT{" "}
+                      <span className="font-bold">
+                        {mergedTenderData?.liquidAssets || "[in figure]"} ({numberToWords(mergedTenderData?.liquidAssets)})
+                      </span>{" "}
+                      for the sole purpose of the execution of the above Contract. This Revolving
+                      Line of Credit will be maintained by us until issuance of “Acceptance
+                      Certificate” by the Procuring Entity.
+                    </p>
+                  </div>
 
-                <div className="mt-8  text-justify">
-                  <p className="text-justify">
-                    In witness whereof, authorised representative of the Bank has hereunto signed
-                    and sealed this Letter of Commitment.
-                  </p>
-                </div>
-                <br />
-                <div>
-                  <p>
-                    Signature
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signature
-                  </p>
+                  <div className="mt-8  text-justify">
+                    <p className="text-justify">
+                      In witness whereof, authorised representative of the Bank has hereunto signed
+                      and sealed this Letter of Commitment.
+                    </p>
+                  </div>
+                  <br />
+                  <div>
+                    <p>
+                      Signature
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signature
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      
     </div>
   );
 };
