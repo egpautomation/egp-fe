@@ -58,7 +58,7 @@ const TenderIds = () => {
   const downloadTenderIds = async () => {
     const toastId = toast.loading("Fetching all Tender IDs…");
     try {
-      const res = await axiosInstance.get('/live-tenders/export-ids');
+      const res = await axiosInstance.get(`/live-tenders/export-ids?searchTerm=${searchTerm}&method=${method}`);
       if (res.data?.success) {
         const ids = res.data.data;
         if (!ids || ids.length === 0) {

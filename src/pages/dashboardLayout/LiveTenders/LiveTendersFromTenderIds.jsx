@@ -294,7 +294,7 @@ export default function LiveTendersFromTenderIds() {
   const downloadTenderIds = async () => {
     const toastId = toast.loading("Fetching Tender IDs…");
     try {
-      const res = await axiosInstance.get('/live-tenders/export-ids?collection=live');
+      const res = await axiosInstance.get(`/live-tenders/export-ids?collection=live&searchTerm=${debouncedSearch}`);
       if (res.data?.success) {
         const ids = res.data.data;
         if (!ids || ids.length === 0) {
