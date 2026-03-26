@@ -1,19 +1,17 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import useAllEgpListedCompanies from '@/hooks/useAllEgpListedCompany';
-import useSingleData from '@/hooks/useSingleData';
-import config from '@/lib/config';
 import { handleAuthorizationLetterDownload } from '@/utils/handleDownloadAuthorization';
 import { FileDown, FileSpreadsheet, FileText } from 'lucide-react'
 import { Link } from 'react-router-dom'
 interface authorizationCardProps {
     tenderId : string;
     egpEmail : string;
+    currentTender?: any;
 }
 
-export default function AuthorizationLetterCard({tenderId, egpEmail}: authorizationCardProps) {
-  const { data: currentTender } = useSingleData(`${config.apiBaseUrl}/tenders/tenderId/${tenderId}` );
-  const { egpListedCompanies,  } = useAllEgpListedCompanies(egpEmail || "Skip"); 
+export default function AuthorizationLetterCard({tenderId, egpEmail, currentTender}: authorizationCardProps) {
+  const { egpListedCompanies,  } = useAllEgpListedCompanies(egpEmail || "Skip");
   const companyData = egpListedCompanies?.[0];
   return (
     <Card className="hover:shadow-lg transition-shadow">
@@ -44,7 +42,7 @@ export default function AuthorizationLetterCard({tenderId, egpEmail}: authorizat
                                   Download  PDF
                                 </Button>
                                 <Button
-                                    
+
                                     className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
                                     variant="default"
                                 >

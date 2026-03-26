@@ -913,7 +913,7 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                 </Card>
 
                  {/* 5. Letter Of Authorization Card */}
-                 <AuthorizationLetterCard tenderId={tenderId} egpEmail={egpEmail} />
+                 <AuthorizationLetterCard tenderId={tenderId} egpEmail={egpEmail} currentTender={currentTender} />
                 
             </div>
         </div>

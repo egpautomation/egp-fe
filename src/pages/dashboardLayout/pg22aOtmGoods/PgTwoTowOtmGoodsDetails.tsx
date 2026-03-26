@@ -436,7 +436,7 @@ const PgTwoTowOtmGoodsDetails = () => {
           tenderId={currentTender?.tenderId || ongoingContracts[0]?.tenderId || completedContracts[0]?.tenderId}
           descriptionOfWorks={currentTender?.descriptionOfWorks}
           turnoverData={turnoverData}
-          currentTender={currentTender}
+          currentTender={liveTenderData || currentTender}
           tdsRequiredFY={tdsRequiredFY}
           tdsRequiredBestYear={tdsRequiredBestYear}
         />
