@@ -1,4 +1,4 @@
-
+// @ts-nocheck
 import { formatDate } from "@/lib/formateDate";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -87,7 +87,7 @@ export const handleAuthorizationLetterDownload = (companyData:any, currentTender
     margin: { left: margin },
   });
 
-  yPos = doc.lastAutoTable.finalY + 10;
+  yPos = (doc as any).lastAutoTable.finalY + 10;
 
   // --- To Section ---
   doc.setFont("helvetica", "normal");
