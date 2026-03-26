@@ -34,7 +34,7 @@ const useLiveTenders = (
                 const t = typeMethod.trim();
                 const pDate = publishingDate.trim();
 
-                if (s) params.search = s;
+                if (s) params.searchTerm = s;
                 if (t) params.method = t; 
                 if (m) params.organization = m;
                 if (d) params.locationDistrict = d;
