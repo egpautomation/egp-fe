@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import XLSX from 'xlsx-js-style';
+import AuthorizationLetterCard from './AuthorizationLetterCard';
 
 interface DownloadsTabProps {
     ongoingContracts: any[];
@@ -910,6 +911,10 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                         </div>
                     </CardContent>
                 </Card>
+
+                 {/* 5. Letter Of Authorization Card */}
+                 <AuthorizationLetterCard tenderId={tenderId} egpEmail={egpEmail} />
+                
             </div>
         </div>
     );
