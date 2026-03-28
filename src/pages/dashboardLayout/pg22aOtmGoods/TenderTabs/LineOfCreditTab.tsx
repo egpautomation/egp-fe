@@ -26,7 +26,6 @@ interface LineOfCreditTabProps {
 export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
   currentTender,
   companyData,
-  companyMigration,
   liveTender: liveTenderProp, 
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);

@@ -7,6 +7,8 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import XLSX from 'xlsx-js-style';
 import AuthorizationLetterCard from './AuthorizationLetterCard';
+import ManufacturerAuthorizationCard from './ManufacturerAuthorizationCard';
+import LineOfCreditCard from './LineOfCreditCard';
 
 interface DownloadsTabProps {
     ongoingContracts: any[];
@@ -36,6 +38,7 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
     currentTender,
     tdsRequiredFY,
     tdsRequiredBestYear
+    
 }) => {
 
     // Helper function to add header to PDF
@@ -913,7 +916,13 @@ export const DownloadsTab: React.FC<DownloadsTabProps> = ({
                 </Card>
 
                  {/* 5. Letter Of Authorization Card */}
+
                  <AuthorizationLetterCard tenderId={tenderId} egpEmail={egpEmail} currentTender={currentTender} />
+                {/* Line Of Credit */}
+                 <LineOfCreditCard tenderId={tenderId} egpEmail={egpEmail} currentTender={currentTender} />
+
+                {/* 7. Letter Of Authorization Card */}
+                 <ManufacturerAuthorizationCard tenderId={tenderId} egpEmail={egpEmail} currentTender={currentTender} />
                 
             </div>
         </div>

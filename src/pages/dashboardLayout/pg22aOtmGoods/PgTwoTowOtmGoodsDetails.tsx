@@ -54,7 +54,7 @@ const PgTwoTowOtmGoodsDetails = () => {
   // 1.1 Fetch Live Tender Data to get Liquid Assets Requirement (based on tenderId from preparation)
   const liveTenderUrl = currentTender?.tenderId ? `${config.apiBaseUrl}/tenders/tenderId/${currentTender.tenderId}` : null;
   const { data: liveTenderData } = useSingleData(liveTenderUrl);
-
+console.log(liveTenderUrl)
   // Initialize shared state from database values
   useEffect(() => {
     if (currentTender) {

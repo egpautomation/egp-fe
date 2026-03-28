@@ -6,7 +6,6 @@ const useSingleData = (url) => {
   const [loading, setLoading] = useState(true);
   const [reload, setReload] = useState(0);
   const [data, setData] = useState({});
-
   useEffect(() => {
     if (!url) {
       setLoading(false);
@@ -19,6 +18,7 @@ const useSingleData = (url) => {
         const response = await fetch(url);
         const data = await response.json();
         setData(data?.data);
+        
       } catch (error) {
         console.error("Error fetching:", error);
       } finally {

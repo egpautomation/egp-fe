@@ -86,6 +86,8 @@ import StlCalculationPage from "@/pages/homeLayout/StlCalculationPage";
 import PrivacyPolicy from "@/pages/homeLayout/PrivacyAndPolicy";
 import GoogleOnboarding from "@/pages/homeLayout/GoogleOnboarding";
 import LetterOfAuthorization from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/LetterOfAuthorization";
+import ManufacturerAuthorizationForGoods from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/ManufacturerAuthorizationForGoods";
+import LineOfCreditPage from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/LineOfCreditPage";
 
 
 const router = createBrowserRouter([
@@ -703,6 +705,14 @@ const router = createBrowserRouter([
   {
     path:"letter-of-authorization/:id",
     element: <LetterOfAuthorization />
+  },
+  {
+    path:"manufacturer-authorization/:id",
+    element: <ManufacturerAuthorizationForGoods />
+  },
+  {
+    path:"line-of-credit/:id",
+    element: <LineOfCreditPage />
   }
 ]);
 
