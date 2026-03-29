@@ -20,7 +20,7 @@ const OTMTenderIds = () => {
     Number(searchParams.get("page")) || 1
   );
   const [pageLimit, setPageLimit] = useState(
-    Number(searchParams.get("limit")) || 100
+    Number(searchParams.get("limit")) || 1000
   );
 
   const { tenders, loading, tendersCount, setReload } = useAllTenderIds(
@@ -29,7 +29,7 @@ const OTMTenderIds = () => {
     currentPage,
     pageLimit
   );
-  const skeleton = new Array(pageLimit).fill(Math?.random());
+  const skeleton = new Array(Math.min(pageLimit, 10)).fill(Math?.random());
 
   // const handleDelete = async (id) => {
   //   const url = `https://egp-tender-automation-server.vercel.app/api/v1/tenderIds/delete-tenderId/${id}`;
