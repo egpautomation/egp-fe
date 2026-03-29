@@ -42,7 +42,7 @@ const useAllUserEgpMail = (userEmail) => {
     reload,
     setLoading,
     setReload,
-    loading
+    loading,
   };
 };
 

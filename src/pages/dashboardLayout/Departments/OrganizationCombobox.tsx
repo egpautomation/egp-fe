@@ -11,17 +11,13 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState } from "react";
 import useAllUniqueOrganizations from "@/hooks/useAllUniqueOrganizations";
 
-export function UniqueOrganizationComboBox({value, setValue, setOrganization,data }) {
+export function UniqueOrganizationComboBox({ value, setValue, setOrganization, data }) {
   const [open, setOpen] = useState(false);
-//   const { data } = useAllUniqueOrganizations();
+  //   const { data } = useAllUniqueOrganizations();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -32,9 +28,7 @@ export function UniqueOrganizationComboBox({value, setValue, setOrganization,dat
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value
-            ? data.find((department) => department === value)
-            : "Select Organization..."}
+          {value ? data.find((department) => department === value) : "Select Organization..."}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -55,12 +49,7 @@ export function UniqueOrganizationComboBox({value, setValue, setOrganization,dat
                   }}
                 >
                   All
-                  <Check
-                    className={cn(
-                      "ml-auto",
-                      value === "" ? "opacity-100" : "opacity-0"
-                    )}
-                  />
+                  <Check className={cn("ml-auto", value === "" ? "opacity-100" : "opacity-0")} />
                 </CommandItem>
               )}
               {data.map((department) => (

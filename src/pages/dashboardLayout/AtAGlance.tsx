@@ -8,15 +8,14 @@ import RecentOrder from "@/components/dashboard/AtAGlance/RecentOrder";
 
 const AtAGlance = () => {
   return (
-   <section>
-    <Greetings />
-    <OrderStats />
-    <RecentOrder />
-    <div className="my-16">
-      <TenderOpeningCalendar />
-    </div>
-    
-   </section>
+    <section>
+      <Greetings />
+      <OrderStats />
+      <RecentOrder />
+      <div className="my-16">
+        <TenderOpeningCalendar />
+      </div>
+    </section>
   );
 };
 

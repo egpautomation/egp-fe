@@ -19,11 +19,11 @@ const UpdateJobOrderStatus = () => {
   const [message, setMessage] = useState("");
 
   const resetForm = () => {
-    setOrderId("")
-    setJobId("")
-    setStatus("")
+    setOrderId("");
+    setJobId("");
+    setStatus("");
     setMessage("Status Update Successfully.");
-  }
+  };
 
   const handleStatusChange = (e) => {
     e.preventDefault();
@@ -38,23 +38,14 @@ const UpdateJobOrderStatus = () => {
 
   return (
     <div>
-      <div
-        id="job_order_update_message"
-        className="text-green-600 text-center mt-4 font-medium"
-      >
+      <div id="job_order_update_message" className="text-green-600 text-center mt-4 font-medium">
         {message && message}{" "}
         {message && (
-          <X
-            size={16}
-            className="inline-block cursor-pointer"
-            onClick={() => setMessage("")}
-          />
+          <X size={16} className="inline-block cursor-pointer" onClick={() => setMessage("")} />
         )}
       </div>
       <div className="my-10">
-        <h1 className="text-xl md:text-3xl font-semibold text-center">
-          Update Status
-        </h1>
+        <h1 className="text-xl md:text-3xl font-semibold text-center">Update Status</h1>
       </div>
       <form
         onSubmit={handleStatusChange}
@@ -97,11 +88,7 @@ const UpdateJobOrderStatus = () => {
           />
         </div>
 
-        <Button
-          name="updateJobOrderStatus"
-          className="w-full mt-5"
-          type="submit"
-        >
+        <Button name="updateJobOrderStatus" className="w-full mt-5" type="submit">
           Update Status
         </Button>
       </form>

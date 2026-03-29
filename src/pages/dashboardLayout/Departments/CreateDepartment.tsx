@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { MoveLeft } from "lucide-react";
 
 const CreateDepartment = () => {
-    const {setReload, data} = useAllUniqueOrganizations()
+  const { setReload, data } = useAllUniqueOrganizations();
   const [formData, setFormData] = useState({
     organization: "",
     shortName: "",
@@ -49,14 +49,12 @@ const CreateDepartment = () => {
 
   return (
     <div className="">
-        <Link to={"/dashboard/departments"}>
+      <Link to={"/dashboard/departments"}>
         <Button className="flex items-center gap-1.5 mt-6 cursor-pointer">
           <MoveLeft /> Back To Department Table
         </Button>
       </Link>
-      <h2 className="text-2xl font-bold mb-4 text-center my-5">
-        Create Department
-      </h2>
+      <h2 className="text-2xl font-bold mb-4 text-center my-5">Create Department</h2>
       <form
         onSubmit={handleSubmit}
         className="space-y-4 max-w-xl mx-auto  p-6 bg-white shadow rounded-xl"

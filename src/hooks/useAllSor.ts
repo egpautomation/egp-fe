@@ -1,9 +1,10 @@
 // @ts-nocheck
-import { config } from "@/lib/config";
+
+import config from "@/lib/config";
 import { useEffect, useState } from "react";
 
-const useAllCompanyMigration = (searchTerm) => {
-  const [companyMigrations, setCompanyMigration] = useState([]);
+const useAllSOR = (searchTerm, page, limit) => {
+  const [sors, setSors] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [reload, setReload] = useState(0);
@@ -12,13 +13,14 @@ const useAllCompanyMigration = (searchTerm) => {
     const result = async () => {
       try {
         setLoading(true);
-        // https://egp-tender-automation-server.vercel.app
-        // https://egpserver.jubairahmad.com
-        const url = `${config.apiBaseUrl}/companyMigration?searchTerm=${searchTerm}`;
-        const response = await fetch(url);
+       
+        
+        const response = await fetch(
+          `${config.apiBaseUrl}/sor?departmentShortName=${searchTerm?.departmentShortName || ""}&itemCode=${searchTerm?.itemCode || ""}&description=${searchTerm?.description || ""}&page=${page}&limit=${limit}`
+        );
         const data = await response.json();
-
-        setCompanyMigration(data?.data);
+        console.log(data);
+        setSors(data?.data);
         setCount(data?.count);
       } catch (error) {
         console.error("Error fetching :", error);
@@ -30,8 +32,8 @@ const useAllCompanyMigration = (searchTerm) => {
   }, [reload, searchTerm]);
 
   return {
-    companyMigrations,
-    setCompanyMigration,
+    sors,
+    setSors,
     count,
     setCount,
     reload,
@@ -41,4 +43,4 @@ const useAllCompanyMigration = (searchTerm) => {
   };
 };
 
-export default useAllCompanyMigration;
+export default useAllSOR;

@@ -37,20 +37,13 @@ const EditDepartmentInformation = () => {
           <MoveLeft /> Back To Department Table
         </Button>
       </Link>
-      <h1 className="text-3xl font-bold text-center my-5">
-        Update Department Information
-      </h1>
+      <h1 className="text-3xl font-bold text-center my-5">Update Department Information</h1>
       <div className="flex justify-center items-center">
         <div className="w-full max-w-xl shadow-2xl p-3 md:p-5 rounded border">
-          <form
-            onSubmit={handleSubmit}
-            className="w-full max-w-2xl grid grid-cols-1 gap-5"
-          >
+          <form onSubmit={handleSubmit} className="w-full max-w-2xl grid grid-cols-1 gap-5">
             {/* Organization */}
             <div>
-              <Label>
-                Organization 
-              </Label>
+              <Label>Organization</Label>
               <Input
                 type="text"
                 name="organization"
@@ -64,9 +57,7 @@ const EditDepartmentInformation = () => {
 
             {/* Short Name */}
             <div>
-              <Label>
-                Short Name 
-              </Label>
+              <Label>Short Name</Label>
               <Input
                 type="text"
                 name="shortName"
@@ -74,15 +65,12 @@ const EditDepartmentInformation = () => {
                 onChange={handleInputChange}
                 placeholder="Enter Short Name"
                 className="mt-2"
-                
               />
             </div>
 
             {/* Details Name */}
             <div>
-              <Label>
-                Details Name 
-              </Label>
+              <Label>Details Name</Label>
               <Input
                 type="text"
                 name="detailsName"
@@ -90,16 +78,12 @@ const EditDepartmentInformation = () => {
                 onChange={handleInputChange}
                 placeholder="Enter Details Name"
                 className="mt-2"
-                
               />
             </div>
 
             {/* Department Bangla Short Name */}
             <div>
-              <Label>
-                Department Bangla Short Name{" "}
-                
-              </Label>
+              <Label>Department Bangla Short Name </Label>
               <Input
                 type="text"
                 name="departmentBanglaShortName"
@@ -107,15 +91,12 @@ const EditDepartmentInformation = () => {
                 onChange={handleInputChange}
                 placeholder="Enter Bangla Short Name"
                 className="mt-2"
-                
               />
             </div>
 
             {/* LTM License Name Code */}
             <div>
-              <Label>
-                LTM License Name Code 
-              </Label>
+              <Label>LTM License Name Code</Label>
               <Input
                 type="text"
                 name="LTMLicenseNameCode"
@@ -123,7 +104,6 @@ const EditDepartmentInformation = () => {
                 onChange={handleInputChange}
                 placeholder="Enter LTM License Code"
                 className="mt-2"
-                
               />
             </div>
 

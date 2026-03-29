@@ -28,8 +28,8 @@ const useAllBOQ = (searchTerm, page, limit) => {
   }, [reload]);
 
   return {
-     data,
-     setData,
+    data,
+    setData,
     count,
     setCount,
     reload,
@@ -40,7 +40,3 @@ const useAllBOQ = (searchTerm, page, limit) => {
 };
 
 export default useAllBOQ;
-
-
-
-

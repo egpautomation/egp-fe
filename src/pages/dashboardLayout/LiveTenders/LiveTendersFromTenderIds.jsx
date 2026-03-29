@@ -38,9 +38,7 @@ const natureColors = {
 function Badge({ label }) {
   const cls = natureColors[label] ?? natureColors.default;
   return (
-    <span
-      className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full ${cls}`}
-    >
+    <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full ${cls}`}>
       {label}
     </span>
   );
@@ -66,7 +64,7 @@ function JsonImportPanel({ onImportDone }) {
       try {
         const raw = JSON.parse(ev.target.result);
         // Accept both array and { data: [...] }
-        const arr = Array.isArray(raw) ? raw : raw?.data ?? [];
+        const arr = Array.isArray(raw) ? raw : (raw?.data ?? []);
         setParsed(arr);
         toast.success(`${arr.length} records loaded`);
       } catch {
@@ -94,7 +92,9 @@ function JsonImportPanel({ onImportDone }) {
       if (inserted === 0 && skipped > 0) {
         toast.error(`Rejected: All ${skipped} records are duplicates!`, { duration: 5000 });
       } else if (skipped > 0) {
-        toast.success(`Accepted: ${inserted}, Rejected (Duplicates): ${skipped}`, { duration: 6000 });
+        toast.success(`Accepted: ${inserted}, Rejected (Duplicates): ${skipped}`, {
+          duration: 6000,
+        });
       } else {
         toast.success(`All ${inserted} records imported successfully!`);
       }
@@ -119,12 +119,8 @@ function JsonImportPanel({ onImportDone }) {
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
         <FileJson size={20} className="text-indigo-600" />
-        <span className="font-semibold text-indigo-700 text-sm">
-          JSON Bulk Import
-        </span>
-        <span className="text-xs text-gray-500 ml-1">
-          — import multiple tenders at once
-        </span>
+        <span className="font-semibold text-indigo-700 text-sm">JSON Bulk Import</span>
+        <span className="text-xs text-gray-500 ml-1">— import multiple tenders at once</span>
       </div>
 
       {/* Drop / File area */}
@@ -158,8 +154,7 @@ function JsonImportPanel({ onImportDone }) {
         {parsed && (
           <>
             <span className="text-xs text-gray-600">
-              <strong className="text-indigo-700">{parsed.length}</strong>{" "}
-              records ready
+              <strong className="text-indigo-700">{parsed.length}</strong> records ready
             </span>
 
             <button
@@ -210,10 +205,7 @@ function JsonImportPanel({ onImportDone }) {
               {parsed.slice(0, 10).map((row, i) => (
                 <tr key={i} className={i % 2 === 1 ? "bg-gray-50" : ""}>
                   {Object.values(row).map((v, j) => (
-                    <td
-                      key={j}
-                      className="px-3 py-1.5 whitespace-nowrap text-gray-700"
-                    >
+                    <td key={j} className="px-3 py-1.5 whitespace-nowrap text-gray-700">
                       {String(v ?? "")}
                     </td>
                   ))}
@@ -234,8 +226,8 @@ function JsonImportPanel({ onImportDone }) {
         <p className="mt-3 text-xs text-gray-500 flex items-center gap-1">
           <Info size={12} />
           Supports JSON array or{" "}
-          <code className="bg-gray-100 px-1 rounded">{"{ \"data\": [...] }"}</code>{" "}
-          format. Drag & drop also supported.
+          <code className="bg-gray-100 px-1 rounded">{'{ "data": [...] }'}</code> format. Drag &
+          drop also supported.
         </p>
       )}
     </div>
@@ -253,12 +245,8 @@ export default function LiveTendersFromTenderIds() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [showImport, setShowImport] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-  const [currentPage, setCurrentPage] = useState(
-    Number(searchParams.get("page")) || 1
-  );
-  const [pageLimit, setPageLimit] = useState(
-    Number(searchParams.get("limit")) || 20
-  );
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
+  const [pageLimit, setPageLimit] = useState(Number(searchParams.get("limit")) || 20);
 
   // Debounce search
   useEffect(() => {
@@ -303,7 +291,9 @@ export default function LiveTendersFromTenderIds() {
   const downloadTenderIds = async () => {
     const toastId = toast.loading("Fetching Tender IDs…");
     try {
-      const res = await axiosInstance.get(`/live-tenders/export-ids?collection=live&searchTerm=${debouncedSearch}`);
+      const res = await axiosInstance.get(
+        `/live-tenders/export-ids?collection=live&searchTerm=${debouncedSearch}`
+      );
       if (res.data?.success) {
         const ids = res.data.data;
         if (!ids || ids.length === 0) {
@@ -315,20 +305,20 @@ export default function LiveTendersFromTenderIds() {
         const csvHeader = "Tender ID\n";
         const csvRows = ids.join("\n");
         const csvContent = csvHeader + csvRows;
-        
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
-        
+
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", `tender_ids_${new Date().toISOString().split('T')[0]}.csv`);
+        link.setAttribute("download", `tender_ids_${new Date().toISOString().split("T")[0]}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         // Clean up the URL object
         setTimeout(() => URL.revokeObjectURL(url), 100);
-        
+
         toast.success(`Downloaded ${ids.length} IDs ✓`);
       }
     } catch (err) {
@@ -358,10 +348,7 @@ export default function LiveTendersFromTenderIds() {
         <div className="flex items-center gap-2 flex-wrap">
           {/* Search */}
           <div className="relative">
-            <Search
-              size={14}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <Input
               value={searchTerm}
               onChange={(e) => {
@@ -413,39 +400,25 @@ export default function LiveTendersFromTenderIds() {
       </div>
 
       {/* ── Import Panel ── */}
-      {showImport && (
-        <JsonImportPanel onImportDone={() => setReload((r) => r + 1)} />
-      )}
+      {showImport && <JsonImportPanel onImportDone={() => setReload((r) => r + 1)} />}
 
       {/* ── Table ── */}
       <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-primary text-primary-foreground">
-              <th className="px-4 py-3 text-left whitespace-nowrap rounded-tl-xl w-10">
-                #
-              </th>
-              <th className="px-4 py-3 text-left whitespace-nowrap">
-                Tender ID
-              </th>
+              <th className="px-4 py-3 text-left whitespace-nowrap rounded-tl-xl w-10">#</th>
+              <th className="px-4 py-3 text-left whitespace-nowrap">Tender ID</th>
               <th className="px-4 py-3 text-left whitespace-nowrap min-w-[220px]">
                 Brief Description
               </th>
               <th className="px-4 py-3 text-left whitespace-nowrap min-w-[200px]">
                 Ministry / Org / PE / Location
               </th>
-              <th className="px-4 py-3 text-center whitespace-nowrap">
-                Type / Method
-              </th>
-              <th className="px-4 py-3 text-center whitespace-nowrap">
-                Publishing
-              </th>
-              <th className="px-4 py-3 text-center whitespace-nowrap">
-                Opening
-              </th>
-              <th className="px-4 py-3 text-center whitespace-nowrap rounded-tr-xl">
-                Action
-              </th>
+              <th className="px-4 py-3 text-center whitespace-nowrap">Type / Method</th>
+              <th className="px-4 py-3 text-center whitespace-nowrap">Publishing</th>
+              <th className="px-4 py-3 text-center whitespace-nowrap">Opening</th>
+              <th className="px-4 py-3 text-center whitespace-nowrap rounded-tr-xl">Action</th>
             </tr>
           </thead>
 
@@ -458,8 +431,9 @@ export default function LiveTendersFromTenderIds() {
                     .map((_, j) => (
                       <td key={j} className="px-4 py-3">
                         <div
-                          className={`h-4 rounded animate-pulse ${idx % 2 === 0 ? "bg-gray-200" : "bg-gray-100"
-                            }`}
+                          className={`h-4 rounded animate-pulse ${
+                            idx % 2 === 0 ? "bg-gray-200" : "bg-gray-100"
+                          }`}
                         />
                       </td>
                     ))}
@@ -469,8 +443,9 @@ export default function LiveTendersFromTenderIds() {
               tenders.map((item, idx) => (
                 <tr
                   key={item?._id ?? idx}
-                  className={`border-b border-gray-100 hover:bg-blue-50/40 transition-colors ${idx % 2 === 1 ? "bg-gray-50/60" : ""
-                    }`}
+                  className={`border-b border-gray-100 hover:bg-blue-50/40 transition-colors ${
+                    idx % 2 === 1 ? "bg-gray-50/60" : ""
+                  }`}
                 >
                   {/* # */}
                   <td className="px-4 py-3 text-gray-500 text-xs">
@@ -496,23 +471,21 @@ export default function LiveTendersFromTenderIds() {
 
                   {/* Ministry / Org / PE */}
                   <td className="px-4 py-3 text-xs text-gray-700 leading-relaxed max-w-[220px]">
-                    {item?.ministry && (
-                      <p className="text-gray-500">{item.ministry}</p>
-                    )}
-                    {item?.organization && (
-                      <p className="font-medium">{item.organization}</p>
-                    )}
-                    {item?.pe && (
-                      <p className="text-gray-500">{item.pe}</p>
-                    )}
+                    {item?.ministry && <p className="text-gray-500">{item.ministry}</p>}
+                    {item?.organization && <p className="font-medium">{item.organization}</p>}
+                    {item?.pe && <p className="text-gray-500">{item.pe}</p>}
                     {item?.locationDistrict && (
-                      <p className="text-indigo-600 font-medium">District: {item.locationDistrict}</p>
+                      <p className="text-indigo-600 font-medium">
+                        District: {item.locationDistrict}
+                      </p>
                     )}
                   </td>
 
                   {/* Type / Method */}
                   <td className="px-4 py-3 text-center text-xs whitespace-nowrap">
-                    <p className="font-medium text-gray-700">{item?.ProcurementType ?? item?.type ?? "—"}</p>
+                    <p className="font-medium text-gray-700">
+                      {item?.ProcurementType ?? item?.type ?? "—"}
+                    </p>
                     <p className="text-gray-500 text-[11px]">
                       {item?.procurementMethod ?? item?.method ?? ""}
                     </p>
@@ -520,20 +493,24 @@ export default function LiveTendersFromTenderIds() {
 
                   {/* Publishing */}
                   <td className="px-4 py-3 text-center text-xs whitespace-nowrap text-gray-700">
-                    <p>{formatDate(item?.publicationDateTime ?? item?.publishingDate, "dd-MMM-yyyy hh:mm a")}</p>
-                    {item?.publishingTime && (
-                      <p className="text-gray-500">{item.publishingTime}</p>
-                    )}
+                    <p>
+                      {formatDate(
+                        item?.publicationDateTime ?? item?.publishingDate,
+                        "dd-MMM-yyyy hh:mm a"
+                      )}
+                    </p>
+                    {item?.publishingTime && <p className="text-gray-500">{item.publishingTime}</p>}
                   </td>
 
                   {/* Closing */}
                   <td className="px-4 py-3 text-center text-xs whitespace-nowrap">
                     <p className="font-medium text-red-600">
-                      {formatDate(item?.openingDateTime ?? item?.closingDate, "dd-MMM-yyyy hh:mm a")}
+                      {formatDate(
+                        item?.openingDateTime ?? item?.closingDate,
+                        "dd-MMM-yyyy hh:mm a"
+                      )}
                     </p>
-                    {item?.closingTime && (
-                      <p className="text-red-400">{item.closingTime}</p>
-                    )}
+                    {item?.closingTime && <p className="text-red-400">{item.closingTime}</p>}
                   </td>
 
                   {/* Action */}
@@ -567,10 +544,7 @@ export default function LiveTendersFromTenderIds() {
               ))
             ) : (
               <tr>
-                <td
-                  colSpan={8}
-                  className="text-center py-16 text-gray-400"
-                >
+                <td colSpan={8} className="text-center py-16 text-gray-400">
                   <div className="flex flex-col items-center gap-2">
                     <AlignJustify size={32} className="opacity-30" />
                     <p className="text-sm">No tenders found</p>

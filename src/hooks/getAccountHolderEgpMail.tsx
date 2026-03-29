@@ -2,7 +2,7 @@
 import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
-const useAccountHolderEgpMail = ( user) => {
+const useAccountHolderEgpMail = (user) => {
   const [data, setData] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ const useAccountHolderEgpMail = ( user) => {
       }
     };
     result();
-  }, [reload,user]);
+  }, [reload, user]);
 
   return {
     data,

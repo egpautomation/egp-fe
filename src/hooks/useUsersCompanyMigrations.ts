@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "@/lib/axiosInstance";
 
-const useUsersCompanyMigration = (user,searchTerm) => {
+const useUsersCompanyMigration = (user, searchTerm) => {
   const [companyMigrations, setCompanyMigration] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -15,7 +15,7 @@ const useUsersCompanyMigration = (user,searchTerm) => {
         const url = `/companyMigration/user?searchTerm=${searchTerm}&user=${user}`;
         const response = await axiosInstance.get(url);
         const data = response.data;
-        
+
         setCompanyMigration(data?.data);
         setCount(data?.count);
       } catch (error) {

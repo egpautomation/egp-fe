@@ -16,7 +16,7 @@ const useAllTenderCategoriesWithPagination = (searchTerm, page, limit) => {
         const url = `${config.apiBaseUrl}/tender-categories/with-pagination?searchTerm=${searchTerm}&page=${page}&limit=${limit}`;
         const response = await fetch(url);
         const data = await response.json();
-        
+
         setCategories(data?.data);
         setCount(data?.count);
       } catch (error) {

@@ -36,7 +36,13 @@ const MyJobOrder = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const { user } = useContext(AuthContext);
   const [currentPage, setCurrentPage] = useState(1);
-  const { data, loading, setReload, pagination } = useMyJobOrders(searchTerm, user?.email, currentPage, 20, statusFilter);
+  const { data, loading, setReload, pagination } = useMyJobOrders(
+    searchTerm,
+    user?.email,
+    currentPage,
+    20,
+    statusFilter
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -109,52 +115,31 @@ const MyJobOrder = () => {
           <table className="mt-5 w-full max-lg:hidden">
             <thead>
               <tr className="bg-primary text-primary-foreground">
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">
-                  Tender Id
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start">
-                  Ordered
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  Egp Email
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  Bank Name
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  Liquid Asset
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  Status
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tr">
-                  Action
-                </th>
+                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">Tender Id</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start">Ordered</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">Egp Email</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">Bank Name</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">Liquid Asset</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">Status</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tr">Action</th>
               </tr>
             </thead>
 
             <tbody>
               {!loading && data?.length > 0 ? (
                 data?.map((item, idx) => (
-                  <tr
-                    key={idx}
-                    className={`border ${idx % 2 == 1 && "bg-gray-100"}`}
-                  >
+                  <tr key={idx} className={`border ${idx % 2 == 1 && "bg-gray-100"}`}>
                     <td className="px-4 py-2">{item?.tenderId}</td>
 
                     <td className="px-4 py-2">{item?.userMail}</td>
                     <td className="px-4 py-2">{item?.egpMail}</td>
                     <td className="px-4 py-2">{item?.bankName}</td>
-                    <td className="px-4 py-2">
-                      {item?.liquidAssetsTenderAmount}
-                    </td>
+                    <td className="px-4 py-2">{item?.liquidAssetsTenderAmount}</td>
                     <td className={`px-4 py-2 `}>
                       <span
-                        className={`border-none shadow-none rounded inline-block py-0.5 px-1.5 bg-orange-300 w-full font-semibold text-orange-900 ${item?.status === "fulfilled" &&
-                          "bg-green-300 text-green-900"
-                          } ${item?.status === "canceled" &&
-                          "bg-red-400 text-red-900"
-                          }`}
+                        className={`border-none shadow-none rounded inline-block py-0.5 px-1.5 bg-orange-300 w-full font-semibold text-orange-900 ${
+                          item?.status === "fulfilled" && "bg-green-300 text-green-900"
+                        } ${item?.status === "canceled" && "bg-red-400 text-red-900"}`}
                       >
                         {" "}
                         {item?.status}
@@ -202,7 +187,7 @@ const MyJobOrder = () => {
       {!loading && data?.length > 0 && (
         <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4 border-t pt-4">
           <div className="text-sm text-gray-600">
-            Showing <span className="font-semibold">{((currentPage - 1) * 20) + 1}</span> to{" "}
+            Showing <span className="font-semibold">{(currentPage - 1) * 20 + 1}</span> to{" "}
             <span className="font-semibold">
               {Math.min(currentPage * 20, pagination?.totalCount || 0)}
             </span>{" "}
@@ -224,7 +209,7 @@ const MyJobOrder = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => prev - 1)}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
               disabled={!pagination?.hasPreviousPage}
               className="cursor-pointer"
             >
@@ -238,7 +223,7 @@ const MyJobOrder = () => {
                   pageNum = i + 1;
                 } else if (currentPage <= 3) {
                   pageNum = i + 1;
-                } else if (currentPage >= (pagination?.totalPages - 2)) {
+                } else if (currentPage >= pagination?.totalPages - 2) {
                   pageNum = pagination?.totalPages - 4 + i;
                 } else {
                   pageNum = currentPage - 2 + i;
@@ -261,7 +246,7 @@ const MyJobOrder = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => prev + 1)}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
               disabled={!pagination?.hasNextPage}
               className="cursor-pointer"
             >
@@ -281,7 +266,6 @@ const MyJobOrder = () => {
           </div>
         </div>
       )}
-
 
       {/* Custom Cancel Confirmation Dialog */}
       <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -309,10 +293,7 @@ const MyJobOrder = () => {
             <AlertDialogCancel onClick={() => setIsDialogOpen(false)}>
               No, Keep It
             </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmCancel}
-              className="bg-red-600 hover:bg-red-700"
-            >
+            <AlertDialogAction onClick={confirmCancel} className="bg-red-600 hover:bg-red-700">
               Yes, Cancel Order
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -322,7 +303,13 @@ const MyJobOrder = () => {
   );
 };
 
-const MobileTableLayout = ({ data, handleCancelRequest }: { data: any, handleCancelRequest: any }) => {
+const MobileTableLayout = ({
+  data,
+  handleCancelRequest,
+}: {
+  data: any;
+  handleCancelRequest: any;
+}) => {
   return (
     <div className="flex flex-col gap-6 my-8 lg:hidden px-2">
       {data?.map((item: any, idx: number) => (
@@ -331,38 +318,62 @@ const MobileTableLayout = ({ data, handleCancelRequest }: { data: any, handleCan
           className="flex flex-col gap-2 border rounded-xl p-4 py-6 shadow-sm bg-white"
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Tender Id:</span>
-            <span className="text-gray-800 break-words sm:text-right font-bold text-xl">{item?.tenderId}</span>
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              Tender Id:
+            </span>
+            <span className="text-gray-800 break-words sm:text-right font-bold text-xl">
+              {item?.tenderId}
+            </span>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Ordered:</span>
-            <span className="text-gray-800 break-all sm:text-right font-medium">{item?.userMail}</span>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">E-GP Email:</span>
-            <span className="text-gray-800 break-all sm:text-right font-medium">{item?.egpEmail}</span>
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Bank Name:</span>
-            <span className="text-gray-800 break-words sm:text-right font-medium">{item?.bankName}</span>
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              Ordered:
+            </span>
+            <span className="text-gray-800 break-all sm:text-right font-medium">
+              {item?.userMail}
+            </span>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Liquid Asset:</span>
-            <span className="text-gray-800 break-words sm:text-right font-medium">{item?.liquidAssetsTenderAmount}</span>
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              E-GP Email:
+            </span>
+            <span className="text-gray-800 break-all sm:text-right font-medium">
+              {item?.egpEmail}
+            </span>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Status:</span>
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              Bank Name:
+            </span>
+            <span className="text-gray-800 break-words sm:text-right font-medium">
+              {item?.bankName}
+            </span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              Liquid Asset:
+            </span>
+            <span className="text-gray-800 break-words sm:text-right font-medium">
+              {item?.liquidAssetsTenderAmount}
+            </span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              Status:
+            </span>
             <span className="text-gray-800 break-words sm:text-right">
               <span
                 className={`inline-block py-0.5 px-2 rounded font-semibold text-sm ${
-                  item?.status === "fulfilled" ? "bg-green-100 text-green-700" :
-                  item?.status === "canceled" ? "bg-red-100 text-red-700" :
-                  "bg-orange-100 text-orange-700"
+                  item?.status === "fulfilled"
+                    ? "bg-green-100 text-green-700"
+                    : item?.status === "canceled"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-orange-100 text-orange-700"
                 }`}
               >
                 {item?.status}
@@ -371,7 +382,9 @@ const MobileTableLayout = ({ data, handleCancelRequest }: { data: any, handleCan
           </div>
 
           <div className="flex items-center justify-between gap-2 mt-4">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Actions:</span>
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              Actions:
+            </span>
             <div className="flex items-center gap-2">
               {item?.status !== "canceled" && item?.status !== "fulfilled" ? (
                 <Button

@@ -11,11 +11,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useContext, useState } from "react";
 import useAccountHolderEgpMail from "@/hooks/getAccountHolderEgpMail";
 import { AuthContext } from "@/provider/AuthProvider";
@@ -23,9 +19,8 @@ import { AuthContext } from "@/provider/AuthProvider";
 export function AccountHolderEgpMail({ setEgpMail }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
-  const {user} = useContext(AuthContext)
-  const {data:mails} = useAccountHolderEgpMail(user?.email)
-
+  const { user } = useContext(AuthContext);
+  const { data: mails } = useAccountHolderEgpMail(user?.email);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -36,9 +31,7 @@ export function AccountHolderEgpMail({ setEgpMail }) {
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value
-            ? mails.find((mail) => mail?.egpMail === value)?.egpMail
-            : "Select E-GP Email..."}
+          {value ? mails.find((mail) => mail?.egpMail === value)?.egpMail : "Select E-GP Email..."}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -48,15 +41,13 @@ export function AccountHolderEgpMail({ setEgpMail }) {
           <CommandList>
             <CommandEmpty>No Mail found.</CommandEmpty>
             <CommandGroup>
-       
               {mails.map((mail) => (
                 <CommandItem
-                key={mail?.egpMail}
-                value={mail?.egpMail}
+                  key={mail?.egpMail}
+                  value={mail?.egpMail}
                   onSelect={(currentValue) => {
-                  
                     const newValue = currentValue === value ? "" : currentValue;
-                   
+
                     setValue(newValue);
                     setEgpMail(newValue);
                     setOpen(false);
@@ -64,10 +55,7 @@ export function AccountHolderEgpMail({ setEgpMail }) {
                 >
                   {mail?.egpMail}
                   <Check
-                    className={cn(
-                      "ml-auto",
-                      value === mail?.egpMail ? "opacity-100" : "opacity-0"
-                    )}
+                    className={cn("ml-auto", value === mail?.egpMail ? "opacity-100" : "opacity-0")}
                   />
                 </CommandItem>
               ))}

@@ -33,7 +33,7 @@ const CreateCompanyRegistration = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "egpEmail") {
-      const trimmedValue = value.trim()
+      const trimmedValue = value.trim();
       const startsWithCapital = /^[A-Z]/.test(trimmedValue);
       const containsUpperCase = /[A-Z]/.test(trimmedValue);
       const missingDotCom = !/\.com$/.test(trimmedValue);
@@ -75,10 +75,7 @@ const CreateCompanyRegistration = () => {
         [name]: [...(prev[name] || []), imageUrl],
       };
 
-      if (
-        name === "tinCertificateDocument" &&
-        updatedData.tinCertificateDocument.length > 0
-      ) {
+      if (name === "tinCertificateDocument" && updatedData.tinCertificateDocument.length > 0) {
         updatedData.companyTinCertificate = "yes";
       }
       if (
@@ -90,7 +87,6 @@ const CreateCompanyRegistration = () => {
 
       return updatedData;
     });
-
   };
 
   const handleSubmit = async (e) => {
@@ -98,15 +94,12 @@ const CreateCompanyRegistration = () => {
     const toastId = toast.loading("Creating...");
 
     try {
-      const response = await axiosInstance.post(
-        "/companyMigration/create-companyMigration",
-        {
-          user: user?.email,
-          egpEmail: formData.egpEmail,
-          egpLoginKey: formData.egpLoginKey,
-          companyName: formData.companyName,
-        }
-      );
+      const response = await axiosInstance.post("/companyMigration/create-companyMigration", {
+        user: user?.email,
+        egpEmail: formData.egpEmail,
+        egpLoginKey: formData.egpLoginKey,
+        companyName: formData.companyName,
+      });
 
       const data = response.data;
 
@@ -127,7 +120,8 @@ const CreateCompanyRegistration = () => {
         toast.error(data.error || "Failed to Create");
       }
     } catch (error) {
-      const errorMessage = error?.response?.data?.message || error?.message || "An unexpected error occurred";
+      const errorMessage =
+        error?.response?.data?.message || error?.message || "An unexpected error occurred";
       toast.error(errorMessage);
       console.error("Error:", error);
     } finally {
@@ -160,10 +154,7 @@ const CreateCompanyRegistration = () => {
 
   return (
     <section className="min-h-lvh ">
-      <Link
-        className="mt-5 inline-block"
-        to={"/dashboard/my-registered-company"}
-      >
+      <Link className="mt-5 inline-block" to={"/dashboard/my-registered-company"}>
         <Button>
           <MoveLeft /> Back To Data Table
         </Button>
@@ -171,10 +162,7 @@ const CreateCompanyRegistration = () => {
       <h1 className="text-3xl font-bold text-center my-5">Company Migration</h1>
       <div className="flex justify-center items-center">
         <div className="w-full max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl shadow-2xl p-4 md:p-6 lg:p-8 rounded border">
-          <form
-            onSubmit={handleSubmit}
-            className="w-full max-w-2xl grid grid-cols-1 gap-5"
-          >
+          <form onSubmit={handleSubmit} className="w-full max-w-2xl grid grid-cols-1 gap-5">
             <div className="">
               <Label htmlFor="egpEmail">
                 E-GP Email<span className="text-red-700">*</span>
@@ -188,9 +176,7 @@ const CreateCompanyRegistration = () => {
                 className="mt-2"
                 required
               />
-              {egpEmailError && (
-                <p className="text-sm text-red-700 mt-2">{egpEmailError}</p>
-              )}
+              {egpEmailError && <p className="text-sm text-red-700 mt-2">{egpEmailError}</p>}
             </div>
 
             <div className="">
@@ -199,8 +185,7 @@ const CreateCompanyRegistration = () => {
               </Label>
               <mark className="bg-yellow-400 mt-2 text-white text-[12px] px-1 rounded">
                 {" "}
-                পাসওয়ার্ড ভালোভাবে যাচাই করুন, পাসওয়ার্ড দিতে ভুল করলে" E-GP
-                একাউন্ট লক হতে পারে।
+                পাসওয়ার্ড ভালোভাবে যাচাই করুন, পাসওয়ার্ড দিতে ভুল করলে" E-GP একাউন্ট লক হতে পারে।
               </mark>
               <Input
                 type="text"
@@ -242,9 +227,7 @@ const CreateCompanyRegistration = () => {
                 required
               />
               {egpPassword !== formData?.egpLoginKey && (
-                <p className="text-red-700 mt-1 text-sm">
-                  Password does not match
-                </p>
+                <p className="text-red-700 mt-1 text-sm">Password does not match</p>
               )}
             </div>
 

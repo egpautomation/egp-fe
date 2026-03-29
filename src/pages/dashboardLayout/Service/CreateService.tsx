@@ -25,12 +25,12 @@ const CreateService = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `${config.apiBaseUrl}/services/create-service`
-    createData(url,formData);
+    const url = `${config.apiBaseUrl}/services/create-service`;
+    createData(url, formData);
   };
   return (
     <div className="min-h-lvh ">
-        <h1 className="text-3xl font-semibold text-center my-8">Add Service</h1>
+      <h1 className="text-3xl font-semibold text-center my-8">Add Service</h1>
       <form
         onSubmit={handleSubmit}
         action=""

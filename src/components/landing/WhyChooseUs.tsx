@@ -32,19 +32,18 @@ export default function WhyChooseUs() {
         "টেন্ডারের চাহিদা অনুযায়ী সকল ধরনের অফিসিয়াল টেমপ্লেট (Authorized Letter, Code of Conduct, JV Agreement ইত্যাদি) স্বয়ংক্রিয়ভাবে তৈরি করুন।",
       blogLink: "/blogs#auto-document-generation",
     },
-   
+
     {
       title: "টেন্ডার ম্যানেজমেন্ট",
       description:
         "আসন্ন টেন্ডারগুলো TO DO লিষ্ট করা, টেন্ডার প্রিপারেশন এর কাজ ম্যনেজমেন্ট, টেন্ডার সিকিউরিটির তথ্য ট্রেকিং, আগামী সম্পাহের টেন্ডার গুলোর তালিকা সুস্জ্জিত রিপোর্ট, সাবমিট করার টেন্ডার লটারির ফলাফল দেখা।",
       blogLink: "/blogs#tender-management",
     },
-     {
+    {
       title: "রিয়েলটাইম নোটিফিকেশন",
       description: "WhatsApp, Email এর মাধ্যেমে আপনার পছেন্দের টেন্ডার তালিকা প্রেরণ",
       blogLink: "/blogs#realtime-notification",
     },
-    
   ];
 
   const comparisonColumns = [
@@ -65,60 +64,107 @@ export default function WhyChooseUs() {
     },
     {
       feature: "এলটিএম ও ওটিএম টেন্ডার ফিলাপ",
-      values: { us: { status: "yes", text: "মোবাইল অ্যাপস, ল্যাপটপ, অ্যান্ড্রয়েড ও আইওএস-এ অটোমেটিক টেন্ডার ড্রপিং" },
-       others: { status: "partial", text: "ম্যানুয়াল ফর্ম ওপেন করে ফিলাপ, সময়সাপেক্ষ" } },
+      values: {
+        us: {
+          status: "yes",
+          text: "মোবাইল অ্যাপস, ল্যাপটপ, অ্যান্ড্রয়েড ও আইওএস-এ অটোমেটিক টেন্ডার ড্রপিং",
+        },
+        others: { status: "partial", text: "ম্যানুয়াল ফর্ম ওপেন করে ফিলাপ, সময়সাপেক্ষ" },
+      },
     },
     {
       feature: "লিমিটেশন",
-      values: { us: { status: "yes", text: "অটোমেশন সফটওয়্যারে ১০০+ টেন্ডার একসাথে কমান্ড, বিভিন্ন টেন্ডার আইডি ও কোম্পানির নাম একসাথে" }, others: { status: "partial", text: "একবারে শুধু একটি টেন্ডার নিয়ে কাজ" } },
+      values: {
+        us: {
+          status: "yes",
+          text: "অটোমেশন সফটওয়্যারে ১০০+ টেন্ডার একসাথে কমান্ড, বিভিন্ন টেন্ডার আইডি ও কোম্পানির নাম একসাথে",
+        },
+        others: { status: "partial", text: "একবারে শুধু একটি টেন্ডার নিয়ে কাজ" },
+      },
     },
     {
       feature: "অটো ডকুমেন্ট জেনারেশন",
-      values: { us: { status: "yes", text: "অটোমেটিকভাবে টেন্ডার ডকুমেন্ট তৈরি ও ডাউনলোড" }, others: { status: "no", text: "এই সুবিধা নেই" } },
+      values: {
+        us: { status: "yes", text: "অটোমেটিকভাবে টেন্ডার ডকুমেন্ট তৈরি ও ডাউনলোড" },
+        others: { status: "no", text: "এই সুবিধা নেই" },
+      },
     },
     {
       feature: "Tender management",
-      values: { us: { status: "yes", text: "আসন্ন টেন্ডার লিস্ট, টু-ডু লিস্ট, সিকিউরিটি ট্র্যাকিং" }, others: { status: "no", text: "নেই" } },
+      values: {
+        us: { status: "yes", text: "আসন্ন টেন্ডার লিস্ট, টু-ডু লিস্ট, সিকিউরিটি ট্র্যাকিং" },
+        others: { status: "no", text: "নেই" },
+      },
     },
     {
       feature: "SLT ক্যালকুলেশন",
-      values: { us: { status: "yes", text: "পিডিএফ এক্সট্র্যাক্ট করে অটোমেটিক ক্যালকুলেশন" }, others: { status: "partial", text: "ম্যানুয়ালি রেট বসাতে হয়" } },
+      values: {
+        us: { status: "yes", text: "পিডিএফ এক্সট্র্যাক্ট করে অটোমেটিক ক্যালকুলেশন" },
+        others: { status: "partial", text: "ম্যানুয়ালি রেট বসাতে হয়" },
+      },
     },
     {
       feature: "টার্নওভার ও ক্যাপাসিটি ক্যালকুলেশন",
-      values: { us: { status: "yes", text: "অটোমেটিক জেনারেট ও ডাউনলোড" }, others: { status: "no", text: "নেই" } },
+      values: {
+        us: { status: "yes", text: "অটোমেটিক জেনারেট ও ডাউনলোড" },
+        others: { status: "no", text: "নেই" },
+      },
     },
     {
       feature: "টেন্ডার রেজিস্ট্রেশন সাপোর্ট",
-      values: { us: { status: "yes", text: "সকল ডিপার্টমেন্টে সাপোর্ট" }, others: { status: "yes", text: "প্রতিযোগীরাও করে" } },
+      values: {
+        us: { status: "yes", text: "সকল ডিপার্টমেন্টে সাপোর্ট" },
+        others: { status: "yes", text: "প্রতিযোগীরাও করে" },
+      },
     },
     {
       feature: "কোম্পানি প্রোফাইল তৈরি",
-      values: { us: { status: "yes", text: "প্রত্যেক বিজনেসের প্রোফাইল তৈরি" }, others: { status: "yes", text: "প্রতিযোগীরাও দেয়" } },
+      values: {
+        us: { status: "yes", text: "প্রত্যেক বিজনেসের প্রোফাইল তৈরি" },
+        others: { status: "yes", text: "প্রতিযোগীরাও দেয়" },
+      },
     },
     {
       feature: "টেন্ডার সিকিউরিটি হিসাব",
-      values: { us: { status: "yes", text: "ওয়েবসাইটে ট্র্যাকিং ও সামারি" }, others: { status: "no", text: "অন্য কোথাও নেই" } },
+      values: {
+        us: { status: "yes", text: "ওয়েবসাইটে ট্র্যাকিং ও সামারি" },
+        others: { status: "no", text: "অন্য কোথাও নেই" },
+      },
     },
     {
       feature: "ব্যাংকিং রিমাইন্ডার",
-      values: { us: { status: "yes", text: "টেন্ডার ড্রপিংয়ের শেষ সময়ের ২ দিন আগে রিমাইন্ডার" }, others: { status: "no", text: "অন্য কোথাও নেই" } },
+      values: {
+        us: { status: "yes", text: "টেন্ডার ড্রপিংয়ের শেষ সময়ের ২ দিন আগে রিমাইন্ডার" },
+        others: { status: "no", text: "অন্য কোথাও নেই" },
+      },
     },
     {
       feature: "লটারি ফলাফল আপডেট",
-      values: { us: { status: "yes", text: "টেন্ডার লটারি ফলাফল আপডেট" }, others: { status: "no", text: "নেই" } },
+      values: {
+        us: { status: "yes", text: "টেন্ডার লটারি ফলাফল আপডেট" },
+        others: { status: "no", text: "নেই" },
+      },
     },
     {
       feature: "ইজিপি অ্যাকাউন্ট তৈরি",
-      values: { us: { status: "yes", text: "সহায়তা করে" }, others: { status: "yes", text: "প্রতিযোগীরাও করে" } },
+      values: {
+        us: { status: "yes", text: "সহায়তা করে" },
+        others: { status: "yes", text: "প্রতিযোগীরাও করে" },
+      },
     },
     {
       feature: "ইজিপি ট্রেনিং",
-      values: { us: { status: "yes", text: "ট্রেনিং প্রদান করে" }, others: { status: "yes", text: "প্রতিযোগীরাও করে" } },
+      values: {
+        us: { status: "yes", text: "ট্রেনিং প্রদান করে" },
+        others: { status: "yes", text: "প্রতিযোগীরাও করে" },
+      },
     },
     {
       feature: "নতুন ট্রেড, টিন, ভ্যাট সার্ভিস",
-      values: { us: { status: "yes", text: "সার্ভিস প্রদান করে" }, others: { status: "yes", text: "প্রতিযোগীরাও করে" } },
+      values: {
+        us: { status: "yes", text: "সার্ভিস প্রদান করে" },
+        others: { status: "yes", text: "প্রতিযোগীরাও করে" },
+      },
     },
   ];
 
@@ -137,43 +183,43 @@ export default function WhyChooseUs() {
           <p className="text-sm font-semibold uppercase tracking-wide text-[#4874c7] ">
             কেন ই-টেন্ডার বিডি?
           </p>
-          <h2 className="mt-2 text-gray-900">
-            আপনার টেন্ডার পিপারেশনের স্মার্ট পার্টনার
-          </h2>
+          <h2 className="mt-2 text-gray-900">আপনার টেন্ডার পিপারেশনের স্মার্ট পার্টনার</h2>
           <p className="mt-3 text-base text-gray-600">
-            শুধু প্রত্রিকার নোটিশ নয়, আরও পাচ্ছেন TDS থেকে সকল ধরনের ফাইন্যান্সিয়াল ক্রাইটেরিয়া (প্রাক্কলিত মূল্য, টেন্ডার সিকিউরিটি, টার্নওভার, লিকুইড অ্যাসেট ক্যাপাসিটি)। রেজিস্ট্রেশন ছাড়া Tender Opening Report (TOR2) পিডিএফ আপলোড করে SLT হিসাব করার ব্যবস্থা। যেকোনো দপ্তর (RHD, PWD, LGED, WBD, ELECTRICAL)-এর BOQ স্বয়ংক্রিয়ভাবে বের করার ব্যবস্থা । টেন্ডার অনুযায়ী সকল ধরনের টেমপ্লেট (Authorization Letter, Code of Conduct, Manufacturing Letter, Production Capacity, JV Agreement) স্বয়ংক্রিয়ভাবে তৈরি করা যায়। <span className="inline-block font-semibold">সবকিছুর নির্ভরযোগ্য একমাত্র প্ল্যাটফর্ম।</span>
-           
+            শুধু প্রত্রিকার নোটিশ নয়, আরও পাচ্ছেন TDS থেকে সকল ধরনের ফাইন্যান্সিয়াল ক্রাইটেরিয়া
+            (প্রাক্কলিত মূল্য, টেন্ডার সিকিউরিটি, টার্নওভার, লিকুইড অ্যাসেট ক্যাপাসিটি)।
+            রেজিস্ট্রেশন ছাড়া Tender Opening Report (TOR2) পিডিএফ আপলোড করে SLT হিসাব করার ব্যবস্থা।
+            যেকোনো দপ্তর (RHD, PWD, LGED, WBD, ELECTRICAL)-এর BOQ স্বয়ংক্রিয়ভাবে বের করার ব্যবস্থা
+            । টেন্ডার অনুযায়ী সকল ধরনের টেমপ্লেট (Authorization Letter, Code of Conduct,
+            Manufacturing Letter, Production Capacity, JV Agreement) স্বয়ংক্রিয়ভাবে তৈরি করা যায়।{" "}
+            <span className="inline-block font-semibold">
+              সবকিছুর নির্ভরযোগ্য একমাত্র প্ল্যাটফর্ম।
+            </span>
           </p>
         </div>
-         <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto  lg:gap-8">
-          
+        <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto  lg:gap-8">
           {highlights.map((card) => (
-            <div className="bg-[url(/egp_logo.png)] bg-no-repeat  h-full"  key={card.title}>
-              <div
-             
-              className="bg-gray-100/90 flex flex-col  justify-between backdrop-blur-md rounded-2xl p-6 shadow-lg border border-slate-200/70 hover:shadow-2xl transition-all duration-300 bg-no-repeat bg-contain h-full"
-            >
-
-              <div className=" items-start gap-4">
-              <div className="bg-[#3a5da8] p-2 rounded-full h-max w-max">
-                 <FaBell  className="h-5 w-5  rounded-full text-white" />
-              </div>
-                <div className="flex-1 min-w-0 mt-8">
-                  <h3 className="text-xl font-bold text-gray-900">{card.title}</h3>
-                  <p className="text-base text-slate-600 mt-1">{card.description}</p>
+            <div className="bg-[url(/egp_logo.png)] bg-no-repeat  h-full" key={card.title}>
+              <div className="bg-gray-100/90 flex flex-col  justify-between backdrop-blur-md rounded-2xl p-6 shadow-lg border border-slate-200/70 hover:shadow-2xl transition-all duration-300 bg-no-repeat bg-contain h-full">
+                <div className=" items-start gap-4">
+                  <div className="bg-[#3a5da8] p-2 rounded-full h-max w-max">
+                    <FaBell className="h-5 w-5  rounded-full text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0 mt-8">
+                    <h3 className="text-xl font-bold text-gray-900">{card.title}</h3>
+                    <p className="text-base text-slate-600 mt-1">{card.description}</p>
+                  </div>
+                </div>
+                <div className="mt-4 flex justify-end">
+                  <Link to={card.blogLink}>
+                    <Button
+                      type="button"
+                      className="h-10 rounded-full px-6 text-white bg-[#4874c7] hover:bg-[#3a5da8] hover:text-base transition-all duration-200"
+                    >
+                      বিস্তারিত
+                    </Button>
+                  </Link>
                 </div>
               </div>
-              <div className="mt-4 flex justify-end">
-                <Link to={card.blogLink}>
-                  <Button
-                    type="button"
-                    className="h-10 rounded-full px-6 text-white bg-[#4874c7] hover:bg-[#3a5da8] hover:text-base transition-all duration-200"
-                  >
-                    বিস্তারিত
-                  </Button>
-                </Link>
-              </div>
-            </div>
             </div>
           ))}
         </div>

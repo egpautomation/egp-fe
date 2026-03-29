@@ -1,20 +1,26 @@
 // @ts-nocheck
 
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
-
-
-
-const SlOfCreditLine = ({setFormData, value}) => {
-    return (
-      <Select onValueChange={(value) => {
-        setFormData(prev =>({
+const SlOfCreditLine = ({ setFormData, value }) => {
+  return (
+    <Select
+      onValueChange={(value) => {
+        setFormData((prev) => ({
           ...prev,
-          SLOfCredit:value
-        }))
-        
+          SLOfCredit: value,
+        }));
       }}
-      value={value}>
+      value={value}
+    >
       <SelectTrigger className="mt-2 w-full">
         <SelectValue placeholder="Select SL No of Credit Line" />
       </SelectTrigger>
@@ -30,7 +36,7 @@ const SlOfCreditLine = ({setFormData, value}) => {
         </SelectGroup>
       </SelectContent>
     </Select>
-    );
+  );
 };
 
 export default SlOfCreditLine;

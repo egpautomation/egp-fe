@@ -1,13 +1,13 @@
 // Authentication Service - JWT Token Management
 // Industry-standard JWT authentication utilities
 
-import { jwtDecode } from 'jwt-decode';
-import { config } from './config';
+import { jwtDecode } from "jwt-decode";
+import { config } from "./config";
 
 // Token storage keys
-const ACCESS_TOKEN_KEY = 'accessToken';
-const REFRESH_TOKEN_KEY = 'refreshToken';
-const USER_DATA_KEY = 'userData';
+const ACCESS_TOKEN_KEY = "accessToken";
+const REFRESH_TOKEN_KEY = "refreshToken";
+const USER_DATA_KEY = "userData";
 
 // JWT Payload Interface
 interface JWTPayload {
@@ -105,7 +105,7 @@ export const getUserData = (): User | null => {
   try {
     return JSON.parse(userData);
   } catch (error) {
-    console.error('Error parsing user data:', error);
+    console.error("Error parsing user data:", error);
     return null;
   }
 };
@@ -128,7 +128,7 @@ export const decodeToken = (token: string): JWTPayload | null => {
   try {
     return jwtDecode<JWTPayload>(token);
   } catch (error) {
-    console.error('Error decoding token:', error);
+    console.error("Error decoding token:", error);
     return null;
   }
 };
@@ -167,19 +167,19 @@ export const isAuthenticated = (): boolean => {
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
     const response = await fetch(`${API_BASE_URL}/user/login`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json();
 
-    console.log('Login response:', data); // Debug log
+    console.log("Login response:", data); // Debug log
 
     if (!response.ok) {
-      throw new Error(data.message || 'Login failed');
+      throw new Error(data.message || "Login failed");
     }
 
     // Handle different response structures
@@ -198,13 +198,13 @@ export const login = async (email: string, password: string): Promise<LoginRespo
     }
 
     if (!token) {
-      console.error('No token in response:', data);
-      throw new Error('No authentication token received from server');
+      console.error("No token in response:", data);
+      throw new Error("No authentication token received from server");
     }
 
     if (!user) {
-      console.error('No user data in response:', data);
-      throw new Error('No user data received from server');
+      console.error("No user data in response:", data);
+      throw new Error("No user data received from server");
     }
 
     // Store tokens and user data
@@ -213,15 +213,15 @@ export const login = async (email: string, password: string): Promise<LoginRespo
 
     return {
       success: true,
-      message: data.message || 'Login successful',
+      message: data.message || "Login successful",
       data: {
         token,
         refreshToken,
-        user
-      }
+        user,
+      },
     };
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
     throw error;
   }
 };
@@ -231,22 +231,24 @@ export const login = async (email: string, password: string): Promise<LoginRespo
  * @param idToken - Google ID token
  * @returns Login response with token, user data, and onboardingRequired flag
  */
-export const googleLogin = async (idToken: string): Promise<LoginResponse & { onboardingRequired?: boolean }> => {
+export const googleLogin = async (
+  idToken: string
+): Promise<LoginResponse & { onboardingRequired?: boolean }> => {
   try {
     const response = await fetch(`${API_BASE_URL}/user/google-login`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ idToken }),
     });
 
     const data = await response.json();
 
-    console.log('Google Login response:', data);
+    console.log("Google Login response:", data);
 
     if (!response.ok) {
-      throw new Error(data.message || 'Google Login failed');
+      throw new Error(data.message || "Google Login failed");
     }
 
     let token, refreshToken, user;
@@ -262,11 +264,11 @@ export const googleLogin = async (idToken: string): Promise<LoginResponse & { on
     }
 
     if (!token) {
-      throw new Error('No authentication token received from server');
+      throw new Error("No authentication token received from server");
     }
 
     if (!user) {
-      throw new Error('No user data received from server');
+      throw new Error("No user data received from server");
     }
 
     // Store tokens and user data
@@ -275,16 +277,16 @@ export const googleLogin = async (idToken: string): Promise<LoginResponse & { on
 
     return {
       success: true,
-      message: data.message || 'Login successful',
+      message: data.message || "Login successful",
       onboardingRequired: data.onboardingRequired ?? false,
       data: {
         token,
         refreshToken,
-        user
-      }
+        user,
+      },
     };
   } catch (error) {
-    console.error('Google Login error:', error);
+    console.error("Google Login error:", error);
     throw error;
   }
 };
@@ -302,9 +304,9 @@ export const completeProfile = async (data: {
 }): Promise<{ success: boolean; message: string; data: User }> => {
   const token = getAccessToken();
   const response = await fetch(`${API_BASE_URL}/user/complete-profile`, {
-    method: 'PATCH',
+    method: "PATCH",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
@@ -313,7 +315,7 @@ export const completeProfile = async (data: {
   const result = await response.json();
 
   if (!response.ok) {
-    throw new Error(result.message || 'Failed to complete profile');
+    throw new Error(result.message || "Failed to complete profile");
   }
 
   // Update stored user data with the completed profile
@@ -324,7 +326,6 @@ export const completeProfile = async (data: {
   return result;
 };
 
-
 /**
  * Register new user
  * @param userData - User registration data
@@ -333,19 +334,19 @@ export const completeProfile = async (data: {
 export const register = async (userData: RegisterData): Promise<LoginResponse> => {
   try {
     const response = await fetch(`${API_BASE_URL}/user/create-user`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(userData),
     });
 
     const data = await response.json();
 
-    console.log('Registration response:', data); // Debug log
+    console.log("Registration response:", data); // Debug log
 
     if (!response.ok) {
-      throw new Error(data.message || 'Registration failed');
+      throw new Error(data.message || "Registration failed");
     }
 
     // Handle different response structures
@@ -371,15 +372,15 @@ export const register = async (userData: RegisterData): Promise<LoginResponse> =
 
     return {
       success: true,
-      message: data.message || 'Registration successful',
+      message: data.message || "Registration successful",
       data: {
-        token: token || '',
+        token: token || "",
         refreshToken,
-        user: user || {} as User
-      }
+        user: user || ({} as User),
+      },
     };
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error("Registration error:", error);
     throw error;
   }
 };
@@ -404,16 +405,16 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 
   try {
     const response = await fetch(`${API_BASE_URL}/user/refresh-token`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ refreshToken }),
     });
 
     const data = await response.json();
 
-    console.log('Refresh token response:', data); // Debug log
+    console.log("Refresh token response:", data); // Debug log
 
     if (!response.ok) {
       // Refresh token is invalid, clear all tokens
@@ -440,7 +441,7 @@ export const refreshAccessToken = async (): Promise<string | null> => {
 
     return null;
   } catch (error) {
-    console.error('Token refresh error:', error);
+    console.error("Token refresh error:", error);
     clearTokens();
     return null;
   }
@@ -451,30 +452,32 @@ export const refreshAccessToken = async (): Promise<string | null> => {
  * @param email - User email address
  * @returns Success response
  */
-export const forgotPassword = async (email: string): Promise<{ success: boolean; message: string }> => {
+export const forgotPassword = async (
+  email: string
+): Promise<{ success: boolean; message: string }> => {
   try {
     const response = await fetch(`${API_BASE_URL}/user/forgot-password`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ email }),
     });
 
     const data = await response.json();
 
-    console.log('Forgot password response:', data); // Debug log
+    console.log("Forgot password response:", data); // Debug log
 
     if (!response.ok) {
-      throw new Error(data.message || 'Failed to send reset email');
+      throw new Error(data.message || "Failed to send reset email");
     }
 
     return {
       success: true,
-      message: data.message || 'Password reset link sent to your email'
+      message: data.message || "Password reset link sent to your email",
     };
   } catch (error) {
-    console.error('Forgot password error:', error);
+    console.error("Forgot password error:", error);
     throw error;
   }
 };
@@ -485,30 +488,33 @@ export const forgotPassword = async (email: string): Promise<{ success: boolean;
  * @param newPassword - New password to set
  * @returns Success response
  */
-export const resetPassword = async (token: string, newPassword: string): Promise<{ success: boolean; message: string }> => {
+export const resetPassword = async (
+  token: string,
+  newPassword: string
+): Promise<{ success: boolean; message: string }> => {
   try {
     const response = await fetch(`${API_BASE_URL}/user/reset-password/${token}`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ newPassword }),
     });
 
     const data = await response.json();
 
-    console.log('Reset password response:', data); // Debug log
+    console.log("Reset password response:", data); // Debug log
 
     if (!response.ok) {
-      throw new Error(data.message || 'Failed to reset password');
+      throw new Error(data.message || "Failed to reset password");
     }
 
     return {
       success: true,
-      message: data.message || 'Password reset successfully'
+      message: data.message || "Password reset successfully",
     };
   } catch (error) {
-    console.error('Reset password error:', error);
+    console.error("Reset password error:", error);
     throw error;
   }
 };

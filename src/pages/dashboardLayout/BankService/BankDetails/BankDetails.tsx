@@ -25,7 +25,6 @@ const BankDetails = () => {
     officerDeg2: "",
     officerName3: "",
     officerDeg3: "",
-    
   });
 
   const handleInputChange = (e) => {
@@ -63,9 +62,7 @@ const BankDetails = () => {
 
   return (
     <div className="min-h-lvh">
-      <h1 className="text-3xl font-semibold text-center my-8">
-        Add Bank Details
-      </h1>
+      <h1 className="text-3xl font-semibold text-center my-8">Add Bank Details</h1>
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-2xl p-5 rounded border shadow-lg mx-auto"
@@ -241,8 +238,6 @@ const BankDetails = () => {
             className="mt-2"
           />
         </div>
-
-     
 
         {/* Submit Button */}
         <div className="col-span-full">

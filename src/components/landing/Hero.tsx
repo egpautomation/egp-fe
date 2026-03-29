@@ -82,7 +82,12 @@ export default function Hero() {
                   className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 text-[#4874c7] shadow-md hover:bg-white transition p-2"
                 >
                   <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
                   </svg>
                 </button>
                 <button
@@ -92,7 +97,12 @@ export default function Hero() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 text-[#4874c7] shadow-md hover:bg-white transition p-2"
                 >
                   <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </button>
                 <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-2">
@@ -103,7 +113,9 @@ export default function Hero() {
                       aria-label={`Go to slide ${index + 1}`}
                       onClick={() => scrollTo(index)}
                       className={`h-2.5 w-2.5 rounded-full transition ${
-                        index === selectedIndex ? "bg-[#4874c7] shadow" : "bg-white/70 hover:bg-white"
+                        index === selectedIndex
+                          ? "bg-[#4874c7] shadow"
+                          : "bg-white/70 hover:bg-white"
                       }`}
                     />
                   ))}

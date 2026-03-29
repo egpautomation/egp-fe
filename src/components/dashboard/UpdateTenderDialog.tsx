@@ -1,14 +1,26 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import axiosInstance from "@/lib/axiosInstance";
 import toast from "react-hot-toast";
 import { Combobox } from "@/components/ui/combobox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { config } from "@/lib/config";
-
 
 interface UpdateTenderDialogProps {
   open: boolean;
@@ -25,7 +37,13 @@ interface UpdateTenderDialogProps {
   onSuccess: () => void;
 }
 
-const UpdateTenderDialog = ({ open, onOpenChange, tenderId, initialData, onSuccess }: UpdateTenderDialogProps) => {
+const UpdateTenderDialog = ({
+  open,
+  onOpenChange,
+  tenderId,
+  initialData,
+  onSuccess,
+}: UpdateTenderDialogProps) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     turnoverAmount: "",
@@ -52,7 +70,7 @@ const UpdateTenderDialog = ({ open, onOpenChange, tenderId, initialData, onSucce
       // Pre-fill categories from typesOfSimilarNature if partial match found or just reset
       // Format expected: "Category : Value"
       if (initialData.typesOfSimilarNature && initialData.typesOfSimilarNature.includes(":")) {
-        const [cat, val] = initialData.typesOfSimilarNature.split(":").map(s => s.trim());
+        const [cat, val] = initialData.typesOfSimilarNature.split(":").map((s) => s.trim());
         setSelectedSubCategory(cat);
         setSubCategoryValue(val);
       } else {
@@ -87,7 +105,6 @@ const UpdateTenderDialog = ({ open, onOpenChange, tenderId, initialData, onSucce
     setFormData((prev) => ({ ...prev, yearofsimilarexperience: value }));
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -95,9 +112,10 @@ const UpdateTenderDialog = ({ open, onOpenChange, tenderId, initialData, onSucce
     try {
       const payload = {
         ...formData,
-        typesOfSimilarNature: (selectedSubCategory && subCategoryValue)
-          ? `${selectedSubCategory} : ${subCategoryValue}`
-          : "",
+        typesOfSimilarNature:
+          selectedSubCategory && subCategoryValue
+            ? `${selectedSubCategory} : ${subCategoryValue}`
+            : "",
       };
 
       await axiosInstance.patch(`/tenders/${tenderId}`, payload);
@@ -181,7 +199,7 @@ const UpdateTenderDialog = ({ open, onOpenChange, tenderId, initialData, onSucce
                   options={subCategories.map((cat, idx) => ({
                     value: cat.sub_cat_name,
                     label: cat.sub_cat_name,
-                    key: `${cat.sub_cat_name}-${idx}`
+                    key: `${cat.sub_cat_name}-${idx}`,
                   }))}
                   value={selectedSubCategory}
                   onChange={setSelectedSubCategory}
@@ -205,10 +223,7 @@ const UpdateTenderDialog = ({ open, onOpenChange, tenderId, initialData, onSucce
               <div className="lg:col-span-1">
                 <div className="grid gap-2">
                   <Label>Year</Label>
-                  <Select
-                    value={formData.yearofsimilarexperience}
-                    onValueChange={handleYearChange}
-                  >
+                  <Select value={formData.yearofsimilarexperience} onValueChange={handleYearChange}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select Year" />
                     </SelectTrigger>

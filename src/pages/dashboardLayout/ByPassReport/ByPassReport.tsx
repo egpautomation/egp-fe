@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-
 import LtmLicenseSL from "@/components/dashboard/ByPassReport/LtmLicenseSL";
 import useByPassReport from "@/hooks/useByPassReport";
 import useSingleData from "@/hooks/useSingleData";
@@ -10,14 +9,13 @@ import { useContext, useState } from "react";
 import ByPassReportRow from "./ByPassReportRow";
 
 const ByPassReport = () => {
-  const { user, loading: authLoading } = useContext(AuthContext)
+  const { user, loading: authLoading } = useContext(AuthContext);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(20);
 
   // Backend automatically extracts user email from JWT token
   // All roles (including admin) can only see their own bypass report
   const { data, count, loading, error } = useByPassReport(currentPage, pageLimit);
-
 
   // const getEgpListedCompany = async (email) => {
   //   try {
@@ -30,7 +28,6 @@ const ByPassReport = () => {
   //     return "NILL";
   //   }
   // };
-
 
   const skeleton = new Array(pageLimit).fill(Math?.random());
 
@@ -49,86 +46,34 @@ const ByPassReport = () => {
           <table className="mt-5 w-full">
             <thead>
               <tr className="bg-primary text-primary-foreground">
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  SL
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  InvoiceNo
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  JobNo
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  ReLogin
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  TenderId
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start">
-                  EGP-Email
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  CompanyName
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  text-start">
-                  Password
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  BankName
-                </th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">SL</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">InvoiceNo</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">JobNo</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">ReLogin</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">TenderId</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start">EGP-Email</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">CompanyName</th>
+                <th className="whitespace-nowrap px-4 py-2  text-start">Password</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">BankName</th>
                 <th className="whitespace-nowrap px-4 py-2">LiquidAsset</th>
                 <th className="whitespace-nowrap px-4 py-2">ActiveDate1</th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  ActiveDate2
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  CompanyAddress
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  Author
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  NID
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  Trade
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  Tin
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  Vat
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  Ltm_License
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  Other_1_Map
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  SLNoLineOfCredit
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  Other_2_Map
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  Whats_app
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  TinReturn
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  VatReturn
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  Manpower
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  Equipment
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  ">
-                  AuditReport
-                </th>
+                <th className="whitespace-nowrap px-4 py-2  ">ActiveDate2</th>
+                <th className="whitespace-nowrap px-4 py-2  ">CompanyAddress</th>
+                <th className="whitespace-nowrap px-4 py-2  ">Author</th>
+                <th className="whitespace-nowrap px-4 py-2  ">NID</th>
+                <th className="whitespace-nowrap px-4 py-2  ">Trade</th>
+                <th className="whitespace-nowrap px-4 py-2  ">Tin</th>
+                <th className="whitespace-nowrap px-4 py-2  ">Vat</th>
+                <th className="whitespace-nowrap px-4 py-2  ">Ltm_License</th>
+                <th className="whitespace-nowrap px-4 py-2  ">Other_1_Map</th>
+                <th className="whitespace-nowrap px-4 py-2  ">SLNoLineOfCredit</th>
+                <th className="whitespace-nowrap px-4 py-2  ">Other_2_Map</th>
+                <th className="whitespace-nowrap px-4 py-2  ">Whats_app</th>
+                <th className="whitespace-nowrap px-4 py-2  ">TinReturn</th>
+                <th className="whitespace-nowrap px-4 py-2  ">VatReturn</th>
+                <th className="whitespace-nowrap px-4 py-2  ">Manpower</th>
+                <th className="whitespace-nowrap px-4 py-2  ">Equipment</th>
+                <th className="whitespace-nowrap px-4 py-2  ">AuditReport</th>
               </tr>
             </thead>
             <tbody>
@@ -163,7 +108,6 @@ const ByPassReport = () => {
                 </tr>
               )}
             </tbody>
-
           </table>
         </div>
       )}

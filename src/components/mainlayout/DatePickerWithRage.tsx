@@ -8,18 +8,14 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 /**
  * DatePickerWithRange Component
- * 
+ *
  * A professional date range picker that converts between string dates (for API)
  * and Date objects (for the calendar component).
- * 
+ *
  * @param {Object} props
  * @param {string} props.className - Optional className for styling
  * @param {Object} props.date - Date range object with from/to string dates
@@ -69,8 +65,7 @@ export function DatePickerWithRange({ className, date, setDate }) {
     if (dateRange.to) {
       return (
         <>
-          {format(dateRange.from, "LLL dd, y")} -{" "}
-          {format(dateRange.to, "LLL dd, y")}
+          {format(dateRange.from, "LLL dd, y")} - {format(dateRange.to, "LLL dd, y")}
         </>
       );
     }

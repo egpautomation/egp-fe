@@ -1,10 +1,9 @@
 // @ts-nocheck
-import React, { useState } from 'react';
-import { Copy, Check, ChevronDown, ChevronRight } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
-import * as CollapsiblePrimitive from "@radix-ui/react-collapsible"
-
+import React, { useState } from "react";
+import { Copy, Check, ChevronDown, ChevronRight } from "lucide-react";
+import toast from "react-hot-toast";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
 
 // --- Mock Data ---
 const mockPreviewData = {
@@ -15,15 +14,16 @@ const mockPreviewData = {
   jointVentureActivities: [
     {
       element: "Structural Steel Works",
-      description: "Fabrication and erection of structural steel framework for bridge construction"
+      description: "Fabrication and erection of structural steel framework for bridge construction",
     },
     {
       element: "Pavement and Asphalt Works",
-      description: "Road surfacing, asphalt laying, and pavement construction activities"
+      description: "Road surfacing, asphalt laying, and pavement construction activities",
     },
   ],
   qualificationInfo: {
-    generalExperience: "15 years of experience in construction works including roads, bridges, and building construction projects across Bangladesh"
+    generalExperience:
+      "15 years of experience in construction works including roads, bridges, and building construction projects across Bangladesh",
   },
   specificExperience: [
     {
@@ -33,8 +33,10 @@ const mockPreviewData = {
       awardDate: "15-Jan-2021",
       completionDate: "31-Dec-2023",
       totalValue: "BDT 450,000,000",
-      procuringEntity: "Bangladesh Bridge Authority Setu Bhaban, Banani, Dhaka-1213 Tel/Fax: +880 2 9870334 Email: info@bba.gov.bd",
-      briefDescription: "4-lane approach road construction with drainage system and minor structures with length 8.5 km"
+      procuringEntity:
+        "Bangladesh Bridge Authority Setu Bhaban, Banani, Dhaka-1213 Tel/Fax: +880 2 9870334 Email: info@bba.gov.bd",
+      briefDescription:
+        "4-lane approach road construction with drainage system and minor structures with length 8.5 km",
     },
     {
       contractNo: "CN-2020-128",
@@ -43,8 +45,10 @@ const mockPreviewData = {
       awardDate: "10-Mar-2020",
       completionDate: "20-Aug-2022",
       totalValue: "BDT 320,000,000",
-      procuringEntity: "Roads and Highways Department Sarak Bhaban, Tejgaon, Dhaka-1215 Tel/Fax: +880 2 8181234 Email: rhd@rhd.gov.bd",
-      briefDescription: "Highway widening from 2-lane to 4-lane, including pavement works and road safety features"
+      procuringEntity:
+        "Roads and Highways Department Sarak Bhaban, Tejgaon, Dhaka-1215 Tel/Fax: +880 2 8181234 Email: rhd@rhd.gov.bd",
+      briefDescription:
+        "Highway widening from 2-lane to 4-lane, including pavement works and road safety features",
     },
   ],
   // Part 3A - Option 1
@@ -62,7 +66,7 @@ const mockPreviewData = {
       receivedDate: "25-Mar-2022",
       grossAmount: "BDT 180,000,000",
       paymentReceived: "BDT 162,000,000 (30%)",
-      turnover: "BDT 113,400,000"
+      turnover: "BDT 113,400,000",
     },
     {
       sl: "2",
@@ -71,7 +75,7 @@ const mockPreviewData = {
       receivedDate: "10-Aug-2022",
       grossAmount: "BDT 220,000,000",
       paymentReceived: "BDT 198,000,000 (0%)",
-      turnover: "BDT 198,000,000"
+      turnover: "BDT 198,000,000",
     },
     {
       sl: "3",
@@ -80,18 +84,32 @@ const mockPreviewData = {
       receivedDate: "15-Jan-2021",
       grossAmount: "BDT 150,000,000",
       paymentReceived: "BDT 150,000,000 (20%)",
-      turnover: "BDT 75,000,000"
+      turnover: "BDT 75,000,000",
     },
   ],
   // Part 4
-  liquidAssets: [
-    { no: "1", source: "Bank Credit Line - AB Bank Limited", amount: "200000000" },
-  ],
-  contactDetails: "AB Bank Limited, Corporate Branch, Gulshan-1, Dhaka-1212. Contact Person: Mr. Rahman Ahmed, Manager Corporate Banking. Tel: +880-2-9876543, Fax: +880-2-9876544, Email: corporate@abbank.com.bd",
+  liquidAssets: [{ no: "1", source: "Bank Credit Line - AB Bank Limited", amount: "200000000" }],
+  contactDetails:
+    "AB Bank Limited, Corporate Branch, Gulshan-1, Dhaka-1212. Contact Person: Mr. Rahman Ahmed, Manager Corporate Banking. Tel: +880-2-9876543, Fax: +880-2-9876544, Email: corporate@abbank.com.bd",
   keyPersonnel: [
-    { name: "Engr. Mohammad Karim", position: "Project Manager", generalExp: "18 years", specificExp: "12 years" },
-    { name: "Engr. Fatima Rahman", position: "Site Engineer", generalExp: "10 years", specificExp: "7 years" },
-    { name: "Md. Ashraful Islam", position: "Quality Control Manager", generalExp: "15 years", specificExp: "10 years" },
+    {
+      name: "Engr. Mohammad Karim",
+      position: "Project Manager",
+      generalExp: "18 years",
+      specificExp: "12 years",
+    },
+    {
+      name: "Engr. Fatima Rahman",
+      position: "Site Engineer",
+      generalExp: "10 years",
+      specificExp: "7 years",
+    },
+    {
+      name: "Md. Ashraful Islam",
+      position: "Quality Control Manager",
+      generalExp: "15 years",
+      specificExp: "10 years",
+    },
   ],
   // Part 5
   equipment: [
@@ -107,8 +125,16 @@ const mockPreviewData = {
     email: "contact@specializedsteel.com",
   },
   subcontractorActivities: [
-    { srNo: "1", element: "Structural Steel Fabrication", description: "Fabrication and installation of steel framework for bridges and buildings" },
-    { srNo: "2", element: "Welding and Joining Works", description: "High-quality welding services for structural components" },
+    {
+      srNo: "1",
+      element: "Structural Steel Fabrication",
+      description: "Fabrication and installation of steel framework for bridges and buildings",
+    },
+    {
+      srNo: "2",
+      element: "Welding and Joining Works",
+      description: "High-quality welding services for structural components",
+    },
   ],
   subcontractorContracts: [
     {
@@ -117,7 +143,7 @@ const mockPreviewData = {
       value: "BDT 85,000,000",
       procuringEntity: "Bangladesh Bridge Authority",
       contactPerson: "Mr. Kamal Hossain, +880-2-9876543",
-      typeOfWork: "Steel Fabrication"
+      typeOfWork: "Steel Fabrication",
     },
   ],
   // Personnel Information
@@ -130,7 +156,7 @@ const mockPreviewData = {
       generalExp: "20 years",
       nationalId: "19780512345678901",
       employmentYears: "8 years",
-      qualifications: "B.Sc. in Civil Engineering, PMP Certified, LEED AP"
+      qualifications: "B.Sc. in Civil Engineering, PMP Certified, LEED AP",
     },
     {
       position: "Quality Control Engineer",
@@ -140,7 +166,7 @@ const mockPreviewData = {
       generalExp: "12 years",
       nationalId: "19850825345678902",
       employmentYears: "5 years",
-      qualifications: "B.Sc. in Civil Engineering, Quality Management Certification"
+      qualifications: "B.Sc. in Civil Engineering, Quality Management Certification",
     },
   ],
   // Present Employment
@@ -152,7 +178,7 @@ const mockPreviewData = {
       tel: "+880-2-9876543",
       fax: "+880-2-9876544",
       email: "N/A",
-      lineManager: "Mr. Rahman Ahmed, Project Director"
+      lineManager: "Mr. Rahman Ahmed, Project Director",
     },
     {
       firmName: "N/A",
@@ -161,7 +187,7 @@ const mockPreviewData = {
       tel: "+880-2-9876543",
       fax: "+880-2-9876544",
       email: "N/A",
-      lineManager: "Engr. Karim Hossain, Senior Engineer"
+      lineManager: "Engr. Karim Hossain, Senior Engineer",
     },
   ],
   // Professional Experience
@@ -173,16 +199,19 @@ const mockPreviewData = {
       companyProjectPosition: "N/A",
       project: "Padma Bridge Approach Road",
       position: "Site Manager",
-      relevantExperience: "Managed construction of 8.5 km 4-lane approach road including drainage systems, minor structures, and quality control"
+      relevantExperience:
+        "Managed construction of 8.5 km 4-lane approach road including drainage systems, minor structures, and quality control",
     },
     {
       srNo: "2",
       from: "2015",
       to: "2018",
-      companyProjectPosition: "ABC Construction Ltd. / Dhaka Elevated Expressway / Assistant Site Engineer",
+      companyProjectPosition:
+        "ABC Construction Ltd. / Dhaka Elevated Expressway / Assistant Site Engineer",
       project: "Dhaka Elevated Expressway",
       position: "Assistant Site Engineer",
-      relevantExperience: "Supervised structural works, coordinated with subcontractors, and ensured compliance with safety standards"
+      relevantExperience:
+        "Supervised structural works, coordinated with subcontractors, and ensured compliance with safety standards",
     },
     {
       srNo: "3",
@@ -191,7 +220,8 @@ const mockPreviewData = {
       companyProjectPosition: "XYZ Engineering / Karnaphuli Tunnel Project / Junior Engineer",
       project: "Karnaphuli Tunnel Project",
       position: "Junior Engineer",
-      relevantExperience: "Assisted in tunnel construction activities, material testing, and site documentation"
+      relevantExperience:
+        "Assisted in tunnel construction activities, material testing, and site documentation",
     },
   ],
   // Tenderer's Capacity Information
@@ -211,7 +241,7 @@ const mockPreviewData = {
       peOrganization: "Local Government Engineering Department (LGED)",
       paymentReceived: "BDT 168,000,000",
       remainingValue: "BDT 112,000,000",
-      uploadContract: "contract_789.pdf"
+      uploadContract: "contract_789.pdf",
     },
     {
       slNo: "2",
@@ -222,7 +252,7 @@ const mockPreviewData = {
       peOrganization: "Roads and Highways Department",
       paymentReceived: "BDT 105,000,000",
       remainingValue: "BDT 45,000,000",
-      uploadContract: "contract_456.pdf"
+      uploadContract: "contract_456.pdf",
     },
   ],
   // Ongoing Works - JV Partner
@@ -237,7 +267,7 @@ const mockPreviewData = {
       peOrganization: "Bangladesh Water Development Board",
       paymentReceived: "BDT 140,000,000",
       remainingValue: "BDT 210,000,000",
-      uploadContract: "contract_jv_321.pdf"
+      uploadContract: "contract_jv_321.pdf",
     },
   ],
   // Ongoing Works - JV (as Sole Tenderer)
@@ -252,7 +282,7 @@ const mockPreviewData = {
       peOrganization: "Not Applicable",
       paymentReceived: "Not Applicable",
       remainingValue: "Not Applicable",
-      uploadContract: "Not Applicable"
+      uploadContract: "Not Applicable",
     },
   ],
   // Ongoing Works - JV Information
@@ -268,7 +298,7 @@ const mockPreviewData = {
       peOrganization: "Not Applicable",
       paymentReceived: "Not Applicable",
       remainingValue: "Not Applicable",
-      uploadContract: "Not Applicable"
+      uploadContract: "Not Applicable",
     },
   ],
   // Activities Form
@@ -280,7 +310,7 @@ const mockPreviewData = {
       physicalProgress: "100%",
       sectionalName: "Repair of Protective Wall on River Karnaphuli",
       duration: "180 days",
-      activityDuration: "6 months"
+      activityDuration: "6 months",
     },
     {
       srNo: "2",
@@ -289,13 +319,15 @@ const mockPreviewData = {
       physicalProgress: "75%",
       sectionalName: "Main Road Section A",
       duration: "120 days",
-      activityDuration: "4 months"
+      activityDuration: "4 months",
     },
   ],
   // Environmental and Social Specifications
   esSpecifications: {
-    description: "The Tenderer shall submit comprehensive and concise Environmental, Social, Health and Safety Management Strategies and Implementation Plan (ES-MSIP), as required by ITT Sub-Clause 26 to 29 and 37.1 of the General Conditions of Contract. These strategies and plans shall describe in detail the actions, materials, equipment, management processes etc. that will be implemented by the contractor, and where applicable, by its Subcontractor, to address the strategies and plans. The Tenderer shall have regard to the ES provisions of the contract including those as may be more fully described in the Works Requirements in General Conditions of Contract.",
-    response: "I Agree - We commit to developing and implementing comprehensive Environmental, Social, Health and Safety Management Strategies in full compliance with ITT Sub-Clause 26 to 29 and 37.1 of the General Conditions of Contract. Our ES-MSIP will detail all necessary actions, materials, equipment, and management processes to ensure environmental protection, social responsibility, and workplace safety throughout the project lifecycle."
+    description:
+      "The Tenderer shall submit comprehensive and concise Environmental, Social, Health and Safety Management Strategies and Implementation Plan (ES-MSIP), as required by ITT Sub-Clause 26 to 29 and 37.1 of the General Conditions of Contract. These strategies and plans shall describe in detail the actions, materials, equipment, management processes etc. that will be implemented by the contractor, and where applicable, by its Subcontractor, to address the strategies and plans. The Tenderer shall have regard to the ES provisions of the contract including those as may be more fully described in the Works Requirements in General Conditions of Contract.",
+    response:
+      "I Agree - We commit to developing and implementing comprehensive Environmental, Social, Health and Safety Management Strategies in full compliance with ITT Sub-Clause 26 to 29 and 37.1 of the General Conditions of Contract. Our ES-MSIP will detail all necessary actions, materials, equipment, and management processes to ensure environmental protection, social responsibility, and workplace safety throughout the project lifecycle.",
   },
 };
 
@@ -305,12 +337,12 @@ const CopyableCell = ({ value, className = "" }) => {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(value || '');
+      await navigator.clipboard.writeText(value || "");
       setCopied(true);
-      toast.success('Copied to clipboard!');
+      toast.success("Copied to clipboard!");
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      toast.error('Failed to copy');
+      toast.error("Failed to copy");
     }
   };
 
@@ -320,7 +352,7 @@ const CopyableCell = ({ value, className = "" }) => {
       onClick={handleCopy}
     >
       <div className="flex items-center justify-between gap-1 sm:gap-2">
-        <span className="flex-1 break-words">{value || 'N/A'}</span>
+        <span className="flex-1 break-words">{value || "N/A"}</span>
         {copied ? (
           <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
         ) : (
@@ -392,30 +424,32 @@ const SpecificExperienceTable = ({ data }) => {
       {totalPages > 1 && (
         <div className="flex justify-between items-center py-3 px-4 bg-gray-50 border-t border-gray-200">
           <span className="text-sm text-gray-600">
-            Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, totalItems)} of {totalItems} entries
+            Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, totalItems)} of{" "}
+            {totalItems} entries
           </span>
           <div className="flex gap-2">
             <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`px-3 py-1 text-sm border rounded ${currentPage === page
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white border-gray-300 hover:bg-gray-100'
-                  }`}
+                className={`px-3 py-1 text-sm border rounded ${
+                  currentPage === page
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white border-gray-300 hover:bg-gray-100"
+                }`}
               >
                 {page}
               </button>
             ))}
             <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
               className="px-3 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -428,16 +462,28 @@ const SpecificExperienceTable = ({ data }) => {
   );
 };
 
-
 // --- Main Preview Component ---
-export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGeneralExperience, turnoverData, tenderList, specificExperienceList, yearlyTotals, totalOngoingCommitments, currentTender, companyData, ongoingContracts }) => {
+export const TendererFormPreview_ePW3_2 = ({
+  companyName,
+  egpEmail,
+  yearsOfGeneralExperience,
+  turnoverData,
+  tenderList,
+  specificExperienceList,
+  yearlyTotals,
+  totalOngoingCommitments,
+  currentTender,
+  companyData,
+  ongoingContracts,
+}) => {
   // 1. Get years from Part 3A (turnoverData)
-  const part3AYears = (turnoverData && turnoverData.length > 0)
-    ? turnoverData.map(item => item.period)
-    : mockPreviewData.turnoverOption1.map(item => item.period);
+  const part3AYears =
+    turnoverData && turnoverData.length > 0
+      ? turnoverData.map((item) => item.period)
+      : mockPreviewData.turnoverOption1.map((item) => item.period);
 
   // 2. Filter tenderList (Part 3B source) based on finding that year in Part 3A
-  //    Mapping: 
+  //    Mapping:
   //    - Period or Year -> financialYear
   //    - Tender ID -> tenderId
   //    - Received Date -> commencementDate (or logic for NOA date)
@@ -445,54 +491,70 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
   //    - Payment Received -> paymentAmount
   //    - Turnover -> paymentAmount (assuming turnover for specific project matches payment received in this context, or needs calculation)
 
-  const processedPart3B = (tenderList && tenderList.length > 0)
-    ? tenderList
-      .filter(item => part3AYears.includes(item.financialYear))
-      .map((item, index) => ({
-        sl: (index + 1).toString(),
-        period: item.financialYear,
-        tenderId: item.tenderId,
-        packageNo: item.packageNo || 'N/A',
-        procuringEntity: item.organization || item.ministry || 'N/A',
-        description: (item.descriptionOfWorks && item.descriptionOfWorks.length > 100)
-          ? `${item.descriptionOfWorks.substring(0, 100)}...`
-          : (item.descriptionOfWorks || 'N/A'),
-        jvShare: item.jvShare ? `${item.jvShare}%` : 'N/A',
-        status: item.Status_Complite_ongoing || 'N/A',
-        paymentAmount: item.paymentAmount
-          ? (() => {
-            const raw = item.paymentAmount.toString().replace(/BDT/gi, "").replace(/,/g, "").trim();
-            const val = parseFloat(raw);
-            return !isNaN(val) ? `BDT ${val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'N/A';
-          })()
-          : 'N/A',
-      }))
-    : mockPreviewData.turnoverOption2; // Fallback if no real data passed
+  const processedPart3B =
+    tenderList && tenderList.length > 0
+      ? tenderList
+          .filter((item) => part3AYears.includes(item.financialYear))
+          .map((item, index) => ({
+            sl: (index + 1).toString(),
+            period: item.financialYear,
+            tenderId: item.tenderId,
+            packageNo: item.packageNo || "N/A",
+            procuringEntity: item.organization || item.ministry || "N/A",
+            description:
+              item.descriptionOfWorks && item.descriptionOfWorks.length > 100
+                ? `${item.descriptionOfWorks.substring(0, 100)}...`
+                : item.descriptionOfWorks || "N/A",
+            jvShare: item.jvShare ? `${item.jvShare}%` : "N/A",
+            status: item.Status_Complite_ongoing || "N/A",
+            paymentAmount: item.paymentAmount
+              ? (() => {
+                  const raw = item.paymentAmount
+                    .toString()
+                    .replace(/BDT/gi, "")
+                    .replace(/,/g, "")
+                    .trim();
+                  const val = parseFloat(raw);
+                  return !isNaN(val)
+                    ? `BDT ${val.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                    : "N/A";
+                })()
+              : "N/A",
+          }))
+      : mockPreviewData.turnoverOption2; // Fallback if no real data passed
 
   // 3. Process Capacity Information from yearlyTotals and totalOngoingCommitments
   // Find the year with maximum value (A) and show only that row
-  const capacityInfo = (yearlyTotals && yearlyTotals.length > 0)
-    ? (() => {
-      // Find the year with maximum amount
-      const maxYearData = yearlyTotals.reduce((max, current) =>
-        current.amount > max.amount ? current : max
-        , yearlyTotals[0]);
+  const capacityInfo =
+    yearlyTotals && yearlyTotals.length > 0
+      ? (() => {
+          // Find the year with maximum amount
+          const maxYearData = yearlyTotals.reduce(
+            (max, current) => (current.amount > max.amount ? current : max),
+            yearlyTotals[0]
+          );
 
-      return [{
-        period: maxYearData.year,
-        maxValue: maxYearData.amount.toFixed(2),
-        remainingValue: totalOngoingCommitments.toFixed(2)
-      }];
-    })()
-    : mockPreviewData.capacityInfo;
+          return [
+            {
+              period: maxYearData.year,
+              maxValue: maxYearData.amount.toFixed(2),
+              remainingValue: totalOngoingCommitments.toFixed(2),
+            },
+          ];
+        })()
+      : mockPreviewData.capacityInfo;
 
   // 4. Process Liquid Assets (Part 4)
   const liquidAssets = currentTender?.liquidAssets
-    ? [{
-      no: "1",
-      source: companyData?.bankName ? `Bank Credit Line - ${companyData.bankName}` : "Bank Credit Line",
-      amount: currentTender.liquidAssets.toString()
-    }]
+    ? [
+        {
+          no: "1",
+          source: companyData?.bankName
+            ? `Bank Credit Line - ${companyData.bankName}`
+            : "Bank Credit Line",
+          amount: currentTender.liquidAssets.toString(),
+        },
+      ]
     : mockPreviewData.liquidAssets;
 
   // 5. Process Ongoing Works - Filter by JV Share
@@ -503,14 +565,14 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
 
     // Helper to format date to dd/MM/yyyy
     const formatDate = (dateString) => {
-      if (!dateString) return 'N/A';
+      if (!dateString) return "N/A";
       try {
         const date = new Date(dateString);
         if (isNaN(date.getTime())) return dateString; // Return original if invalid
-        return new Intl.DateTimeFormat('en-GB', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric'
+        return new Intl.DateTimeFormat("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
         }).format(date);
       } catch (e) {
         return dateString;
@@ -518,59 +580,72 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
     };
 
     const soleTenderer = contracts
-      .filter(item => {
+      .filter((item) => {
         const jvShare = parseFloat(item.jvShare) || 0;
         return jvShare === 100;
       })
       .map((item, index) => ({
         slNo: (index + 1).toString(),
-        tidRefNo: item.tenderId || 'N/A',
-        contractAmount: item.revisedContractValue ? `BDT ${item.revisedContractValue.toLocaleString('en-IN')}` : 'N/A',
+        tidRefNo: item.tenderId || "N/A",
+        contractAmount: item.revisedContractValue
+          ? `BDT ${item.revisedContractValue.toLocaleString("en-IN")}`
+          : "N/A",
         dateOfNOA: formatDate(item.commencementDate),
         intendedCompletion: formatDate(item.contractPeriodExtendedUpTo),
-        peOrganization: item.organization || item.ministry || 'N/A',
-        paymentReceived: item.paymentAmount ? `BDT ${item.paymentAmount.toLocaleString('en-IN')}` : 'N/A',
-        remainingValue: item.WorksInHand ? `BDT ${item.WorksInHand.toLocaleString('en-IN')}` : 'N/A',
-        workCompletionCertificate: item.workCompletationCertificateFileName || 'N/A',
-        paymentCertificate: item.paymentCertificateFileName || 'N/A',
-        uploadContract: 'Attached in Map'
+        peOrganization: item.organization || item.ministry || "N/A",
+        paymentReceived: item.paymentAmount
+          ? `BDT ${item.paymentAmount.toLocaleString("en-IN")}`
+          : "N/A",
+        remainingValue: item.WorksInHand
+          ? `BDT ${item.WorksInHand.toLocaleString("en-IN")}`
+          : "N/A",
+        workCompletionCertificate: item.workCompletationCertificateFileName || "N/A",
+        paymentCertificate: item.paymentCertificateFileName || "N/A",
+        uploadContract: "Attached in Map",
       }));
 
     const jvPartner = contracts
-      .filter(item => {
+      .filter((item) => {
         const jvShare = parseFloat(item.jvShare) || 0;
         return jvShare > 0 && jvShare < 100;
       })
       .map((item, index) => ({
         slNo: (index + 1).toString(),
-        tidRefNo: item.tenderId || 'N/A',
-        contractAmount: item.revisedContractValue ? `BDT ${item.revisedContractValue.toLocaleString('en-IN')}` : 'N/A',
-        tendererPortion: item.jvShare ? `${item.jvShare}%` : 'N/A',
+        tidRefNo: item.tenderId || "N/A",
+        contractAmount: item.revisedContractValue
+          ? `BDT ${item.revisedContractValue.toLocaleString("en-IN")}`
+          : "N/A",
+        tendererPortion: item.jvShare ? `${item.jvShare}%` : "N/A",
         dateOfNOA: formatDate(item.commencementDate),
         intendedCompletion: formatDate(item.contractPeriodExtendedUpTo),
-        peOrganization: item.organization || item.ministry || 'N/A',
-        paymentReceived: item.paymentAmount ? `BDT ${item.paymentAmount.toLocaleString('en-IN')}` : 'N/A',
-        remainingValue: item.WorksInHand ? `BDT ${item.WorksInHand.toLocaleString('en-IN')}` : 'N/A',
-        workCompletionCertificate: item.workCompletationCertificateFileName || 'N/A',
-        paymentCertificate: item.paymentCertificateFileName || 'N/A',
-        uploadContract: 'Attached in Map'
+        peOrganization: item.organization || item.ministry || "N/A",
+        paymentReceived: item.paymentAmount
+          ? `BDT ${item.paymentAmount.toLocaleString("en-IN")}`
+          : "N/A",
+        remainingValue: item.WorksInHand
+          ? `BDT ${item.WorksInHand.toLocaleString("en-IN")}`
+          : "N/A",
+        workCompletionCertificate: item.workCompletationCertificateFileName || "N/A",
+        paymentCertificate: item.paymentCertificateFileName || "N/A",
+        uploadContract: "Attached in Map",
       }));
 
     return { soleTenderer, jvPartner };
   };
 
-  const { soleTenderer: ongoingWorksSole, jvPartner: ongoingWorksJVPartner } = processOngoingWorks(ongoingContracts);
+  const { soleTenderer: ongoingWorksSole, jvPartner: ongoingWorksJVPartner } =
+    processOngoingWorks(ongoingContracts);
 
   // Helper to format date safely
   const formatDateForExperience = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return dateString;
-      return new Intl.DateTimeFormat('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
+      return new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
       }).format(date);
     } catch (e) {
       return dateString;
@@ -580,27 +655,36 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
   // Process Specific Experience from tenderList (Completed Contracts)
   const experienceSource = specificExperienceList || tenderList;
 
-  // Logic: 
-  // 1. If specificExperienceList is explicitly passed (even if empty array), we use it. 
+  // Logic:
+  // 1. If specificExperienceList is explicitly passed (even if empty array), we use it.
   //    If it's empty, we show empty (don't fallback to mock).
   // 2. If specificExperienceList is NOT passed, we use tenderList.
   // 3. Fallback to mock data ONLY if we are using the default flow (tenderList) AND it is empty.
 
-  const shouldUseMock = specificExperienceList !== undefined ? false : (!tenderList || tenderList.length === 0);
+  const shouldUseMock =
+    specificExperienceList !== undefined ? false : !tenderList || tenderList.length === 0;
 
-  const processedSpecificExperience = (!shouldUseMock && experienceSource)
-    ? experienceSource.map(item => ({
-      contractNo: item.tenderId || 'N/A',
-      name: item.descriptionOfWorks ? (item.descriptionOfWorks.length > 50 ? item.descriptionOfWorks.substring(0, 50) + "..." : item.descriptionOfWorks) : 'N/A',
-      role: parseFloat(item.jvShare) === 100 ? "Prime Contractor" : "Joint Venture Partner",
-      awardDate: formatDateForExperience(item.commencementDate),
-      completionDate: formatDateForExperience(item.contractPeriodExtendedUpTo),
-      totalValue: item.revisedContractValue ? `BDT ${Number(item.revisedContractValue.toString().replace(/,/g, '')).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'N/A',
-      procuringEntity: item.organization || item.ministry || 'N/A',
-      briefDescription: item.descriptionOfWorks || 'N/A'
-    }))
-    : (shouldUseMock ? mockPreviewData.specificExperience : []);
-
+  const processedSpecificExperience =
+    !shouldUseMock && experienceSource
+      ? experienceSource.map((item) => ({
+          contractNo: item.tenderId || "N/A",
+          name: item.descriptionOfWorks
+            ? item.descriptionOfWorks.length > 50
+              ? item.descriptionOfWorks.substring(0, 50) + "..."
+              : item.descriptionOfWorks
+            : "N/A",
+          role: parseFloat(item.jvShare) === 100 ? "Prime Contractor" : "Joint Venture Partner",
+          awardDate: formatDateForExperience(item.commencementDate),
+          completionDate: formatDateForExperience(item.contractPeriodExtendedUpTo),
+          totalValue: item.revisedContractValue
+            ? `BDT ${Number(item.revisedContractValue.toString().replace(/,/g, "")).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+            : "N/A",
+          procuringEntity: item.organization || item.ministry || "N/A",
+          briefDescription: item.descriptionOfWorks || "N/A",
+        }))
+      : shouldUseMock
+        ? mockPreviewData.specificExperience
+        : [];
 
   const data = {
     ...mockPreviewData,
@@ -611,24 +695,35 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
     },
     qualificationInfo: {
       ...mockPreviewData.qualificationInfo,
-      generalExperience: yearsOfGeneralExperience ? `${yearsOfGeneralExperience} years of experience in construction works` : mockPreviewData.qualificationInfo.generalExperience,
+      generalExperience: yearsOfGeneralExperience
+        ? `${yearsOfGeneralExperience} years of experience in construction works`
+        : mockPreviewData.qualificationInfo.generalExperience,
     },
     specificExperience: processedSpecificExperience,
-    turnoverOption1: (turnoverData && turnoverData.length > 0) ? turnoverData : mockPreviewData.turnoverOption1,
+    turnoverOption1:
+      turnoverData && turnoverData.length > 0 ? turnoverData : mockPreviewData.turnoverOption1,
     turnoverOption2: processedPart3B,
     capacityInfo: capacityInfo,
     liquidAssets: liquidAssets,
     keyPersonnel: [
-      { name: "Attached In Map", position: "Attached In Map", generalExp: "Attached In Map", specificExp: "Attached In Map" }
+      {
+        name: "Attached In Map",
+        position: "Attached In Map",
+        generalExp: "Attached In Map",
+        specificExp: "Attached In Map",
+      },
     ],
-    equipment: [
-      { item: "Attached In Map", condition: "New", ownership: "Company" }
-    ],
-    subcontractorActivities: [
-      { srNo: "1", element: "N/A", description: "N/A" }
-    ],
+    equipment: [{ item: "Attached In Map", condition: "New", ownership: "Company" }],
+    subcontractorActivities: [{ srNo: "1", element: "N/A", description: "N/A" }],
     subcontractorContracts: [
-      { slNo: "1", nameAndYear: "N/A", value: "N/A", procuringEntity: "N/A", contactPerson: "N/A", typeOfWork: "N/A" }
+      {
+        slNo: "1",
+        nameAndYear: "N/A",
+        value: "N/A",
+        procuringEntity: "N/A",
+        contactPerson: "N/A",
+        typeOfWork: "N/A",
+      },
     ],
     personnelData: [
       {
@@ -639,8 +734,8 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
         generalExp: "File Attached In Map",
         nationalId: "File Attached In Map",
         employmentYears: "File Attached In Map",
-        qualifications: "File Attached In Map"
-      }
+        qualifications: "File Attached In Map",
+      },
     ],
     presentEmployment: [
       {
@@ -650,8 +745,8 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
         tel: "File Attached In Map",
         fax: "File Attached In Map",
         email: "File Attached In Map",
-        lineManager: "File Attached In Map"
-      }
+        lineManager: "File Attached In Map",
+      },
     ],
     professionalExperience: [
       {
@@ -661,8 +756,8 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
         companyProjectPosition: "File Attached In Map",
         project: "File Attached In Map",
         position: "File Attached In Map",
-        relevantExperience: "File Attached In Map"
-      }
+        relevantExperience: "File Attached In Map",
+      },
     ],
     activitiesForm: [
       {
@@ -693,15 +788,18 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
           const calculated = diffDays - 3;
           return calculated > 0 ? calculated.toString() : "30";
         })(),
-      }
+      },
     ],
     esSpecifications: {
       ...mockPreviewData.esSpecifications,
-      response: "I Agree"
+      response: "I Agree",
     },
     // Override mock data with real filtered ongoing works
     ongoingWorks: ongoingWorksSole.length > 0 ? ongoingWorksSole : mockPreviewData.ongoingWorks,
-    ongoingWorksJVPartner: ongoingWorksJVPartner.length > 0 ? ongoingWorksJVPartner : mockPreviewData.ongoingWorksJVPartner,
+    ongoingWorksJVPartner:
+      ongoingWorksJVPartner.length > 0
+        ? ongoingWorksJVPartner
+        : mockPreviewData.ongoingWorksJVPartner,
   };
 
   return (
@@ -721,7 +819,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
           </CollapsibleTrigger>
           <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
             <div className="border border-t-0 border-gray-300">
-
               {/* Section 1: Eligibility Information - Responsive */}
               <div className="w-full group/sub">
                 <div className="w-full">
@@ -769,7 +866,8 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                         Key Activity(ies) for Joint Venture (e-PW2A-3)
                       </h3>
                       <p className="text-xs text-gray-600 mt-1 break-words">
-                        1.4 Key Activity(ies) for which it is intended to be joint ventured, if it can be specified (ITT Sub Clause 17.2)
+                        1.4 Key Activity(ies) for which it is intended to be joint ventured, if it
+                        can be specified (ITT Sub Clause 17.2)
                       </p>
                     </div>
                   </div>
@@ -797,7 +895,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   </table>
                 </div>
               </div>
-
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -815,7 +912,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
           </CollapsibleTrigger>
           <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
             <div className="border border-t-0 border-gray-300">
-
               {/* Section 2: Qualification Information */}
               <div className="w-full group/qual">
                 <div className="w-full">
@@ -868,10 +964,8 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   <div className="overflow-x-auto">
                     <SpecificExperienceTable data={data.specificExperience} />
                   </div>
-
                 </div>
               </div>
-
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -890,7 +984,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
           </CollapsibleTrigger>
           <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
             <div className="border border-t-0 border-gray-300">
-
               {/* Section 2.5: Average annual construction turnover - Option 1 */}
               <div className="w-full group/opt1">
                 <div className="w-full">
@@ -937,7 +1030,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   </table>
                 </div>
               </div>
-
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -956,7 +1048,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
           </CollapsibleTrigger>
           <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
             <div className="border border-t-0 border-gray-300">
-
               {/* Section 2.5: Average annual construction turnover - Option 2 */}
               <div className="w-full group/opt2">
                 <div className="w-full">
@@ -1019,7 +1110,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   </div>
                 </div>
               </div>
-
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -1038,7 +1128,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
           </CollapsibleTrigger>
           <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
             <div className="border border-t-0 border-gray-300">
-
               {/* Section 2.6: Liquid assets */}
               <div className="w-full group/liquid">
                 <div className="w-full">
@@ -1048,7 +1137,8 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                         2.6 Liquid assets available to meet the construction cash flow
                       </h3>
                       <p className="text-xs text-gray-600 mt-1">
-                        Liquid assets available to meet the construction cash flow (ITT Sub Clause: 14.1(c))
+                        Liquid assets available to meet the construction cash flow (ITT Sub Clause:
+                        14.1(c))
                       </p>
                     </div>
                     <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/liquid:rotate-180" />
@@ -1094,7 +1184,9 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                         Contact Details (ITT Sub Clause 29.1 (e))
                       </p>
                       <p className="text-xs text-gray-600 mt-1 break-words">
-                        Name, address, and other contact details of Tenderer's Bankers and other Procuring Entity(s) that may provide references, if contacted by the Procuring Entity
+                        Name, address, and other contact details of Tenderer's Bankers and other
+                        Procuring Entity(s) that may provide references, if contacted by the
+                        Procuring Entity
                       </p>
                     </div>
                     <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/contact:rotate-180" />
@@ -1115,7 +1207,7 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                     <tbody>
                       <tr className="hover:bg-gray-50">
                         <CopyableCell value="Bank Address for Contact Details" />
-                        <CopyableCell value={companyData?.bankAddress || 'N/A'} />
+                        <CopyableCell value={companyData?.bankAddress || "N/A"} />
                       </tr>
                     </tbody>
                   </table>
@@ -1128,10 +1220,12 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between transition-all duration-300">
                     <div>
                       <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                        2.8 Qualifications and experience of key technical and administrative personnel proposed for Contract administration and management
+                        2.8 Qualifications and experience of key technical and administrative
+                        personnel proposed for Contract administration and management
                       </h3>
                       <p className="text-xs text-gray-600 mt-1">
-                        Qualifications and experience of key technical and administrative personnel proposed for Contract administration and management (ITT Sub Clause 29.1(c))
+                        Qualifications and experience of key technical and administrative personnel
+                        proposed for Contract administration and management (ITT Sub Clause 29.1(c))
                       </p>
                     </div>
                     <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/personnel:rotate-180" />
@@ -1168,7 +1262,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   </table>
                 </div>
               </div>
-
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -1187,13 +1280,13 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
           </CollapsibleTrigger>
           <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
             <div className="border border-t-0 border-gray-300">
-
               {/* Section 2.9: Equipment */}
               <div className="w-full group/equip">
                 <div className="w-full">
                   <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between transition-all duration-300">
                     <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                      2.9 Major Construction Equipment proposed to carry out the Contract (ITT Sub Clause 29.1(f))
+                      2.9 Major Construction Equipment proposed to carry out the Contract (ITT Sub
+                      Clause 29.1(f))
                     </h3>
                     <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/equip:rotate-180" />
                   </div>
@@ -1225,7 +1318,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   </table>
                 </div>
               </div>
-
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -1244,7 +1336,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
           </CollapsibleTrigger>
           <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
             <div className="border border-t-0 border-gray-300">
-
               {/* Subcontractor Eligibility Information */}
               <div className="w-full group/subelig">
                 <div className="w-full">
@@ -1291,7 +1382,8 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                 <div className="w-full">
                   <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between transition-all duration-300">
                     <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                      2.1 Key Activity(ies) for which it is intended to be Subcontracted (ITT Sub Clause 18.1)
+                      2.1 Key Activity(ies) for which it is intended to be Subcontracted (ITT Sub
+                      Clause 18.1)
                     </h3>
                     <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/subact:rotate-180" />
                   </div>
@@ -1329,7 +1421,8 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                 <div className="w-full">
                   <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between transition-all duration-300">
                     <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                      2.2 List of Similar Contracts in which the proposed Subcontractor had been engaged
+                      2.2 List of Similar Contracts in which the proposed Subcontractor had been
+                      engaged
                     </h3>
                     <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/subcont:rotate-180" />
                   </div>
@@ -1375,7 +1468,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   </div>
                 </div>
               </div>
-
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -1391,7 +1483,8 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   Personnel Information (Form e-PW2A-5)
                 </h2>
                 <p className="text-xs sm:text-sm text-green-700 mt-1">
-                  [This form should be completed for each person proposed by the Tenderer in Form e-PW2A-2 & e-PW2A-3, where applicable]
+                  [This form should be completed for each person proposed by the Tenderer in Form
+                  e-PW2A-2 & e-PW2A-3, where applicable]
                 </p>
               </div>
               <ChevronDown className="h-5 w-5 text-green-800 transition-transform duration-300 group-data-[state=open]/personnel:rotate-180" />
@@ -1399,7 +1492,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
           </CollapsibleTrigger>
           <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
             <div className="border border-t-0 border-gray-300">
-
               {/* Personnel Proposed Position and Personal Data */}
               <div className="w-full group/pos">
                 <div className="w-full">
@@ -1525,7 +1617,9 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                         Professional Experience
                       </h3>
                       <p className="text-xs text-gray-600 mt-1">
-                        Summarize professional experience over the last twenty years, in reverse chronological order. Indicate particular technical and managerial experience relevant to the project.
+                        Summarize professional experience over the last twenty years, in reverse
+                        chronological order. Indicate particular technical and managerial experience
+                        relevant to the project.
                       </p>
                     </div>
                     <ChevronDown className="h-4 w-4 text-gray-600 transition-transform duration-300 group-data-[state=open]/profexp:rotate-180" />
@@ -1546,7 +1640,8 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                             To
                           </th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
-                            Company / Project / Position / Relevant technical and managerial experience
+                            Company / Project / Position / Relevant technical and managerial
+                            experience
                           </th>
                           <th className="px-3 py-2 text-left text-xs font-semibold text-gray-700 border border-gray-300 whitespace-nowrap">
                             Project
@@ -1576,7 +1671,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   </div>
                 </div>
               </div>
-
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -1625,20 +1719,21 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
           <CollapsibleTrigger className="w-full">
             <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg border-l-4 border-green-600 flex items-center justify-between transition-all duration-300 hover:bg-green-200">
               <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-green-800 text-left">
-                List of On-Going Works / Current Commitment Under any Organization as a Sole Tenderer (If Tenderer participated as individual) - (Form e-PW2A-6A)
+                List of On-Going Works / Current Commitment Under any Organization as a Sole
+                Tenderer (If Tenderer participated as individual) - (Form e-PW2A-6A)
               </h2>
               <ChevronDown className="h-5 w-5 text-green-800 transition-transform duration-300 group-data-[state=open]/ongoing:rotate-180" />
             </div>
           </CollapsibleTrigger>
           <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
             <div className="border border-t-0 border-gray-300">
-
               {/* Ongoing Works Section */}
               <div className="w-full">
                 <div className="w-full">
                   <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between transition-all duration-300">
                     <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                      (A) List of On-Going Works / Current Commitment Under any Organization as a Sole Tenderer (If Tenderer participated as individual)
+                      (A) List of On-Going Works / Current Commitment Under any Organization as a
+                      Sole Tenderer (If Tenderer participated as individual)
                     </h3>
                   </div>
                 </div>
@@ -1690,7 +1785,10 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                             <CopyableCell value={item.peOrganization} className="text-xs" />
                             <CopyableCell value={item.paymentReceived} className="text-xs" />
                             <CopyableCell value={item.remainingValue} className="text-xs" />
-                            <CopyableCell value={item.workCompletionCertificate} className="text-xs" />
+                            <CopyableCell
+                              value={item.workCompletionCertificate}
+                              className="text-xs"
+                            />
                             <CopyableCell value={item.paymentCertificate} className="text-xs" />
                           </tr>
                         ))}
@@ -1705,7 +1803,8 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                 <div className="w-full">
                   <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300 flex items-center justify-between transition-all duration-300">
                     <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                      (B) List of On-Going Works / Current Commitment Under any Organization as JV Partner (If Tenderer participated as individual)
+                      (B) List of On-Going Works / Current Commitment Under any Organization as JV
+                      Partner (If Tenderer participated as individual)
                     </h3>
                   </div>
                 </div>
@@ -1761,7 +1860,10 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                             <CopyableCell value={item.peOrganization} className="text-xs" />
                             <CopyableCell value={item.paymentReceived} className="text-xs" />
                             <CopyableCell value={item.remainingValue} className="text-xs" />
-                            <CopyableCell value={item.workCompletionCertificate} className="text-xs" />
+                            <CopyableCell
+                              value={item.workCompletionCertificate}
+                              className="text-xs"
+                            />
                             <CopyableCell value={item.paymentCertificate} className="text-xs" />
                           </tr>
                         ))}
@@ -1770,7 +1872,6 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
                   </div>
                 </div>
               </div>
-
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -1782,19 +1883,20 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
           <CollapsibleTrigger className="w-full">
             <div className="bg-green-100 px-4 sm:px-6 py-3 sm:py-4 rounded-t-lg border-l-4 border-green-600 flex items-center justify-between transition-all duration-300 hover:bg-green-200">
               <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-green-800">
-                List of On-Going Works / Current Commitment Under any Organization as a Sole Tenderer (If Tenderer participated as JV) - (Form e-PW2A-6A)
+                List of On-Going Works / Current Commitment Under any Organization as a Sole
+                Tenderer (If Tenderer participated as JV) - (Form e-PW2A-6A)
               </h2>
               <ChevronDown className="h-5 w-5 text-green-800 transition-transform duration-300 group-data-[state=open]/ongoingjv:rotate-180" />
             </div>
           </CollapsibleTrigger>
           <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
             <div className="border border-t-0 border-gray-300">
-
               {/* Section (A): JV Sole Tenderer */}
               <div className="border border-gray-300 mb-4 sm:mb-6">
                 <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
                   <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                    (A) List of On-Going Works / Current Commitment Under any Organization as a Sole Tenderer (If Tenderer participated as JV)
+                    (A) List of On-Going Works / Current Commitment Under any Organization as a Sole
+                    Tenderer (If Tenderer participated as JV)
                   </h3>
                 </div>
 
@@ -1855,7 +1957,8 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
               <div className="border border-gray-300 mb-4 sm:mb-6">
                 <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-b border-gray-300">
                   <h3 className="text-xs sm:text-sm font-semibold text-gray-800 break-words">
-                    (B) List of On-Going Works / Current Commitment Under any Organization for JV Information (If Tenderer participated as JV)
+                    (B) List of On-Going Works / Current Commitment Under any Organization for JV
+                    Information (If Tenderer participated as JV)
                   </h3>
                 </div>
 
@@ -2022,5 +2125,3 @@ export const TendererFormPreview_ePW3_2 = ({ companyName, egpEmail, yearsOfGener
     </div>
   );
 };
-
-

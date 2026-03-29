@@ -37,11 +37,16 @@ const CreatePayment = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = `${config.apiBaseUrl}/payments/create-payment`;
-    await createData(url, {
-      ...formData,
-      wallet: Number(formData.wallet),
-      transactionAmount: Number(formData.transactionAmount),
-    }, null, resetForm);
+    await createData(
+      url,
+      {
+        ...formData,
+        wallet: Number(formData.wallet),
+        transactionAmount: Number(formData.transactionAmount),
+      },
+      null,
+      resetForm
+    );
   };
 
   return (

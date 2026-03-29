@@ -18,12 +18,12 @@ const useAllTenderPreparation = (searchTerm, page, limit, userEmail) => {
             searchTerm,
             page,
             limit,
-            userMail: userEmail // Pass userMail to filter by backend
-          }
+            userMail: userEmail, // Pass userMail to filter by backend
+          },
         });
 
         const data = response.data;
-        console.log(data?.data)
+        console.log(data?.data);
         setData(data?.data);
         setCount(data?.count);
       } catch (error) {
@@ -48,7 +48,3 @@ const useAllTenderPreparation = (searchTerm, page, limit, userEmail) => {
 };
 
 export default useAllTenderPreparation;
-
-
-
-

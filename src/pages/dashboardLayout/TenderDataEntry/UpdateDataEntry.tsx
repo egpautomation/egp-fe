@@ -67,16 +67,13 @@ const UpdateTenderDataEntry = () => {
 
   const handleSendTender = async (tenderData) => {
     try {
-      const response = await fetch(
-        `${config.exinApiBaseUrl}/tender_update`,
-        {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
-          body: JSON.stringify(tenderData),
-        }
-      );
+      const response = await fetch(`${config.exinApiBaseUrl}/tender_update`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify(tenderData),
+      });
 
       const data = await response.json();
 
@@ -99,29 +96,25 @@ const UpdateTenderDataEntry = () => {
     const toastId = toast.loading("Deleting...");
     const tenderId = { tender_id: Number(`${tenderData?.tender_id}${0}${0}`) };
     try {
-      const response = await fetch(
-        `${config.exinApiBaseUrl}/delete_tender`,
-        {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
-          body: JSON.stringify(tenderId),
-        }
-      );
+      const response = await fetch(`${config.exinApiBaseUrl}/delete_tender`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify(tenderId),
+      });
 
       const data = await response.json();
- 
-      if ((data?.status == "success") && (data?.code === 200)) {
+
+      if (data?.status == "success" && data?.code === 200) {
         const url = `${config.apiBaseUrl}/tender-dataEntry/${tenderData?.tender_id}`;
         const response = await axiosInstance.delete(url, { withCredentials: false });
         if (response.status === 200) {
           toast.dismiss(toastId);
           toast.success("Successfully Deleted");
-        }else{
+        } else {
           toast.dismiss(toastId);
         }
-        
       } else {
         toast.dismiss(toastId);
         toast.error(data.status || "Failed to delete");
@@ -141,15 +134,10 @@ const UpdateTenderDataEntry = () => {
       <div className="flex justify-between my-5 gap-3 flex-wrap">
         <div className="flex items-center gap-2">
           <AlignJustify />
-          <h1 className="text-2xl font-semibold mb-1">
-            {tendersCount} All Tenders
-          </h1>
+          <h1 className="text-2xl font-semibold mb-1">{tendersCount} All Tenders</h1>
         </div>
         <div>
-          <Input
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search..."
-          />
+          <Input onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search..." />
         </div>
       </div>
 
@@ -158,19 +146,11 @@ const UpdateTenderDataEntry = () => {
           <table className="mt-5 w-full table-fixed">
             <thead>
               <tr className="bg-primary text-primary-foreground">
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">
-                  Action
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  Tender Id
-                </th>
+                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">Action</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">Tender Id</th>
 
-                <th className="whitespace-nowrap px-4 py-2  text-start">
-                  Method
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tr">
-                  Publish Date
-                </th>
+                <th className="whitespace-nowrap px-4 py-2  text-start">Method</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tr">Publish Date</th>
 
                 {/* <th className="whitespace-nowrap px-4 py-2  rounded-tr text-start ">
                   Details
@@ -181,16 +161,11 @@ const UpdateTenderDataEntry = () => {
             <tbody>
               {!loading
                 ? formattedTenders?.map((item, idx) => (
-                    <tr
-                      key={idx}
-                      className={`border ${idx % 2 == 1 && "bg-gray-100"}`}
-                    >
+                    <tr key={idx} className={`border ${idx % 2 == 1 && "bg-gray-100"}`}>
                       <td className="px-4 py-2 align-top">
                         <Button
                           className="cursor-pointer"
-                          onClick={() =>
-                            handleSendTender(item, item?.tender_id)
-                          }
+                          onClick={() => handleSendTender(item, item?.tender_id)}
                         >
                           Update <SendHorizontal />
                         </Button>
@@ -203,9 +178,7 @@ const UpdateTenderDataEntry = () => {
                       </td>
                       <td className="px-4 py-2 align-top">{item?.tender_id}</td>
 
-                      <td className="px-4 py-2 align-top">
-                        {item?.procurement_method}
-                      </td>
+                      <td className="px-4 py-2 align-top">{item?.procurement_method}</td>
                       <td className="px-4 py-2 align-top">
                         {formatDate(item?.publication_date, "MM-dd-yyyy")}
                       </td>
@@ -219,9 +192,7 @@ const UpdateTenderDataEntry = () => {
                     <tr key={idx}>
                       <td
                         colSpan={4}
-                        className={`h-20 ${
-                          idx % 2 == 1 ? "bg-gray-300" : "bg-white"
-                        }`}
+                        className={`h-20 ${idx % 2 == 1 ? "bg-gray-300" : "bg-white"}`}
                       ></td>
                     </tr>
                   ))}

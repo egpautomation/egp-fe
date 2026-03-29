@@ -9,7 +9,6 @@ const useUserRecentOrder = (user) => {
   const [reload, setReload] = useState(0);
 
   useEffect(() => {
-    
     const result = async () => {
       try {
         setLoading(true);
@@ -20,7 +19,6 @@ const useUserRecentOrder = (user) => {
         const data = await response.json();
         setOrders(data?.data);
         setCount(data?.count);
-      
       } catch (error) {
         console.error("Error fetching :", error);
       } finally {
@@ -39,7 +37,6 @@ const useUserRecentOrder = (user) => {
     setLoading,
     setReload,
     loading,
-
   };
 };
 

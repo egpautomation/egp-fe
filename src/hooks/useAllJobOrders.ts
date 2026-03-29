@@ -31,9 +31,8 @@ const useAllJobOrders = (searchTerm, page = 1, limit = 20, status = "all") => {
         const allData = apiResult?.data || [];
 
         // Apply status filter on client-side
-        const filteredData = status === "all"
-          ? allData
-          : allData.filter(item => item.status === status);
+        const filteredData =
+          status === "all" ? allData : allData.filter((item) => item.status === status);
 
         const totalCount = filteredData.length;
 

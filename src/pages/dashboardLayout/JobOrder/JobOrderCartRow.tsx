@@ -1,7 +1,5 @@
 // @ts-nocheck
 
 export default function JobOrderCartRow() {
-  return (
-    <div>JobOrderCartRow</div>
-  )
+  return <div>JobOrderCartRow</div>;
 }

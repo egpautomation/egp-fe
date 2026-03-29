@@ -16,15 +16,12 @@ const DashboardHeader = () => {
 
       <div className="px-5">
         <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold text-[#4874c7]">ই-টেন্ডার বিডি</span>
-            </Link>
+          <span className="text-2xl font-bold text-[#4874c7]">ই-টেন্ডার বিডি</span>
+        </Link>
       </div>
 
       <div className="ml-auto flex items-center gap-3 min-h-16">
-        <Link
-          className="relative max-md:hidden"
-          to={"/dashboard/jobOrder-cart"}
-        >
+        <Link className="relative max-md:hidden" to={"/dashboard/jobOrder-cart"}>
           <ShoppingCart size={32} />{" "}
           <p className="rounded-full text-[10px] h-5 w-5 text-white flex justify-center items-center bg-red-500 absolute -top-1 -right-2">
             {JobOrderCount}

@@ -4,14 +4,14 @@ import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import useSingleData from "@/hooks/useSingleData";
 import { formatDate } from "@/lib/formateDate";
-import {  useRef,  } from "react";
+import { useRef } from "react";
 
-import type { 
-  Tender, 
-  TenderPreparation, 
-  EgpListedCompany, 
+import type {
+  Tender,
+  TenderPreparation,
+  EgpListedCompany,
   CompanyMigration,
-  LineOfCreditTenderData 
+  LineOfCreditTenderData,
 } from "@/types/tender";
 import LetterOfAuthorization from "./LetterOfAuthorization";
 
@@ -26,10 +26,9 @@ interface LineOfCreditTabProps {
 export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
   currentTender,
   companyData,
-  liveTender: liveTenderProp, 
+  liveTender: liveTenderProp,
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
-  
 
   // Fetch live tender data if not provided via prop
   const { data: fetchedLiveTender } = useSingleData(
@@ -47,7 +46,8 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
     ...currentTender,
     // Override with live tender data (from Tender model - has the missing fields)
     packageNo: liveTender?.packageNo || currentTender?.packageNo,
-    InvitationReferenceNo: liveTender?.InvitationReferenceNo || currentTender?.InvitationReferenceNo,
+    InvitationReferenceNo:
+      liveTender?.InvitationReferenceNo || currentTender?.InvitationReferenceNo,
     procuringEntityName: liveTender?.procuringEntityName || currentTender?.procuringEntityName,
     division: liveTender?.division || currentTender?.division,
     openingDateTime: liveTender?.openingDateTime || currentTender?.openingDateTime,
@@ -62,8 +62,6 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
   // console.log('LineOfCreditTab - currentTender:', currentTender);
   // console.log('LineOfCreditTab - liveTender:', liveTender);
   // console.log('LineOfCreditTab - mergedTenderData:', mergedTenderData);
-
- 
 
   const handleDownloadDoc = () => {
     const el = contentRef.current;
@@ -330,7 +328,7 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
   };
 
   return (
-   <div>
+    <div>
       <div className="container mx-auto p-5">
         <div className="flex flex-col gap-6">
           <div className="flex justify-end gap-2">
@@ -353,23 +351,23 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
                   <div className="mb-4">
                     <p>
                       Invitation for Tender No:
-                      {liveTender?.InvitationReferenceNo || "N/A"} &nbsp; &nbsp;&nbsp;
+                      {liveTender?.InvitationReferenceNo || "N/A"} &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
                       &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
-                      &nbsp;&nbsp; Date:
+                      Date:
                       {formatDate(currentTender?.openingDateTime, "MM-dd-yyyy")}
                     </p>
                     <p>Tender Package No:{liveTender?.packageNo || "N/A"} </p>
                     <p>Lot No : {liveTender?.tenderId || "N/A"} </p>
                     <p>
-                      To: {mergedTenderData?.officialDesignation ? `${mergedTenderData?.officialDesignation},${<br />}` : ""} {" "}
+                      To:{" "}
+                      {mergedTenderData?.officialDesignation
+                        ? `${mergedTenderData?.officialDesignation},${(<br />)}`
+                        : ""}{" "}
                       {liveTender?.procuringEntityName
                         ? liveTender?.procuringEntityName
                         : liveTender?.division || "N/A"}
                       , <br />
-                      {liveTender?.locationDistrict
-                        ? liveTender?.locationDistrict
-                        : "N/A"}{" "}
-                      <br />
+                      {liveTender?.locationDistrict ? liveTender?.locationDistrict : "N/A"} <br />
                     </p>
                   </div>
 
@@ -428,7 +426,8 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
                       </span>{" "}
                       for an amount not less than BDT{" "}
                       <span className="font-bold">
-                        {mergedTenderData?.liquidAssets || "[in figure]"} ({numberToWords(mergedTenderData?.liquidAssets)})
+                        {mergedTenderData?.liquidAssets || "[in figure]"} (
+                        {numberToWords(mergedTenderData?.liquidAssets)})
                       </span>{" "}
                       for the sole purpose of the execution of the above Contract. This Revolving
                       Line of Credit will be maintained by us until issuance of “Acceptance
@@ -456,7 +455,6 @@ export const LineOfCreditTab: React.FC<LineOfCreditTabProps> = ({
           </div>
         </div>
       </div>
-      
     </div>
   );
 };

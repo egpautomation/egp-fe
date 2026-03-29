@@ -13,17 +13,18 @@ export const updateData = async (url, data, setReload, resetForm) => {
       toast.dismiss(toastId);
       toast.success("Success");
       if (setReload) {
-        setReload(prev => prev + 1)
+        setReload((prev) => prev + 1);
       }
       if (resetForm) {
-        resetForm()
+        resetForm();
       }
     } else {
       throw new Error(response.data?.message || "An unexpected error occurred");
     }
   } catch (error) {
     toast.dismiss(toastId);
-    const errorMessage = error?.response?.data?.message || error?.message || "An unexpected error occurred";
+    const errorMessage =
+      error?.response?.data?.message || error?.message || "An unexpected error occurred";
     toast.error(errorMessage);
     console.error("Error:", error);
   } finally {
@@ -41,17 +42,18 @@ export const patchData = async (url, data, setReload, resetForm) => {
       toast.dismiss(toastId);
       toast.success("Success");
       if (setReload) {
-        setReload(prev => prev + 1)
+        setReload((prev) => prev + 1);
       }
       if (resetForm) {
-        resetForm()
+        resetForm();
       }
     } else {
       throw new Error(response.data?.message || "An unexpected error occurred");
     }
   } catch (error) {
     toast.dismiss(toastId);
-    const errorMessage = error?.response?.data?.message || error?.message || "An unexpected error occurred";
+    const errorMessage =
+      error?.response?.data?.message || error?.message || "An unexpected error occurred";
     toast.error(errorMessage);
     console.error("Error:", error);
   } finally {

@@ -6,30 +6,29 @@ import { formatDate } from "@/lib/formateDate";
 import { downloadCreditLineAsWord } from "@/lib/utils";
 import { useRef } from "react";
 
-import type { 
-  Tender, 
-  TenderPreparation, 
-  EgpListedCompany, 
+import type {
+  Tender,
+  TenderPreparation,
+  EgpListedCompany,
   CompanyMigration,
-  LineOfCreditTenderData 
+  LineOfCreditTenderData,
 } from "@/types/tender";
 import { useParams, useSearchParams } from "react-router-dom";
 import useAllEgpListedCompanies from "@/hooks/useAllEgpListedCompany";
 import { numberToWords } from "@/utils/numberToWords";
 
-
-
-
 export default function LineOfCreditPage(): JSX.Element {
   const contentRef = useRef<HTMLDivElement>(null);
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [searchParams] = useSearchParams();
-  const egpEmail = searchParams.get('egpEmail');
-  const tenderId = Number(id)
+  const egpEmail = searchParams.get("egpEmail");
+  const tenderId = Number(id);
 
-  const { data: currentTender } = useSingleData(`${config.apiBaseUrl}/tenders/tenderId/${tenderId}` );
+  const { data: currentTender } = useSingleData(
+    `${config.apiBaseUrl}/tenders/tenderId/${tenderId}`
+  );
 
-  const { egpListedCompanies,  } = useAllEgpListedCompanies(egpEmail || "Skip"); 
+  const { egpListedCompanies } = useAllEgpListedCompanies(egpEmail || "Skip");
   const companyData = egpListedCompanies?.[0];
 
   // Fetch live tender data if not provided via prop
@@ -40,7 +39,7 @@ export default function LineOfCreditPage(): JSX.Element {
   );
 
   // Use prop if available, otherwise use fetched data
-  const liveTender =  fetchedLiveTender;
+  const liveTender = fetchedLiveTender;
 
   // Merge data: prioritize liveTender for fields that come from Tender model
   // Fall back to currentTender (TenderPreparation) for other fields
@@ -48,7 +47,8 @@ export default function LineOfCreditPage(): JSX.Element {
     ...currentTender,
     // Override with live tender data (from Tender model - has the missing fields)
     packageNo: liveTender?.packageNo || currentTender?.packageNo,
-    InvitationReferenceNo: liveTender?.InvitationReferenceNo || currentTender?.InvitationReferenceNo,
+    InvitationReferenceNo:
+      liveTender?.InvitationReferenceNo || currentTender?.InvitationReferenceNo,
     procuringEntityName: liveTender?.procuringEntityName || currentTender?.procuringEntityName,
     division: liveTender?.division || currentTender?.division,
     openingDateTime: liveTender?.openingDateTime || currentTender?.openingDateTime,
@@ -60,16 +60,16 @@ export default function LineOfCreditPage(): JSX.Element {
     tenderId: currentTender?.tenderId || liveTender?.tenderId,
   };
 
-  
-
-  
-
   return (
-   <div>
+    <div>
       <div className="container max-w-4xl my-10 mx-auto p-5">
         <div className="flex flex-col gap-6">
           <div className="flex justify-end gap-2">
-            <Button onClick={()=> downloadCreditLineAsWord(contentRef.current, "Line Of Credit.doc")}>Download DOC</Button>
+            <Button
+              onClick={() => downloadCreditLineAsWord(contentRef.current, "Line Of Credit.doc")}
+            >
+              Download DOC
+            </Button>
           </div>
 
           <div className="border rounded">
@@ -88,23 +88,23 @@ export default function LineOfCreditPage(): JSX.Element {
                   <div className="mb-4">
                     <p>
                       Invitation for Tender No:
-                      {liveTender?.InvitationReferenceNo || "N/A"} &nbsp; &nbsp;&nbsp;
+                      {liveTender?.InvitationReferenceNo || "N/A"} &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
                       &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
-                      &nbsp;&nbsp; Date:
+                      Date:
                       {formatDate(currentTender?.openingDateTime, "MM-dd-yyyy")}
                     </p>
                     <p>Tender Package No:{liveTender?.packageNo || "N/A"} </p>
                     <p>Lot No : {liveTender?.tenderId || "N/A"} </p>
                     <p>
-                      To: {mergedTenderData?.officialDesignation ? `${mergedTenderData?.officialDesignation},${<br />}` : ""} {" "}
+                      To:{" "}
+                      {mergedTenderData?.officialDesignation
+                        ? `${mergedTenderData?.officialDesignation},${(<br />)}`
+                        : ""}{" "}
                       {liveTender?.procuringEntityName
                         ? liveTender?.procuringEntityName
                         : liveTender?.division || "N/A"}
                       , <br />
-                      {liveTender?.locationDistrict
-                        ? liveTender?.locationDistrict
-                        : "N/A"}{" "}
-                      <br />
+                      {liveTender?.locationDistrict ? liveTender?.locationDistrict : "N/A"} <br />
                     </p>
                   </div>
 
@@ -163,7 +163,8 @@ export default function LineOfCreditPage(): JSX.Element {
                       </span>{" "}
                       for an amount not less than BDT{" "}
                       <span className="font-bold">
-                        {mergedTenderData?.liquidAssets || "[in figure]"} ({numberToWords(mergedTenderData?.liquidAssets)})
+                        {mergedTenderData?.liquidAssets || "[in figure]"} (
+                        {numberToWords(mergedTenderData?.liquidAssets)})
                       </span>{" "}
                       for the sole purpose of the execution of the above Contract. This Revolving
                       Line of Credit will be maintained by us until issuance of “Acceptance
@@ -191,7 +192,6 @@ export default function LineOfCreditPage(): JSX.Element {
           </div>
         </div>
       </div>
-      
     </div>
   );
-};
+}

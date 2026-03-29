@@ -1,46 +1,53 @@
 ## SIAM: 25-08-2025
+
 - create pgtowtowotmgoods and details page with complete ui
 
 ## SIAM: 24-08-2025
+
 - AllEgpListedCOmpany, CompanyMigrations, UsersCompanyMigrations, JobOrder, MyJobOrder mobile table layout added.
 - fixed bottom navigation space issue
 
 ## SIAM: 23-08-2025
+
 - complete the dashboard sidebar with fully responsive functionality
 - fixed live tenders table filter ui
 - created dashboard recent order table mobile layout
 
-
 ## SIAM: 22-08-2025
+
 - created live tenders table mobile layout
 
-
-
-
-
 ## 4-5-2025
+
 - created all api (get all ,get single, create, update, delete) for tutorials category
 - implemented functionality to remove duplicate word from sub-categories
 - created page to add tutorial category
 - created hooks to get all tutorial category and displayed in data-table
-- created update form to update category 
+- created update form to update category
 - while updating removed duplicate word from sub-categories
 - implemented Delete Functionality
 
 ## 4-5-2025
+
 - create public route for create-tender, update-secondary-tender-form, tender-ids, tenders(need to update)
 - remove all inactive routes from dashboard sidebar
+
 ### update-tender(secondary)
+
 - convert tenderCategory field to selectedTenderCategory
 - filtering with selectedTenderCategory instead of tenderCategory
+
 ### tenders(need to update)
+
 - added field to data table (descriptionOfWorks, selectedTenderCategory, tds, identificationOfLot, qualityCriteria. )
+
 ### create-tender(master-form)
+
 - added quality criteria in form also in backend schema
 - convert date fields to text field (openingDate, lastSelling, publicationDate)
 
-
 ## 3-5-2025
+
 - update update-tender(secondary) form
 - update tender schema in back-end
 - create api (get all, get single, create, delete, update) for department
@@ -51,14 +58,19 @@
 - modify tender creation form and remove duplicate word from tds field
 
 ## 1-5-2025
+
 ### Account Holder
+
 - implemented creating unique egp mail for unique account holder
+
 ### All Tender
+
 - Made tender stats section dynamic by creating api in back-end
 - resolve search issue with All Tender
 - modify data-entry table
 
 ### line-of-credit
+
 - top-bottom (min-5)
 - Credit amount(liquide_Asset)
 - reduce_line break of 1st paragraph
@@ -74,6 +86,7 @@ dashboard-sidebar nested will be open when click parent
 after clicking the route side will be close
 
 ## 30-4-2025
+
 - created tender update form and api in the backend
 - created api to get tenderIds that did not match to tenderId in tender collection
 - created hook to get tenderIds

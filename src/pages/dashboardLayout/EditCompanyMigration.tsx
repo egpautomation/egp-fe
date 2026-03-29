@@ -34,10 +34,7 @@ const EditCompanyMigration = () => {
 
   return (
     <section className="min-h-lvh ">
-      <Link
-        className="mt-5 inline-block"
-        to={"/dashboard/company-registration"}
-      >
+      <Link className="mt-5 inline-block" to={"/dashboard/company-registration"}>
         <Button>
           <MoveLeft /> Back To Data Table
         </Button>
@@ -45,10 +42,7 @@ const EditCompanyMigration = () => {
       <h1 className="text-3xl font-bold text-center my-5">Edit Migration</h1>
       <div className="flex justify-center items-center">
         <div className="w-full max-w-xl shadow-2xl p-3 md:p-5 rounded border">
-          <form
-            onSubmit={handleSubmit}
-            className="w-full max-w-2xl grid grid-cols-1 gap-5"
-          >
+          <form onSubmit={handleSubmit} className="w-full max-w-2xl grid grid-cols-1 gap-5">
             {/* E-GP Email */}
             <div className="">
               <Label htmlFor="egpEmail">
@@ -73,8 +67,7 @@ const EditCompanyMigration = () => {
               </Label>
               <mark className="bg-yellow-400 mt-2 text-white text-[12px] px-1 rounded">
                 {" "}
-                পাসওয়ার্ড ভালোভাবে যাচাই করুন, পাসওয়ার্ড দিতে ভুল করলে E-GP
-                একাউন্ট লক হতে পারে।
+                পাসওয়ার্ড ভালোভাবে যাচাই করুন, পাসওয়ার্ড দিতে ভুল করলে E-GP একাউন্ট লক হতে পারে।
               </mark>
               <Input
                 type="text"

@@ -88,6 +88,7 @@ import GoogleOnboarding from "@/pages/homeLayout/GoogleOnboarding";
 import LetterOfAuthorization from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/LetterOfAuthorization";
 import ManufacturerAuthorizationForGoods from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/ManufacturerAuthorizationForGoods";
 import LineOfCreditPage from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/LineOfCreditPage";
+import SOR from "@/components/dashboard/SOR/SOR";
 
 
 const router = createBrowserRouter([
@@ -380,6 +381,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <PgTwoTowOtmGoods />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "estimated/sor",
+        element: (
+          <PrivateRoute>
+            <SOR />
           </PrivateRoute>
         ),
       },
