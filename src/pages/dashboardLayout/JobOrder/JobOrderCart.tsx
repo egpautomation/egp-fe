@@ -32,16 +32,18 @@ const JobOrderCart = () => {
 
     setIsRefreshing(true);
     try {
-      const response = await axiosInstance.get(`/user/get-single-user-by-userId?userId=${user.userId}`);
+      const response = await axiosInstance.get(
+        `/user/get-single-user-by-userId?userId=${user.userId}`
+      );
 
       if (response.data?.success && response.data?.data?.wallet) {
         setUser({
           ...user,
-          wallet: response.data.data.wallet
+          wallet: response.data.data.wallet,
         });
       }
     } catch (error) {
-      console.error('Error fetching wallet data:', error);
+      console.error("Error fetching wallet data:", error);
     } finally {
       setTimeout(() => setIsRefreshing(false), 500);
     }
@@ -67,13 +69,9 @@ const JobOrderCart = () => {
     }
   }, [location.pathname, handleUniversalRefresh]);
 
-
-
   const handleDelete = async (id) => {
     try {
-      await axiosInstance.delete(
-        `${config.apiBaseUrl}/jobOrder-cart/${id}`
-      );
+      await axiosInstance.delete(`${config.apiBaseUrl}/jobOrder-cart/${id}`);
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -81,31 +79,24 @@ const JobOrderCart = () => {
     }
   };
 
-
-
-
   const handleDownloadFile = async (id) => {
-    const api = `${config.apiBaseUrl}/jobOrder-cart/jobOrderCart/${id}/file`
-    console.log(api)
+    const api = `${config.apiBaseUrl}/jobOrder-cart/jobOrderCart/${id}/file`;
+    console.log(api);
     try {
-
       const link = document.createElement("a");
       link.href = api;
       link.setAttribute("download", ""); // let backend set filename
-      link.style.display = "none";       // keep it hidden
+      link.style.display = "none"; // keep it hidden
       document.body.appendChild(link);
 
       // ✅ Trigger download without reload
       link.click();
 
       document.body.removeChild(link);
-
     } catch (error) {
       console.error("Error downloading file:", error);
     }
   };
-
-
 
   const handleCheckout = () => {
     const grandTotal = promoCode
@@ -122,25 +113,27 @@ const JobOrderCart = () => {
       ...user,
       wallet: {
         ...user.wallet,
-        balance: createOrder.remainingBalance
-      }
+        balance: createOrder.remainingBalance,
+      },
     };
     const url = `${config.apiBaseUrl}/jobOrder/create-jobOrder`;
     createData(url, createOrder, setReload);
     setReload((prevReload) => prevReload + 1);
-    setUser(updatedUser)
-    setCode("")
+    setUser(updatedUser);
+    setCode("");
   };
-  const grandTotal = promoCode
-    ? totalPrice - (promoCode.percent / 100) * totalPrice
-    : totalPrice;
+  const grandTotal = promoCode ? totalPrice - (promoCode.percent / 100) * totalPrice : totalPrice;
 
   return (
     <div className="min-h-lvh p-5">
       <div className="flex justify-between items-center mb-5">
         <div className=""></div>
-        <Button onClick={handleUniversalRefresh} disabled={isRefreshingAll || isRefreshing} className="cursor-pointer">
-          <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshingAll ? 'animate-spin' : ''}`} />
+        <Button
+          onClick={handleUniversalRefresh}
+          disabled={isRefreshingAll || isRefreshing}
+          className="cursor-pointer"
+        >
+          <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshingAll ? "animate-spin" : ""}`} />
           Refresh All
         </Button>
       </div>
@@ -149,24 +142,16 @@ const JobOrderCart = () => {
           {userJobOrderCart?.length > 0 ? (
             userJobOrderCart?.map((item, idx) => (
               <div key={idx}>
-                <div
-
-                  className="rounded-md shadow-md border p-2 md:p-5 md:px-10 relative"
-                >
-                  <h1 className="text-xl font-semibold mb-2">
-                    {item?.serviceName}
+                <div className="rounded-md shadow-md border p-2 md:p-5 md:px-10 relative">
+                  <h1 className="text-xl font-semibold mb-2">{item?.serviceName}</h1>
+                  <h1>
+                    <span className="font-semibold">E-GP Email:</span> {item?.egpMail}
                   </h1>
                   <h1>
-                    <span className="font-semibold">E-GP Email:</span>{" "}
-                    {item?.egpMail}
+                    <span className="font-semibold mt-2">Tender Id:</span> {item?.tenderId}
                   </h1>
                   <h1>
-                    <span className="font-semibold mt-2">Tender Id:</span>{" "}
-                    {item?.tenderId}
-                  </h1>
-                  <h1>
-                    <span className="font-semibold mt-2">Service Price:</span>{" "}
-                    {item?.servicePrice}
+                    <span className="font-semibold mt-2">Service Price:</span> {item?.servicePrice}
                   </h1>
                   <button
                     onClick={() => handleDelete(item?._id)}
@@ -187,32 +172,23 @@ const JobOrderCart = () => {
           <div className="mt-2 rounded-md shadow-lg border p-2 md:p-5 ">
             <div className="flex items-center justify-between">
               <h1 className="text-lg font-semibold">Available Balance</h1>
-
             </div>
-            <h1 className="text-2xl font-semibold">
-              {user?.wallet?.balance || "00"}
-            </h1>
+            <h1 className="text-2xl font-semibold">{user?.wallet?.balance || "00"}</h1>
           </div>
           <div className="mt-2 rounded-md shadow-lg border p-2 md:p-5 ">
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-semibold">Order Summery</h1>
-
             </div>
             <h1>
-              <span className="font-semibold mt-2">Total Price: </span>{" "}
-              {totalPrice}
+              <span className="font-semibold mt-2">Total Price: </span> {totalPrice}
             </h1>
             <h1>
               <span className="font-semibold mt-2">Discount: </span>{" "}
-              {code && promoCode
-                ? `${(promoCode?.percent / 100) * totalPrice}`
-                : `00`}
+              {code && promoCode ? `${(promoCode?.percent / 100) * totalPrice}` : `00`}
             </h1>
             <h1>
               <span className="font-semibold mt-2">Grand Total: </span>{" "}
-              {promoCode
-                ? totalPrice - (promoCode.percent / 100) * totalPrice
-                : totalPrice}
+              {promoCode ? totalPrice - (promoCode.percent / 100) * totalPrice : totalPrice}
             </h1>
             <div className="mt-5">
               <Label className="font-bold">Do You Have Coupon?</Label>
@@ -227,9 +203,7 @@ const JobOrderCart = () => {
                   {promoCode ? (
                     <p className="text-green-700">Applied Successfully</p>
                   ) : (
-                    <p className="text-red-700">
-                      Promo Code Not Found Or Invalid!
-                    </p>
+                    <p className="text-red-700">Promo Code Not Found Or Invalid!</p>
                   )}
                 </div>
               )}
@@ -237,23 +211,20 @@ const JobOrderCart = () => {
           </div>
 
           <div>
-            {
-
-              (userJobOrderCart?.length === 0 || grandTotal > user?.wallet?.balance) ? (
-                <Button disabled className="w-full cursor-pointer mt-5">
-                  {userJobOrderCart?.length === 0 ? "Cart Is Empty" : "Not Enough Balance"}
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleCheckout}
-                  className="w-full cursor-pointer mt-5"
-                >
-                  Proceed To Checkout
-                </Button>
-              )}
-            <Link to={"/dashboard/payment"}><Button variant={"outline"} className="w-full mt-3 cursor-pointer">
-              Payment
-            </Button></Link>
+            {userJobOrderCart?.length === 0 || grandTotal > user?.wallet?.balance ? (
+              <Button disabled className="w-full cursor-pointer mt-5">
+                {userJobOrderCart?.length === 0 ? "Cart Is Empty" : "Not Enough Balance"}
+              </Button>
+            ) : (
+              <Button onClick={handleCheckout} className="w-full cursor-pointer mt-5">
+                Proceed To Checkout
+              </Button>
+            )}
+            <Link to={"/dashboard/payment"}>
+              <Button variant={"outline"} className="w-full mt-3 cursor-pointer">
+                Payment
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

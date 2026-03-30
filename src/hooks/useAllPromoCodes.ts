@@ -2,7 +2,7 @@
 import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
-const useAllPromoCodes = ( searchTerm) => {
+const useAllPromoCodes = (searchTerm) => {
   const [promoCodes, setPromoCodes] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);

@@ -10,12 +10,8 @@ import DeleteDataModal from "@/shared/Dashboard/DeleteDataModal";
 
 const Departments = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(
-    Number(searchParams.get("page")) || 1
-  );
-  const [pageLimit, setPageLimit] = useState(
-    Number(searchParams.get("limit")) || 20
-  );
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
+  const [pageLimit, setPageLimit] = useState(Number(searchParams.get("limit")) || 20);
 
   const { departments, loading, count, setReload } = useAllDepartments();
   const skeleton = new Array(pageLimit).fill(Math?.random());
@@ -50,25 +46,13 @@ const Departments = () => {
           <table className="mt-5 w-full">
             <thead>
               <tr className="bg-primary text-primary-foreground">
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">
-                  Organization
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start">
-                  Short Name
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  Bangla ShortName
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  text-start">
-                  LTM License NameCode
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  detailsName
-                </th>
+                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">Organization</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start">Short Name</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">Bangla ShortName</th>
+                <th className="whitespace-nowrap px-4 py-2  text-start">LTM License NameCode</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">detailsName</th>
 
-                <th className="whitespace-nowrap px-4 py-2  rounded-tr">
-                  Actions
-                </th>
+                <th className="whitespace-nowrap px-4 py-2  rounded-tr">Actions</th>
               </tr>
             </thead>
 
@@ -76,15 +60,10 @@ const Departments = () => {
               {!loading ? (
                 departments?.length > 0 ? (
                   departments?.map((item, idx) => (
-                    <tr
-                      key={idx}
-                      className={`border ${idx % 2 == 1 && "bg-gray-100"}`}
-                    >
+                    <tr key={idx} className={`border ${idx % 2 == 1 && "bg-gray-100"}`}>
                       <td className="px-4 py-2">{item?.organization}</td>
                       <td className="px-4 py-2">{item?.shortName}</td>
-                      <td className="px-4 py-2">
-                        {item?.departmentBanglaShortName}
-                      </td>
+                      <td className="px-4 py-2">{item?.departmentBanglaShortName}</td>
                       <td className="px-4 py-2">{item?.LTMLicenseNameCode}</td>
                       <td className="px-4 py-2">{item?.detailsName}</td>
 
@@ -111,9 +90,7 @@ const Departments = () => {
                   <tr key={idx}>
                     <td
                       colSpan={6}
-                      className={`h-14 ${
-                        idx % 2 == 1 ? "bg-gray-300" : "bg-white"
-                      }`}
+                      className={`h-14 ${idx % 2 == 1 ? "bg-gray-300" : "bg-white"}`}
                     ></td>
                   </tr>
                 ))

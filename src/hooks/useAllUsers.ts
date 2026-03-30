@@ -1,5 +1,5 @@
 // @ts-nocheck
-// @ts-nocheck
+
 import { useEffect, useState } from "react";
 
 const useAllUsers = (searchTerm) => {
@@ -12,9 +12,9 @@ const useAllUsers = (searchTerm) => {
     const result = async () => {
       try {
         setLoading(true);
-        const response = await import("@/lib/axiosInstance").then(m => m.default.get(
-          `/user?searchTerm=${searchTerm}`
-        ));
+        const response = await import("@/lib/axiosInstance").then((m) =>
+          m.default.get(`/user?searchTerm=${searchTerm}`)
+        );
         setUsers(response.data?.data);
         setUsersCount(response.data?.count);
       } catch (error) {
@@ -24,7 +24,7 @@ const useAllUsers = (searchTerm) => {
       }
     };
     result();
-  }, [reload,searchTerm]);
+  }, [reload, searchTerm]);
 
   return {
     users,

@@ -13,10 +13,7 @@ import toast from "react-hot-toast";
 const TenderDataEntry = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(10);
-  const { tenders, loading, setReload, count } = useFormattedTenders(
-    currentPage,
-    pageLimit
-  );
+  const { tenders, loading, setReload, count } = useFormattedTenders(currentPage, pageLimit);
   const sendToDB = (id) => {
     const url = `${config.apiBaseUrl}/tender-dataEntry/create-tenderId`;
     createData(url, { tenderId: id }, setReload);
@@ -58,22 +55,18 @@ const TenderDataEntry = () => {
       ...tender,
       tender_id: Number(`${tender?.tender_id}${0}${0}`),
     }));
-    const tenderIds = tenders?.map(tender => ({tenderId:tender?.tender_id}))
-    
+    const tenderIds = tenders?.map((tender) => ({ tenderId: tender?.tender_id }));
 
     try {
-      const response = await fetch(
-        `${config.exinApiBaseUrl}/add_tenders`,
-        {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
-          body: JSON.stringify({
-            tenders: updatedTenders,
-          }),
-        }
-      );
+      const response = await fetch(`${config.exinApiBaseUrl}/add_tenders`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify({
+          tenders: updatedTenders,
+        }),
+      });
 
       const res = await response.json();
 
@@ -81,7 +74,7 @@ const TenderDataEntry = () => {
         const url = `${config.apiBaseUrl}/tender-dataEntry/create-tenderId`;
         createData(url, tenderIds, setReload);
         // toast.success("Successfully Create Tenders");
-        
+
         return res;
       } else {
         console.log(res);
@@ -103,10 +96,7 @@ const TenderDataEntry = () => {
           <h1 className="text-2xl font-semibold mb-1">All Tenders</h1>
         </div>
         <div>
-          <Button
-            className="cursor-pointer"
-            onClick={() => handleSendAllTenders()}
-          >
+          <Button className="cursor-pointer" onClick={() => handleSendAllTenders()}>
             Send All
             <SendHorizontal />
           </Button>
@@ -118,19 +108,11 @@ const TenderDataEntry = () => {
           <table className="mt-5 w-full table-fixed">
             <thead>
               <tr className="bg-primary text-primary-foreground">
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">
-                  Action
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  Tender Id
-                </th>
+                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">Action</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">Tender Id</th>
 
-                <th className="whitespace-nowrap px-4 py-2  text-start">
-                  Method
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tr">
-                  Publish Date
-                </th>
+                <th className="whitespace-nowrap px-4 py-2  text-start">Method</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tr">Publish Date</th>
 
                 {/* <th className="whitespace-nowrap px-4 py-2  rounded-tr text-start ">
                   Details
@@ -141,25 +123,18 @@ const TenderDataEntry = () => {
             <tbody>
               {!loading
                 ? tenders?.map((item, idx) => (
-                    <tr
-                      key={idx}
-                      className={`border ${idx % 2 == 1 && "bg-gray-100"}`}
-                    >
+                    <tr key={idx} className={`border ${idx % 2 == 1 && "bg-gray-100"}`}>
                       <td className="px-4 py-2 align-top">
                         <Button
                           className="cursor-pointer"
-                          onClick={() =>
-                            handleSendTender(item, item?.tender_id)
-                          }
+                          onClick={() => handleSendTender(item, item?.tender_id)}
                         >
                           Send <SendHorizontal />
                         </Button>
                       </td>
                       <td className="px-4 py-2 align-top">{item?.tender_id}</td>
 
-                      <td className="px-4 py-2 align-top">
-                        {item?.procurement_method}
-                      </td>
+                      <td className="px-4 py-2 align-top">{item?.procurement_method}</td>
                       <td className="px-4 py-2 align-top">
                         {formatDate(item?.publication_date, "MM-dd-yyyy")}
                       </td>
@@ -173,9 +148,7 @@ const TenderDataEntry = () => {
                     <tr key={idx}>
                       <td
                         colSpan={4}
-                        className={`h-20 ${
-                          idx % 2 == 1 ? "bg-gray-300" : "bg-white"
-                        }`}
+                        className={`h-20 ${idx % 2 == 1 ? "bg-gray-300" : "bg-white"}`}
                       ></td>
                     </tr>
                   ))}

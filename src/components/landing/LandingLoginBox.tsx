@@ -10,8 +10,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { useContext, useState } from "react";
 import { AuthContext } from "@/provider/AuthProvider";
 import toast from "react-hot-toast";
-import { useGoogleLogin } from '@react-oauth/google';
-import { FcGoogle } from 'react-icons/fc';
+import { useGoogleLogin } from "@react-oauth/google";
+import { FcGoogle } from "react-icons/fc";
 
 interface LandingLoginBoxProps {
   preview?: boolean; // If true, shows preview mode (non-submitting), if false, fully functional
@@ -38,18 +38,18 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     if (preview) return;
-    
+
     setIsLoading(true);
     const toastId = toast.loading("Logging in with Google...");
-    
+
     try {
       let result;
       // credentialResponse contains `credential` which is the id_token
       if (credentialResponse.credential) {
-         result = await googleLogin(credentialResponse.credential);
+        result = await googleLogin(credentialResponse.credential);
       } else if (credentialResponse.access_token) {
-         // Fallback if the implicit flow returns access_token
-         result = await googleLogin(credentialResponse.access_token);
+        // Fallback if the implicit flow returns access_token
+        result = await googleLogin(credentialResponse.access_token);
       }
 
       toast.dismiss(toastId);
@@ -63,9 +63,10 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
         navigate("/dashboard");
       }
     } catch (error) {
-       toast.dismiss(toastId);
-       const errorMessage = error?.response?.data?.message || error?.message || "Google Login failed.";
-       toast.error(errorMessage);
+      toast.dismiss(toastId);
+      const errorMessage =
+        error?.response?.data?.message || error?.message || "Google Login failed.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -75,7 +76,7 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
     onSuccess: handleGoogleSuccess,
     onError: () => {
       if (!preview) toast.error("Google Login Failed");
-    }
+    },
   });
 
   const handleSubmit = async (e) => {
@@ -107,7 +108,10 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
       navigate("/dashboard");
     } catch (error) {
       toast.dismiss(toastId);
-      const errorMessage = error?.response?.data?.message || error?.message || "Login failed. Please check your credentials.";
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Login failed. Please check your credentials.";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -117,9 +121,7 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
   return (
     <Card className="shadow-2xl w-full min-[515px]:w-[480px] lg:w-full border-0 bg-white/90 backdrop-blur-sm">
       <CardHeader className="space-y-2">
-        <CardTitle className="text-xl font-bold text-[#4874c7]">
-          লগইন করুন
-        </CardTitle>
+        <CardTitle className="text-xl font-bold text-[#4874c7]">লগইন করুন</CardTitle>
         <CardDescription className="text-sm">
           আপনার অ্যাকাউন্টে প্রবেশ করুন এবং টেন্ডার ব্যবস্থাপনা শুরু করুন
         </CardDescription>
@@ -161,11 +163,7 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
-                )}
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
           </div>
@@ -176,7 +174,10 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
           </div>
           <div className="flex w-full justify-center">
             {preview ? (
-              <Button asChild className="h-11 w-[50%] text-white bg-[#4874c7] hover:bg-[#3a5da8] hover:scale-102 transition-all duration-200">
+              <Button
+                asChild
+                className="h-11 w-[50%] text-white bg-[#4874c7] hover:bg-[#3a5da8] hover:scale-102 transition-all duration-200"
+              >
                 <Link to="/login">Login</Link>
               </Button>
             ) : (
@@ -189,7 +190,7 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
               </Button>
             )}
           </div>
-          
+
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
@@ -217,7 +218,10 @@ export default function LandingLoginBox({ preview = true, onSubmit }: LandingLog
           <div className="text-center pt-2">
             <p className="text-sm text-gray-600">
               অ্যাকাউন্ট নেই?{" "}
-              <Link to="/registration" className="font-semibold underline text-[#4874c7] hover:underline">
+              <Link
+                to="/registration"
+                className="font-semibold underline text-[#4874c7] hover:underline"
+              >
                 রেজিস্ট্রেশন করুন
               </Link>
             </p>

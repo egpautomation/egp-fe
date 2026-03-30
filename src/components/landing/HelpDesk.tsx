@@ -49,7 +49,7 @@ export default function HelpDesk() {
       <div className="mx-auto py-10 lg:py-16">
         <div>
           <h2 className="max-w-4xl mx-auto text-center mb-8 text-gray-900">
-          আপনার যেকোনো সমস্যা সমাধানে আমাদের সাপোর্ট টিম প্রস্তুত।
+            আপনার যেকোনো সমস্যা সমাধানে আমাদের সাপোর্ট টিম প্রস্তুত।
           </h2>
         </div>
         {/* <div className="max-w-3xl mx-auto mb-10">

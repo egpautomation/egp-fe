@@ -17,7 +17,7 @@ const useAllCompanyMigration = (searchTerm) => {
         const url = `${config.apiBaseUrl}/companyMigration?searchTerm=${searchTerm}`;
         const response = await fetch(url);
         const data = await response.json();
-        
+
         setCompanyMigration(data?.data);
         setCount(data?.count);
       } catch (error) {

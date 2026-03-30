@@ -98,6 +98,7 @@ import {
   X,
   ShoppingCart,
   Bell,
+  SquareSigma,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "./input";
@@ -179,7 +180,6 @@ export function AppSidebarNew() {
           path: "/dashboard/create-job-order-bulk",
           role: ["admin", "user_agent", "user", "moderator"],
         },
-
       ],
     },
     {
@@ -197,6 +197,19 @@ export function AppSidebarNew() {
           label: "STL Calculation",
           path: "/dashboard/stl-calculation",
           role: ["admin", "user_agent", "user", "moderator"],
+        },
+      ],
+    },
+    {
+      label: "Estimated",
+      path: "/",
+      role: ["admin", "moderator"],
+      icon: SquareSigma,
+      children: [
+        {
+          label: "SOR",
+          path: "/dashboard/estimated/sor",
+          role: ["admin", "moderator"],
         },
       ],
     },
@@ -545,14 +558,16 @@ export function AppSidebarNew() {
       </div>
       {/* empty space for desktop menu */}
       <div
-        className={`${isOpen ? "w-64" : "w-16"
-          } max-md:hidden transition-all duration-500 ease-in-out`}
+        className={`${
+          isOpen ? "w-64" : "w-16"
+        } max-md:hidden transition-all duration-500 ease-in-out`}
       ></div>
 
       {/* desktop menu */}
       <motion.div
-        className={`fixed left-0 top-0 h-full bg-white border-r z-50 transition-all duration-500 ease-in-out overflow-hidden ${isOpen ? "w-64" : "w-16 max-md:w-0"
-          }`}
+        className={`fixed left-0 top-0 h-full bg-white border-r z-50 transition-all duration-500 ease-in-out overflow-hidden ${
+          isOpen ? "w-64" : "w-16 max-md:w-0"
+        }`}
         onMouseEnter={() => window.innerWidth >= 768 && setIsOpen(true)}
         onMouseLeave={() => window.innerWidth >= 768 && setIsOpen(false)}
       >
@@ -565,9 +580,9 @@ export function AppSidebarNew() {
                   {/* search bar */}
                   <motion.div
                     className={`relative mt-4 px-2 ${isOpen ? "block" : "hidden"}`}
-                  // initial={{ opacity: 0, y: -20 }}
-                  // animate={{ opacity: 1, y: 0 }}
-                  // transition={{ duration: 0.3, delay: 2 }}
+                    // initial={{ opacity: 0, y: -20 }}
+                    // animate={{ opacity: 1, y: 0 }}
+                    // transition={{ duration: 0.3, delay: 2 }}
                   >
                     <Input
                       placeholder="Search"
@@ -603,8 +618,9 @@ export function AppSidebarNew() {
               >
                 <div className="w-full">
                   <motion.div
-                    className={`flex h-12 w-full rounded-xl items-center justify-between text-decoration-none ${location.pathname === "/" ? "" : " hover:bg-gray-100"
-                      }`}
+                    className={`flex h-12 w-full rounded-xl items-center justify-between text-decoration-none ${
+                      location.pathname === "/" ? "" : " hover:bg-gray-100"
+                    }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ duration: 0.2 }}
@@ -686,8 +702,9 @@ export function AppSidebarNew() {
                             setOpenIndex(openIndex === idx ? null : idx);
                           }
                         }}
-                        className={`flex h-12 w-full group transition-all duration-200 rounded-xl items-center justify-between text-decoration-none ${isActive ? "" : " hover:text-[#4874c7] hover:bg-blue-50"
-                          }`}
+                        className={`flex h-12 w-full group transition-all duration-200 rounded-xl items-center justify-between text-decoration-none ${
+                          isActive ? "" : " hover:text-[#4874c7] hover:bg-blue-50"
+                        }`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         transition={{ duration: 0.4 }}
@@ -760,10 +777,11 @@ export function AppSidebarNew() {
                                   >
                                     <Link
                                       to={item.path}
-                                      className={`flex h-10 w-full rounded-lg items-center px-4 transition-all duration-200 ${childIsActive
-                                        ? "bg-black text-white"
-                                        : "text-black hover:bg-gray-100"
-                                        }`}
+                                      className={`flex h-10 w-full rounded-lg items-center px-4 transition-all duration-200 ${
+                                        childIsActive
+                                          ? "bg-black text-white"
+                                          : "text-black hover:bg-gray-100"
+                                      }`}
                                     >
                                       {/* <div className="w-2 h-2 bg-current rounded-full opacity-60 mr-3"></div> */}
                                       <div className="text-sm min-w-fit text-nowrap flex items-center justify-center">

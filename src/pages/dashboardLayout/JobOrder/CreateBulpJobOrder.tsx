@@ -87,26 +87,26 @@ export default function CreateBulpJobOrder() {
     }
 
     const url1 = `${config.apiBaseUrl}/jobOrder-cart/create-multiple-jobOrderCart`;
-    
+
     // Call first API - Bulk Job Order
     const result = await createData(url1, orders, null, null);
-    
+
     // If first API succeeds, call second API for each tenderId
     if (result?.success) {
       // Collect unique tenderIds from orders
-      const uniqueTenderIds = [...new Set(orders.map(order => order.tenderId))];
-      
+      const uniqueTenderIds = [...new Set(orders.map((order) => order.tenderId))];
+
       // Data to update for each tender
       const tenderUpdateData = {
         LtmLicenseNameCode: ltmLicenseNameCode,
       };
-      
+
       // Call PUT API for each unique tenderId
       for (const tenderId of uniqueTenderIds) {
         const url2 = `${config.apiBaseUrl}/tenders/tenderId/${tenderId}`;
         await updateData(url2, tenderUpdateData, null, null);
       }
-      
+
       // Reset after both APIs complete
       setReset();
       setReload((prev) => prev + 1);
@@ -120,10 +120,7 @@ export default function CreateBulpJobOrder() {
           <Label htmlFor="egpEmail">
             E-GP Email<span className="text-red-700">*</span>
           </Label>
-          <UserEgpMail
-            setFormData={setCurrentOrder}
-            value={currentOrder.egpMail}
-          />
+          <UserEgpMail setFormData={setCurrentOrder} value={currentOrder.egpMail} />
         </div>
 
         {/* Tender Id */}
@@ -144,9 +141,7 @@ export default function CreateBulpJobOrder() {
 
         {/* Liquid Assets Tender Amount */}
         <div className="max-sm:w-full">
-          <Label htmlFor="liquidAssetsTenderAmount">
-            Liquid Assets Tender Amount
-          </Label>
+          <Label htmlFor="liquidAssetsTenderAmount">Liquid Assets Tender Amount</Label>
           <Input
             type="number"
             name="liquidAssetsTenderAmount"
@@ -193,31 +188,23 @@ export default function CreateBulpJobOrder() {
           <h3 className="font-semibold mb-2">Added Orders:</h3>
           <div className="list-disc pl-5">
             {orders.map((order, idx) => (
-              <div
-                key={idx}
-                className="mb-3 shadow-sm p-2 rounded bg-gray-50 flex justify-between"
-              >
+              <div key={idx} className="mb-3 shadow-sm p-2 rounded bg-gray-50 flex justify-between">
                 <div>
                   <strong>{order.egpMail}</strong> - {order.tenderId}
                   {order.liquidAssetsTenderAmount && (
-                    <span className="text-sm text-gray-600"> (Amount: {order.liquidAssetsTenderAmount})</span>
+                    <span className="text-sm text-gray-600">
+                      {" "}
+                      (Amount: {order.liquidAssetsTenderAmount})
+                    </span>
                   )}
                 </div>
-                <X
-                  onClick={() => handleRemoveOrder(idx)}
-                  className="cursor-pointer"
-                  size={16}
-                />
+                <X onClick={() => handleRemoveOrder(idx)} className="cursor-pointer" size={16} />
               </div>
             ))}
           </div>
 
           {/* Final Submit button */}
-          <Button
-            type="button"
-            className="mt-4 max-sm:w-full"
-            onClick={handleFinalSubmit}
-          >
+          <Button type="button" className="mt-4 max-sm:w-full" onClick={handleFinalSubmit}>
             Submit All Orders
           </Button>
         </div>

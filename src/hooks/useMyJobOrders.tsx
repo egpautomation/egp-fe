@@ -29,14 +29,16 @@ const useMyJobOrders = (searchTerm, user, page = 1, limit = 20, status = "all") 
 
         setData(result?.data || []);
         setCount(result?.pagination?.totalCount || 0);
-        setPagination(result?.pagination || {
-          currentPage: 1,
-          totalPages: 1,
-          totalCount: 0,
-          limit: 20,
-          hasNextPage: false,
-          hasPreviousPage: false,
-        });
+        setPagination(
+          result?.pagination || {
+            currentPage: 1,
+            totalPages: 1,
+            totalCount: 0,
+            limit: 20,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          }
+        );
       } catch (error) {
         console.error("Error fetching :", error);
       } finally {

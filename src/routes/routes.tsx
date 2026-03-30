@@ -86,6 +86,9 @@ import StlCalculationPage from "@/pages/homeLayout/StlCalculationPage";
 import PrivacyPolicy from "@/pages/homeLayout/PrivacyAndPolicy";
 import GoogleOnboarding from "@/pages/homeLayout/GoogleOnboarding";
 import LetterOfAuthorization from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/LetterOfAuthorization";
+import ManufacturerAuthorizationForGoods from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/ManufacturerAuthorizationForGoods";
+import LineOfCreditPage from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/LineOfCreditPage";
+import SOR from "@/components/dashboard/SOR/SOR";
 
 
 const router = createBrowserRouter([
@@ -378,6 +381,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <PgTwoTowOtmGoods />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "estimated/sor",
+        element: (
+          <PrivateRoute>
+            <SOR />
           </PrivateRoute>
         ),
       },
@@ -703,6 +714,14 @@ const router = createBrowserRouter([
   {
     path:"letter-of-authorization/:id",
     element: <LetterOfAuthorization />
+  },
+  {
+    path:"manufacturer-authorization/:id",
+    element: <ManufacturerAuthorizationForGoods />
+  },
+  {
+    path:"line-of-credit/:id",
+    element: <LineOfCreditPage />
   }
 ]);
 

@@ -19,9 +19,7 @@ export default function SelectTenderLicense({ setFormData }) {
   const url = config.apiBaseUrl && id ? `${config.apiBaseUrl}/companyMigration/${id}` : "";
   const { data, loading } = useSingleData(url);
 
-  const [selectedItems, setSelectedItems] = useState(
-    data?.ltmTenderLicenseShortName || []
-  );
+  const [selectedItems, setSelectedItems] = useState(data?.ltmTenderLicenseShortName || []);
 
   const toggleItem = (value) => {
     setSelectedItems((prev) => {
@@ -38,7 +36,7 @@ export default function SelectTenderLicense({ setFormData }) {
       return newSelected;
     });
   };
-  
+
   const options = [
     { value: "RHD", label: "RHD" },
     { value: "EED", label: "EED" },
@@ -62,15 +60,11 @@ export default function SelectTenderLicense({ setFormData }) {
     <section>
       {!loading && (
         <div className="">
-          <Label
-            className="text-sm font-semibold"
-            htmlFor="ltmTenderLicenseShortName"
-          >
-            Please Select Your Total LTM Tender License{" "}
-            <span className="text-red-700">* </span>
+          <Label className="text-sm font-semibold" htmlFor="ltmTenderLicenseShortName">
+            Please Select Your Total LTM Tender License <span className="text-red-700">* </span>
             <span>{`(${selectedItems?.length} Items)`}</span>
           </Label>
-          <Select  onValueChange={toggleItem}>
+          <Select onValueChange={toggleItem}>
             <SelectTrigger className="w-full mt-2">
               <SelectValue placeholder="Select options" />
             </SelectTrigger>
@@ -82,16 +76,13 @@ export default function SelectTenderLicense({ setFormData }) {
                   className="flex items-center justify-between"
                 >
                   {option.label}
-                  {selectedItems.includes(option.value) && (
-                    <Check className="h-4 w-4" />
-                  )}
+                  {selectedItems.includes(option.value) && <Check className="h-4 w-4" />}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           <p className="mt-2">
-            <span className="font-semibold"></span> Selected :{" "}
-            {selectedItems.join(", ") || "None"}
+            <span className="font-semibold"></span> Selected : {selectedItems.join(", ") || "None"}
           </p>
         </div>
       )}

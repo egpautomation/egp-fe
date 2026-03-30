@@ -10,7 +10,6 @@ const useAllUserJobOrderCart = (user) => {
   const [reload, setReload] = useState(0);
 
   useEffect(() => {
-    
     const result = async () => {
       try {
         setLoading(true);
@@ -28,7 +27,7 @@ const useAllUserJobOrderCart = (user) => {
       }
     };
     result();
-  }, [reload, ]);
+  }, [reload]);
 
   return {
     userJobOrderCart,
@@ -39,7 +38,7 @@ const useAllUserJobOrderCart = (user) => {
     setLoading,
     setReload,
     loading,
-    totalPrice
+    totalPrice,
   };
 };
 

@@ -3,17 +3,22 @@ import React, { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import useLiveTenders from "@/hooks/useLiveTenders";
 import useAllTenderPreparation from "@/hooks/useAllTenderPreparation";
 import useAllMethodTenders from "@/hooks/useAllMethodTenders";
-import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, parseISO, isValid, parse, addDays } from "date-fns";
+import {
+  format,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  parseISO,
+  isValid,
+  parse,
+  addDays,
+} from "date-fns";
 import { formatDate as parseDate } from "@/lib/formateDate";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/lib/axiosInstance";
@@ -23,7 +28,17 @@ import { AuthContext } from "@/provider/AuthProvider";
 // LTM Wings Breakdown Component
 const LtmWingsBreakdown = () => {
   const navigate = useNavigate();
-  const { tenders: ltmTenders, loading } = useAllMethodTenders("LTM", "", "", "", "", "", "", 1, 10000);
+  const { tenders: ltmTenders, loading } = useAllMethodTenders(
+    "LTM",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    1,
+    10000
+  );
 
   // Group LTM tenders by organization (Wings Breakdown)
   const getWingsBreakdown = (tenders: any[]) => {
@@ -36,9 +51,9 @@ const LtmWingsBreakdown = () => {
     });
 
     return Object.entries(counts).map(([name, count], idx) => ({
-      id: String(idx + 1).padStart(2, '0'),
+      id: String(idx + 1).padStart(2, "0"),
       name,
-      count: String(count).padStart(2, '0')
+      count: String(count).padStart(2, "0"),
     }));
   };
 
@@ -52,13 +67,15 @@ const LtmWingsBreakdown = () => {
     if (loading) {
       return (
         <div className="divide-y divide-slate-50">
-          {Array(5).fill(0).map((_, i) => (
-            <div key={i} className="grid grid-cols-12 px-6 py-3 items-center gap-2">
-              <div className="col-span-2 h-3 bg-slate-200 rounded animate-pulse" />
-              <div className="col-span-7 h-3 bg-slate-200 rounded animate-pulse" />
-              <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
-            </div>
-          ))}
+          {Array(5)
+            .fill(0)
+            .map((_, i) => (
+              <div key={i} className="grid grid-cols-12 px-6 py-3 items-center gap-2">
+                <div className="col-span-2 h-3 bg-slate-200 rounded animate-pulse" />
+                <div className="col-span-7 h-3 bg-slate-200 rounded animate-pulse" />
+                <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
+              </div>
+            ))}
         </div>
       );
     }
@@ -78,12 +95,9 @@ const LtmWingsBreakdown = () => {
             key={wing.id}
             className="grid grid-cols-12 px-6 py-3 items-center hover:bg-slate-50/50 transition-colors group"
           >
-            <div className="col-span-2 text-sm text-slate-500 font-medium">
-              {wing.id}
-            </div>
+            <div className="col-span-2 text-sm text-slate-500 font-medium">{wing.id}</div>
             <div className="col-span-7 text-sm text-slate-700 font-semibold leading-relaxed">
-              {wing.name} {" "}
-              <span className="text-slate-400 font-normal ml-1">({wing.count})</span>
+              {wing.name} <span className="text-slate-400 font-normal ml-1">({wing.count})</span>
             </div>
             <div className="col-span-3 text-right">
               <Button
@@ -130,10 +144,12 @@ const ClosingDateWingsBreakdown = () => {
   const [activeTab, setActiveTab] = useState("today");
 
   // Fetch tender preparation data
-  const {
-    data: tenderPreparationData,
-    loading,
-  } = useAllTenderPreparation("", 1, 10000, user?.email);
+  const { data: tenderPreparationData, loading } = useAllTenderPreparation(
+    "",
+    1,
+    10000,
+    user?.email
+  );
 
   // Get today's and tomorrow's dates in dd-MMM-yyyy format
   const today = new Date();
@@ -182,9 +198,9 @@ const ClosingDateWingsBreakdown = () => {
     });
 
     return Object.entries(counts).map(([name, count], idx) => ({
-      id: String(idx + 1).padStart(2, '0'),
+      id: String(idx + 1).padStart(2, "0"),
       name,
-      count: String(count).padStart(2, '0')
+      count: String(count).padStart(2, "0"),
     }));
   };
 
@@ -199,13 +215,15 @@ const ClosingDateWingsBreakdown = () => {
     if (loading) {
       return (
         <div className="divide-y divide-slate-50">
-          {Array(5).fill(0).map((_, i) => (
-            <div key={i} className="grid grid-cols-12 px-6 py-3 items-center gap-2">
-              <div className="col-span-2 h-3 bg-slate-200 rounded animate-pulse" />
-              <div className="col-span-7 h-3 bg-slate-200 rounded animate-pulse" />
-              <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
-            </div>
-          ))}
+          {Array(5)
+            .fill(0)
+            .map((_, i) => (
+              <div key={i} className="grid grid-cols-12 px-6 py-3 items-center gap-2">
+                <div className="col-span-2 h-3 bg-slate-200 rounded animate-pulse" />
+                <div className="col-span-7 h-3 bg-slate-200 rounded animate-pulse" />
+                <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
+              </div>
+            ))}
         </div>
       );
     }
@@ -225,12 +243,9 @@ const ClosingDateWingsBreakdown = () => {
             key={wing.id}
             className="grid grid-cols-12 px-6 py-3 items-center hover:bg-slate-50/50 transition-colors group"
           >
-            <div className="col-span-2 text-sm text-slate-500 font-medium">
-              {wing.id}
-            </div>
+            <div className="col-span-2 text-sm text-slate-500 font-medium">{wing.id}</div>
             <div className="col-span-7 text-sm text-slate-700 font-semibold leading-relaxed">
-              {wing.name} {" "}
-              <span className="text-slate-400 font-normal ml-1">({wing.count})</span>
+              {wing.name} <span className="text-slate-400 font-normal ml-1">({wing.count})</span>
             </div>
             <div className="col-span-3 text-right">
               <Button
@@ -283,7 +298,8 @@ const ClosingDateWingsBreakdown = () => {
             {renderWingsTable(todayWings, todayStr, todayTenders)}
             <div className="px-6 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50/50">
               <div className="text-sm font-semibold text-slate-700">
-                Closing Today: <span className="text-[#4874c7] font-bold ml-1">{todayTenders.length}</span>
+                Closing Today:{" "}
+                <span className="text-[#4874c7] font-bold ml-1">{todayTenders.length}</span>
               </div>
               <Button
                 onClick={() => handleDetailsClick(todayStr)}
@@ -305,7 +321,8 @@ const ClosingDateWingsBreakdown = () => {
             {renderWingsTable(tomorrowWings, tomorrowStr, tomorrowTenders)}
             <div className="px-6 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50/50">
               <div className="text-sm font-semibold text-slate-700">
-                Closing Tomorrow: <span className="text-[#4874c7] font-bold ml-1">{tomorrowTenders.length}</span>
+                Closing Tomorrow:{" "}
+                <span className="text-[#4874c7] font-bold ml-1">{tomorrowTenders.length}</span>
               </div>
               <Button
                 onClick={() => handleDetailsClick(tomorrowStr)}
@@ -331,7 +348,7 @@ const SimpleTenderCalendar = () => {
   const [thisWeekTenders, setThisWeekTenders] = React.useState([]);
   const [thisMonthTenders, setThisMonthTenders] = React.useState([]);
   const [myAreaTenders, setMyAreaTenders] = React.useState([]);
-  const [categoryGroups, setCategoryGroups] = React.useState<{ name: string, count: number }[]>([]);
+  const [categoryGroups, setCategoryGroups] = React.useState<{ name: string; count: number }[]>([]);
   const [weekLoading, setWeekLoading] = React.useState(false);
   const { userData } = useUserProfile();
 
@@ -387,10 +404,14 @@ const SimpleTenderCalendar = () => {
         // Group by category
         const catMap: Record<string, number> = {};
         list.forEach((t) => {
-          const cat = t.tenderCategory || t.category || t.tender_subCategories || "General Construction";
+          const cat =
+            t.tenderCategory || t.category || t.tender_subCategories || "General Construction";
           // Split by semicolon if it's a list
-          const parts = String(cat).split(";").map(s => s.trim()).filter(Boolean);
-          parts.forEach(p => {
+          const parts = String(cat)
+            .split(";")
+            .map((s) => s.trim())
+            .filter(Boolean);
+          parts.forEach((p) => {
             catMap[p] = (catMap[p] || 0) + 1;
           });
         });
@@ -420,7 +441,7 @@ const SimpleTenderCalendar = () => {
   // Tenders published on the selected date
   const tendersOnDate = React.useMemo(() => {
     if (!formattedDate || !allTenders.length) return [];
-    return allTenders.filter(t => {
+    return allTenders.filter((t) => {
       const dbDate = t.publicationDateTime || t.publishingDate || "";
       if (!dbDate) return false;
       const parsedDbDate = parseDate(dbDate, "dd-MMM-yyyy").toLowerCase();
@@ -431,15 +452,15 @@ const SimpleTenderCalendar = () => {
   // Group by organization
   const wings = React.useMemo(() => {
     const counts: Record<string, number> = {};
-    tendersOnDate.forEach(t => {
+    tendersOnDate.forEach((t) => {
       const org = t.organization || "Other";
       counts[org] = (counts[org] || 0) + 1;
     });
 
     const items = Object.entries(counts).map(([name, count], idx) => ({
-      id: String(idx + 1).padStart(2, '0'),
+      id: String(idx + 1).padStart(2, "0"),
       name,
-      count: String(count).padStart(2, '0')
+      count: String(count).padStart(2, "0"),
     }));
 
     // Fallback if empty
@@ -477,7 +498,8 @@ const SimpleTenderCalendar = () => {
             />
             <div className="px-5 py-3 border-t border-slate-100 flex items-center justify-between mt-auto">
               <div className="text-sm font-semibold text-slate-700">
-                Publishing: <span className="text-[#4874c7] font-bold ml-1">{tendersOnDate.length}</span>
+                Publishing:{" "}
+                <span className="text-[#4874c7] font-bold ml-1">{tendersOnDate.length}</span>
               </div>
               <Button
                 onClick={handleDetailsClick}
@@ -491,10 +513,12 @@ const SimpleTenderCalendar = () => {
         </Card>
         <Card className="w-full max-w-md bg-slate-50 border-none shadow-sm rounded-xl overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between py-4 px-6">
-            <CardTitle className="text-slate-600 text-xl font-medium">
-              Latest Tender
-            </CardTitle>
-            <Button variant="link" className="text-[#4874c7] font-bold p-0 h-auto" onClick={() => navigate("/dashboard/live-tenders")}>
+            <CardTitle className="text-slate-600 text-xl font-medium">Latest Tender</CardTitle>
+            <Button
+              variant="link"
+              className="text-[#4874c7] font-bold p-0 h-auto"
+              onClick={() => navigate("/dashboard/live-tenders")}
+            >
               View All
             </Button>
           </CardHeader>
@@ -533,21 +557,29 @@ const SimpleTenderCalendar = () => {
               <TabsContent value="this-week" className="mt-0">
                 <Card className="border-none shadow-none bg-white rounded-xl overflow-hidden">
                   <div className="grid grid-cols-12 bg-slate-50/50 px-4 py-3 border-b border-slate-100">
-                    <span className="col-span-1 text-[11px] font-bold text-slate-400 uppercase">#</span>
-                    <span className="col-span-8 text-[11px] font-bold text-slate-400 uppercase">Name</span>
-                    <span className="col-span-3 text-right text-[11px] font-bold text-slate-400 uppercase">Published</span>
+                    <span className="col-span-1 text-[11px] font-bold text-slate-400 uppercase">
+                      #
+                    </span>
+                    <span className="col-span-8 text-[11px] font-bold text-slate-400 uppercase">
+                      Name
+                    </span>
+                    <span className="col-span-3 text-right text-[11px] font-bold text-slate-400 uppercase">
+                      Published
+                    </span>
                   </div>
 
                   <ScrollArea className="h-70">
                     <div className="divide-y divide-slate-50">
                       {weekLoading ? (
-                        Array(5).fill(0).map((_, i) => (
-                          <div key={i} className="grid grid-cols-12 px-4 py-4 items-start gap-2">
-                            <div className="col-span-1 h-3 bg-slate-200 rounded animate-pulse" />
-                            <div className="col-span-8 h-3 bg-slate-200 rounded animate-pulse" />
-                            <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
-                          </div>
-                        ))
+                        Array(5)
+                          .fill(0)
+                          .map((_, i) => (
+                            <div key={i} className="grid grid-cols-12 px-4 py-4 items-start gap-2">
+                              <div className="col-span-1 h-3 bg-slate-200 rounded animate-pulse" />
+                              <div className="col-span-8 h-3 bg-slate-200 rounded animate-pulse" />
+                              <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
+                            </div>
+                          ))
                       ) : thisWeekTenders.length === 0 ? (
                         <div className="flex items-center justify-center py-10 text-slate-400 text-sm italic">
                           No tenders published this week.
@@ -556,7 +588,9 @@ const SimpleTenderCalendar = () => {
                         thisWeekTenders.map((tender, idx) => (
                           <div
                             key={tender._id ?? idx}
-                            onClick={() => tender._id && navigate(`/dashboard/view-tender/${tender._id}`)}
+                            onClick={() =>
+                              tender._id && navigate(`/dashboard/view-tender/${tender._id}`)
+                            }
                             className="grid grid-cols-12 px-4 py-4 items-start hover:bg-slate-50/60 transition-colors cursor-pointer"
                           >
                             <div className="col-span-1 text-sm text-slate-400 font-medium">
@@ -564,14 +598,22 @@ const SimpleTenderCalendar = () => {
                             </div>
                             <div className="col-span-8 pr-2">
                               <p className="text-sm text-slate-700 font-medium leading-relaxed line-clamp-3">
-                                {tender.BriefDescriptionofWorks || tender.descriptionOfWorks || tender.title || "—"}
+                                {tender.BriefDescriptionofWorks ||
+                                  tender.descriptionOfWorks ||
+                                  tender.title ||
+                                  "—"}
                               </p>
                               {tender.organization && (
-                                <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">{tender.organization}</p>
+                                <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">
+                                  {tender.organization}
+                                </p>
                               )}
                             </div>
                             <div className="col-span-3 text-right text-xs text-slate-500 font-medium whitespace-nowrap pt-1">
-                              {parseDate(tender.publicationDateTime || tender.publishingDate, "dd-MMM-yyyy")}
+                              {parseDate(
+                                tender.publicationDateTime || tender.publishingDate,
+                                "dd-MMM-yyyy"
+                              )}
                             </div>
                           </div>
                         ))
@@ -581,24 +623,31 @@ const SimpleTenderCalendar = () => {
                 </Card>
               </TabsContent>
 
-
               <TabsContent value="this-month" className="mt-0">
                 <Card className="border-none shadow-none bg-white rounded-xl overflow-hidden">
                   <div className="grid grid-cols-12 bg-slate-50/50 px-4 py-3 border-b border-slate-100">
-                    <span className="col-span-1 text-[11px] font-bold text-slate-400 uppercase">#</span>
-                    <span className="col-span-8 text-[11px] font-bold text-slate-400 uppercase">Name</span>
-                    <span className="col-span-3 text-right text-[11px] font-bold text-slate-400 uppercase">Published</span>
+                    <span className="col-span-1 text-[11px] font-bold text-slate-400 uppercase">
+                      #
+                    </span>
+                    <span className="col-span-8 text-[11px] font-bold text-slate-400 uppercase">
+                      Name
+                    </span>
+                    <span className="col-span-3 text-right text-[11px] font-bold text-slate-400 uppercase">
+                      Published
+                    </span>
                   </div>
                   <ScrollArea className="h-70">
                     <div className="divide-y divide-slate-50">
                       {weekLoading ? (
-                        Array(5).fill(0).map((_, i) => (
-                          <div key={i} className="grid grid-cols-12 px-4 py-4 items-start gap-2">
-                            <div className="col-span-1 h-3 bg-slate-200 rounded animate-pulse" />
-                            <div className="col-span-8 h-3 bg-slate-200 rounded animate-pulse" />
-                            <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
-                          </div>
-                        ))
+                        Array(5)
+                          .fill(0)
+                          .map((_, i) => (
+                            <div key={i} className="grid grid-cols-12 px-4 py-4 items-start gap-2">
+                              <div className="col-span-1 h-3 bg-slate-200 rounded animate-pulse" />
+                              <div className="col-span-8 h-3 bg-slate-200 rounded animate-pulse" />
+                              <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
+                            </div>
+                          ))
                       ) : thisMonthTenders.length === 0 ? (
                         <div className="flex items-center justify-center py-10 text-slate-400 text-sm italic">
                           No tenders published this month.
@@ -607,7 +656,9 @@ const SimpleTenderCalendar = () => {
                         thisMonthTenders.map((tender, idx) => (
                           <div
                             key={tender._id ?? idx}
-                            onClick={() => tender._id && navigate(`/dashboard/view-tender/${tender._id}`)}
+                            onClick={() =>
+                              tender._id && navigate(`/dashboard/view-tender/${tender._id}`)
+                            }
                             className="grid grid-cols-12 px-4 py-4 items-start hover:bg-slate-50/60 transition-colors cursor-pointer"
                           >
                             <div className="col-span-1 text-sm text-slate-400 font-medium">
@@ -615,14 +666,22 @@ const SimpleTenderCalendar = () => {
                             </div>
                             <div className="col-span-8 pr-2">
                               <p className="text-sm text-slate-700 font-medium leading-relaxed line-clamp-3">
-                                {tender.BriefDescriptionofWorks || tender.descriptionOfWorks || tender.title || "—"}
+                                {tender.BriefDescriptionofWorks ||
+                                  tender.descriptionOfWorks ||
+                                  tender.title ||
+                                  "—"}
                               </p>
                               {tender.organization && (
-                                <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">{tender.organization}</p>
+                                <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">
+                                  {tender.organization}
+                                </p>
                               )}
                             </div>
                             <div className="col-span-3 text-right text-xs text-slate-500 font-medium whitespace-nowrap pt-1">
-                              {parseDate(tender.publicationDateTime || tender.publishingDate, "dd-MMM-yyyy")}
+                              {parseDate(
+                                tender.publicationDateTime || tender.publishingDate,
+                                "dd-MMM-yyyy"
+                              )}
                             </div>
                           </div>
                         ))
@@ -635,26 +694,38 @@ const SimpleTenderCalendar = () => {
               <TabsContent value="my-area" className="mt-0">
                 <Card className="border-none shadow-none bg-white rounded-xl overflow-hidden">
                   <div className="grid grid-cols-12 bg-slate-50/50 px-4 py-3 border-b border-slate-100">
-                    <span className="col-span-1 text-[11px] font-bold text-slate-400 uppercase">#</span>
-                    <span className="col-span-8 text-[11px] font-bold text-slate-400 uppercase">Name</span>
-                    <span className="col-span-3 text-right text-[11px] font-bold text-slate-400 uppercase">Location</span>
+                    <span className="col-span-1 text-[11px] font-bold text-slate-400 uppercase">
+                      #
+                    </span>
+                    <span className="col-span-8 text-[11px] font-bold text-slate-400 uppercase">
+                      Name
+                    </span>
+                    <span className="col-span-3 text-right text-[11px] font-bold text-slate-400 uppercase">
+                      Location
+                    </span>
                   </div>
                   <ScrollArea className="h-70">
                     <div className="divide-y divide-slate-50">
                       {weekLoading ? (
-                        Array(5).fill(0).map((_, i) => (
-                          <div key={i} className="grid grid-cols-12 px-4 py-4 items-start gap-2">
-                            <div className="col-span-1 h-3 bg-slate-200 rounded animate-pulse" />
-                            <div className="col-span-8 h-3 bg-slate-200 rounded animate-pulse" />
-                            <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
-                          </div>
-                        ))
+                        Array(5)
+                          .fill(0)
+                          .map((_, i) => (
+                            <div key={i} className="grid grid-cols-12 px-4 py-4 items-start gap-2">
+                              <div className="col-span-1 h-3 bg-slate-200 rounded animate-pulse" />
+                              <div className="col-span-8 h-3 bg-slate-200 rounded animate-pulse" />
+                              <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
+                            </div>
+                          ))
                       ) : !userDistrict ? (
                         <div className="flex flex-col items-center justify-center py-10 gap-2">
                           <span className="text-slate-400 text-sm italic">
                             Your district is not set in your profile.
                           </span>
-                          <Button variant="outline" size="sm" onClick={() => navigate("/dashboard/profile")}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate("/dashboard/profile")}
+                          >
                             Update Profile
                           </Button>
                         </div>
@@ -666,7 +737,9 @@ const SimpleTenderCalendar = () => {
                         myAreaTenders.map((tender, idx) => (
                           <div
                             key={tender._id ?? idx}
-                            onClick={() => tender._id && navigate(`/dashboard/view-tender/${tender._id}`)}
+                            onClick={() =>
+                              tender._id && navigate(`/dashboard/view-tender/${tender._id}`)
+                            }
                             className="grid grid-cols-12 px-4 py-4 items-start hover:bg-slate-50/60 transition-colors cursor-pointer"
                           >
                             <div className="col-span-1 text-sm text-slate-400 font-medium">
@@ -674,10 +747,15 @@ const SimpleTenderCalendar = () => {
                             </div>
                             <div className="col-span-8 pr-2">
                               <p className="text-sm text-slate-700 font-medium leading-relaxed line-clamp-3">
-                                {tender.BriefDescriptionofWorks || tender.descriptionOfWorks || tender.title || "—"}
+                                {tender.BriefDescriptionofWorks ||
+                                  tender.descriptionOfWorks ||
+                                  tender.title ||
+                                  "—"}
                               </p>
                               {tender.organization && (
-                                <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">{tender.organization}</p>
+                                <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">
+                                  {tender.organization}
+                                </p>
                               )}
                             </div>
                             <div className="col-span-3 text-right text-xs text-slate-500 font-medium whitespace-nowrap pt-1">
@@ -694,20 +772,28 @@ const SimpleTenderCalendar = () => {
               <TabsContent value="by-category" className="mt-0">
                 <Card className="border-none shadow-none bg-white rounded-xl overflow-hidden">
                   <div className="grid grid-cols-12 bg-slate-50/50 px-4 py-3 border-b border-slate-100">
-                    <span className="col-span-1 text-[11px] font-bold text-slate-400 uppercase">#</span>
-                    <span className="col-span-8 text-[11px] font-bold text-slate-400 uppercase">Category Name</span>
-                    <span className="col-span-3 text-right text-[11px] font-bold text-slate-400 uppercase">Tenders</span>
+                    <span className="col-span-1 text-[11px] font-bold text-slate-400 uppercase">
+                      #
+                    </span>
+                    <span className="col-span-8 text-[11px] font-bold text-slate-400 uppercase">
+                      Category Name
+                    </span>
+                    <span className="col-span-3 text-right text-[11px] font-bold text-slate-400 uppercase">
+                      Tenders
+                    </span>
                   </div>
                   <ScrollArea className="h-70">
                     <div className="divide-y divide-slate-50">
                       {weekLoading ? (
-                        Array(5).fill(0).map((_, i) => (
-                          <div key={i} className="grid grid-cols-12 px-4 py-4 items-start gap-2">
-                            <div className="col-span-1 h-3 bg-slate-200 rounded animate-pulse" />
-                            <div className="col-span-8 h-3 bg-slate-200 rounded animate-pulse" />
-                            <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
-                          </div>
-                        ))
+                        Array(5)
+                          .fill(0)
+                          .map((_, i) => (
+                            <div key={i} className="grid grid-cols-12 px-4 py-4 items-start gap-2">
+                              <div className="col-span-1 h-3 bg-slate-200 rounded animate-pulse" />
+                              <div className="col-span-8 h-3 bg-slate-200 rounded animate-pulse" />
+                              <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
+                            </div>
+                          ))
                       ) : categoryGroups.length === 0 ? (
                         <div className="flex items-center justify-center py-10 text-slate-400 text-sm italic">
                           No categories found.
@@ -716,7 +802,11 @@ const SimpleTenderCalendar = () => {
                         categoryGroups.map((cat, idx) => (
                           <div
                             key={idx}
-                            onClick={() => navigate(`/dashboard/live-tenders?category=${encodeURIComponent(cat.name)}`)}
+                            onClick={() =>
+                              navigate(
+                                `/dashboard/live-tenders?category=${encodeURIComponent(cat.name)}`
+                              )
+                            }
                             className="grid grid-cols-12 px-4 py-4 items-center hover:bg-slate-50/60 transition-colors cursor-pointer"
                           >
                             <div className="col-span-1 text-sm text-slate-400 font-medium">

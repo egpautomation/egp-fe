@@ -8,20 +8,20 @@ import { config } from "@/lib/config";
 import useAllEgpListedCompanies from "@/hooks/useAllEgpListedCompany";
 import { handleAuthorizationLetterDownload } from "@/utils/handleDownloadAuthorization";
 
-
-
 const LetterOfAuthorization = () => {
- const { id } = useParams(); 
+  const { id } = useParams();
   const [searchParams] = useSearchParams();
-  const egpEmail = searchParams.get('egpEmail');
-  const { data: currentTender } = useSingleData(`${config.apiBaseUrl}/tenders/tenderId/${id}` );
-  const { egpListedCompanies,  } = useAllEgpListedCompanies(egpEmail || "Skip"); 
+  const egpEmail = searchParams.get("egpEmail");
+  const { data: currentTender } = useSingleData(`${config.apiBaseUrl}/tenders/tenderId/${id}`);
+  const { egpListedCompanies } = useAllEgpListedCompanies(egpEmail || "Skip");
   const companyData = egpListedCompanies?.[0];
 
   return (
     <div className="container max-w-4xl mx-auto  my-10  bg-white">
       <div className="flex justify-end mb-4 no-print">
-        <Button onClick={()=>handleAuthorizationLetterDownload(companyData, currentTender)}>Download PDF</Button>
+        <Button onClick={() => handleAuthorizationLetterDownload(companyData, currentTender)}>
+          Download PDF
+        </Button>
       </div>
 
       {/* Preview Area (remains same for UI) */}
@@ -30,7 +30,8 @@ const LetterOfAuthorization = () => {
         <div className="mb-6 text-center border-b-2 border-purple-900">
           <h1 className="font-bold text-4xl text-blue-900">{companyData?.companyName || "N/A"}</h1>
           <p className="text-purple-900 font-bold">
-          Proprietor Name: {companyData?.proprietorName}, <br />   Address: {companyData?.companyAddress}, <br /> E-mail: {companyData?.egpEmail} 
+            Proprietor Name: {companyData?.proprietorName}, <br /> Address:{" "}
+            {companyData?.companyAddress}, <br /> E-mail: {companyData?.egpEmail}
           </p>
           <br />
         </div>

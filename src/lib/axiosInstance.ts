@@ -1,15 +1,15 @@
 // Axios Instance with JWT Interceptors
 // Automatically handles token injection and refresh
 
-import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-import { getAccessToken, refreshAccessToken, clearTokens, isTokenExpired } from './authService';
-import { config } from './config';
+import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
+import { getAccessToken, refreshAccessToken, clearTokens, isTokenExpired } from "./authService";
+import { config } from "./config";
 
 // Create axios instance with base configuration
 const axiosInstance = axios.create({
   baseURL: config.apiBaseUrl,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   withCredentials: false,
 });
@@ -46,7 +46,7 @@ axiosInstance.interceptors.request.use(
     // sets multipart/form-data with boundary. Otherwise default application/json
     // causes the server to not receive the file ("No PDF file uploaded").
     if (config.data instanceof FormData) {
-      delete config.headers['Content-Type'];
+      delete config.headers["Content-Type"];
     }
 
     const token = getAccessToken();
@@ -126,24 +126,24 @@ axiosInstance.interceptors.response.use(
           processQueue(error, null);
           isRefreshing = false;
           clearTokens();
-          
+
           // Redirect to login page
-          if (typeof window !== 'undefined') {
-            window.location.href = '/';
+          if (typeof window !== "undefined") {
+            window.location.href = "/";
           }
-          
+
           return Promise.reject(error);
         }
       } catch (refreshError) {
         processQueue(error, null);
         isRefreshing = false;
         clearTokens();
-        
+
         // Redirect to login page
-        if (typeof window !== 'undefined') {
-          window.location.href = '/';
+        if (typeof window !== "undefined") {
+          window.location.href = "/";
         }
-        
+
         return Promise.reject(refreshError);
       }
     }

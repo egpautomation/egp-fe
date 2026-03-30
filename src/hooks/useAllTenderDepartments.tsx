@@ -9,7 +9,6 @@ const useAllTenderDepartments = () => {
   const [reload, setReload] = useState(0);
 
   useEffect(() => {
-    
     const result = async () => {
       try {
         setLoading(true);
@@ -19,7 +18,6 @@ const useAllTenderDepartments = () => {
         const data = await response.json();
         setDepartments(data?.data);
         setCount(data?.count);
-       
       } catch (error) {
         console.error("Error fetching :", error);
       } finally {
@@ -27,10 +25,10 @@ const useAllTenderDepartments = () => {
       }
     };
     result();
-  }, [reload, ]);
+  }, [reload]);
 
   return {
-   departments,
+    departments,
     setDepartments,
     count,
     setCount,
@@ -38,7 +36,6 @@ const useAllTenderDepartments = () => {
     setLoading,
     setReload,
     loading,
-   
   };
 };
 

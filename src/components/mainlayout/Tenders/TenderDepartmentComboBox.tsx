@@ -11,20 +11,14 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState } from "react";
 import useAllTenderDepartments from "@/hooks/useAllTenderDepartments";
-
-
 
 export function TenderDepartmentsComboBox({ setDepartment, className }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
-  const {departments} = useAllTenderDepartments()
+  const { departments } = useAllTenderDepartments();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -33,7 +27,7 @@ export function TenderDepartmentsComboBox({ setDepartment, className }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={"w-[200px] justify-between", cn(className)}
+          className={("w-[200px] justify-between", cn(className))}
         >
           {value
             ? departments.find((department) => department.name === value)?.name
@@ -41,13 +35,14 @@ export function TenderDepartmentsComboBox({ setDepartment, className }) {
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className={`w-[200px] p-0`, cn(className)}>
+      <PopoverContent className={(`w-[200px] p-0`, cn(className))}>
         <Command>
           <CommandInput placeholder="Search Department..." className="h-9" />
           <CommandList>
             <CommandEmpty>No Departments found.</CommandEmpty>
             <CommandGroup>
-          { departments?.length > 0 && <CommandItem
+              {departments?.length > 0 && (
+                <CommandItem
                   value={""}
                   onSelect={(currentValue) => {
                     const newValue = currentValue === value ? "" : currentValue;
@@ -56,22 +51,17 @@ export function TenderDepartmentsComboBox({ setDepartment, className }) {
                     setOpen(false);
                   }}
                 >
-                 All
-                  <Check
-                    className={cn(
-                      "ml-auto",
-                      value === "" ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                </CommandItem>}
+                  All
+                  <Check className={cn("ml-auto", value === "" ? "opacity-100" : "opacity-0")} />
+                </CommandItem>
+              )}
               {departments.map((department) => (
                 <CommandItem
-                key={department.name}
-                value={department.name}
+                  key={department.name}
+                  value={department.name}
                   onSelect={(currentValue) => {
-                  
                     const newValue = currentValue === value ? "" : currentValue;
-                   
+
                     setValue(newValue);
                     setDepartment(newValue);
                     setOpen(false);

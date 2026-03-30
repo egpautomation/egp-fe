@@ -23,7 +23,12 @@ const JobOrder = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const { data, loading, setReload, pagination } = useAllJobOrders(searchTerm, currentPage, 20, statusFilter);
+  const { data, loading, setReload, pagination } = useAllJobOrders(
+    searchTerm,
+    currentPage,
+    20,
+    statusFilter
+  );
 
   // Reset to page 1 when filter changes
   useEffect(() => {
@@ -85,54 +90,35 @@ const JobOrder = () => {
           <table className="mt-5 w-full max-lg:hidden">
             <thead>
               <tr className="bg-primary text-primary-foreground">
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">
-                  Tender Id
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start">
-                  Ordered
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  Egp Email
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  Bank Name
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  Liquid Asset
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tr">
-                  Status
-                </th>
+                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">Tender Id</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start">Ordered</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">Egp Email</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">Bank Name</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">Liquid Asset</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tr">Status</th>
               </tr>
             </thead>
 
             <tbody>
               {!loading && data?.length > 0 ? (
                 data?.map((item, idx) => (
-                  <tr
-                    key={idx}
-                    className={`border ${idx % 2 == 1 && "bg-gray-100"}`}
-                  >
+                  <tr key={idx} className={`border ${idx % 2 == 1 && "bg-gray-100"}`}>
                     <td className="px-4 py-2">{item?.tenderId}</td>
 
                     <td className="px-4 py-2">{item?.userMail}</td>
                     <td className="px-4 py-2">{item?.egpMail}</td>
                     <td className="px-4 py-2">{item?.bankName}</td>
+                    <td className="px-4 py-2">{item?.liquidAssetsTenderAmount}</td>
                     <td className="px-4 py-2">
-                      {item?.liquidAssetsTenderAmount}
-                    </td>
-                    <td className="px-4 py-2">
-                      <Select
-                        onValueChange={(value) =>
-                          handleStatusChange(value, item)
-                        }
-                      >
+                      <Select onValueChange={(value) => handleStatusChange(value, item)}>
                         <SelectTrigger
-                          className={`border-none shadow-none bg-orange-300 w-full data-[placeholder]:font-semibold data-[placeholder]:text-orange-900 ${item?.status === "fulfilled" &&
+                          className={`border-none shadow-none bg-orange-300 w-full data-[placeholder]:font-semibold data-[placeholder]:text-orange-900 ${
+                            item?.status === "fulfilled" &&
                             "bg-green-300 data-[placeholder]:text-green-900"
-                            } ${item?.status === "canceled" &&
+                          } ${
+                            item?.status === "canceled" &&
                             "bg-red-400 data-[placeholder]:text-red-900"
-                            }`}
+                          }`}
                         >
                           <SelectValue
                             className="text-orange-900"
@@ -170,7 +156,7 @@ const JobOrder = () => {
       {!loading && data?.length > 0 && (
         <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4 border-t pt-4">
           <div className="text-sm text-gray-600">
-            Showing <span className="font-semibold">{((currentPage - 1) * 20) + 1}</span> to{" "}
+            Showing <span className="font-semibold">{(currentPage - 1) * 20 + 1}</span> to{" "}
             <span className="font-semibold">
               {Math.min(currentPage * 20, pagination?.totalCount || 0)}
             </span>{" "}
@@ -192,7 +178,7 @@ const JobOrder = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => prev - 1)}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
               disabled={!pagination?.hasPreviousPage}
               className="cursor-pointer"
             >
@@ -206,7 +192,7 @@ const JobOrder = () => {
                   pageNum = i + 1;
                 } else if (currentPage <= 3) {
                   pageNum = i + 1;
-                } else if (currentPage >= (pagination?.totalPages - 2)) {
+                } else if (currentPage >= pagination?.totalPages - 2) {
                   pageNum = pagination?.totalPages - 4 + i;
                 } else {
                   pageNum = currentPage - 2 + i;
@@ -229,7 +215,7 @@ const JobOrder = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => prev + 1)}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
               disabled={!pagination?.hasNextPage}
               className="cursor-pointer"
             >
@@ -268,43 +254,63 @@ const MobileTableLayout = ({
           className="flex flex-col gap-2 border rounded-xl p-4 py-6 shadow-sm bg-white"
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Tender Id:</span>
-            <span className="text-gray-800 break-words sm:text-right font-bold text-xl">{item?.tenderId}</span>
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              Tender Id:
+            </span>
+            <span className="text-gray-800 break-words sm:text-right font-bold text-xl">
+              {item?.tenderId}
+            </span>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Ordered:</span>
-            <span className="text-gray-800 break-all sm:text-right font-medium">{item?.userMail}</span>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">E-GP Email:</span>
-            <span className="text-gray-800 break-all sm:text-right font-medium">{item?.egpMail}</span>
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Bank Name:</span>
-            <span className="text-gray-800 break-words sm:text-right font-medium">{item?.bankName}</span>
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              Ordered:
+            </span>
+            <span className="text-gray-800 break-all sm:text-right font-medium">
+              {item?.userMail}
+            </span>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Liquid Asset:</span>
-            <span className="text-gray-800 break-words sm:text-right font-medium">{item?.liquidAssetsTenderAmount}</span>
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              E-GP Email:
+            </span>
+            <span className="text-gray-800 break-all sm:text-right font-medium">
+              {item?.egpMail}
+            </span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              Bank Name:
+            </span>
+            <span className="text-gray-800 break-words sm:text-right font-medium">
+              {item?.bankName}
+            </span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              Liquid Asset:
+            </span>
+            <span className="text-gray-800 break-words sm:text-right font-medium">
+              {item?.liquidAssetsTenderAmount}
+            </span>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mt-2">
-            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">Status & Actions:</span>
+            <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+              Status & Actions:
+            </span>
             <div className="w-full sm:w-48 mt-1 sm:mt-0">
-              <Select
-                onValueChange={(value) => handleStatusChange(value, item)}
-              >
+              <Select onValueChange={(value) => handleStatusChange(value, item)}>
                 <SelectTrigger
                   className={`h-9 text-sm font-semibold ${
                     item?.status === "fulfilled"
                       ? "bg-green-100 text-green-700 border-green-200"
                       : item?.status === "canceled"
-                      ? "bg-red-100 text-red-700 border-red-200"
-                      : "bg-orange-100 text-orange-700 border-orange-200"
+                        ? "bg-red-100 text-red-700 border-red-200"
+                        : "bg-orange-100 text-orange-700 border-orange-200"
                   }`}
                 >
                   <SelectValue placeholder={item?.status || "Loading..."} />

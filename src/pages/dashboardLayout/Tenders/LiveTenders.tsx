@@ -42,7 +42,14 @@ import autoTable from "jspdf-autotable";
 const METHODS = ["LTM", "OTM", "OSTETM", "RFQ"];
 
 // Filter Section Component
-const FilterSection = ({ title, children, searchPlaceholder, searchValue, onSearchChange, count }) => (
+const FilterSection = ({
+  title,
+  children,
+  searchPlaceholder,
+  searchValue,
+  onSearchChange,
+  count,
+}) => (
   <AccordionItem value={title} className="border-0">
     <div className="mb-2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
       <AccordionTrigger className="flex items-center justify-between bg-primary px-4 py-3 text-left text-sm font-semibold text-white hover:bg-primary/90 hover:no-underline [&[data-state=open]>svg]:rotate-180">
@@ -66,7 +73,9 @@ const FilterSection = ({ title, children, searchPlaceholder, searchValue, onSear
         )}
         <div className="max-h-64 overflow-y-auto pr-1">{children}</div>
         {count !== undefined && (
-          <div className="mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">{count} items found</div>
+          <div className="mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">
+            {count} items found
+          </div>
         )}
       </AccordionContent>
     </div>
@@ -82,7 +91,10 @@ const FilterCheckbox = ({ label, count, checked, onCheckedChange }) => (
       onCheckedChange={onCheckedChange}
       className="mt-0.5 h-4 w-4 rounded border-slate-300 data-[state=checked]:bg-primary data-[state=checked]:text-white"
     />
-    <label htmlFor={label} className="flex flex-1 cursor-pointer items-start justify-between text-sm leading-5">
+    <label
+      htmlFor={label}
+      className="flex flex-1 cursor-pointer items-start justify-between text-sm leading-5"
+    >
       <span className="text-slate-700">{label}</span>
       {count !== undefined && <span className="ml-2 text-xs text-slate-400">{count}</span>}
     </label>
@@ -92,12 +104,8 @@ const FilterCheckbox = ({ label, count, checked, onCheckedChange }) => (
 const LiveTenders = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(
-    Number(searchParams.get("page")) || 1
-  );
-  const [pageLimit, setPageLimit] = useState(
-    Number(searchParams.get("limit")) || 20
-  );
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
+  const [pageLimit, setPageLimit] = useState(Number(searchParams.get("limit")) || 20);
   const [date, setDate] = useState({
     from: "",
     to: "",
@@ -172,33 +180,25 @@ const LiveTenders = () => {
   const filteredDepartments = useMemo(() => {
     const list = filterCounts.departments || [];
     if (!deptSearch) return list;
-    return list.filter((d) =>
-      d.name?.toLowerCase().includes(deptSearch.toLowerCase())
-    );
+    return list.filter((d) => d.name?.toLowerCase().includes(deptSearch.toLowerCase()));
   }, [filterCounts.departments, deptSearch]);
 
   const filteredCategories = useMemo(() => {
     const list = filterCounts.categories || [];
     if (!catSearch) return list;
-    return list.filter((c) =>
-      c.name?.toLowerCase().includes(catSearch.toLowerCase())
-    );
+    return list.filter((c) => c.name?.toLowerCase().includes(catSearch.toLowerCase()));
   }, [filterCounts.categories, catSearch]);
 
   const filteredLocations = useMemo(() => {
-    const list = filterCounts.locations?.map(l => l.name) || [];
+    const list = filterCounts.locations?.map((l) => l.name) || [];
     if (!locSearch) return list;
-    return list.filter((d) =>
-      d.toLowerCase().includes(locSearch.toLowerCase())
-    );
+    return list.filter((d) => d.toLowerCase().includes(locSearch.toLowerCase()));
   }, [filterCounts.locations, locSearch]);
 
   const filteredProcurementNatures = useMemo(() => {
     const list = filterCounts.procurementNatures || [];
     if (!procSearch) return list;
-    return list.filter((p) =>
-      p.name?.toLowerCase().includes(procSearch.toLowerCase())
-    );
+    return list.filter((p) => p.name?.toLowerCase().includes(procSearch.toLowerCase()));
   }, [filterCounts.procurementNatures, procSearch]);
 
   const displayTenders = useMemo(() => {
@@ -206,7 +206,7 @@ const LiveTenders = () => {
 
     // Client-side filter for Nature since backend might ignore it
     if (selectedProcurementNatures.length > 0) {
-      list = list.filter(t => selectedProcurementNatures.includes(t.procurementNature));
+      list = list.filter((t) => selectedProcurementNatures.includes(t.procurementNature));
     }
 
     return list;
@@ -232,7 +232,9 @@ const LiveTenders = () => {
         }
 
         // ── STEP 2: Cache miss or expired — fetch from optimized backend endpoint ──
-        const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders/tender-filter-counts'));
+        const response = await import("@/lib/axiosInstance").then((m) =>
+          m.default.get("/tenders/tender-filter-counts")
+        );
 
         if (!ignore && response.data?.success) {
           const data = {
@@ -253,27 +255,31 @@ const LiveTenders = () => {
 
     loadFilterCounts();
 
-    return () => { ignore = true; };
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   // ── NEW: Dynamic counts based on active filters ──
   useEffect(() => {
     let ignore = false;
-    
+
     // If no filters are active, we don't need to do local counting (initial global fetch handles it)
     if (!hasActiveFilters) {
       // Re-fetch global counts if we cleared filters to ensure they are fresh
       const refreshGlobalCounts = async () => {
-         const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders/tender-filter-counts'));
-         if (!ignore && response.data?.success) {
-           setFilterCounts({
-             departments: response.data.data.departments || [],
-             categories: response.data.data.categories || [],
-             locations: response.data.data.locations || [],
-             methods: response.data.data.methods || [],
-             procurementNatures: response.data.data.procurementNatures || [],
-           });
-         }
+        const response = await import("@/lib/axiosInstance").then((m) =>
+          m.default.get("/tenders/tender-filter-counts")
+        );
+        if (!ignore && response.data?.success) {
+          setFilterCounts({
+            departments: response.data.data.departments || [],
+            categories: response.data.data.categories || [],
+            locations: response.data.data.locations || [],
+            methods: response.data.data.methods || [],
+            procurementNatures: response.data.data.procurementNatures || [],
+          });
+        }
       };
       refreshGlobalCounts();
       return;
@@ -283,7 +289,7 @@ const LiveTenders = () => {
       try {
         // Fetch ALL tenders matching current filters to count accurately
         const allFilteredTenders = await fetchAllTenders();
-        
+
         if (!ignore && allFilteredTenders) {
           const deptMap = {};
           const catMap = {};
@@ -291,7 +297,7 @@ const LiveTenders = () => {
           const methodMap = {};
           const natureMap = {};
 
-          allFilteredTenders.forEach(t => {
+          allFilteredTenders.forEach((t) => {
             const d = t.organization || t.department;
             if (d) deptMap[d] = (deptMap[d] || 0) + 1;
 
@@ -323,14 +329,16 @@ const LiveTenders = () => {
 
     updateDynamicCounts();
 
-    return () => { ignore = true; };
+    return () => {
+      ignore = true;
+    };
   }, [
     searchTerm,
     selectedDepartments.length,
     selectedCategories.length,
     selectedLocations.length,
     selectedMethods.length,
-    selectedProcurementNatures.length
+    selectedProcurementNatures.length,
   ]);
 
   const departmentCountMap = useMemo(
@@ -359,9 +367,7 @@ const LiveTenders = () => {
 
   const methodCountMap = useMemo(
     () =>
-      Object.fromEntries(
-        (filterCounts?.methods || []).map((item) => [item.name, item.count || 0])
-      ),
+      Object.fromEntries((filterCounts?.methods || []).map((item) => [item.name, item.count || 0])),
     [filterCounts?.methods]
   );
 
@@ -383,7 +389,7 @@ const LiveTenders = () => {
   };
 
   const getNatureCount = (natureName) => {
-    const item = filterCounts.procurementNatures.find(p => p.name === natureName);
+    const item = filterCounts.procurementNatures.find((p) => p.name === natureName);
     return item ? item.count : 0;
   };
 
@@ -392,176 +398,159 @@ const LiveTenders = () => {
     try {
       const doc = new jsPDF("l", "mm", "a4");
 
-    const tableColumn = [
-      "Tender ID",
-      "Department",
-      "Description",
-      "Location",
-      "Details",
-      "Quality criteria",
-
-    ];
-
-    const tableRows = [];
-    const allTenders = displayTenders || [];
-
-    allTenders.forEach((item) => {
-      const tenderIdAndMore = [
-        `${item?.tenderId || "N/A"}`,
-        `${item?.procurementType || "N/A"}`,
-        `${item?.procurementMethod || "N/A"}`,
-        `${item?.tenderStatus || "N/A"}`,
-      ].join("\n");
-      const details = [
-        `LAST SELLING DATE: ${formatDate(
-          item?.documentLastSelling,
-          "MM-dd-yyyy"
-        )}`,
-        `CLOSING DATE: ${formatDate(item?.openingDateTime, "MM-dd-yyyy")}`,
-        `DOCUMENT PRICE: ${item?.documentPrice || "N/A"}`,
-        `TENDER SECURITY: ${item?.tenderSecurity || "N/A"}`,
-        `ESTIMATED AMOUNT: ${item?.estimatedCost || "N/A"}`,
-        `LINE OF CREDIT: ${item?.liquidAssets || "N/A"}`,
-      ].join("\n");
-
-      const others = [
-        `GENERAL EXPERIENCE: ${item?.generalExperience || "N/A"}`,
-        `JVCA: ${item?.jvca || "N/A"}`,
-        `SIMILAR NATURE WORK: ${item?.similarNatureWork || "N/A"}`,
-        `TURNOVER AMOUNT: ${item?.turnoverAmount || "N/A"}`,
-        `LIQUID ASSET: ${item?.liquidAssets || "N/A"}`,
-        `TENDER CAPACITY: ${item?.tenderCapacity || "N/A"}`,
-        `WORKING LOCATION: ${item?.workingLocation || "N/A"}`,
-      ].join("\n");
-      const Description = [
-        `${item?.descriptionOfWorks || "N/A"}`,
-      ].join("\n");
-
-      const rowData = [
-        tenderIdAndMore,
-        item?.organization || item?.department,
-        Description,
-        item?.locationDistrict,
-        details,
-        others,
-
+      const tableColumn = [
+        "Tender ID",
+        "Department",
+        "Description",
+        "Location",
+        "Details",
+        "Quality criteria",
       ];
-      tableRows.push(rowData);
-    });
 
-    autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-      startY: 25,
-      margin: { top: 20, bottom: 25, left: 10, right: 10 }, // ensures safe print area
-      theme: "grid",
-      styles: {
-        fontSize: 10,
-        cellPadding: 2.5,
-        overflow: "linebreak",
-        textColor: [0, 0, 0], // Dark black text
-      },
-      columnStyles: {
-        0: { cellWidth: 30 }, // Tender ID
-        1: { cellWidth: 40 }, // Department
-        2: { cellWidth: 70 }, // Description
-        3: { cellWidth: 30 }, // Location
-        4: { cellWidth: 60 }, // Details
-        5: { cellWidth: 47 }, // Quality criteria / Others
-      },
-      headStyles: {
-        fillColor: [255, 255, 255],
-        textColor: [0, 0, 0],
-        lineWidth: 0.1,
-        lineColor: [200, 200, 200],
-        fontSize: 11,
-        fontStyle: "bold",
-        halign: "start",
-      },
-      alternateRowStyles: {
-        fillColor: [255, 255, 255],
-      },
+      const tableRows = [];
+      const allTenders = displayTenders || [];
 
-      didDrawPage: (data) => {
-        const pageNumber = doc.internal.getNumberOfPages();
+      allTenders.forEach((item) => {
+        const tenderIdAndMore = [
+          `${item?.tenderId || "N/A"}`,
+          `${item?.procurementType || "N/A"}`,
+          `${item?.procurementMethod || "N/A"}`,
+          `${item?.tenderStatus || "N/A"}`,
+        ].join("\n");
+        const details = [
+          `LAST SELLING DATE: ${formatDate(item?.documentLastSelling, "MM-dd-yyyy")}`,
+          `CLOSING DATE: ${formatDate(item?.openingDateTime, "MM-dd-yyyy")}`,
+          `DOCUMENT PRICE: ${item?.documentPrice || "N/A"}`,
+          `TENDER SECURITY: ${item?.tenderSecurity || "N/A"}`,
+          `ESTIMATED AMOUNT: ${item?.estimatedCost || "N/A"}`,
+          `LINE OF CREDIT: ${item?.liquidAssets || "N/A"}`,
+        ].join("\n");
 
-        doc.setFontSize(18);
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(0, 0, 0);
-        doc.text(
-          "E-GP Tender Automation (Live Tenders)",
-          data.settings.margin.left,
-          15
-        );
+        const others = [
+          `GENERAL EXPERIENCE: ${item?.generalExperience || "N/A"}`,
+          `JVCA: ${item?.jvca || "N/A"}`,
+          `SIMILAR NATURE WORK: ${item?.similarNatureWork || "N/A"}`,
+          `TURNOVER AMOUNT: ${item?.turnoverAmount || "N/A"}`,
+          `LIQUID ASSET: ${item?.liquidAssets || "N/A"}`,
+          `TENDER CAPACITY: ${item?.tenderCapacity || "N/A"}`,
+          `WORKING LOCATION: ${item?.workingLocation || "N/A"}`,
+        ].join("\n");
+        const Description = [`${item?.descriptionOfWorks || "N/A"}`].join("\n");
 
-        const date = new Date();
-        const formattedDate = `${date.getDate()} ${date.toLocaleString(
-          "default",
-          { month: "long" }
-        )} ${date.getFullYear()}`;
-        doc.setFontSize(10);
-        doc.text(
-          formattedDate,
-          doc.internal.pageSize.width -
-          data.settings.margin.right -
-          doc.getTextWidth(formattedDate),
-          15
-        );
+        const rowData = [
+          tenderIdAndMore,
+          item?.organization || item?.department,
+          Description,
+          item?.locationDistrict,
+          details,
+          others,
+        ];
+        tableRows.push(rowData);
+      });
 
-        const pageHeight = doc.internal.pageSize.height;
-        const centerX = doc.internal.pageSize.width / 2;
+      autoTable(doc, {
+        head: [tableColumn],
+        body: tableRows,
+        startY: 25,
+        margin: { top: 20, bottom: 25, left: 10, right: 10 }, // ensures safe print area
+        theme: "grid",
+        styles: {
+          fontSize: 10,
+          cellPadding: 2.5,
+          overflow: "linebreak",
+          textColor: [0, 0, 0], // Dark black text
+        },
+        columnStyles: {
+          0: { cellWidth: 30 }, // Tender ID
+          1: { cellWidth: 40 }, // Department
+          2: { cellWidth: 70 }, // Description
+          3: { cellWidth: 30 }, // Location
+          4: { cellWidth: 60 }, // Details
+          5: { cellWidth: 47 }, // Quality criteria / Others
+        },
+        headStyles: {
+          fillColor: [255, 255, 255],
+          textColor: [0, 0, 0],
+          lineWidth: 0.1,
+          lineColor: [200, 200, 200],
+          fontSize: 11,
+          fontStyle: "bold",
+          halign: "start",
+        },
+        alternateRowStyles: {
+          fillColor: [255, 255, 255],
+        },
 
-        const line1Y = pageHeight - 18;
-        const line2Y = line1Y + 4;
-        const line3Y = line2Y + 4;
+        didDrawPage: (data) => {
+          const pageNumber = doc.internal.getNumberOfPages();
 
-        doc.setFontSize(8);
-        doc.setTextColor(0, 0, 0);
+          doc.setFontSize(18);
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor(0, 0, 0);
+          doc.text("E-GP Tender Automation (Live Tenders)", data.settings.margin.left, 15);
 
-        doc.text(
-          `© ${new Date().getFullYear()} E-GP Tender Automation — All Rights Reserved.`,
-          centerX,
-          line1Y,
-          { align: "center" }
-        );
-        // Line 2 – full text, centered with links
-        const prefix = "Visit us: ";
-        const website = "etenderbd.com";
-        const mid = " | WhatsApp: ";
-        const whatsapp = "01926-959331";
+          const date = new Date();
+          const formattedDate = `${date.getDate()} ${date.toLocaleString("default", {
+            month: "long",
+          })} ${date.getFullYear()}`;
+          doc.setFontSize(10);
+          doc.text(
+            formattedDate,
+            doc.internal.pageSize.width -
+              data.settings.margin.right -
+              doc.getTextWidth(formattedDate),
+            15
+          );
 
-        const fullText = prefix + website + mid + whatsapp;
-        const fullWidth = doc.getTextWidth(fullText);
-        const startX = centerX - fullWidth / 2;
+          const pageHeight = doc.internal.pageSize.height;
+          const centerX = doc.internal.pageSize.width / 2;
 
-        // Draw prefix
-        doc.text(prefix, startX, line2Y);
+          const line1Y = pageHeight - 18;
+          const line2Y = line1Y + 4;
+          const line3Y = line2Y + 4;
 
-        // Website link
-        const prefixWidth = doc.getTextWidth(prefix);
-        doc.textWithLink(website, startX + prefixWidth, line2Y, {
-          url: "https://etenderbd.com",
-        });
+          doc.setFontSize(8);
+          doc.setTextColor(0, 0, 0);
 
-        // Mid text
-        const websiteWidth = doc.getTextWidth(website);
-        doc.text(mid, startX + prefixWidth + websiteWidth, line2Y);
+          doc.text(
+            `© ${new Date().getFullYear()} E-GP Tender Automation — All Rights Reserved.`,
+            centerX,
+            line1Y,
+            { align: "center" }
+          );
+          // Line 2 – full text, centered with links
+          const prefix = "Visit us: ";
+          const website = "etenderbd.com";
+          const mid = " | WhatsApp: ";
+          const whatsapp = "01926-959331";
 
-        // WhatsApp link
-        const midWidth = doc.getTextWidth(mid);
-        doc.textWithLink(
-          whatsapp,
-          startX + prefixWidth + websiteWidth + midWidth,
-          line2Y,
-          {
+          const fullText = prefix + website + mid + whatsapp;
+          const fullWidth = doc.getTextWidth(fullText);
+          const startX = centerX - fullWidth / 2;
+
+          // Draw prefix
+          doc.text(prefix, startX, line2Y);
+
+          // Website link
+          const prefixWidth = doc.getTextWidth(prefix);
+          doc.textWithLink(website, startX + prefixWidth, line2Y, {
+            url: "https://etenderbd.com",
+          });
+
+          // Mid text
+          const websiteWidth = doc.getTextWidth(website);
+          doc.text(mid, startX + prefixWidth + websiteWidth, line2Y);
+
+          // WhatsApp link
+          const midWidth = doc.getTextWidth(mid);
+          doc.textWithLink(whatsapp, startX + prefixWidth + websiteWidth + midWidth, line2Y, {
             url: `https://wa.me/8801926959331`,
-          }
-        );
-        doc.text(`Page ${pageNumber}`, centerX, line3Y, { align: "center" });
-      },
+          });
+          doc.text(`Page ${pageNumber}`, centerX, line3Y, { align: "center" });
+        },
 
-      pageBreak: "auto",
-    });
+        pageBreak: "auto",
+      });
 
       doc.save("live-tenders.pdf");
     } catch (error) {
@@ -577,7 +566,6 @@ const LiveTenders = () => {
     params.set("limit", pageLimit);
     setSearchParams(params);
   }, [currentPage, pageLimit]);
-
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -628,7 +616,9 @@ const LiveTenders = () => {
                       label={dept.name}
                       count={getDepartmentCount(dept.name)}
                       checked={selectedDepartments.includes(dept.name)}
-                      onCheckedChange={() => toggleSelection(setSelectedDepartments, selectedDepartments, dept.name)}
+                      onCheckedChange={() =>
+                        toggleSelection(setSelectedDepartments, selectedDepartments, dept.name)
+                      }
                     />
                   ))}
                 </div>
@@ -649,7 +639,9 @@ const LiveTenders = () => {
                       label={cat.name}
                       count={getCategoryCount(cat.name)}
                       checked={selectedCategories.includes(cat.name)}
-                      onCheckedChange={() => toggleSelection(setSelectedCategories, selectedCategories, cat.name)}
+                      onCheckedChange={() =>
+                        toggleSelection(setSelectedCategories, selectedCategories, cat.name)
+                      }
                     />
                   ))}
                 </div>
@@ -670,7 +662,9 @@ const LiveTenders = () => {
                       label={loc}
                       count={getLocationCount(loc)}
                       checked={selectedLocations.includes(loc)}
-                      onCheckedChange={() => toggleSelection(setSelectedLocations, selectedLocations, loc)}
+                      onCheckedChange={() =>
+                        toggleSelection(setSelectedLocations, selectedLocations, loc)
+                      }
                     />
                   ))}
                 </div>
@@ -685,7 +679,9 @@ const LiveTenders = () => {
                       label={method}
                       count={getMethodCount(method)}
                       checked={selectedMethods.includes(method)}
-                      onCheckedChange={() => toggleSelection(setSelectedMethods, selectedMethods, method)}
+                      onCheckedChange={() =>
+                        toggleSelection(setSelectedMethods, selectedMethods, method)
+                      }
                     />
                   ))}
                 </div>
@@ -706,7 +702,13 @@ const LiveTenders = () => {
                       label={proc.name}
                       count={proc.count}
                       checked={selectedProcurementNatures.includes(proc.name)}
-                      onCheckedChange={() => toggleSelection(setSelectedProcurementNatures, selectedProcurementNatures, proc.name)}
+                      onCheckedChange={() =>
+                        toggleSelection(
+                          setSelectedProcurementNatures,
+                          selectedProcurementNatures,
+                          proc.name
+                        )
+                      }
                     />
                   ))}
                 </div>
@@ -727,7 +729,9 @@ const LiveTenders = () => {
                   <p className="text-sm text-slate-500">
                     {tendersCount} results found
                     {hasActiveFilters && (
-                      <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Filtered</span>
+                      <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                        Filtered
+                      </span>
                     )}
                   </p>
                 </div>
@@ -756,7 +760,9 @@ const LiveTenders = () => {
                 <div key={idx} className="bg-white rounded-xl border p-4 shadow-sm space-y-3">
                   {/* Card content goes here */}
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-slate-500">Tender ID: {item?.tenderId}</span>
+                    <span className="text-xs font-medium text-slate-500">
+                      Tender ID: {item?.tenderId}
+                    </span>
                     <a
                       href={`https://www.eprocure.gov.bd/resources/common/ViewTender.jsp?id=${item?.tenderId}`}
                       target="_blank"
@@ -779,29 +785,64 @@ const LiveTenders = () => {
                     </Link>
                   </h3>
                   <p className="text-sm text-slate-600">
-                    <span className="font-medium">Organization:</span> {item?.organization || item?.department}
+                    <span className="font-medium">Organization:</span>{" "}
+                    {item?.organization || item?.department}
                   </p>
                   <p className="text-sm text-slate-600">
                     <span className="font-medium">Location:</span> {item?.locationDistrict}
                   </p>
                   <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
-                    <p><span className="font-medium">Last Selling Date:</span> {formatDate(item?.documentLastSelling, "MM-dd-yyyy")}</p>
-                    <p><span className="font-medium">Closing Date:</span> {formatDate(item?.openingDateTime, "MM-dd-yyyy")}</p>
-                    <p><span className="font-medium">Document Price:</span> {item?.documentPrice}</p>
-                    <p><span className="font-medium">Tender Security:</span> {item?.tenderSecurity}</p>
-                    <p><span className="font-medium">Estimated Amount:</span> {item?.estimatedCost}</p>
-                    <p><span className="font-medium">Line Of Credit:</span> {item?.liquidAssets}</p>
+                    <p>
+                      <span className="font-medium">Last Selling Date:</span>{" "}
+                      {formatDate(item?.documentLastSelling, "MM-dd-yyyy")}
+                    </p>
+                    <p>
+                      <span className="font-medium">Closing Date:</span>{" "}
+                      {formatDate(item?.openingDateTime, "MM-dd-yyyy")}
+                    </p>
+                    <p>
+                      <span className="font-medium">Document Price:</span> {item?.documentPrice}
+                    </p>
+                    <p>
+                      <span className="font-medium">Tender Security:</span> {item?.tenderSecurity}
+                    </p>
+                    <p>
+                      <span className="font-medium">Estimated Amount:</span> {item?.estimatedCost}
+                    </p>
+                    <p>
+                      <span className="font-medium">Line Of Credit:</span> {item?.liquidAssets}
+                    </p>
                   </div>
                   <div className="text-xs text-slate-600">
-                    <p><span className="font-medium">General Experience:</span> {item?.generalExperience || "N/A"}</p>
-                    <p><span className="font-medium">JVCA:</span> {item?.jvca || "N/A"}</p>
-                    <p><span className="font-medium">Similar Nature Work:</span> {item?.similarNatureWork || "N/A"}</p>
-                    <p><span className="font-medium">Turnover Amount:</span> {item?.turnoverAmount || "N/A"}</p>
-                    <p><span className="font-medium">Liquid Asset:</span> {item?.liquidAssets || "N/A"}</p>
-                    <p><span className="font-medium">Tender Capacity:</span> {item?.tenderCapacity || "N/A"}</p>
+                    <p>
+                      <span className="font-medium">General Experience:</span>{" "}
+                      {item?.generalExperience || "N/A"}
+                    </p>
+                    <p>
+                      <span className="font-medium">JVCA:</span> {item?.jvca || "N/A"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Similar Nature Work:</span>{" "}
+                      {item?.similarNatureWork || "N/A"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Turnover Amount:</span>{" "}
+                      {item?.turnoverAmount || "N/A"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Liquid Asset:</span>{" "}
+                      {item?.liquidAssets || "N/A"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Tender Capacity:</span>{" "}
+                      {item?.tenderCapacity || "N/A"}
+                    </p>
                     <p className="flex items-start gap-1">
                       <span className="font-medium whitespace-nowrap">Working Location:</span>
-                      <span className="inline-block max-w-[150px] truncate" title={item?.workingLocation || "N/A"}>
+                      <span
+                        className="inline-block max-w-[150px] truncate"
+                        title={item?.workingLocation || "N/A"}
+                      >
                         {item?.workingLocation || "N/A"}
                       </span>
                     </p>
@@ -839,113 +880,118 @@ const LiveTenders = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {!loading ? (
-                    displayTenders?.map((item, idx) => (
-                      <tr
-                        key={idx}
-                        className={`${idx % 2 === 1 ? "bg-slate-50" : "bg-white"} hover:bg-slate-100 transition-colors`}
-                      >
-                        <td className="px-4 py-3 text-sm align-top">
-                          {item?.tenderId}
-                        </td>
-                        <td className="px-4 py-3 text-sm align-top">
-                          {item?.organization || item?.department}
-                        </td>
-                        <td className="px-4 py-3 text-xs text-justify min-w-[200px] max-w-[300px] align-top">
-                          <Link
-                            className="underline whitespace-break-spaces text-slate-700 hover:text-teal-600"
-                            to={`/dashboard/view-tender/${item?._id}`}
-                          >
-                            {item?.descriptionOfWorks}
-                          </Link>
-                        </td>
-                        <td className="px-4 py-3 text-sm align-top">
-                          {item?.locationDistrict}
-                        </td>
-                        <td className="px-4 py-3 text-sm align-top whitespace-nowrap">
-                          <p>
-                            <span className="font-medium text-slate-600">Last Selling Date: </span>
-                            {formatDate(item?.documentLastSelling, "MM-dd-yyyy")}
-                          </p>
-                          <p>
-                            <span className="font-medium text-slate-600">Closing Date: </span>
-                            {formatDate(item?.openingDateTime, "MM-dd-yyyy")}
-                          </p>
-                          <p>
-                            <span className="font-medium text-slate-600">Document Price: </span>
-                            {item?.documentPrice}
-                          </p>
-                          <p>
-                            <span className="font-medium text-slate-600">Tender Security: </span>
-                            {item?.tenderSecurity}
-                          </p>
-                          <p>
-                            <span className="font-medium text-slate-600">Estimated Amount: </span>
-                            {item?.estimatedCost}
-                          </p>
-                          <p>
-                            <span className="font-medium text-slate-600">Line Of Credit: </span>
-                            {item?.liquidAssets}
-                          </p>
-                        </td>
-                        <td className="px-4 py-3 text-sm align-top whitespace-nowrap">
-                          <p>
-                            <span className="font-medium text-slate-600">General Experience: </span>
-                            {item?.generalExperience || "N/A"}
-                          </p>
-                          <p>
-                            <span className="font-medium text-slate-600">JVCA: </span>
-                            {item?.jvca || "N/A"}
-                          </p>
-                          <p>
-                            <span className="font-medium text-slate-600">Similar Nature Work: </span>
-                            {item?.similarNatureWork || "N/A"}
-                          </p>
-                          <p>
-                            <span className="font-medium text-slate-600">Turnover Amount: </span>
-                            {item?.turnoverAmount || "N/A"}
-                          </p>
-                          <p>
-                            <span className="font-medium text-slate-600">Liquid Asset: </span>
-                            {item?.liquidAssets || "N/A"}
-                          </p>
-                          <p>
-                            <span className="font-medium text-slate-600">Tender Capacity: </span>
-                            {item?.tenderCapacity || "N/A"}
-                          </p>
-                          <p className="flex items-start gap-1">
-                            <span className="font-medium text-slate-600 whitespace-nowrap">Working Location: </span>
-                            <span className="inline-block max-w-[150px] lg:max-w-[200px] truncate" title={item?.workingLocation || "N/A"}>
-                              {item?.workingLocation || "N/A"}
-                            </span>
-                          </p>
-                        </td>
-                        <td className="px-4 py-3 text-center align-top">
-                          <a
-                            href={`https://www.eprocure.gov.bd/resources/common/ViewTender.jsp?id=${item?.tenderId}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-emerald-300 bg-gradient-to-r from-emerald-500 to-green-600 px-3.5 py-1.5 text-xs font-semibold leading-none text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:from-emerald-600 hover:to-green-700 hover:shadow-md"
-                            title="View on e-GP"
-                          >
-                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 transition-colors group-hover:bg-white/30">
-                              <ExternalLink className="h-3.5 w-3.5" />
-                            </span>
-                            <span>e-GP</span>
-                          </a>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    skeleton.map((_, idx) => (
-                      <tr key={idx}>
-                        <td
-                          colSpan={7}
-                          className={`h-20 ${idx % 2 === 1 ? "bg-slate-200" : "bg-white"}`}
-                        />
-                      </tr>
-                    ))
-                  )}
+                  {!loading
+                    ? displayTenders?.map((item, idx) => (
+                        <tr
+                          key={idx}
+                          className={`${idx % 2 === 1 ? "bg-slate-50" : "bg-white"} hover:bg-slate-100 transition-colors`}
+                        >
+                          <td className="px-4 py-3 text-sm align-top">{item?.tenderId}</td>
+                          <td className="px-4 py-3 text-sm align-top">
+                            {item?.organization || item?.department}
+                          </td>
+                          <td className="px-4 py-3 text-xs text-justify min-w-[200px] max-w-[300px] align-top">
+                            <Link
+                              className="underline whitespace-break-spaces text-slate-700 hover:text-teal-600"
+                              to={`/dashboard/view-tender/${item?._id}`}
+                            >
+                              {item?.descriptionOfWorks}
+                            </Link>
+                          </td>
+                          <td className="px-4 py-3 text-sm align-top">{item?.locationDistrict}</td>
+                          <td className="px-4 py-3 text-sm align-top whitespace-nowrap">
+                            <p>
+                              <span className="font-medium text-slate-600">
+                                Last Selling Date:{" "}
+                              </span>
+                              {formatDate(item?.documentLastSelling, "MM-dd-yyyy")}
+                            </p>
+                            <p>
+                              <span className="font-medium text-slate-600">Closing Date: </span>
+                              {formatDate(item?.openingDateTime, "MM-dd-yyyy")}
+                            </p>
+                            <p>
+                              <span className="font-medium text-slate-600">Document Price: </span>
+                              {item?.documentPrice}
+                            </p>
+                            <p>
+                              <span className="font-medium text-slate-600">Tender Security: </span>
+                              {item?.tenderSecurity}
+                            </p>
+                            <p>
+                              <span className="font-medium text-slate-600">Estimated Amount: </span>
+                              {item?.estimatedCost}
+                            </p>
+                            <p>
+                              <span className="font-medium text-slate-600">Line Of Credit: </span>
+                              {item?.liquidAssets}
+                            </p>
+                          </td>
+                          <td className="px-4 py-3 text-sm align-top whitespace-nowrap">
+                            <p>
+                              <span className="font-medium text-slate-600">
+                                General Experience:{" "}
+                              </span>
+                              {item?.generalExperience || "N/A"}
+                            </p>
+                            <p>
+                              <span className="font-medium text-slate-600">JVCA: </span>
+                              {item?.jvca || "N/A"}
+                            </p>
+                            <p>
+                              <span className="font-medium text-slate-600">
+                                Similar Nature Work:{" "}
+                              </span>
+                              {item?.similarNatureWork || "N/A"}
+                            </p>
+                            <p>
+                              <span className="font-medium text-slate-600">Turnover Amount: </span>
+                              {item?.turnoverAmount || "N/A"}
+                            </p>
+                            <p>
+                              <span className="font-medium text-slate-600">Liquid Asset: </span>
+                              {item?.liquidAssets || "N/A"}
+                            </p>
+                            <p>
+                              <span className="font-medium text-slate-600">Tender Capacity: </span>
+                              {item?.tenderCapacity || "N/A"}
+                            </p>
+                            <p className="flex items-start gap-1">
+                              <span className="font-medium text-slate-600 whitespace-nowrap">
+                                Working Location:{" "}
+                              </span>
+                              <span
+                                className="inline-block max-w-[150px] lg:max-w-[200px] truncate"
+                                title={item?.workingLocation || "N/A"}
+                              >
+                                {item?.workingLocation || "N/A"}
+                              </span>
+                            </p>
+                          </td>
+                          <td className="px-4 py-3 text-center align-top">
+                            <a
+                              href={`https://www.eprocure.gov.bd/resources/common/ViewTender.jsp?id=${item?.tenderId}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-emerald-300 bg-gradient-to-r from-emerald-500 to-green-600 px-3.5 py-1.5 text-xs font-semibold leading-none text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:from-emerald-600 hover:to-green-700 hover:shadow-md"
+                              title="View on e-GP"
+                            >
+                              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 transition-colors group-hover:bg-white/30">
+                                <ExternalLink className="h-3.5 w-3.5" />
+                              </span>
+                              <span>e-GP</span>
+                            </a>
+                          </td>
+                        </tr>
+                      ))
+                    : skeleton.map((_, idx) => (
+                        <tr key={idx}>
+                          <td
+                            colSpan={7}
+                            className={`h-20 ${idx % 2 === 1 ? "bg-slate-200" : "bg-white"}`}
+                          />
+                        </tr>
+                      ))}
                 </tbody>
               </table>
 
@@ -953,9 +999,13 @@ const LiveTenders = () => {
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                   <Filter className="mb-4 h-12 w-12 text-slate-300" />
                   <p className="text-lg font-medium text-slate-600">No tenders found</p>
-                  <p className="mt-1 text-sm text-slate-500">Try adjusting your filters or search criteria</p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Try adjusting your filters or search criteria
+                  </p>
                   {hasActiveFilters && (
-                    <Button onClick={handleClearFilters} variant="outline" className="mt-4">Clear all filters</Button>
+                    <Button onClick={handleClearFilters} variant="outline" className="mt-4">
+                      Clear all filters
+                    </Button>
                   )}
                 </div>
               )}

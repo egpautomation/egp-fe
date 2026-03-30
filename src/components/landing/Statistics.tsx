@@ -10,7 +10,7 @@ export default function Statistics() {
     LTM: 0,
     OTM: 0,
     OSTETM: 0,
-    others: 0
+    others: 0,
   });
 
   const today = new Intl.DateTimeFormat("bn-BD", {
@@ -20,7 +20,7 @@ export default function Statistics() {
   }).format(new Date());
 
   const toBanglaNumber = (number) => {
-    const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    const banglaDigits = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
     return number.toString().replace(/\d/g, (digit) => banglaDigits[digit]);
   };
 
@@ -28,7 +28,7 @@ export default function Statistics() {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get('/live-tenders/stats');
+        const res = await axiosInstance.get("/live-tenders/stats");
         if (res.data?.success) {
           const stats = res.data.data;
           setLiveCount(stats.total);
@@ -36,7 +36,7 @@ export default function Statistics() {
             LTM: stats.LTM,
             OTM: stats.OTM,
             OSTETM: stats.OSTETM,
-            others: stats.others
+            others: stats.others,
           });
         }
       } catch (error) {
@@ -60,11 +60,9 @@ export default function Statistics() {
       <div className="mx-auto py-10 lg:py-16">
         <div>
           <h2 className="text-center mb-8 text-gray-900">
-            {loading ? (
-              "লোড হচ্ছে..."
-            ) : (
-              `আজকের প্রকাশিত মোট টেন্ডার : ${toBanglaNumber(liveCount)} টি || তারিখ: ${today}`
-            )}
+            {loading
+              ? "লোড হচ্ছে..."
+              : `আজকের প্রকাশিত মোট টেন্ডার : ${toBanglaNumber(liveCount)} টি || তারিখ: ${today}`}
           </h2>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto gap-4 px-4">
@@ -76,9 +74,7 @@ export default function Statistics() {
               <div className="text-3xl font-bold text-[#4874c7] lg:text-4xl">
                 {toBanglaNumber(item.value)}
               </div>
-              <div className="mt-1 text-sm font-medium text-slate-600">
-                {item.label} টেন্ডার
-              </div>
+              <div className="mt-1 text-sm font-medium text-slate-600">{item.label} টেন্ডার</div>
             </div>
           ))}
         </div>

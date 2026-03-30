@@ -51,10 +51,7 @@ function EgpPassEmail() {
       <h1 className="text-3xl font-bold text-center my-5">Egp Pass Email</h1>
       <div className=" flex justify-center items-center">
         <div className="w-full max-w-xl shadow-2xl p-3 md:p-5 rounded border">
-          <form
-            onSubmit={handleSubmit}
-            className="w-full max-w-2xl grid grid-cols-1 gap-5"
-          >
+          <form onSubmit={handleSubmit} className="w-full max-w-2xl grid grid-cols-1 gap-5">
             <div className="">
               <Label htmlFor="egpEmail">
                 E-GP Email<span className="text-red-700">*</span>

@@ -21,13 +21,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-
 const mockTenderData = [
-  { financialYear: '2024-2025', tenderId: 'TND-001', packageNo: 'PKG-001', ministry: 'Ministry A', organization: 'Org A', division: 'Div A', descriptionOfWorks: 'Road Construction', commencementDate: '2024-01-15', contractPeriodExtendedUpTo: '2025-01-15', Status_Complite_ongoing: 'Ongoing', revisedContractValue: '5000000', paymentAmount: '3500000', jvShare: '70' },
-
+  {
+    financialYear: "2024-2025",
+    tenderId: "TND-001",
+    packageNo: "PKG-001",
+    ministry: "Ministry A",
+    organization: "Org A",
+    division: "Div A",
+    descriptionOfWorks: "Road Construction",
+    commencementDate: "2024-01-15",
+    contractPeriodExtendedUpTo: "2025-01-15",
+    Status_Complite_ongoing: "Ongoing",
+    revisedContractValue: "5000000",
+    paymentAmount: "3500000",
+    jvShare: "70",
+  },
 ];
-
-
 
 import useUsersCompanyMigration from "@/hooks/useUsersCompanyMigrations";
 import { AuthContext } from "@/provider/AuthProvider";
@@ -43,18 +53,24 @@ const PgTwoTowOtmGoodsDetails = () => {
 
   // Shared state for Tender Capacity inputs (for real-time preview updates)
   // Shared state for Tender Capacity inputs (for real-time preview updates)
-  const [tdsRequiredFY, setTdsRequiredFY] = useState('');
-  const [tdsRequiredBestYear, setTdsRequiredBestYear] = useState('');
-  const [proposedProjectYear, setProposedProjectYear] = useState('');
+  const [tdsRequiredFY, setTdsRequiredFY] = useState("");
+  const [tdsRequiredBestYear, setTdsRequiredBestYear] = useState("");
+  const [proposedProjectYear, setProposedProjectYear] = useState("");
 
   // 1. Fetch Tender Preparation Data by _id
   const tenderUrl = id ? `${config.apiBaseUrl}/tender-preparation/${id}` : null;
-  const { data: currentTender, loading: tenderLoading, setReload: setTenderReload } = useSingleData(tenderUrl);
+  const {
+    data: currentTender,
+    loading: tenderLoading,
+    setReload: setTenderReload,
+  } = useSingleData(tenderUrl);
 
   // 1.1 Fetch Live Tender Data to get Liquid Assets Requirement (based on tenderId from preparation)
-  const liveTenderUrl = currentTender?.tenderId ? `${config.apiBaseUrl}/tenders/tenderId/${currentTender.tenderId}` : null;
+  const liveTenderUrl = currentTender?.tenderId
+    ? `${config.apiBaseUrl}/tenders/tenderId/${currentTender.tenderId}`
+    : null;
   const { data: liveTenderData } = useSingleData(liveTenderUrl);
-
+  console.log(liveTenderUrl);
   // Initialize shared state from database values
   useEffect(() => {
     if (currentTender) {
@@ -70,7 +86,7 @@ const PgTwoTowOtmGoodsDetails = () => {
     }
   }, [currentTender]);
 
-  const egpEmail = currentTender?.egpEmail || '';
+  const egpEmail = currentTender?.egpEmail || "";
 
   // Fetch user's company migrations to find the matching migration ID
   const { companyMigrations } = useUsersCompanyMigration(user?.email, "");
@@ -82,23 +98,31 @@ const PgTwoTowOtmGoodsDetails = () => {
   }, [companyMigrations, egpEmail]);
 
   // 2. Fetch EGP Listed Company data using the exact matching email
-  const companyUrl = egpEmail ? `${config.apiBaseUrl}/egp-listed-company/get-by-mail?mail=${encodeURIComponent(egpEmail)}` : null;
+  const companyUrl = egpEmail
+    ? `${config.apiBaseUrl}/egp-listed-company/get-by-mail?mail=${encodeURIComponent(egpEmail)}`
+    : null;
   const { data: companyData, loading: companyLoading } = useSingleData(companyUrl);
 
-  const companyDisplayName = companyData?.companyName || currentTender?.egpCompanyName || "Company Name";
+  const companyDisplayName =
+    companyData?.companyName || currentTender?.egpCompanyName || "Company Name";
 
   // Fetch contract information from API using egpEmail exclusively.
   // This enables cross-tender CMS universality by ensuring all contracts linked to this email are returned.
   const contractUrl = egpEmail
     ? `${config.apiBaseUrl}/contract-information?egpEmail=${encodeURIComponent(egpEmail)}&limit=1000`
     : null;
-  const { data: contractData, loading: contractLoading, setReload: setContractReload } = useSingleData(contractUrl);
-
+  const {
+    data: contractData,
+    loading: contractLoading,
+    setReload: setContractReload,
+  } = useSingleData(contractUrl);
 
   // Filter for completed contracts only
   const completedContracts = useMemo(() => {
     if (!contractData || !Array.isArray(contractData)) return [];
-    return contractData.filter(item => item.Status_Complite_ongoing?.toLowerCase() === 'completed');
+    return contractData.filter(
+      (item) => item.Status_Complite_ongoing?.toLowerCase() === "completed"
+    );
   }, [contractData]);
 
   // Filter for specific experience based on "Minimum Year of Similar Work"
@@ -114,7 +138,7 @@ const PgTwoTowOtmGoodsDetails = () => {
     const allowedDays = minYears * 360;
     const today = new Date(); // Use current date
 
-    return completedContracts.filter(contract => {
+    return completedContracts.filter((contract) => {
       // Get completion date from contractPeriodExtendedUpTo
       const completionDateStr = contract.contractPeriodExtendedUpTo;
       if (!completionDateStr) return false; // Skip if no date
@@ -137,11 +161,8 @@ const PgTwoTowOtmGoodsDetails = () => {
   // Filter for ongoing contracts only
   const ongoingContracts = useMemo(() => {
     if (!contractData || !Array.isArray(contractData)) return [];
-    return contractData.filter(item => item.Status_Complite_ongoing?.toLowerCase() === 'ongoing');
+    return contractData.filter((item) => item.Status_Complite_ongoing?.toLowerCase() === "ongoing");
   }, [contractData]);
-
-
-
 
   // ধাপ ২: কম্পোনেন্টগুলোর মধ্যে ডেটা শেয়ার করার জন্য স্টেট তৈরি করুন
   // Calculate yearlyTotals directly for instant updates (no useEffect delay)
@@ -156,7 +177,7 @@ const PgTwoTowOtmGoodsDetails = () => {
       // Safe parse helper
       const safeParse = (val) => {
         if (!val) return 0;
-        const strVal = String(val).replace(/,/g, '');
+        const strVal = String(val).replace(/,/g, "");
         return parseFloat(strVal) || 0;
       };
 
@@ -177,12 +198,12 @@ const PgTwoTowOtmGoodsDetails = () => {
       // Safe parse helper for this scope as well or reuse if moved out
       const safeParse = (val) => {
         if (!val) return 0;
-        const strVal = String(val).replace(/,/g, '');
+        const strVal = String(val).replace(/,/g, "");
         return parseFloat(strVal) || 0;
       };
 
       const worksInHand = safeParse(item.WorksInHand);
-      // Check for nYear in item, default to 0 if missing. 
+      // Check for nYear in item, default to 0 if missing.
       // Note: OngoingTenderTab handled local state edits, but for instant load we use saved data.
       const nYearValue = parseFloat(item.nYear || 0);
       const worksInHandPerNYear = nYearValue > 0 ? worksInHand / nYearValue : 0;
@@ -200,11 +221,20 @@ const PgTwoTowOtmGoodsDetails = () => {
     };
 
     const rows = [
-      { mapList: "Trade Certificate", fileName: normalizeValue(companyData?.trade || companyData?.tradeCertificate) },
+      {
+        mapList: "Trade Certificate",
+        fileName: normalizeValue(companyData?.trade || companyData?.tradeCertificate),
+      },
       { mapList: "TIN Certificate", fileName: normalizeValue(companyData?.tin) },
-      { mapList: "TIN Return Certificate", fileName: normalizeValue(companyData?.tinReturnCertificate) },
+      {
+        mapList: "TIN Return Certificate",
+        fileName: normalizeValue(companyData?.tinReturnCertificate),
+      },
       { mapList: "VAT Certificate", fileName: normalizeValue(companyData?.vat) },
-      { mapList: "VAT Return Certificate", fileName: normalizeValue(companyData?.vatReturnCertificate) },
+      {
+        mapList: "VAT Return Certificate",
+        fileName: normalizeValue(companyData?.vatReturnCertificate),
+      },
       { mapList: "Authorization Letter", fileName: normalizeValue(companyData?.autho) },
       { mapList: "NID", fileName: normalizeValue(companyData?.nid) },
       { mapList: "Equipment List", fileName: normalizeValue(companyData?.equipment) },
@@ -212,23 +242,25 @@ const PgTwoTowOtmGoodsDetails = () => {
       { mapList: "Audit Report", fileName: normalizeValue(companyData?.updateAuditReportFileName) },
     ];
 
-    const departmentRows = Object.entries(companyData?.departmentLicenses || {}).map(([dept, file]) => ({
-      mapList: `${dept} License Certificate`,
-      fileName: normalizeValue(file),
-    }));
+    const departmentRows = Object.entries(companyData?.departmentLicenses || {}).map(
+      ([dept, file]) => ({
+        mapList: `${dept} License Certificate`,
+        fileName: normalizeValue(file),
+      })
+    );
 
     // Get best years from turnover history (top years by amount)
     const bestYears = [...yearlyTotals]
       .sort((a, b) => b.amount - a.amount)
       .slice(0, 3)
-      .map(y => y.year);
+      .map((y) => y.year);
 
     // Find contracts from best years and extract certificate file names
     const certificateRows = [];
     if (completedContracts && bestYears.length > 0) {
       bestYears.forEach((year) => {
         const yearContracts = completedContracts.filter(
-          contract => contract.financialYear === year
+          (contract) => contract.financialYear === year
         );
 
         yearContracts.forEach((contract, contractIndex) => {
@@ -270,15 +302,18 @@ const PgTwoTowOtmGoodsDetails = () => {
       const yearAmount = currentTender[`FinancialYear${i}Amount`];
 
       if (yearName && yearAmount) {
-        // Format roughly to match the mock data structure 
+        // Format roughly to match the mock data structure
         // Mock: { period: "2022-2023", amountCurrency: "USD 5,200,000", amountBDT: "BDT 546,000,000" }
         // We only have BDT amount in backend usually
-        const amountFormatted = Number(yearAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const amountFormatted = Number(yearAmount).toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
 
         savedYears.push({
           period: yearName,
           amountCurrency: `BDT ${amountFormatted}`, // Assuming BDT for now as primary
-          amountBDT: `BDT ${amountFormatted}`
+          amountBDT: `BDT ${amountFormatted}`,
         });
       }
     }
@@ -294,11 +329,13 @@ const PgTwoTowOtmGoodsDetails = () => {
     }
 
     // Prioritize shared state (live input) over database values
-    const tdsYears = Number(tdsRequiredFY) || Number(currentTender?.tdsYearFinancialCapacity) || Number(currentTender?.tdsYearFinancial) || 5;
+    const tdsYears =
+      Number(tdsRequiredFY) ||
+      Number(currentTender?.tdsYearFinancialCapacity) ||
+      Number(currentTender?.tdsYearFinancial) ||
+      5;
     const proposeYear = Number(proposedProjectYear) || Number(currentTender?.proposeYear) || 1;
     const factor = 1.25;
-
-
 
     if (!yearlyTotals || yearlyTotals.length === 0) return 0;
 
@@ -307,15 +344,12 @@ const PgTwoTowOtmGoodsDetails = () => {
       .sort((a, b) => b.year.localeCompare(a.year))
       .slice(0, tdsYears);
 
-    const valueA = Math.max(0, ...relevantYears.map(y => y.amount));
+    const valueA = Math.max(0, ...relevantYears.map((y) => y.amount));
     const valueN = proposeYear;
     const valueB = totalOngoingCommitments;
 
-
-
     // Formula: (A × N × 1.25) - B
-    const result = (valueA * valueN * factor) - valueB;
-
+    const result = valueA * valueN * factor - valueB;
 
     return result;
   }, [currentTender, yearlyTotals, totalOngoingCommitments, tdsRequiredFY, proposedProjectYear]);
@@ -367,50 +401,58 @@ const PgTwoTowOtmGoodsDetails = () => {
     {
       id: 1,
       name: "e-PW3-2 Preview",
-      content: <TendererFormPreview_ePW3_2
-        companyName={companyData?.companyName || currentTender?.egpCompanyName}
-        egpEmail={companyData?.egpEmail || currentTender?.egpEmail}
-        yearsOfGeneralExperience={companyData?.yearsOfGeneralExperience}
-        turnoverData={turnoverData}
-        tenderList={completedContracts} // Pass the completed contracts ("tender list summary")
-        specificExperienceList={
-          currentTender?.experienceContractId
-            ? completedContracts.filter(c => c._id === currentTender.experienceContractId)
-            : []
-        } // Pass only the confirmed contract for specific experience
-
-        // specificExperienceList={filteredSpecificExperience}
-        yearlyTotals={yearlyTotals}
-        totalOngoingCommitments={totalOngoingCommitments}
-        currentTender={{ ...currentTender, liquidAssets: liveTenderData?.liquidAssets || currentTender?.liquidAssets }}
-        companyData={companyData}
-        ongoingContracts={ongoingContracts}
-        financialInfo={currentTender}
-      />,
+      content: (
+        <TendererFormPreview_ePW3_2
+          companyName={companyData?.companyName || currentTender?.egpCompanyName}
+          egpEmail={companyData?.egpEmail || currentTender?.egpEmail}
+          yearsOfGeneralExperience={companyData?.yearsOfGeneralExperience}
+          turnoverData={turnoverData}
+          tenderList={completedContracts} // Pass the completed contracts ("tender list summary")
+          specificExperienceList={
+            currentTender?.experienceContractId
+              ? completedContracts.filter((c) => c._id === currentTender.experienceContractId)
+              : []
+          } // Pass only the confirmed contract for specific experience
+          // specificExperienceList={filteredSpecificExperience}
+          yearlyTotals={yearlyTotals}
+          totalOngoingCommitments={totalOngoingCommitments}
+          currentTender={{
+            ...currentTender,
+            liquidAssets: liveTenderData?.liquidAssets || currentTender?.liquidAssets,
+          }}
+          companyData={companyData}
+          ongoingContracts={ongoingContracts}
+          financialInfo={currentTender}
+        />
+      ),
     },
     {
       id: 2,
       name: "Turnover History",
-      content: <TurnoverHistoryTab
-        yearlyTotals={yearlyTotals}
-        tdsRequiredFY={tdsRequiredFY}
-        setTdsRequiredFY={setTdsRequiredFY}
-        tdsRequiredBestYear={tdsRequiredBestYear}
-        setTdsRequiredBestYear={setTdsRequiredBestYear}
-      />,
+      content: (
+        <TurnoverHistoryTab
+          yearlyTotals={yearlyTotals}
+          tdsRequiredFY={tdsRequiredFY}
+          setTdsRequiredFY={setTdsRequiredFY}
+          tdsRequiredBestYear={tdsRequiredBestYear}
+          setTdsRequiredBestYear={setTdsRequiredBestYear}
+        />
+      ),
     },
     {
       id: 3,
       name: "Tender Capacity",
-      content: <TenderCapacityTab
-        yearlyTotals={yearlyTotals}
-        totalOngoingCommitments={totalOngoingCommitments}
-        egpEmail={egpEmail}
-        tdsRequiredFY={tdsRequiredFY}
-        setTdsRequiredFY={setTdsRequiredFY}
-        proposedProjectYear={proposedProjectYear}
-        setProposedProjectYear={setProposedProjectYear}
-      />,
+      content: (
+        <TenderCapacityTab
+          yearlyTotals={yearlyTotals}
+          totalOngoingCommitments={totalOngoingCommitments}
+          egpEmail={egpEmail}
+          tdsRequiredFY={tdsRequiredFY}
+          setTdsRequiredFY={setTdsRequiredFY}
+          proposedProjectYear={proposedProjectYear}
+          setProposedProjectYear={setProposedProjectYear}
+        />
+      ),
     },
     {
       id: 4,
@@ -420,7 +462,13 @@ const PgTwoTowOtmGoodsDetails = () => {
     {
       id: 5,
       name: "Ongoing",
-      content: <OngoingTenderTab data={ongoingContracts} loading={contractLoading} setReload={setContractReload} />,
+      content: (
+        <OngoingTenderTab
+          data={ongoingContracts}
+          loading={contractLoading}
+          setReload={setContractReload}
+        />
+      ),
     },
     {
       id: 6,
@@ -433,7 +481,11 @@ const PgTwoTowOtmGoodsDetails = () => {
           totalOngoingCommitments={totalOngoingCommitments}
           egpEmail={egpEmail}
           companyName={companyData?.companyName}
-          tenderId={currentTender?.tenderId || ongoingContracts[0]?.tenderId || completedContracts[0]?.tenderId}
+          tenderId={
+            currentTender?.tenderId ||
+            ongoingContracts[0]?.tenderId ||
+            completedContracts[0]?.tenderId
+          }
           descriptionOfWorks={currentTender?.descriptionOfWorks}
           turnoverData={turnoverData}
           currentTender={liveTenderData || currentTender}
@@ -448,7 +500,9 @@ const PgTwoTowOtmGoodsDetails = () => {
       content: (
         <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
           <div className="border-b border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50 px-4 sm:px-6 py-4">
-            <h3 className="text-2xl sm:text-3xl font-semibold text-slate-800 tracking-tight">{companyDisplayName}</h3>
+            <h3 className="text-2xl sm:text-3xl font-semibold text-slate-800 tracking-tight">
+              {companyDisplayName}
+            </h3>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">Document Mapping Sheet</p>
           </div>
 
@@ -456,8 +510,12 @@ const PgTwoTowOtmGoodsDetails = () => {
             <table className="w-full min-w-[620px] text-sm">
               <thead>
                 <tr className="bg-slate-100 border-b border-slate-300">
-                  <th className="w-1/2 px-4 sm:px-6 py-3 text-left font-semibold text-slate-700">Map List</th>
-                  <th className="w-1/2 px-4 sm:px-6 py-3 text-left font-semibold text-slate-700">File Name</th>
+                  <th className="w-1/2 px-4 sm:px-6 py-3 text-left font-semibold text-slate-700">
+                    Map List
+                  </th>
+                  <th className="w-1/2 px-4 sm:px-6 py-3 text-left font-semibold text-slate-700">
+                    File Name
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -468,7 +526,9 @@ const PgTwoTowOtmGoodsDetails = () => {
                       className="border-b border-slate-200 odd:bg-white even:bg-slate-50/40"
                     >
                       <td className="px-4 sm:px-6 py-2.5 text-slate-800">{row.mapList}</td>
-                      <td className="px-4 sm:px-6 py-2.5 text-slate-700 break-all">{row.fileName}</td>
+                      <td className="px-4 sm:px-6 py-2.5 text-slate-700 break-all">
+                        {row.fileName}
+                      </td>
                     </tr>
                   ))
                 ) : (
@@ -492,12 +552,25 @@ const PgTwoTowOtmGoodsDetails = () => {
     {
       id: 9,
       name: "BOQ",
-      content: (<div className="bg-green-50 p-4 rounded-lg"><h3 className="font-semibold text-green-800 mb-2">Bill of Quantities</h3></div>),
+      content: (
+        <div className="bg-green-50 p-4 rounded-lg">
+          <h3 className="font-semibold text-green-800 mb-2">Bill of Quantities</h3>
+        </div>
+      ),
     },
     {
       id: 10,
       name: "CMS",
-      content: <CMSTab completedContracts={completedContracts} ongoingContracts={ongoingContracts} loading={contractLoading} setReload={setContractReload} setActiveTab={setActiveTab} onEditContract={handleEditContract} />,
+      content: (
+        <CMSTab
+          completedContracts={completedContracts}
+          ongoingContracts={ongoingContracts}
+          loading={contractLoading}
+          setReload={setContractReload}
+          setActiveTab={setActiveTab}
+          onEditContract={handleEditContract}
+        />
+      ),
     },
     {
       id: 11,
@@ -507,7 +580,12 @@ const PgTwoTowOtmGoodsDetails = () => {
     {
       id: 12,
       name: "Update Tender Info",
-      content: <UpdateTenderInformationForm egpEmail={egpEmail} preSelectedContractId={selectedContractIdForEdit} />,
+      content: (
+        <UpdateTenderInformationForm
+          egpEmail={egpEmail}
+          preSelectedContractId={selectedContractIdForEdit}
+        />
+      ),
     },
     {
       id: 13,
@@ -540,27 +618,39 @@ const PgTwoTowOtmGoodsDetails = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <Label className="mb-1 block text-sm font-normal">E-GP Email</Label>
-                    <Input readOnly value={companyData?.egpEmail || ''} className="bg-white" />
+                    <Input readOnly value={companyData?.egpEmail || ""} className="bg-white" />
                   </div>
                   <div>
                     <Label className="mb-1 block text-sm font-normal">Company Name</Label>
-                    <Input readOnly value={companyData?.companyName || ''} className="bg-white" />
+                    <Input readOnly value={companyData?.companyName || ""} className="bg-white" />
                   </div>
                   <div>
                     <Label className="mb-1 block text-sm font-normal">Password</Label>
-                    <Input readOnly value={companyData?.password || ''} className="bg-white" />
+                    <Input readOnly value={companyData?.password || ""} className="bg-white" />
                   </div>
                   <div>
                     <Label className="mb-1 block text-sm font-normal">Bank Name</Label>
                     <Input readOnly value={companyData?.bankName} className="bg-white" />
                   </div>
                   <div>
-                    <Label className="mb-1 block text-sm font-normal">Bank Address for Contact Details</Label>
-                    <Input readOnly value={companyData?.bankAddress || 'N/A'} className="bg-white" />
+                    <Label className="mb-1 block text-sm font-normal">
+                      Bank Address for Contact Details
+                    </Label>
+                    <Input
+                      readOnly
+                      value={companyData?.bankAddress || "N/A"}
+                      className="bg-white"
+                    />
                   </div>
                   <div>
-                    <Label className="mb-1 block text-sm font-normal">Years of General Experience</Label>
-                    <Input readOnly value={companyData?.yearsOfGeneralExperience || 'N/A'} className="bg-white" />
+                    <Label className="mb-1 block text-sm font-normal">
+                      Years of General Experience
+                    </Label>
+                    <Input
+                      readOnly
+                      value={companyData?.yearsOfGeneralExperience || "N/A"}
+                      className="bg-white"
+                    />
                   </div>
                 </div>
               </div>
@@ -568,30 +658,42 @@ const PgTwoTowOtmGoodsDetails = () => {
               {/* Legal & Authorization Documents Section */}
               <div className="space-y-4 pt-4">
                 <div className="border-b pb-2">
-                  <h2 className="text-xl font-bold text-gray-800">Legal & Authorization Documents</h2>
-                  <p className="text-sm text-gray-500">File names for required documents in eGP account</p>
+                  <h2 className="text-xl font-bold text-gray-800">
+                    Legal & Authorization Documents
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    File names for required documents in eGP account
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label className="mb-1 block text-sm font-normal">Authorization Letter File Name</Label>
-                    <Input readOnly value={companyData?.autho || ''} className="bg-white" />
+                    <Label className="mb-1 block text-sm font-normal">
+                      Authorization Letter File Name
+                    </Label>
+                    <Input readOnly value={companyData?.autho || ""} className="bg-white" />
                   </div>
                   <div>
                     <Label className="mb-1 block text-sm font-normal">NID File Name</Label>
-                    <Input readOnly value={companyData?.nid || ''} className="bg-white" />
+                    <Input readOnly value={companyData?.nid || ""} className="bg-white" />
                   </div>
                   <div>
-                    <Label className="mb-1 block text-sm font-normal">Trade Certificate File Name</Label>
-                    <Input readOnly value={companyData?.trade || ''} className="bg-white" />
+                    <Label className="mb-1 block text-sm font-normal">
+                      Trade Certificate File Name
+                    </Label>
+                    <Input readOnly value={companyData?.trade || ""} className="bg-white" />
                   </div>
                   <div>
-                    <Label className="mb-1 block text-sm font-normal">TIN Certificate File Name</Label>
-                    <Input readOnly value={companyData?.tin || ''} className="bg-white" />
+                    <Label className="mb-1 block text-sm font-normal">
+                      TIN Certificate File Name
+                    </Label>
+                    <Input readOnly value={companyData?.tin || ""} className="bg-white" />
                   </div>
                   <div>
-                    <Label className="mb-1 block text-sm font-normal">VAT Certificate File Name</Label>
-                    <Input readOnly value={companyData?.vat || ''} className="bg-white" />
+                    <Label className="mb-1 block text-sm font-normal">
+                      VAT Certificate File Name
+                    </Label>
+                    <Input readOnly value={companyData?.vat || ""} className="bg-white" />
                   </div>
                 </div>
               </div>
@@ -599,7 +701,9 @@ const PgTwoTowOtmGoodsDetails = () => {
               {/* Departmental Wise LTM Enlistment Certificate Section */}
               <div className="space-y-4 pt-4">
                 <div className="border-b pb-2">
-                  <h2 className="text-xl font-bold text-gray-800">Departmental Wise LTM Enlistment Certificate</h2>
+                  <h2 className="text-xl font-bold text-gray-800">
+                    Departmental Wise LTM Enlistment Certificate
+                  </h2>
                   <p className="text-sm text-gray-500">Department-specific license information</p>
                 </div>
 
@@ -612,13 +716,18 @@ const PgTwoTowOtmGoodsDetails = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {companyData?.departmentLicenses && Object.keys(companyData.departmentLicenses).length > 0 ? (
-                        Object.entries(companyData.departmentLicenses).map(([dept, value], index) => (
-                          <tr key={index} className="bg-white hover:bg-gray-50">
-                            <td className="px-4 py-3 font-medium text-gray-900">{dept}</td>
-                            <td className="px-4 py-3 text-gray-600">{value as string || 'N/A'}</td>
-                          </tr>
-                        ))
+                      {companyData?.departmentLicenses &&
+                      Object.keys(companyData.departmentLicenses).length > 0 ? (
+                        Object.entries(companyData.departmentLicenses).map(
+                          ([dept, value], index) => (
+                            <tr key={index} className="bg-white hover:bg-gray-50">
+                              <td className="px-4 py-3 font-medium text-gray-900">{dept}</td>
+                              <td className="px-4 py-3 text-gray-600">
+                                {(value as string) || "N/A"}
+                              </td>
+                            </tr>
+                          )
+                        )
                       ) : (
                         <tr>
                           <td colSpan={2} className="px-4 py-3 text-center text-gray-500">
@@ -654,7 +763,11 @@ const PgTwoTowOtmGoodsDetails = () => {
 
   // Early Loading State for the initial resolution
   if (tenderLoading) {
-    return <div className="p-10 flex justify-center text-lg text-gray-500">Resolving Tender Information...</div>;
+    return (
+      <div className="p-10 flex justify-center text-lg text-gray-500">
+        Resolving Tender Information...
+      </div>
+    );
   }
 
   if (!egpEmail && !tenderLoading) {
@@ -662,7 +775,9 @@ const PgTwoTowOtmGoodsDetails = () => {
       <div className="p-10 flex flex-col items-center gap-4">
         <div className="text-red-500 text-xl font-semibold">Tender ID Not Found</div>
         <p className="text-gray-500">Could not find any tender with ID: {id}</p>
-        <p className="text-sm text-gray-400">Debug Info: Search returned {currentTender ? "data" : "no data"}.</p>
+        <p className="text-sm text-gray-400">
+          Debug Info: Search returned {currentTender ? "data" : "no data"}.
+        </p>
       </div>
     );
   }
@@ -675,25 +790,34 @@ const PgTwoTowOtmGoodsDetails = () => {
             <h1 className="text-xl sm:text-2xl font-bold">Tender Preparation Details</h1>
             <h3 className="text-base sm:text-lg text-gray-600 mt-1">Id: {id}</h3>
             {currentTender?.tenderId && (
-              <h3 className="text-base sm:text-lg text-gray-600 mt-1">Tender ID: {currentTender.tenderId}</h3>
+              <h3 className="text-base sm:text-lg text-gray-600 mt-1">
+                Tender ID: {currentTender.tenderId}
+              </h3>
             )}
           </div>
           <div className="flex gap-2">
             <Button
               onClick={() => {
                 setIsReloading(true);
-                setContractReload(prev => prev + 1);
-                setTenderReload(prev => prev + 1); // Also reload tender preparation data
+                setContractReload((prev) => prev + 1);
+                setTenderReload((prev) => prev + 1); // Also reload tender preparation data
                 setTimeout(() => setIsReloading(false), 1000);
               }}
               variant="outline"
               size="sm"
               className="flex items-center gap-2"
             >
-              <RefreshCw className={`w-4 h-4 transition-transform duration-1000 ${isReloading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`w-4 h-4 transition-transform duration-1000 ${isReloading ? "animate-spin" : ""}`}
+              />
               <span className="hidden sm:inline">Reload Data</span>
             </Button>
-            <Button onClick={() => setUpdateDialogOpen(true)} variant="outline" size="sm" className="flex items-center gap-2">
+            <Button
+              onClick={() => setUpdateDialogOpen(true)}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
               Update Tender Info
             </Button>
           </div>
@@ -705,10 +829,11 @@ const PgTwoTowOtmGoodsDetails = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-3 border-b-2 font-medium text-sm whitespace-nowrap ${activeTab === tab.id
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  }`}
+                className={`py-2 px-3 border-b-2 font-medium text-sm whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? "border-blue-500 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
               >
                 {tab.name}
               </button>
@@ -718,10 +843,10 @@ const PgTwoTowOtmGoodsDetails = () => {
 
         <div className="mt-4 sm:mt-6">
           <div className="bg-white p-3 sm:p-4 md:p-6 rounded-lg border">
-            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">{tabs.find(tab => tab.id === activeTab)?.name}</h2>
-            <div key={activeTab}>
-              {tabs.find(tab => tab.id === activeTab)?.content}
-            </div>
+            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
+              {tabs.find((tab) => tab.id === activeTab)?.name}
+            </h2>
+            <div key={activeTab}>{tabs.find((tab) => tab.id === activeTab)?.content}</div>
           </div>
         </div>
       </div>

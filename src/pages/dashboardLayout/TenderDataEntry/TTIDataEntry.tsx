@@ -14,10 +14,7 @@ const TTITenderDataEntry = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(5);
   const [message, setMessage] = useState("");
-  const { tenders, loading, setReload, count } = useFormattedTendersTTI(
-    currentPage,
-    pageLimit
-  );
+  const { tenders, loading, setReload, count } = useFormattedTendersTTI(currentPage, pageLimit);
 
   const resetForm = () => {
     setMessage("Tenders submitted successfully."); // show success message
@@ -32,19 +29,16 @@ const TTITenderDataEntry = () => {
     }));
     console.log(updatedTenders);
     try {
-      const response = await fetch(
-        `${config.ttiServerUrl}/tenders/create-multiple-tender`,
-        {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
-          body: JSON.stringify(updatedTenders),
-        }
-      );
+      const response = await fetch(`${config.ttiServerUrl}/tenders/create-multiple-tender`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify(updatedTenders),
+      });
 
       const res = await response.json();
-      
+
       if (res.success || res.message == "Error: No New Tenders To Insert") {
         const url = `${config.apiBaseUrl}/tti-dataEntry/create-tenderId`;
         createData(url, tenderIds, setReload, resetForm);
@@ -64,24 +58,14 @@ const TTITenderDataEntry = () => {
   return (
     <div>
       <div>
-        <Button
-          className="cursor-pointer"
-          onClick={() => handleSendAllTenders()}
-        >
+        <Button className="cursor-pointer" onClick={() => handleSendAllTenders()}>
           Send All
           <SendHorizontal />
         </Button>
-        <div
-          id="tender-entry-message"
-          className="text-green-600  mt-4 font-medium"
-        >
+        <div id="tender-entry-message" className="text-green-600  mt-4 font-medium">
           {message && message}{" "}
           {message && (
-            <X
-              size={16}
-              className="inline-block cursor-pointer"
-              onClick={() => setMessage("")}
-            />
+            <X size={16} className="inline-block cursor-pointer" onClick={() => setMessage("")} />
           )}
         </div>
       </div>
@@ -99,15 +83,9 @@ const TTITenderDataEntry = () => {
           <table className="mt-5 w-full table-fixed">
             <thead>
               <tr className="bg-primary text-primary-foreground">
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  Tender Id
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  text-start">
-                  Sub Categories
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  text-start">
-                  TDS 01
-                </th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">Tender Id</th>
+                <th className="whitespace-nowrap px-4 py-2  text-start">Sub Categories</th>
+                <th className="whitespace-nowrap px-4 py-2  text-start">TDS 01</th>
 
                 {/* <th className="whitespace-nowrap px-4 py-2  rounded-tr text-start ">
                   Details
@@ -118,15 +96,10 @@ const TTITenderDataEntry = () => {
             <tbody>
               {!loading
                 ? tenders?.map((item, idx) => (
-                    <tr
-                      key={idx}
-                      className={`border ${idx % 2 == 1 && "bg-gray-100"}`}
-                    >
+                    <tr key={idx} className={`border ${idx % 2 == 1 && "bg-gray-100"}`}>
                       <td className="px-4 py-2 align-top">{item?.tenderId}</td>
 
-                      <td className="px-4 py-2 align-top">
-                        {item?.tender_subCategories}
-                      </td>
+                      <td className="px-4 py-2 align-top">{item?.tender_subCategories}</td>
                       <td className="px-4 py-2 align-top">{item?.tds_01}</td>
                     </tr>
                   ))
@@ -134,9 +107,7 @@ const TTITenderDataEntry = () => {
                     <tr key={idx}>
                       <td
                         colSpan={3}
-                        className={`h-20 ${
-                          idx % 2 == 1 ? "bg-gray-300" : "bg-white"
-                        }`}
+                        className={`h-20 ${idx % 2 == 1 ? "bg-gray-300" : "bg-white"}`}
                       ></td>
                     </tr>
                   ))}

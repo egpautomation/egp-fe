@@ -6,7 +6,6 @@ const useSingleData = (url) => {
   const [loading, setLoading] = useState(true);
   const [reload, setReload] = useState(0);
   const [data, setData] = useState({});
-
   useEffect(() => {
     if (!url) {
       setLoading(false);

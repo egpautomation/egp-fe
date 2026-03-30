@@ -12,7 +12,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const CreatePromoCode = () => {
-   
   const [formData, setFormData] = useState({
     name: "",
     code: "",
@@ -35,10 +34,13 @@ const CreatePromoCode = () => {
   };
   return (
     <div className="min-h-lvh ">
-        <Link to={"/dashboard/promo-codes"} className="mt-5 inline-block"><Button> <MoveLeft /> To Data Table</Button></Link>
-      <h1 className="text-3xl font-semibold text-center my-8">
-        Add A New Promo Code
-      </h1>
+      <Link to={"/dashboard/promo-codes"} className="mt-5 inline-block">
+        <Button>
+          {" "}
+          <MoveLeft /> To Data Table
+        </Button>
+      </Link>
+      <h1 className="text-3xl font-semibold text-center my-8">Add A New Promo Code</h1>
       <form
         onSubmit={handleSubmit}
         action=""
@@ -93,10 +95,8 @@ const CreatePromoCode = () => {
           <Calendar
             mode="single"
             selected={formData?.deadline}
-            onSelect={(value) => setFormData(prev => ({...prev, deadline: value}))}
-            disabled={(date) =>
-                date < new Date() || date < new Date("1900-01-01")
-              }
+            onSelect={(value) => setFormData((prev) => ({ ...prev, deadline: value }))}
+            disabled={(date) => date < new Date() || date < new Date("1900-01-01")}
             className="rounded-md border shadow w-max mt-2"
           />
         </div>

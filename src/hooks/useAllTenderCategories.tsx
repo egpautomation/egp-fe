@@ -3,9 +3,7 @@ import { config } from "@/lib/config";
 import TenderCategories from "@/pages/dashboardLayout/TenderCategories/TenderCategories";
 import { useEffect, useState } from "react";
 
-const useAllTenderCategories = (
-  
-) => {
+const useAllTenderCategories = () => {
   const [categories, setTenderCategories] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -18,7 +16,7 @@ const useAllTenderCategories = (
         const url = `${config.apiBaseUrl}/tender-categories`;
         const response = await fetch(url);
         const data = await response.json();
-        console.log(data)
+        console.log(data);
         setTenderCategories(data?.data);
         setCount(data?.count);
       } catch (error) {
@@ -28,7 +26,7 @@ const useAllTenderCategories = (
       }
     };
     result();
-  }, [reload,]);
+  }, [reload]);
 
   return {
     categories,

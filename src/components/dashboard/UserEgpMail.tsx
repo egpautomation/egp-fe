@@ -22,7 +22,7 @@ const UserEgpMail = ({ setFormData, value }) => {
   const [open, setOpen] = useState(false);
 
   // Filter for active emails
-  const activeMails = userMail?.filter(item => item?.status?.toLowerCase() === "active");
+  const activeMails = userMail?.filter((item) => item?.status?.toLowerCase() === "active");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

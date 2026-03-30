@@ -51,8 +51,6 @@ const CreateJobOrder = () => {
     }));
   };
 
-
-
   const handleReset = () => {
     setFormData({
       userMail: user?.email,
@@ -89,15 +87,11 @@ const CreateJobOrder = () => {
       formDataToSend.append("tenderId", formData.tenderId || "");
       formDataToSend.append("SlNoLineOfCredit", formData.SlNoLineOfCredit || "");
       formDataToSend.append("SLOfCredit", formData.SLOfCredit || "");
-      formDataToSend.append(
-        "liquidAssetsTenderAmount",
-        formData.liquidAssetsTenderAmount || ""
-      );
+      formDataToSend.append("liquidAssetsTenderAmount", formData.liquidAssetsTenderAmount || "");
       formDataToSend.append("bankName", formData.bankName || "");
       formDataToSend.append("activityDate1", formData.activityDate1 || "");
       formDataToSend.append("activityDate2", formData.activityDate2 || "");
       formDataToSend.append("serviceId", "1001");
-
 
       // Create a dummy empty file to prevent "Cannot read properties of undefined (reading 'buffer')" error
       const dummyFile = new File([""], "no-file.txt", { type: "text/plain" });
@@ -115,12 +109,7 @@ const CreateJobOrder = () => {
 
       if (data.success) {
         const tenderUpdateUrl = `${config.apiBaseUrl}/tenders/tenderId/${formData.tenderId}`;
-        await updateData(
-          tenderUpdateUrl,
-          { LtmLicenseNameCode: ltmLicenseNameCode },
-          null,
-          null
-        );
+        await updateData(tenderUpdateUrl, { LtmLicenseNameCode: ltmLicenseNameCode }, null, null);
         toast.success("Added to cart successfully!");
         setReload((prev) => prev + 1);
         handleReset();
@@ -141,15 +130,10 @@ const CreateJobOrder = () => {
           <MoveLeft /> Back To Data Table
         </Button>
       </Link>
-      <h1 className="text-3xl font-bold text-center mb-5 underline">
-        Order A Job{" "}
-      </h1>
+      <h1 className="text-3xl font-bold text-center mb-5 underline">Order A Job </h1>
       <div className="flex justify-center items-center">
         <div className="w-full max-w-xl shadow-2xl p-3 md:p-5 rounded border">
-          <form
-            onSubmit={handleSubmit}
-            className="w-full max-w-2xl grid grid-cols-1  gap-5"
-          >
+          <form onSubmit={handleSubmit} className="w-full max-w-2xl grid grid-cols-1  gap-5">
             <div className="">
               <Label htmlFor="egpEmail">
                 E-GP Email<span className="text-red-700">*</span>

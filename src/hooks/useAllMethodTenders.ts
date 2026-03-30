@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 
 const useAllMethodTenders = (
   method,
-  searchTerm="",
-  from="",
-  to="",
-  department="",
-  category="",
-  location="",
-  page=1,
-  limit=20
+  searchTerm = "",
+  from = "",
+  to = "",
+  department = "",
+  category = "",
+  location = "",
+  page = 1,
+  limit = 20
 ) => {
   const [tenders, setTenders] = useState([]);
   const [tendersCount, setTendersCount] = useState(0);
@@ -37,7 +37,7 @@ const useAllMethodTenders = (
       }
     };
     result();
-  }, [reload, searchTerm, from, to, method, department, category,location, page, limit]);
+  }, [reload, searchTerm, from, to, method, department, category, location, page, limit]);
 
   return {
     tenders,

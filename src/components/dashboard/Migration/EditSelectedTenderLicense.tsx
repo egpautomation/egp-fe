@@ -40,12 +40,8 @@ export default function EditSelectTenderLicense({ setFormData }) {
 
   return (
     <div className="">
-      <Label
-        className="text-sm font-semibold"
-        htmlFor="ltmTenderLicenseShortName"
-      >
-        Please Select Your Total LTM Tender License{" "}
-        <span className="text-red-700">* </span>
+      <Label className="text-sm font-semibold" htmlFor="ltmTenderLicenseShortName">
+        Please Select Your Total LTM Tender License <span className="text-red-700">* </span>
         <span>{`(${selectedItems?.length} Items)`}</span>
       </Label>
       <Select required onValueChange={toggleItem}>
@@ -60,16 +56,13 @@ export default function EditSelectTenderLicense({ setFormData }) {
               className="flex items-center justify-between"
             >
               {option.label}
-              {selectedItems.includes(option.value) && (
-                <Check className="h-4 w-4" />
-              )}
+              {selectedItems.includes(option.value) && <Check className="h-4 w-4" />}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
       <p className="mt-2">
-        <span className="font-semibold"></span> Selected :{" "}
-        {selectedItems.join(", ") || "None"}
+        <span className="font-semibold"></span> Selected : {selectedItems.join(", ") || "None"}
       </p>
     </div>
   );

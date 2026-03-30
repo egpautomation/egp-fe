@@ -11,8 +11,8 @@ const Payment = () => {
     <div className="">
       <div className="p-3  bg-yellow-200 mt-3 rounded-md border border-yellow-300 sticky top-0 z-30 ">
         <p className="  font-medium">
-          রেফানেন্স হিসেবে অবশ্যই আপনার রেজিষ্ট্রেশন মোবাইলের শেষ ৫ ডিজিট{" "}
-          {user?.userId} (Last 5 Digit of Active Phone No) প্রদান করিবেন।
+          রেফানেন্স হিসেবে অবশ্যই আপনার রেজিষ্ট্রেশন মোবাইলের শেষ ৫ ডিজিট {user?.userId} (Last 5
+          Digit of Active Phone No) প্রদান করিবেন।
         </p>
       </div>
 
@@ -30,15 +30,13 @@ const Payment = () => {
             >
               {" "}
               <p className="text-xl lg:text-3xl font-medium text-center flex items-center justify-center gap-2">
-              Click Here To  Pay BKash <MoveRight className="mt-2" />
+                Click Here To Pay BKash <MoveRight className="mt-2" />
               </p>
             </Link>
           </div>
 
           <div>
-            <h1 className="text-2xl lg:text-3xl text-gray-600 font-semibold ">
-              OR
-            </h1>
+            <h1 className="text-2xl lg:text-3xl text-gray-600 font-semibold ">OR</h1>
           </div>
 
           <div>
@@ -75,14 +73,10 @@ const Payment = () => {
                 <div className="flex h-full justify-center flex-col gap-2 font-medium">
                   <p>1. Send Money</p>
                   <p>2. Buy Airtime</p>
-                  <p className="text-2xl font-semibold text-pink-600">
-                    3. Payment
-                  </p>
+                  <p className="text-2xl font-semibold text-pink-600">3. Payment</p>
                   <p>4. Cash Out</p>
                   <p className="flex-1">5. My BKash</p>
-                  <p className="text-center border-2 border-pink-600 rounded-md">
-                    3
-                  </p>
+                  <p className="text-center border-2 border-pink-600 rounded-md">3</p>
                 </div>
                 <div className="rounded-md border-2 border-pink-600 px-2.5 bg-white font-semibold text-gray-600 py-0.5 w-max absolute -top-3 -right-3">
                   2
@@ -100,17 +94,13 @@ const Payment = () => {
                   <p className="text-xl font-semibold text-pink-600 flex-1 ">
                     Enter BKash Merchant Number
                   </p>
-                  <p className="text-center border-2 border-pink-600 rounded-md">
-                    01400959331
-                  </p>
+                  <p className="text-center border-2 border-pink-600 rounded-md">01400959331</p>
                 </div>
                 <div className="rounded-md border-2 border-pink-600 px-2.5 bg-white font-semibold text-gray-600 py-0.5 w-max absolute -top-3 -right-3">
                   3
                 </div>
               </div>
-              <p className="mt-2  text-gray-600 font-medium text-center">
-                Enter '01400959331'
-              </p>
+              <p className="mt-2  text-gray-600 font-medium text-center">Enter '01400959331'</p>
             </div>
 
             {/* step 4 */}
@@ -119,30 +109,22 @@ const Payment = () => {
                 <div className="flex  flex-col flex-auto h-full gap-2 font-medium">
                   <p className="text-xl font-semibold  flex-1 ">Enter Amount</p>
 
-                  <p className="text-center border-2 border-pink-600 rounded-md">
-                    100
-                  </p>
+                  <p className="text-center border-2 border-pink-600 rounded-md">100</p>
                 </div>
                 <div className="rounded-md border-2 border-pink-600 px-2.5 bg-white font-semibold text-gray-600 py-0.5 w-max absolute -top-3 -right-3">
                   4
                 </div>
               </div>
-              <p className="mt-2  text-gray-600 font-medium text-center">
-                Enter Amount
-              </p>
+              <p className="mt-2  text-gray-600 font-medium text-center">Enter Amount</p>
             </div>
 
             {/* step 5 */}
             <div className="p-3 md:p-5">
               <div className="p-3 md:p-5 rounded-md border-2 border-pink-600 relative h-60">
                 <div className="flex  flex-col flex-auto h-full gap-2 font-medium">
-                  <p className="text-xl font-semibold  flex-1 ">
-                    Enter Reference
-                  </p>
+                  <p className="text-xl font-semibold  flex-1 ">Enter Reference</p>
 
-                  <p className="text-center border-2 border-pink-600 rounded-md">
-                    {user?.userId}
-                  </p>
+                  <p className="text-center border-2 border-pink-600 rounded-md">{user?.userId}</p>
                 </div>
                 <div className="rounded-md border-2 border-pink-600 px-2.5 bg-white font-semibold text-gray-600 py-0.5 w-max absolute -top-3 -right-3">
                   5
@@ -162,9 +144,7 @@ const Payment = () => {
                   <p>Amount: TK 100</p>
                   <p className="">Reference: Niaz</p>
                   <p className="flex-1">Enter Pin To Confirm</p>
-                  <p className="text-center border-2 border-pink-600 rounded-md">
-                    xxxxx
-                  </p>
+                  <p className="text-center border-2 border-pink-600 rounded-md">xxxxx</p>
                 </div>
                 <div className="rounded-md border-2 border-pink-600 px-2.5 bg-white font-semibold text-gray-600 py-0.5 w-max absolute -top-3 -right-3">
                   6

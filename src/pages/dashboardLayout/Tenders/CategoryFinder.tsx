@@ -25,26 +25,71 @@ export default function TenderCategoryFinder() {
   const [suggestionsData, setSuggestionsData] = useState([]);
 
   const stopWords = [
-    "a", "an", "the", "of", "in", "on", "at", "for", "and", "or", "is",
-    "are", "was", "were", "under", "with", "to", "from", "etc", "fy",
-    "work", "works", "sub", "head", "ch", "no", "as", "by", "be", "new",
-    "existing", "different", "towards", "area", "division", "starting",
-    "detecting", "patients", "approach", "one", "all", "any", "com", "inc",
-    "co", "ltd", "pvt", "llc", "ward", "name", "tender"
+    "a",
+    "an",
+    "the",
+    "of",
+    "in",
+    "on",
+    "at",
+    "for",
+    "and",
+    "or",
+    "is",
+    "are",
+    "was",
+    "were",
+    "under",
+    "with",
+    "to",
+    "from",
+    "etc",
+    "fy",
+    "work",
+    "works",
+    "sub",
+    "head",
+    "ch",
+    "no",
+    "as",
+    "by",
+    "be",
+    "new",
+    "existing",
+    "different",
+    "towards",
+    "area",
+    "division",
+    "starting",
+    "detecting",
+    "patients",
+    "approach",
+    "one",
+    "all",
+    "any",
+    "com",
+    "inc",
+    "co",
+    "ltd",
+    "pvt",
+    "llc",
+    "ward",
+    "name",
+    "tender",
   ];
 
   // Helper function to escape regex special characters
   const escapeRegExp = (string) => {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   };
 
   // Normalize function to handle variations like punctuation, camel case, etc.
   const normalize = (text) => {
-    if (!text) return '';
-    let result = text.replace(/([a-z0-9])([A-Z])/g, '$1 $2');
+    if (!text) return "";
+    let result = text.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
     result = result.toLowerCase();
-    result = result.replace(/[^a-z0-9]+/g, ' ');
-    result = result.replace(/\s+/g, ' ').trim();
+    result = result.replace(/[^a-z0-9]+/g, " ");
+    result = result.replace(/\s+/g, " ").trim();
     return result;
   };
 
@@ -55,26 +100,26 @@ export default function TenderCategoryFinder() {
 
     const normalizedTitle = normalize(title);
     const titleWords = new Set(
-      normalizedTitle
-        .split(' ')
-        .filter(word => word.length > 2 && !stopWords.includes(word))
+      normalizedTitle.split(" ").filter((word) => word.length > 2 && !stopWords.includes(word))
     );
 
     console.log("Normalized Title Words:", Array.from(titleWords));
 
-    categories.forEach(item => {
+    categories.forEach((item) => {
       if (!item.sub_cat_name || !item.sub_cat_id) return;
 
       const normalizedSub = normalize(item.sub_cat_name);
       const subWords = normalizedSub
-        .split(' ')
-        .filter(word => word.length > 2 && !stopWords.includes(word));
+        .split(" ")
+        .filter((word) => word.length > 2 && !stopWords.includes(word));
 
       if (subWords.length === 0) return;
 
-      console.log(`Checking Subcategory: ${item.sub_cat_name}, Normalized: ${normalizedSub}, Words: ${subWords}`);
+      console.log(
+        `Checking Subcategory: ${item.sub_cat_name}, Normalized: ${normalizedSub}, Words: ${subWords}`
+      );
 
-      const overlap = subWords.filter(word => titleWords.has(word)).length;
+      const overlap = subWords.filter((word) => titleWords.has(word)).length;
       const score = overlap / subWords.length;
 
       if (score >= 0.5 && !processedIds.includes(item.sub_cat_id)) {
@@ -100,24 +145,27 @@ export default function TenderCategoryFinder() {
   // JS version of getUltimateKeywordSuggestions
   const getUltimateKeywordSuggestions = (title, categories, stopWords) => {
     const actionWords = [
-      "construction", "supply", "repair", "re-construction", "upgrading",
-      "extension", "manufacturing", "hiring", "washing", "renewal",
-      "reconstruction", "procurement"
+      "construction",
+      "supply",
+      "repair",
+      "re-construction",
+      "upgrading",
+      "extension",
+      "manufacturing",
+      "hiring",
+      "washing",
+      "renewal",
+      "reconstruction",
+      "procurement",
     ];
     const allStop = [...stopWords, ...actionWords];
     let cleanedTitle = normalize(title);
 
-    const allKnownWords = [
-      ...allStop,
-      ...categories.map(c => normalize(c.sub_cat_name))
-    ];
-    allKnownWords.forEach(word => {
+    const allKnownWords = [...allStop, ...categories.map((c) => normalize(c.sub_cat_name))];
+    allKnownWords.forEach((word) => {
       if (word) {
         const escaped = escapeRegExp(word);
-        cleanedTitle = cleanedTitle.replace(
-          new RegExp(`\\b${escaped}\\b`, "gi"),
-          " "
-        );
+        cleanedTitle = cleanedTitle.replace(new RegExp(`\\b${escaped}\\b`, "gi"), " ");
       }
     });
 
@@ -126,11 +174,11 @@ export default function TenderCategoryFinder() {
       .replace(/\s+/g, " ")
       .trim();
 
-    const words = cleanedTitle.split(" ").filter(w => w.length > 2 && !stopWords.includes(w));
+    const words = cleanedTitle.split(" ").filter((w) => w.length > 2 && !stopWords.includes(w));
     if (!words.length) return [];
 
     let suggestions = [];
-    [4, 3, 2].forEach(n => {
+    [4, 3, 2].forEach((n) => {
       if (words.length >= n) {
         for (let i = 0; i <= words.length - n; i++) {
           suggestions.push(words.slice(i, i + n).join(" "));
@@ -138,7 +186,7 @@ export default function TenderCategoryFinder() {
       }
     });
 
-    words.forEach(w => {
+    words.forEach((w) => {
       if (w.length > 4) suggestions.push(w);
     });
 
@@ -146,8 +194,8 @@ export default function TenderCategoryFinder() {
 
     suggestions.sort((a, b) => b.length - a.length);
     const finalSuggestions = [];
-    suggestions.forEach(s => {
-      if (!finalSuggestions.some(ex => ex.includes(s) && ex !== s)) {
+    suggestions.forEach((s) => {
+      if (!finalSuggestions.some((ex) => ex.includes(s) && ex !== s)) {
         finalSuggestions.push(s);
       }
     });
@@ -163,15 +211,11 @@ export default function TenderCategoryFinder() {
     setErrorMessage("");
 
     const matched = findExistingCategories(jobTitle, categoryData);
-    const newSuggestions = getUltimateKeywordSuggestions(
-      jobTitle,
-      categoryData,
-      stopWords
-    );
+    const newSuggestions = getUltimateKeywordSuggestions(jobTitle, categoryData, stopWords);
 
-    const subCatNames = categoryData.map(c => c.sub_cat_name);
+    const subCatNames = categoryData.map((c) => c.sub_cat_name);
     const uniqueCats = {};
-    categoryData.forEach(c => {
+    categoryData.forEach((c) => {
       if (c.cat_id && c.cat_name) {
         uniqueCats[c.cat_id] = c.cat_name;
       }
@@ -184,7 +228,12 @@ export default function TenderCategoryFinder() {
       Object.fromEntries(Object.entries(uniqueCats).sort((a, b) => a[1].localeCompare(b[1])))
     );
 
-    console.log("Analysis Result - Matched Categories:", matched, "New Suggestions:", newSuggestions);
+    console.log(
+      "Analysis Result - Matched Categories:",
+      matched,
+      "New Suggestions:",
+      newSuggestions
+    );
   };
 
   const handleRedirect = () => {
@@ -192,17 +241,15 @@ export default function TenderCategoryFinder() {
   };
 
   const handleUpdateCategory = () => {
-    const selectedCategories = matchedCategories.map(m => m.category);
-    const subCategories = matchedCategories.map(m => m.keyword);
+    const selectedCategories = matchedCategories.map((m) => m.category);
+    const subCategories = matchedCategories.map((m) => m.keyword);
 
-    const selectedCategoriesString = [...new Set(selectedCategories)].join(','); // Ensure unique categories
-    const SubCategoriesString = subCategories.join(',');
+    const selectedCategoriesString = [...new Set(selectedCategories)].join(","); // Ensure unique categories
+    const SubCategoriesString = subCategories.join(",");
     const payload = {
       selectedTenderCategory: selectedCategoriesString,
       tender_subCategories: SubCategoriesString,
     };
-
-   
 
     const url = `${config.apiBaseUrl}/tenders/tenderId/${id}`;
     updateData(url, payload, null, handleRedirect);
@@ -215,12 +262,12 @@ export default function TenderCategoryFinder() {
   };
 
   const removeMatchedCategory = (index) => {
-    setMatchedCategories(prev => prev.filter((_, i) => i !== index));
+    setMatchedCategories((prev) => prev.filter((_, i) => i !== index));
   };
-// null, handleRedirect
+  // null, handleRedirect
   const handleSkipAnalyze = () => {
     updateData(`${config.apiBaseUrl}/tenders/tenderId/${id}`, { skip: true }, null, handleRedirect);
-  }
+  };
 
   useEffect(() => {
     setJobTitle(tender?.descriptionOfWorks || "");
@@ -229,7 +276,11 @@ export default function TenderCategoryFinder() {
   return (
     <section>
       <div className="max-w-4xl mx-auto">
-        <Button className="cursor-pointer" id="page-reload-category-finder" onClick={() => window.location.reload()}>
+        <Button
+          className="cursor-pointer"
+          id="page-reload-category-finder"
+          onClick={() => window.location.reload()}
+        >
           Reload <LoaderCircle />
         </Button>
       </div>
@@ -257,10 +308,7 @@ export default function TenderCategoryFinder() {
           >
             বিশ্লেষণ করুন
           </Button>
-          <Button
-            onClick={handleSkipAnalyze}
-            className="mt-3 px-4 py-2 "
-          >
+          <Button onClick={handleSkipAnalyze} className="mt-3 px-4 py-2 ">
             <SkipBack />
             Skip
           </Button>
@@ -275,9 +323,7 @@ export default function TenderCategoryFinder() {
         {/* Matched Categories */}
         {matchedCategories.length > 0 && (
           <div className="mt-6">
-            <h2 className="text-lg font-bold text-blue-700 border-b pb-1">
-              শনাক্ত করা ক্যাটাগরি
-            </h2>
+            <h2 className="text-lg font-bold text-blue-700 border-b pb-1">শনাক্ত করা ক্যাটাগরি</h2>
             <table className="w-full border mt-3">
               <thead>
                 <tr className="bg-gray-100">
@@ -317,9 +363,7 @@ export default function TenderCategoryFinder() {
         {/* New Suggestions */}
         {newKeywordSuggestions.length > 0 && (
           <div className="mt-6">
-            <h2 className="text-lg font-bold text-blue-700 border-b pb-1">
-              নতুন কী-ওয়ার্ড সাজেশন
-            </h2>
+            <h2 className="text-lg font-bold text-blue-700 border-b pb-1">নতুন কী-ওয়ার্ড সাজেশন</h2>
             <table className="w-full border mt-3">
               <thead>
                 <tr className="bg-gray-100">
@@ -337,12 +381,12 @@ export default function TenderCategoryFinder() {
                         className="border rounded p-1 w-full"
                         onChange={(e) => {
                           const value = e.target.value;
-                          setSuggestionsData(prev => {
+                          setSuggestionsData((prev) => {
                             const updated = [...prev];
                             updated[idx] = {
                               ...updated[idx],
                               sub_cat_id: Date.now(),
-                              sub_cat_name: value
+                              sub_cat_name: value,
                             };
                             return updated;
                           });
@@ -354,7 +398,7 @@ export default function TenderCategoryFinder() {
                         onChange={(e) => {
                           const selected = JSON.parse(e.target.value);
                           selected.cat_id = Number(selected.cat_id);
-                          setSuggestionsData(prev => {
+                          setSuggestionsData((prev) => {
                             const updated = [...prev];
                             updated[idx] = { ...updated[idx], ...selected };
                             return updated;

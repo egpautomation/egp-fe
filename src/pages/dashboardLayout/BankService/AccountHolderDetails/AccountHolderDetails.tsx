@@ -52,9 +52,7 @@ const CreateAccountHolderDetails = () => {
           <MoveLeft /> Back To Data Table
         </Button>
       </Link>
-      <h1 className="text-3xl font-semibold text-center my-8">
-        Add Account Holder Details
-      </h1>
+      <h1 className="text-3xl font-semibold text-center my-8">Add Account Holder Details</h1>
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-1 gap-5 max-w-xl p-5 rounded border shadow-lg mx-auto"
