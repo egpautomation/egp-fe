@@ -14,6 +14,10 @@ import { Input } from "@/components/ui/input";
 import useAllDepartments from "@/hooks/useAllDepartments";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Pagination from "@/shared/Pagination/Pagination";
+import { Edit, File, Paperclip } from "lucide-react";
+import EditSORForm from "./EditSORForm";
+import ViewSORModal from "./ViewSORForm";
+import DeleteDataModal from "@/shared/Dashboard/DeleteDataModal";
 
 export default function SOR() {
   const [searchTerm, setSearchTerm] = useState({
@@ -68,18 +72,20 @@ export default function SOR() {
         </Dialog>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm hidden lg:block">
-        <table className="w-full">
+      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm ">
+        <table className="w-full overflow-x-auto">
           <thead>
             <tr className="bg-primary text-primary-foreground">
-              <th className="px-4 py-3 text-left text-sm font-semibold rounded-tl-lg">Item Code</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold rounded-tl-lg">Item Code</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold ">Department <br /> Year Of Rate</th>
+              
               <th className="px-4 py-3 text-left text-sm font-semibold">
                 Category, Sub-category, <br /> Sub-sub category
               </th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Year Of Rate</th>
+          
               <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Details</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold">Rates</th>
+           
+            
               <th className="px-4 py-3 text-center text-sm font-semibold rounded-tr-lg">Actions</th>
             </tr>
           </thead>
@@ -97,7 +103,13 @@ export default function SOR() {
                     <td className="px-4 py-3 text-sm align-top">
                       {item?.itemCode || "NOT AVAILABLE"}
                     </td>
-
+                    <td className="px-4 py-3 text-sm align-top">
+                      Department: {item?.departmentShortName || "NOT AVAILABLE"}
+                      <br />
+                      Year of Rate: {item?.yearOfRate || "NOT AVAILABLE"}
+                    </td>
+ {/* Year */}
+                    
                     {/* Category */}
                     <td className="px-4 py-3 text-sm align-top">
                       {item?.category && <p>Category : {item?.category}</p>}
@@ -108,59 +120,40 @@ export default function SOR() {
                       )}
                     </td>
 
-                    {/* Year */}
-                    <td className="px-4 py-3 text-sm align-top">
-                      {item?.yearOfRate || "NOT AVAILABLE"}
-                    </td>
+                   
 
                     {/* Description */}
                     <td className="px-4 py-3 text-xs text-justify min-w-50 align-top">
                       {item?.description || "NOT AVAILABLE"}
                     </td>
 
-                    {/* Details */}
-                    <td className="px-4 py-3 text-sm align-top whitespace-nowrap">
-                      <p>
-                        <span className="font-medium text-slate-600">Department:</span>{" "}
-                        {item?.departmentShortName || "N/A"}
-                      </p>
-                      <p>
-                        <span className="font-medium text-slate-600">Unit:</span>{" "}
-                        {item?.unit || "N/A"}
-                      </p>
-                      <p>
-                        <span className="font-medium text-slate-600">Source:</span>{" "}
-                        {item?.sourceOfRate || "N/A"}
-                      </p>
-                      <p>
-                        <span className="font-medium text-slate-600">Reference:</span>{" "}
-                        {item?.reference || "N/A"}
-                      </p>
-                    </td>
+                    
 
-                    {/* Rates */}
-                    <td className="px-4 py-3 text-sm align-top whitespace-nowrap">
-                      {item?.rate_1 && <p>Rate 1: {item?.rate_1 ?? "N/A"}</p>}
-                      {item?.rate_2 && <p>Rate 2: {item?.rate_2 ?? "N/A"}</p>}
-                      {item?.rate_3 && <p>Rate 3: {item?.rate_3 ?? "N/A"}</p>}
-                      {item?.rate_4 && <p>Rate 4: {item?.rate_4 ?? "N/A"}</p>}
-                      {item?.rate_5 && <p>Rate 5: {item?.rate_5 ?? "N/A"}</p>}
-                      {item?.rate_6 && <p>Rate 6: {item?.rate_6 ?? "N/A"}</p>}
-                    </td>
+                    
 
                     {/* Actions */}
-                    <td className="px-4 py-3 text-center align-top">
+                    <td className="px-4 py-3 align-top grid grid-cols-3 gap-2">
+<ViewSORModal data={item}/>
+                      <EditSORForm data={item} setReload={setReload} />
+                      <DeleteDataModal url={`/sor/delete-sor/${item?._id}`} setReload={setReload}/>
                       {item?.attachment ? (
                         <a
                           href={item.attachment}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="group inline-flex items-center justify-center gap-2 rounded-full border border-blue-300 bg-blue-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-600"
+                          className="group inline-flex items-center justify-center gap-1 rounded border border-blue-300 bg-[#4874c7] text-nowrap px-1.5 mt-2 py-1.5 text-xs font-semibold text-white hover:bg-blue-600 col-span-3"
                         >
-                          View File
+                        <Paperclip size={14} /> View File
                         </a>
                       ) : (
-                        <span className="text-gray-400 text-xs">No File</span>
+                        <span
+                          
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group inline-flex items-center justify-center gap-1 rounded border border-gray-300 bg-gray-100 text-gray-500 text-nowrap px-1.5 mt-2 py-1.5 text-xs font-semibold col-span-3"
+                        >
+                        <Paperclip size={14} /> No File
+                        </span>
                       )}
                     </td>
                   </tr>

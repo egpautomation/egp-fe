@@ -19,7 +19,7 @@ const useAllSOR = (searchTerm, page, limit) => {
           `${config.apiBaseUrl}/sor?departmentShortName=${searchTerm?.departmentShortName || ""}&itemCode=${searchTerm?.itemCode || ""}&description=${searchTerm?.description || ""}&page=${page}&limit=${limit}`
         );
         const data = await response.json();
-        console.log(data);
+  
         setSors(data?.data);
         setCount(data?.count);
       } catch (error) {
