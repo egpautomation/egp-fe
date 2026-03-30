@@ -28,12 +28,12 @@ export function downloadCreditLineAsWord(element: HTMLElement | null, filename =
     m.replace("<h2", '<h2 style="font-size:20px;"')
   );
 
-  content = content.replace(/<h3\b([^>]*)>/gi, (match, attrs) => {
+  content = content.replace(/<h3\b([^>]*)>/gi, (_, attrs: string) => {
     try {
       if (/style=(['"]).*?\1/i.test(attrs)) {
         return `<h3${attrs.replace(
           /style=(['"])(.*?)\1/i,
-          (s, q, v) => `style=${q}${v}; font-size:20px; color:#6D28D9; text-align:center;${q}`
+          (_s: string, q: string, v: string) => `style=${q}${v}; font-size:20px; color:#6D28D9; text-align:center;${q}`
         )}>`;
       }
       return `<h3${attrs} style="font-size:20px; color:#6D28D9; text-align:center;">`;
@@ -44,37 +44,37 @@ export function downloadCreditLineAsWord(element: HTMLElement | null, filename =
 
   content = content.replace(
     /<div([^>]*class=["'][^"']*text-justify[^"']*["'][^>]*)>/,
-    (match, p1) => `<div${p1} style="text-align:justify;">`
+    (_: string, p1: string) => `<div${p1} style="text-align:justify;">`
   );
 
-  content = content.replace(/<table([^>]*)>/gi, (m, attrs) => {
+  content = content.replace(/<table([^>]*)>/gi, (_: string, attrs: string) => {
     if (/style=/.test(attrs)) {
       return `<table${attrs.replace(
         /style=(['"])(.*?)\1/,
-        (s, q, v) =>
+        (_s: string, q: string, v: string) =>
           `style=${q}${v}; border-collapse:collapse; width:100%; border:1px solid #000;${q}`
       )}>`;
     }
     return `<table${attrs} style="border-collapse:collapse; width:100%; border:1px solid #000;">`;
   });
 
-  content = content.replace(/<(td|th)([^>]*)>/gi, (m, tag, attrs) => {
+  content = content.replace(/<(td|th)([^>]*)>/gi, (_: string, tag: string, attrs: string) => {
     if (/style=/.test(attrs)) {
       return `<${tag}${attrs.replace(
         /style=(['"])(.*?)\1/,
-        (s, q, v) => `style=${q}${v}; border:1px solid #000;${q}`
+        (_s: string, q: string, v: string) => `style=${q}${v}; border:1px solid #000;${q}`
       )}>`;
     }
     return `<${tag}${attrs} style="border:1px solid #000;">`;
   });
 
-  content = content.replace(/<([a-z0-9]+)([^>]*)>/gi, (full, tag, attrs) => {
+  content = content.replace(/<([a-z0-9]+)([^>]*)>/gi, (full: string, tag: string, attrs: string) => {
     try {
       if (!/class=(['"]).*?\btext-xs\b.*?\1/i.test(attrs)) return full;
       if (/style=(['"])(.*?)\1/i.test(attrs)) {
         return `<${tag}${attrs.replace(
           /style=(['"])(.*?)\1/i,
-          (s, q, v) => `style=${q}${v}; font-size:9px;${q}`
+          (_s: string, q: string, v: string) => `style=${q}${v}; font-size:9px;${q}`
         )}>`;
       }
       return `<${tag}${attrs} style="font-size:9px;">`;
@@ -83,7 +83,7 @@ export function downloadCreditLineAsWord(element: HTMLElement | null, filename =
     }
   });
 
-  content = content.replace(/<([a-z0-9]+)([^>]*)>/gi, (full, tag, attrs) => {
+  content = content.replace(/<([a-z0-9]+)([^>]*)>/gi, (full: string, tag: string, attrs: string) => {
     try {
       if (
         !/class=(['"]) .*?\btext-sm\b.*?\1/i.test(attrs) &&
@@ -93,7 +93,7 @@ export function downloadCreditLineAsWord(element: HTMLElement | null, filename =
       if (/style=(['"])(.*?)\1/i.test(attrs)) {
         return `<${tag}${attrs.replace(
           /style=(['"])(.*?)\1/i,
-          (s, q, v) => `style=${q}${v}; font-size:10px;${q}`
+          (_s: string, q: string, v: string) => `style=${q}${v}; font-size:10px;${q}`
         )}>`;
       }
       return `<${tag}${attrs} style="font-size:10px;">`;
@@ -102,13 +102,13 @@ export function downloadCreditLineAsWord(element: HTMLElement | null, filename =
     }
   });
 
-  content = content.replace(/<([a-z0-9]+)([^>]*)>/gi, (full, tag, attrs) => {
+  content = content.replace(/<([a-z0-9]+)([^>]*)>/gi, (full: string, tag: string, attrs: string) => {
     try {
       if (!/class=(['"]).*?\bpl-3\b.*?\1/i.test(attrs)) return full;
       if (/style=(['"])(.*?)\1/i.test(attrs)) {
         return `<${tag}${attrs.replace(
           /style=(['"])(.*?)\1/i,
-          (s, q, v) => `style=${q}${v}; padding-left:12px;${q}`
+          (_s: string, q: string, v: string) => `style=${q}${v}; padding-left:12px;${q}`
         )}>`;
       }
       return `<${tag}${attrs} style="padding-left:12px;">`;
@@ -117,13 +117,13 @@ export function downloadCreditLineAsWord(element: HTMLElement | null, filename =
     }
   });
 
-  content = content.replace(/<([a-z0-9]+)([^>]*)>/gi, (full, tag, attrs) => {
+  content = content.replace(/<([a-z0-9]+)([^>]*)>/gi, (full: string, tag: string, attrs: string) => {
     try {
       if (!/class=(['"]).*?\bitalic\b.*?\1/i.test(attrs)) return full;
       if (/style=(['"])(.*?)\1/i.test(attrs)) {
         return `<${tag}${attrs.replace(
           /style=(['"])(.*?)\1/i,
-          (s, q, v) => `style=${q}${v}; font-style:italic;${q}`
+          (_s: string, q: string, v: string) => `style=${q}${v}; font-style:italic;${q}`
         )}>`;
       }
       return `<${tag}${attrs} style="font-style:italic;">`;

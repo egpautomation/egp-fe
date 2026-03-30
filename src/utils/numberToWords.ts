@@ -1,72 +1,73 @@
 // Number to words conversion for Bengali currency format
- export  const numberToWords = (num:string | number) => {
-    const a = [
-      "",
-      "one",
-      "two",
-      "three",
-      "four",
-      "five",
-      "six",
-      "seven",
-      "eight",
-      "nine",
-      "ten",
-      "eleven",
-      "twelve",
-      "thirteen",
-      "fourteen",
-      "fifteen",
-      "sixteen",
-      "seventeen",
-      "eighteen",
-      "nineteen",
-    ];
-    const b = [
-      "",
-      "",
-      "twenty",
-      "thirty",
-      "forty",
-      "fifty",
-      "sixty",
-      "seventy",
-      "eighty",
-      "ninety",
-    ];
+export const numberToWords = (num: string | number) => {
+  const a = [
+    "",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen",
+  ];
+  const b = [
+    "",
+    "",
+    "twenty",
+    "thirty",
+    "forty",
+    "fifty",
+    "sixty",
+    "seventy",
+    "eighty",
+    "ninety",
+  ];
 
-    if (num === 0) return "zero";
+  let n = typeof num === "string" ? parseFloat(num) : num;
+  if (isNaN(n) || n === 0) return n === 0 ? "zero" : "";
 
-    const numToWordsBelowThousand = (n) => {
-      if (n < 20) return a[n];
-      if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+    const numToWordsBelowThousand = (val: number): string => {
+      if (val < 20) return a[val];
+      if (val < 100) return b[Math.floor(val / 10)] + (val % 10 ? " " + a[val % 10] : "");
       return (
-        a[Math.floor(n / 100)] +
+        a[Math.floor(val / 100)] +
         " hundred" +
-        (n % 100 ? " " + numToWordsBelowThousand(n % 100) : "")
+        (val % 100 ? " " + numToWordsBelowThousand(val % 100) : "")
       );
     };
 
     let result = "";
 
-    if (Math.floor(num / 10000000) > 0) {
-      result += numToWordsBelowThousand(Math.floor(num / 10000000)) + " crore ";
-      num %= 10000000;
+    if (Math.floor(n / 10000000) > 0) {
+      result += numToWordsBelowThousand(Math.floor(n / 10000000)) + " crore ";
+      n %= 10000000;
     }
-    if (Math.floor(num / 100000) > 0) {
-      result += numToWordsBelowThousand(Math.floor(num / 100000)) + " lakh ";
-      num %= 100000;
+    if (Math.floor(n / 100000) > 0) {
+      result += numToWordsBelowThousand(Math.floor(n / 100000)) + " lakh ";
+      n %= 100000;
     }
-    if (Math.floor(num / 1000) > 0) {
-      result += numToWordsBelowThousand(Math.floor(num / 1000)) + " thousand ";
-      num %= 1000;
+    if (Math.floor(n / 1000) > 0) {
+      result += numToWordsBelowThousand(Math.floor(n / 1000)) + " thousand ";
+      n %= 1000;
     }
-    if (Math.floor(num / 100) > 0) {
-      result += numToWordsBelowThousand(Math.floor(num / 100)) + " hundred ";
-      num %= 100;
+    if (Math.floor(n / 100) > 0) {
+      result += numToWordsBelowThousand(Math.floor(n / 100)) + " hundred ";
+      n %= 100;
     }
-    if (num > 0) {
-      result += numToWordsBelowThousand(num) + " ";
+    if (n > 0) {
+      result += numToWordsBelowThousand(Math.floor(n)) + " ";
     }
 
     return result.trim();
