@@ -6,6 +6,7 @@ import {
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 const DeleteDataModal = ({ setReload, url }) => {
+  console.log(url)
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDataDelete = async (e) => {
@@ -49,6 +51,7 @@ const DeleteDataModal = ({ setReload, url }) => {
         </div>
       </AlertDialogTrigger>
       <AlertDialogContent className="max-w-xl">
+        <AlertDialogTitle></AlertDialogTitle>
         <AlertDialogHeader>
           <div className="max-h-[70vh] overflow-y-auto p-4 space-y-5 customScrollbar text-center text-gray-900">
             <h3 className="text-2xl font-bold">Are Your sure ?</h3>

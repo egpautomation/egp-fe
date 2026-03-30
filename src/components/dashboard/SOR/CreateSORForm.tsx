@@ -61,18 +61,8 @@ const resetForm = () => {
         {/* Category */}
         <div>
           <Label className="mb-2">Category</Label>
-          <Select onValueChange={(v) => handleChange("category", v)}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Category" />
-            </SelectTrigger>
-            <SelectContent>
-              {demoData.map((item) => (
-                <SelectItem key={item} value={item}>
-                  {item}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input type="text" onChange={(e) => handleChange("category", e.target.value)} />
+
         </div>
 
         {/* Sub Category */}
@@ -82,11 +72,16 @@ const resetForm = () => {
         </div>
 
         {/* Sub Sub Category */}
-        <div>
+        <div className="col-span-2">
           <Label className="mb-2">Sub Sub Category</Label>
           <Input onChange={(e) => handleChange("subSubCategory", e.target.value)} />
         </div>
 
+        {/* Group  Name */}
+        <div>
+          <Label className="mb-2">Group Name</Label>
+          <Input onChange={(e) => handleChange("group_name", e.target.value)} />
+        </div>
         {/* Item Code */}
         <div>
           <Label className="mb-2">Item Code</Label>
