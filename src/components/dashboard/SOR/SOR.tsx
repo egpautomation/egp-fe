@@ -19,6 +19,7 @@ import EditSORForm from "./EditSORForm";
 import ViewSORModal from "./ViewSORForm";
 import DeleteDataModal from "@/shared/Dashboard/DeleteDataModal";
 import DownloadSOR from "./DownloadSOR";
+import SORJsonImport from "./CreateMultipleSOR";
 
 export default function SOR() {
   const [searchTerm, setSearchTerm] = useState({
@@ -32,10 +33,11 @@ export default function SOR() {
   const { sors, count, loading,setReload } = useAllSOR(searchTerm, 1, 10);
   const {departments} = useAllDepartments();
   const skeleton = new Array(pageLimit).fill(Math?.random());
+  const [isJSONImportOpen, setIsJSONImportOpen] = useState(false);
   return (
     <div className="p-6 container mx-auto">
   
-      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 mb-5 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 mb-5 gap-5 ">
         <Input
           placeholder="Search by Description..."
           value={searchTerm.description}
@@ -60,7 +62,7 @@ export default function SOR() {
           value={searchTerm.itemCode}
           onChange={(e) => setSearchTerm({ ...searchTerm, itemCode: e.target.value })}
         />
-       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+       <div className="grid col-span-2 grid-cols-1 xl:grid-cols-3 gap-5">
          <Dialog>
           <DialogTrigger asChild>
             <Button><CirclePlus /> Add SOR</Button>
@@ -74,10 +76,16 @@ export default function SOR() {
           </DialogContent>
         </Dialog>
             <DownloadSOR sors={sors} />
+            <Button onClick={() => setIsJSONImportOpen(!isJSONImportOpen)} className="bg-blue-200 hover:bg-blue-200 text-gray-600 font-semibold">
+              <File size={14} className=" inline" /> Import JSON
+            
+            </Button>
        </div>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm ">
+      <SORJsonImport  isJSONImportOpen={isJSONImportOpen} setReload={setReload} />
+
+      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm mt-7">
         <table className="w-full overflow-x-auto">
           <thead>
             <tr className="bg-primary text-primary-foreground">
