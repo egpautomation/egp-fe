@@ -14,10 +14,11 @@ import { Input } from "@/components/ui/input";
 import useAllDepartments from "@/hooks/useAllDepartments";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Pagination from "@/shared/Pagination/Pagination";
-import { Edit, File, Paperclip } from "lucide-react";
+import { CirclePlus, Download, Edit, File, Paperclip } from "lucide-react";
 import EditSORForm from "./EditSORForm";
 import ViewSORModal from "./ViewSORForm";
 import DeleteDataModal from "@/shared/Dashboard/DeleteDataModal";
+import DownloadSOR from "./DownloadSOR";
 
 export default function SOR() {
   const [searchTerm, setSearchTerm] = useState({
@@ -33,7 +34,8 @@ export default function SOR() {
   const skeleton = new Array(pageLimit).fill(Math?.random());
   return (
     <div className="p-6 container mx-auto">
-      <div className="grid grid-cols-4 mb-5 gap-5">
+  
+      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 mb-5 gap-5">
         <Input
           placeholder="Search by Description..."
           value={searchTerm.description}
@@ -58,9 +60,10 @@ export default function SOR() {
           value={searchTerm.itemCode}
           onChange={(e) => setSearchTerm({ ...searchTerm, itemCode: e.target.value })}
         />
-        <Dialog>
+       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+         <Dialog>
           <DialogTrigger asChild>
-            <Button>Add SOR</Button>
+            <Button><CirclePlus /> Add SOR</Button>
           </DialogTrigger>
 
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -70,6 +73,8 @@ export default function SOR() {
             <CreateSORForm setReload={setReload} />
           </DialogContent>
         </Dialog>
+            <DownloadSOR sors={sors} />
+       </div>
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm ">

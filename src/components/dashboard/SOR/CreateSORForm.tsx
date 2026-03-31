@@ -13,7 +13,7 @@ import {
 import useAllDepartments from "@/hooks/useAllDepartments";
 import { createData } from "@/lib/createData";
 import { useState } from "react";
-const demoData = ["Civil", "Electrical", "Mechanical"];
+
 
 export default function CreateSORForm({setReload}: {setReload: () => void}) {
   const [formData, setFormData] = useState<any>({});

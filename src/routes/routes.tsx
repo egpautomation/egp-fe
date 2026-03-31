@@ -90,6 +90,7 @@ import ManufacturerAuthorizationForGoods from "@/pages/dashboardLayout/pg22aOtmG
 import LineOfCreditPage from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/LineOfCreditPage";
 import SOR from "@/components/dashboard/SOR/SOR";
 import LTMBypassReport from "@/pages/dashboardLayout/ByPassReport/LTMBypassReport";
+import BOQPrivate from "@/components/dashboard/SOR/BOQPrivate";
 
 
 const router = createBrowserRouter([
@@ -394,6 +395,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <SOR />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "estimated/boq",
+        element: (
+          <PrivateRoute>
+            <BOQPrivate />
           </PrivateRoute>
         ),
       },
