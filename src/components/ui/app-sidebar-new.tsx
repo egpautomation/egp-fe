@@ -395,6 +395,11 @@ export function AppSidebarNew() {
           path: "/public/by-pass-report",
           role: ["guest", "user", "moderator", "admin"],
         },
+        {
+          label: "LTM By Pass Reports",
+          path: "/public/ltm-by-pass-report",
+          role: ["guest", "user", "moderator", "admin"],
+        },
       ],
     },
     {

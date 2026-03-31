@@ -89,6 +89,7 @@ import LetterOfAuthorization from "@/pages/dashboardLayout/pg22aOtmGoods/TenderT
 import ManufacturerAuthorizationForGoods from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/ManufacturerAuthorizationForGoods";
 import LineOfCreditPage from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/LineOfCreditPage";
 import SOR from "@/components/dashboard/SOR/SOR";
+import LTMBypassReport from "@/pages/dashboardLayout/ByPassReport/LTMBypassReport";
 
 
 const router = createBrowserRouter([
@@ -194,6 +195,10 @@ const router = createBrowserRouter([
       {
         path: "/public/by-pass-report",
         element: <ByPassReport />,
+      },
+      {
+        path: "/public/ltm-by-pass-report",
+        element: <LTMBypassReport />,
       },
       {
         path: "/public/job-order/update-status",

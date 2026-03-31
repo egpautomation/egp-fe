@@ -2,8 +2,9 @@
 import { config } from "@/lib/config";
 import { useParams, Link } from "react-router-dom";
 import { useMemo, useState, useEffect, useContext } from "react";
-import { Filter, RefreshCw, Edit } from "lucide-react";
+import { Filter, RefreshCw, Edit, Plus } from "lucide-react";
 import useSingleData from "@/hooks/useSingleData";
+import toast from "react-hot-toast";
 import { TenderListTab } from "./TenderTabs/TenderListTab";
 import { OngoingTenderTab } from "./TenderTabs/OngoingTenderTab";
 import { TurnoverHistoryTab } from "./TenderTabs/TurnoverHistoryTab";
@@ -819,6 +820,17 @@ const PgTwoTowOtmGoodsDetails = () => {
               className="flex items-center gap-2"
             >
               Update Tender Info
+            </Button>
+            <Button
+              onClick={() => {
+                toast.success("Added to By Pass Report (Mock)");
+              }}
+              variant="default"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Add to By Pass Report
             </Button>
           </div>
         </div>
