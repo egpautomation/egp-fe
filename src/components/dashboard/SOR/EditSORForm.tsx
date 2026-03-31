@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 
 import {
   Dialog,
@@ -26,7 +25,7 @@ import { updateData } from "@/lib/updateData";
 import { SquarePen } from "lucide-react";
 import config from "@/lib/config";
 
-const demoData = ["Civil", "Electrical", "Mechanical"];
+
 const departments = [{ shortName: "RHD" }, { shortName: "EED" }];
 
 export default function EditSORForm({
