@@ -5,6 +5,7 @@ import { createData } from "@/lib/createData";
 export default function CreateTenderPreparationButton({ data }: { data: any }) {
   const handleCreateTenderPreparation = () => {
     
+    // const url = `${config.apiBaseUrl}/tender-preparation/create-tender-preparation`;
     const url = `${config.apiBaseUrl}/tender-preparation/create-tender-preparation`;
     createData(url, data, null, null);
   };
