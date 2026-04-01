@@ -211,6 +211,11 @@ export function AppSidebarNew() {
           path: "/dashboard/estimated/sor",
           role: ["admin", "moderator"],
         },
+        {
+          label: "BOQ",
+          path: "/dashboard/estimated/boq",
+          role: ["admin", "moderator"],
+        },
       ],
     },
     {
