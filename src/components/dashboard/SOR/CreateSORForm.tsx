@@ -14,22 +14,21 @@ import useAllDepartments from "@/hooks/useAllDepartments";
 import { createData } from "@/lib/createData";
 import { useState } from "react";
 
-
-export default function CreateSORForm({setReload}: {setReload: () => void}) {
+export default function CreateSORForm({ setReload }: { setReload: () => void }) {
   const [formData, setFormData] = useState<any>({});
- const {departments} = useAllDepartments();
+  const { departments } = useAllDepartments();
   const handleChange = (key: string, value: any) => {
     setFormData((prev: any) => ({
       ...prev,
       [key]: value,
     }));
   };
-const resetForm = () => {
-  setFormData({});
-}
+  const resetForm = () => {
+    setFormData({});
+  };
   const handleSubmit = () => {
     const url = `${config.apiBaseUrl}/sor/create-sor`; // Replace with your actual endpoint
-   
+
     createData(url, formData, setReload, resetForm);
   };
   return (
@@ -43,7 +42,7 @@ const resetForm = () => {
               <SelectValue placeholder="Select Department" />
             </SelectTrigger>
             <SelectContent>
-             {departments?.map((dept) => (
+              {departments?.map((dept) => (
                 <SelectItem key={dept.shortName} value={dept.shortName}>
                   {dept.shortName}
                 </SelectItem>
@@ -62,7 +61,6 @@ const resetForm = () => {
         <div>
           <Label className="mb-2">Category</Label>
           <Input type="text" onChange={(e) => handleChange("category", e.target.value)} />
-
         </div>
 
         {/* Sub Category */}

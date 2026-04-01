@@ -25,16 +25,9 @@ import { updateData } from "@/lib/updateData";
 import { SquarePen } from "lucide-react";
 import config from "@/lib/config";
 
-
 const departments = [{ shortName: "RHD" }, { shortName: "EED" }];
 
-export default function EditSORForm({
-  data,
-  setReload,
-}: {
-  data: any;
-  setReload: () => void;
-}) {
+export default function EditSORForm({ data, setReload }: { data: any; setReload: () => void }) {
   const [formData, setFormData] = useState<any>({});
   const [originalData, setOriginalData] = useState<any>({});
   const [loading, setLoading] = useState(false);
@@ -77,14 +70,7 @@ export default function EditSORForm({
   const preparePayload = () => {
     const modified = getModifiedFields();
 
-    const rateKeys = [
-      "rate_1",
-      "rate_2",
-      "rate_3",
-      "rate_4",
-      "rate_5",
-      "rate_6",
-    ];
+    const rateKeys = ["rate_1", "rate_2", "rate_3", "rate_4", "rate_5", "rate_6"];
 
     const rates: any = {};
 
@@ -102,7 +88,6 @@ export default function EditSORForm({
     return modified;
   };
 
-  
   const handleSubmit = async () => {
     try {
       const payload = preparePayload();
@@ -116,11 +101,8 @@ export default function EditSORForm({
 
       console.log("Payload:", payload);
 
-      
       const api = `${config.apiBaseUrl}/sor/update-sor/${data._id}`;
       updateData(api, payload, setReload, null);
-
-      
     } catch (error) {
       console.error(error);
     } finally {
@@ -131,7 +113,6 @@ export default function EditSORForm({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        
         <SquarePen className="cursor-pointer" />
       </DialogTrigger>
 
@@ -146,9 +127,7 @@ export default function EditSORForm({
             <Label className="mb-2">Department Short Name</Label>
             <Select
               value={formData.departmentShortName}
-              onValueChange={(v) =>
-                handleChange("departmentShortName", v)
-              }
+              onValueChange={(v) => handleChange("departmentShortName", v)}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select Department" />
@@ -169,9 +148,7 @@ export default function EditSORForm({
             <Input
               type="number"
               value={formData.yearOfRate || ""}
-              onChange={(e) =>
-                handleChange("yearOfRate", e.target.value)
-              }
+              onChange={(e) => handleChange("yearOfRate", e.target.value)}
             />
           </div>
 
@@ -181,11 +158,8 @@ export default function EditSORForm({
             <Input
               type="text"
               value={formData.category || ""}
-              onChange={(e) =>
-                handleChange("category", e.target.value)
-              }
+              onChange={(e) => handleChange("category", e.target.value)}
             />
-           
           </div>
 
           {/* Sub Category */}
@@ -193,9 +167,7 @@ export default function EditSORForm({
             <Label className="mb-2">Sub Category</Label>
             <Input
               value={formData.subCategory || ""}
-              onChange={(e) =>
-                handleChange("subCategory", e.target.value)
-              }
+              onChange={(e) => handleChange("subCategory", e.target.value)}
             />
           </div>
 
@@ -204,9 +176,7 @@ export default function EditSORForm({
             <Label className="mb-2">Sub Sub Category</Label>
             <Input
               value={formData.subSubCategory || ""}
-              onChange={(e) =>
-                handleChange("subSubCategory", e.target.value)
-              }
+              onChange={(e) => handleChange("subSubCategory", e.target.value)}
             />
           </div>
 
@@ -215,9 +185,7 @@ export default function EditSORForm({
             <Label className="mb-2">Group Name</Label>
             <Input
               value={formData.group_name || ""}
-              onChange={(e) =>
-                handleChange("group_name", e.target.value)
-              }
+              onChange={(e) => handleChange("group_name", e.target.value)}
             />
           </div>
 
@@ -226,9 +194,7 @@ export default function EditSORForm({
             <Label className="mb-2">Item Code</Label>
             <Input
               value={formData.itemCode || ""}
-              onChange={(e) =>
-                handleChange("itemCode", e.target.value)
-              }
+              onChange={(e) => handleChange("itemCode", e.target.value)}
             />
           </div>
 
@@ -237,9 +203,7 @@ export default function EditSORForm({
             <Label className="mb-2">Description</Label>
             <Input
               value={formData.description || ""}
-              onChange={(e) =>
-                handleChange("description", e.target.value)
-              }
+              onChange={(e) => handleChange("description", e.target.value)}
             />
           </div>
 
@@ -257,9 +221,7 @@ export default function EditSORForm({
             <Label className="mb-2">Source of Rate</Label>
             <Input
               value={formData.sourceOfRate || ""}
-              onChange={(e) =>
-                handleChange("sourceOfRate", e.target.value)
-              }
+              onChange={(e) => handleChange("sourceOfRate", e.target.value)}
             />
           </div>
 
@@ -268,9 +230,7 @@ export default function EditSORForm({
             <Label className="mb-2">Reference</Label>
             <Input
               value={formData.reference || ""}
-              onChange={(e) =>
-                handleChange("reference", e.target.value)
-              }
+              onChange={(e) => handleChange("reference", e.target.value)}
             />
           </div>
 
@@ -279,9 +239,7 @@ export default function EditSORForm({
             <Label className="mb-2">Attachment</Label>
             <Input
               value={formData.attachment || ""}
-              onChange={(e) =>
-                handleChange("attachment", e.target.value)
-              }
+              onChange={(e) => handleChange("attachment", e.target.value)}
             />
           </div>
 
@@ -292,20 +250,14 @@ export default function EditSORForm({
               <Input
                 type="number"
                 value={formData[`rate_${num}`] || ""}
-                onChange={(e) =>
-                  handleChange(`rate_${num}`, e.target.value)
-                }
+                onChange={(e) => handleChange(`rate_${num}`, e.target.value)}
               />
             </div>
           ))}
         </div>
 
         <div className="flex justify-end mt-6">
-          <Button
-            className="w-full"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
+          <Button className="w-full" onClick={handleSubmit} disabled={loading}>
             {loading ? "Updating..." : "Update"}
           </Button>
         </div>

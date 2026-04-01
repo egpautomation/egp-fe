@@ -35,7 +35,7 @@ const LTMBypassReport = () => {
       vatReturnCertificate: "Yes",
       manpower: "10",
       equipment: "5",
-      updateAuditReportFileName: "audit_2023.pdf"
+      updateAuditReportFileName: "audit_2023.pdf",
     },
     {
       _id: "mock2",
@@ -64,8 +64,8 @@ const LTMBypassReport = () => {
       vatReturnCertificate: "No",
       manpower: "15",
       equipment: "8",
-      updateAuditReportFileName: "audit_2023_v2.pdf"
-    }
+      updateAuditReportFileName: "audit_2023_v2.pdf",
+    },
   ];
 
   const loading = false;
@@ -77,7 +77,7 @@ const LTMBypassReport = () => {
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4 text-primary">LTM By Pass Report (Mock)</h2>
-      
+
       {/* Error State */}
       {error && (
         <div className="mt-5 p-4 bg-red-50 border border-red-200 rounded-md">
@@ -125,7 +125,10 @@ const LTMBypassReport = () => {
               {loading ? (
                 skeleton.map((item, idx) => (
                   <tr key={idx} className="animate-pulse border-b">
-                    <td colSpan={28} className={`h-12 ${idx % 2 === 1 ? "bg-gray-50" : "bg-white"}`}></td>
+                    <td
+                      colSpan={28}
+                      className={`h-12 ${idx % 2 === 1 ? "bg-gray-50" : "bg-white"}`}
+                    ></td>
                   </tr>
                 ))
               ) : mockData && mockData.length > 0 ? (

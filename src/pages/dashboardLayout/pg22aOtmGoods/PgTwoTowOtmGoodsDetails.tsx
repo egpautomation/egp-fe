@@ -42,6 +42,7 @@ const mockTenderData = [
 
 import useUsersCompanyMigration from "@/hooks/useUsersCompanyMigrations";
 import { AuthContext } from "@/provider/AuthProvider";
+import BOQTab from "./TenderTabs/BOQTab";
 
 // --- মেইন কম্পোনেন্ট ---
 const PgTwoTowOtmGoodsDetails = () => {
@@ -71,7 +72,7 @@ const PgTwoTowOtmGoodsDetails = () => {
     ? `${config.apiBaseUrl}/tenders/tenderId/${currentTender.tenderId}`
     : null;
   const { data: liveTenderData } = useSingleData(liveTenderUrl);
-  console.log(liveTenderUrl);
+
   // Initialize shared state from database values
   useEffect(() => {
     if (currentTender) {
@@ -554,9 +555,12 @@ const PgTwoTowOtmGoodsDetails = () => {
       id: 9,
       name: "BOQ",
       content: (
-        <div className="bg-green-50 p-4 rounded-lg">
-          <h3 className="font-semibold text-green-800 mb-2">Bill of Quantities</h3>
-        </div>
+        <BOQTab
+          procurementNature={currentTender?.procurementNature}
+          egpEmail={egpEmail}
+          procurementMethod={currentTender?.procurementMethod}
+          tenderId={currentTender?.tenderId || ""}
+        />
       ),
     },
     {
