@@ -5,6 +5,7 @@ import { useMemo, useState, useEffect, useContext } from "react";
 import { Filter, RefreshCw, Edit, Plus } from "lucide-react";
 import useSingleData from "@/hooks/useSingleData";
 import toast from "react-hot-toast";
+import axiosInstance from "@/lib/axiosInstance";
 import { TenderListTab } from "./TenderTabs/TenderListTab";
 import { OngoingTenderTab } from "./TenderTabs/OngoingTenderTab";
 import { TurnoverHistoryTab } from "./TenderTabs/TurnoverHistoryTab";
@@ -51,6 +52,7 @@ const PgTwoTowOtmGoodsDetails = () => {
   const [isReloading, setIsReloading] = useState(false);
   const [selectedContractIdForEdit, setSelectedContractIdForEdit] = useState(null);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const [isSubmittingBypass, setIsSubmittingBypass] = useState(false);
 
   // Shared state for Tender Capacity inputs (for real-time preview updates)
   // Shared state for Tender Capacity inputs (for real-time preview updates)
@@ -376,6 +378,93 @@ const PgTwoTowOtmGoodsDetails = () => {
       setTenderReload((prev) => prev + 1);
     } catch (error) {
       console.error("Error saving experience contract:", error);
+    }
+  };
+
+  const handleAddToBypass = async () => {
+    setIsSubmittingBypass(true);
+    try {
+      const specificExp = completedContracts?.find((c) => c._id === currentTender?.experienceContractId);
+      
+      const payload = {
+        invoice_no: String(currentTender?.jobOrder || ""),
+        job_no: String(currentTender?.jobOrder || ""),
+        tender_id: String(currentTender?.tenderId || ""),
+        egp_email: companyData?.egpEmail || currentTender?.egpEmail || "",
+        company_name: companyData?.companyName || "",
+        password: companyData?.password || "",
+        bank_name: companyData?.bankName || "",
+        liquid_asset: String(liveTenderData?.liquidAssets || ""),
+        active_date1: liveTenderData?.documentLastSelling || "",
+        active_date2: liveTenderData?.openingDateTime || "",
+        company_address: companyData?.companyAddress || "",
+        author: companyData?.autho || "",
+        nid: companyData?.nid || "",
+        trade_license: companyData?.trade || "",
+        tin: companyData?.tin || "",
+        vat: companyData?.vat || "",
+        ltm_license: companyData?.departmentLicenses && Object.keys(companyData.departmentLicenses).length > 0 ? "Yes" : "",
+        other1_map: companyData?.other1Map || "",
+        slno_line_credit: companyData?.slnoLineCredit || "",
+        other2_map: companyData?.other2Map || "",
+        whatsapp: companyData?.whatsapp || companyData?.mobileNumber || "",
+        tin_return: companyData?.tinReturnCertificate || "",
+        vat_return: companyData?.vatReturnCertificate || "",
+        manpower: companyData?.manpower || "",
+        equipment: companyData?.equipment || "",
+        audit_report: companyData?.updateAuditReportFileName || "",
+
+        structural_steel_works: "",
+        pavement_asphalt_works: "",
+
+        general_exp_year: String(companyData?.yearsOfGeneralExperience || ""),
+        specific_contract_no: specificExp?.contractNo || "",
+        specific_contract_name: specificExp?.descriptionOfWorks || "",
+        specific_contract_role: specificExp?.role || "",
+        specific_award_date: specificExp?.dateOfNOA || "",
+        specific_completion_date: specificExp?.contractPeriodExtendedUpTo || "",
+        specific_contract_value: String(specificExp?.actualPayment || specificExp?.actualPaymentJvShare || ""),
+        specific_entity_details: specificExp?.organization || "",
+        specific_description: specificExp?.descriptionOfWorks || "",
+
+        year01_period: turnoverData[0]?.period || "",
+        year01_amount_currency: turnoverData[0]?.amountCurrency || "",
+        year01_amount_bdt: turnoverData[0]?.amountBDT || "",
+        year02_period: turnoverData[1]?.period || "",
+        year02_amount_currency: turnoverData[1]?.amountCurrency || "",
+        year02_amount_bdt: turnoverData[1]?.amountBDT || "",
+        year03_period: turnoverData[2]?.period || "",
+        year03_amount_currency: turnoverData[2]?.amountCurrency || "",
+        year03_amount_bdt: turnoverData[2]?.amountBDT || "",
+        year04_period: turnoverData[3]?.period || "",
+        year04_amount_currency: turnoverData[3]?.amountCurrency || "",
+        year04_amount_bdt: turnoverData[3]?.amountBDT || "",
+        year05_period: turnoverData[4]?.period || "",
+        year05_amount_currency: turnoverData[4]?.amountCurrency || "",
+        year05_amount_bdt: turnoverData[4]?.amountBDT || "",
+
+        loc_no: "1",
+        loc_source: companyData?.bankName || "",
+        loc_amount: String(liveTenderData?.liquidAssets || ""),
+
+        contact_details: companyData?.mobileNumber || companyData?.email || "",
+        qualifications_experience: "",
+        tender_capacity_period: String(currentTender?.proposeYear || ""),
+        tender_capacity_max_value: String(currentTender?.Maximumvalue || ""),
+        tender_capacity_remaining_value: String(calculatedAssessedCapacity || ""),
+        
+        user_email: user?.email || "" // Passing user email for coin deduction
+      };
+
+      const response = await axiosInstance.post("/otm-bypass-report", payload);
+      if (response.data) {
+        toast.success("Successfully added to Bypass Report");
+      }
+    } catch (error) {
+      console.error("Error adding to bypass report:", error);
+      toast.error("Failed to add to Bypass Report");
+    } finally {
+      setIsSubmittingBypass(false);
     }
   };
 
@@ -822,15 +911,18 @@ const PgTwoTowOtmGoodsDetails = () => {
               Update Tender Info
             </Button>
             <Button
-              onClick={() => {
-                toast.success("Added to By Pass Report (Mock)");
-              }}
+              onClick={handleAddToBypass}
               variant="default"
               size="sm"
+              disabled={isSubmittingBypass}
               className="flex items-center gap-2"
             >
-              <Plus className="w-4 h-4" />
-              Add to By Pass Report
+              {isSubmittingBypass ? (
+                <RefreshCw className="w-4 h-4 animate-spin" />
+              ) : (
+                <Plus className="w-4 h-4" />
+              )}
+              {isSubmittingBypass ? "Adding..." : "Add to By Pass Report"}
             </Button>
           </div>
         </div>

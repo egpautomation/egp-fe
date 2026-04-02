@@ -1,82 +1,25 @@
-// @ts-nocheck
 import { useState } from "react";
+import useSingleData from "@/hooks/useSingleData";
+import { config } from "@/lib/config";
 import ByPassReportRow from "./ByPassReportRow";
 
 const LTMBypassReport = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(20);
 
-  // Mock data for initial UI demonstration
-  const mockData = [
-    {
-      _id: "mock1",
-      orderId: 1001,
-      jobId: 10011,
-      tenderId: "789456",
-      egpMail: "company1@example.com",
-      companyName: "Mock LTM Company A",
-      password: "pass123",
-      bankName: "Example Bank Ltd",
-      liquidAssetsTenderAmount: "1,500,000",
-      activityDate1: "2024-04-01",
-      activityDate2: "2024-04-30",
-      companyAddress: "123 Mock Street, Dhaka",
-      autho: "John Doe",
-      nid: "1234567890",
-      trade: "TR-999",
-      tin: "TIN-888",
-      vat: "VAT-777",
-      licenseSL: "LTM-001",
-      other1: "Yes",
-      SLOfCredit: "LC-100",
-      other2Map: "No",
-      whatsApp: "01700000000",
-      tinReturnCertificate: "Yes",
-      vatReturnCertificate: "Yes",
-      manpower: "10",
-      equipment: "5",
-      updateAuditReportFileName: "audit_2023.pdf"
-    },
-    {
-      _id: "mock2",
-      orderId: 1002,
-      jobId: 10021,
-      tenderId: "654321",
-      egpMail: "company2@example.com",
-      companyName: "Mock LTM Company B",
-      password: "pass456",
-      bankName: "Global Trust Bank",
-      liquidAssetsTenderAmount: "2,000,000",
-      activityDate1: "2024-05-15",
-      activityDate2: "2024-06-15",
-      companyAddress: "456 Fake Road, Chittagong",
-      autho: "Jane Smith",
-      nid: "0987654321",
-      trade: "TR-111",
-      tin: "TIN-222",
-      vat: "VAT-333",
-      licenseSL: "LTM-002",
-      other1: "No",
-      SLOfCredit: "LC-200",
-      other2Map: "Yes",
-      whatsApp: "01800000000",
-      tinReturnCertificate: "Yes",
-      vatReturnCertificate: "No",
-      manpower: "15",
-      equipment: "8",
-      updateAuditReportFileName: "audit_2023_v2.pdf"
-    }
-  ];
+  // Fetch real bypass report data from API
+  const { data: bypassReports, loading } = useSingleData(`${config.apiBaseUrl}/otm-bypass-report`);
+  
+  const reportData = Array.isArray(bypassReports) ? bypassReports : (bypassReports?.data || []);
 
-  const loading = false;
   const error = null;
-  const count = mockData.length;
+  const count = reportData.length;
 
   const skeleton = new Array(pageLimit).fill(Math?.random());
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4 text-primary">LTM By Pass Report (Mock)</h2>
+      <h2 className="text-2xl font-bold mb-4 text-primary">LTM By Pass Report</h2>
       
       {/* Error State */}
       {error && (
@@ -91,50 +34,96 @@ const LTMBypassReport = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-primary text-primary-foreground text-left">
+                {/* General Info */}
                 <th className="whitespace-nowrap px-4 py-3">SL</th>
-                <th className="whitespace-nowrap px-4 py-3">InvoiceNo</th>
-                <th className="whitespace-nowrap px-4 py-3">JobNo</th>
+                <th className="whitespace-nowrap px-4 py-3">Invoice No</th>
+                <th className="whitespace-nowrap px-4 py-3">Job No</th>
                 <th className="whitespace-nowrap px-4 py-3">ReLogin</th>
-                <th className="whitespace-nowrap px-4 py-3">TenderId</th>
-                <th className="whitespace-nowrap px-4 py-3">EGP-Email</th>
-                <th className="whitespace-nowrap px-4 py-3">CompanyName</th>
+                <th className="whitespace-nowrap px-4 py-3">Tender Id</th>
+                <th className="whitespace-nowrap px-4 py-3">EGP Email</th>
+                <th className="whitespace-nowrap px-4 py-3">Company Name</th>
                 <th className="whitespace-nowrap px-4 py-3">Password</th>
-                <th className="whitespace-nowrap px-4 py-3">BankName</th>
-                <th className="whitespace-nowrap px-4 py-3">LiquidAsset</th>
-                <th className="whitespace-nowrap px-4 py-3">ActiveDate1</th>
-                <th className="whitespace-nowrap px-4 py-3">ActiveDate2</th>
-                <th className="whitespace-nowrap px-4 py-3">CompanyAddress</th>
+                <th className="whitespace-nowrap px-4 py-3">Bank Name</th>
+                <th className="whitespace-nowrap px-4 py-3">Liquid Asset</th>
+                <th className="whitespace-nowrap px-4 py-3">Active Date 1</th>
+                <th className="whitespace-nowrap px-4 py-3">Active Date 2</th>
+                <th className="whitespace-nowrap px-4 py-3">Company Address</th>
                 <th className="whitespace-nowrap px-4 py-3">Author</th>
+                
+                {/* Documents & Mappings */}
                 <th className="whitespace-nowrap px-4 py-3">NID</th>
-                <th className="whitespace-nowrap px-4 py-3">Trade</th>
-                <th className="whitespace-nowrap px-4 py-3">Tin</th>
-                <th className="whitespace-nowrap px-4 py-3">Vat</th>
-                <th className="whitespace-nowrap px-4 py-3">Ltm_License</th>
-                <th className="whitespace-nowrap px-4 py-3">Other_1_Map</th>
-                <th className="whitespace-nowrap px-4 py-3">SLNoLineOfCredit</th>
-                <th className="whitespace-nowrap px-4 py-3">Other_2_Map</th>
-                <th className="whitespace-nowrap px-4 py-3">Whats_app</th>
-                <th className="whitespace-nowrap px-4 py-3">TinReturn</th>
-                <th className="whitespace-nowrap px-4 py-3">VatReturn</th>
+                <th className="whitespace-nowrap px-4 py-3">Trade License</th>
+                <th className="whitespace-nowrap px-4 py-3">TIN</th>
+                <th className="whitespace-nowrap px-4 py-3">VAT</th>
+                <th className="whitespace-nowrap px-4 py-3">LTM License</th>
+                <th className="whitespace-nowrap px-4 py-3">Other 1 Map</th>
+                <th className="whitespace-nowrap px-4 py-3">SL No Line Credit</th>
+                <th className="whitespace-nowrap px-4 py-3">Other 2 Map</th>
+                <th className="whitespace-nowrap px-4 py-3">WhatsApp</th>
+                <th className="whitespace-nowrap px-4 py-3">TIN Return</th>
+                <th className="whitespace-nowrap px-4 py-3">VAT Return</th>
                 <th className="whitespace-nowrap px-4 py-3">Manpower</th>
                 <th className="whitespace-nowrap px-4 py-3">Equipment</th>
-                <th className="whitespace-nowrap px-4 py-3">AuditReport</th>
+                <th className="whitespace-nowrap px-4 py-3">Audit Report</th>
+
+                {/* Additional Technical */}
+                <th className="whitespace-nowrap px-4 py-3">Structural Steel Works</th>
+                <th className="whitespace-nowrap px-4 py-3">Pavement Asphalt Works</th>
+
+                {/* Specific Experience */}
+                <th className="whitespace-nowrap px-4 py-3">General Exp Year</th>
+                <th className="whitespace-nowrap px-4 py-3">Specific Contract No</th>
+                <th className="whitespace-nowrap px-4 py-3">Specific Contract Name</th>
+                <th className="whitespace-nowrap px-4 py-3">Specific Contract Role</th>
+                <th className="whitespace-nowrap px-4 py-3">Specific Award Date</th>
+                <th className="whitespace-nowrap px-4 py-3">Specific Completion Date</th>
+                <th className="whitespace-nowrap px-4 py-3">Specific Contract Value</th>
+                <th className="whitespace-nowrap px-4 py-3">Specific Entity Details</th>
+                <th className="whitespace-nowrap px-4 py-3">Specific Description</th>
+
+                {/* Financial Turnover */}
+                <th className="whitespace-nowrap px-4 py-3">Year 1 Period</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 1 Curr</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 1 BDT</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 2 Period</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 2 Curr</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 2 BDT</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 3 Period</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 3 Curr</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 3 BDT</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 4 Period</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 4 Curr</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 4 BDT</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 5 Period</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 5 Curr</th>
+                <th className="whitespace-nowrap px-4 py-3">Year 5 BDT</th>
+
+                {/* LOC and Extra Info */}
+                <th className="whitespace-nowrap px-4 py-3">LOC No</th>
+                <th className="whitespace-nowrap px-4 py-3">LOC Source</th>
+                <th className="whitespace-nowrap px-4 py-3">LOC Amount</th>
+                <th className="whitespace-nowrap px-4 py-3">Contact Details</th>
+                <th className="whitespace-nowrap px-4 py-3">Qual & Exp</th>
+                <th className="whitespace-nowrap px-4 py-3">Tender Cap Period</th>
+                <th className="whitespace-nowrap px-4 py-3">Tender Cap Max</th>
+                <th className="whitespace-nowrap px-4 py-3">Tender Cap Rem</th>
+                <th className="whitespace-nowrap px-4 py-3">Created At</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 skeleton.map((item, idx) => (
                   <tr key={idx} className="animate-pulse border-b">
-                    <td colSpan={28} className={`h-12 ${idx % 2 === 1 ? "bg-gray-50" : "bg-white"}`}></td>
+                    <td colSpan={63} className={`h-12 ${idx % 2 === 1 ? "bg-gray-50" : "bg-white"}`}></td>
                   </tr>
                 ))
-              ) : mockData && mockData.length > 0 ? (
-                mockData.map((item, idx) => (
-                  <ByPassReportRow key={item._id || idx} item={item} idx={idx} data={mockData} />
+              ) : reportData && reportData.length > 0 ? (
+                reportData.map((item, idx) => (
+                  <ByPassReportRow key={item._id || idx} item={item} idx={idx} data={reportData} />
                 ))
               ) : (
                 <tr>
-                  <td colSpan={28} className="px-4 py-12 text-center text-gray-500 bg-gray-50">
+                  <td colSpan={63} className="px-4 py-12 text-center text-gray-500 bg-gray-50">
                     <p className="text-lg font-medium">No bypass report data found</p>
                   </td>
                 </tr>
