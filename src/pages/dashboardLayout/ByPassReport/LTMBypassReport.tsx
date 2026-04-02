@@ -4,16 +4,14 @@ import { config } from "@/lib/config";
 import ByPassReportRow from "./ByPassReportRow";
 
 const LTMBypassReport = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageLimit, setPageLimit] = useState(20);
+  const [pageLimit] = useState(20);
 
   // Fetch real bypass report data from API
   const { data: bypassReports, loading } = useSingleData(`${config.apiBaseUrl}/otm-bypass-report`);
   
-  const reportData = Array.isArray(bypassReports) ? bypassReports : (bypassReports?.data || []);
+  const reportData = Array.isArray(bypassReports) ? bypassReports : ((bypassReports as any)?.data || []);
 
   const error = null;
-  const count = reportData.length;
 
   const skeleton = new Array(pageLimit).fill(Math?.random());
 
@@ -112,13 +110,13 @@ const LTMBypassReport = () => {
             </thead>
             <tbody>
               {loading ? (
-                skeleton.map((item, idx) => (
+                skeleton.map((_, idx) => (
                   <tr key={idx} className="animate-pulse border-b">
                     <td colSpan={63} className={`h-12 ${idx % 2 === 1 ? "bg-gray-50" : "bg-white"}`}></td>
                   </tr>
                 ))
               ) : reportData && reportData.length > 0 ? (
-                reportData.map((item, idx) => (
+                reportData.map((item: any, idx: number) => (
                   <ByPassReportRow key={item._id || idx} item={item} idx={idx} data={reportData} />
                 ))
               ) : (
