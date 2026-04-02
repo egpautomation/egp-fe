@@ -401,7 +401,7 @@ export function AppSidebarNew() {
           role: ["guest", "user", "moderator", "admin"],
         },
         {
-          label: "LTM By Pass Reports",
+          label: "OTM By Pass Reports",
           path: "/public/ltm-by-pass-report",
           role: ["guest", "user", "moderator", "admin"],
         },

@@ -51,7 +51,7 @@ export default function DownloadSOR({ sors }: { sors: SOR[] }) {
       const cleaned = {} as SOR;
 
       (Object.keys(SOR_FIELD_LABELS) as (keyof SOR)[]).forEach((key) => {
-        cleaned[key] = item[key];
+        (cleaned as any)[key] = item[key];
       });
 
       return cleaned;
