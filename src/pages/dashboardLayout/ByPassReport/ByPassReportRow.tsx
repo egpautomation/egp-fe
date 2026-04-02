@@ -40,7 +40,9 @@ export default function ByPassReportRow({ item, idx, data }: any) {
       <td className="px-4 py-2">{item?.sl || idx + 1}</td>
       <td className="px-4 py-2">{item?.invoice_no || "N/A"}</td>
       <td className="px-4 py-2">{item?.job_no || "N/A"}</td>
-      <td className="px-4 py-2">{idx > 0 && item?.egp_email === data[idx - 1]?.egp_email ? 1 : 2}</td>
+      <td className="px-4 py-2">
+        {idx > 0 && item?.egp_email === data[idx - 1]?.egp_email ? 1 : 2}
+      </td>
       <td className="px-4 py-2">{item?.tender_id || "N/A"}</td>
       <td className="px-4 py-2">{item?.egp_email || "N/A"}</td>
       <td className="px-4 py-2">{item?.company_name || "N/A"}</td>
@@ -48,9 +50,7 @@ export default function ByPassReportRow({ item, idx, data }: any) {
       <td className="px-4 py-2">
         {item?.bank_name ? item?.bank_name : loading ? "..." : bankName}
       </td>
-      <td className="px-4 py-2">
-        {item?.liquid_asset || liquidAssets || "N/A"}
-      </td>
+      <td className="px-4 py-2">{item?.liquid_asset || liquidAssets || "N/A"}</td>
       <td className="px-4 py-2">{item?.active_date1 || "N/A"}</td>
       <td className="px-4 py-2">{item?.active_date2 || "N/A"}</td>
       <td className="px-4 py-2">{item?.company_address || "N/A"}</td>

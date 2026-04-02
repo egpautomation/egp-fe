@@ -22,8 +22,7 @@ const MultipleTenderSender = ({ setReload }) => {
         const json = JSON.parse(e.target.result);
         if (Array.isArray(json)) {
           const uniqueTenders = json.filter(
-            (tender, index, self) =>
-              self.findIndex((t) => t.tenderId === tender.tenderId) === index
+            (tender, index, self) => self.findIndex((t) => t.tenderId === tender.tenderId) === index
           );
           setData(uniqueTenders);
         } else {
@@ -54,12 +53,7 @@ const MultipleTenderSender = ({ setReload }) => {
     <div className="mb-8">
       <h2 className="text-xl font-bold mb-2 text-center">Upload JSON File</h2>
       <div className="flex gap-3 flex-wrap items-center justify-center">
-        <Input
-          ref={fileInputRef}
-          type="file"
-          accept=".json"
-          onChange={handleJsonUpload}
-        />
+        <Input ref={fileInputRef} type="file" accept=".json" onChange={handleJsonUpload} />
         {data ? (
           <Button className="mx-auto" onClick={handleSubmit}>
             Send <Send />
@@ -71,21 +65,12 @@ const MultipleTenderSender = ({ setReload }) => {
         )}
       </div>
 
-      <div
-        id="tender_submission-message"
-        className="text-green-600 text-center mt-4 font-medium"
-      >
+      <div id="tender_submission-message" className="text-green-600 text-center mt-4 font-medium">
         {message && message}{" "}
         {message && (
-          <X
-            size={16}
-            className="inline-block cursor-pointer"
-            onClick={() => setMessage("")}
-          />
+          <X size={16} className="inline-block cursor-pointer" onClick={() => setMessage("")} />
         )}
       </div>
-
-      
     </div>
   );
 };

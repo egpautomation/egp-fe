@@ -1,5 +1,12 @@
 import useAllTenderIDBOQ from "@/hooks/useBoqByTenderId";
 import CreateTenderPreparationButton from "./CreateTenderPreparationButton";
+import useAllTenderIdTenderPreparation from "@/hooks/useTenderIdTenderPreparation";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface BOQItem {
   itemNo: number;
@@ -27,73 +34,198 @@ export default function BOQTab({
   tenderId,
   egpEmail,
   procurementMethod,
-  procurementNature
+  procurementNature,
 }: {
   tenderId: string;
   egpEmail: string;
   procurementMethod: string;
   procurementNature: string;
 }) {
-  const { data, loading }: { data: BOQData[]; loading: boolean } = useAllTenderIDBOQ(tenderId);
+  const { data, loading, setReload }: { data: BOQData[]; loading: boolean; setReload: Function } =
+    useAllTenderIDBOQ(tenderId);
+
+  const { data: tenderPreparationData, setReload: setTenderPreparationReload }: { data: BOQData[];  setReload: Function } =
+    useAllTenderIdTenderPreparation(tenderId);
+
+  const setAllReload = () => {
+    setReload((prev: number) => prev + 1);
+    setTenderPreparationReload((prev: number) => prev + 1);
+  };
 
   if (loading) return <div className="p-4">Loading BOQ Data...</div>;
-  if (!data || data.length === 0) return <div className="p-4">No BOQ data found.</div>;
+  // if (!data || data.length === 0) return <div className="p-4">No BOQ data found.</div>;
 
   return (
-    <div className="flex flex-col gap-8 p-4">
-      {data.map((table) => (
-        <div key={table._id} className="border rounded-lg overflow-hidden shadow-sm">
-          {/* Table Header / Group Name */}
-          <div className="bg-green-100   px-4 py-2 border-b">
-            <h2 className="text-lg font-bold capitalize text-teal-600">
-              {table.tableName.replace("_", " ")}
-            </h2>
-          </div>
+    <div>
+      <div className="flex flex-col gap-8 p-4">
+        {!data || data.length === 0 ? (
+          <div className="p-4">No BOQ data found.</div>
+        ) : (
+          <div>
+            {data?.map((table) => (
+              <Accordion
+                key={table._id}
+                type="single"
+                collapsible
+                defaultValue="shipping"
+                className="max-w-full"
+              >
+                <AccordionItem value={table?._id}>
+                  <AccordionTrigger className=" bg-teal-600 text-white mb-4 px-2">
+                    {" "}
+                    <h2 className="text-lg font-bold capitalize ">
+                      {table.tableName.replace("_", " ")}
+                    </h2>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="border rounded-lg overflow-hidden shadow-sm ">
+                      {/* Table Header / Group Name */}
 
-          {/* Items Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead className="bg-gray-50 text-xs uppercase text-gray-600">
-                <tr>
-                  <th className="px-4 py-2 border-b">No.</th>
-                  <th className="px-4 py-2 border-b">Code</th>
-                  <th className="px-4 py-2 border-b">Description</th>
-                  <th className="px-4 py-2 border-b">Group</th>
-                  <th className="px-4 py-2 border-b">Unit</th>
-                  <th className="px-4 py-2 border-b text-right">Qty</th>
-                  <th className="px-4 py-2 border-b text-right">Price</th>
-                  <th className="px-4 py-2 border-b text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm divide-y">
-                {table.items.map((item) => (
-                  <tr key={item._id} className="hover:bg-gray-50">
-                    <td className="px-4 py-2">{item.itemNo}</td>
-                    <td className="px-4 py-2 font-mono text-xs">{item.itemCode}</td>
-                    <td className="px-4 py-2">
-                      <div className="font-medium">{item.descriptionOfItem}</div>
-                      <div className="text-xs text-gray-400">{item.requiredDocument}</div>
-                    </td>
-                    <td className="px-4 py-2">
-                      <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-xs">
-                        {item.group}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2">{item.unit}</td>
-                    <td className="px-4 py-2 text-right">{item.quantity}</td>
-                    <td className="px-4 py-2 text-right">{item.unitPrice}</td>
-                    <td className="px-4 py-2 text-right font-semibold">
-                      <CreateTenderPreparationButton
-                        data={{ ...item, tenderId, egpEmail, tenderType: `${procurementMethod} ${procurementNature}` }}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      {/* Items Table */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                          <thead className="bg-green-100 text-xs uppercase text-gray-600">
+                            <tr>
+                              <th className="px-4 py-2 border-b">Item no.</th>
+                              <th className="px-4 py-2 border-b">Group</th>
+                              <th className="px-4 py-2 border-b">Item Code</th>
+                              <th className="px-4 py-2 border-b">Description of Item</th>
+
+                              <th className="px-4 py-2 border-b">
+                                Measurement <br /> Unit
+                              </th>
+                              <th className="px-4 py-2 border-b text-right">Quantity</th>
+                              <th className="px-4 py-2 border-b text-right">
+                                Unit Price
+                                <br />
+                                In figures (BDT)
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="text-sm divide-y">
+                            {table.items.map((item) => (
+                              <tr key={item._id} className="hover:bg-gray-50">
+                                <td className="px-4 py-2">{item.itemNo}</td>
+                                <td className="px-4 py-2">
+                                  <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-xs">
+                                    {item.group}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-2 font-mono text-xs">{item.itemCode}</td>
+                                <td className="px-4 py-2">
+                                  <div className="font-medium">{item.descriptionOfItem}</div>
+                                  <div className="text-xs text-gray-400">
+                                    {item.requiredDocument}
+                                  </div>
+                                </td>
+
+                                <td className="px-4 py-2">{item.unit}</td>
+                                <td className="px-4 py-2 text-right">{item.quantity}</td>
+                                <td className="px-4 py-2 text-right">{item.unitPrice}</td>
+                              </tr>
+                            ))}
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-4 py-2   text-end" colSpan={7}>
+                                <CreateTenderPreparationButton
+                                  setReload={setAllReload}
+                                  table={table}
+                                  data={{
+                                    ...table,
+                                    tenderId,
+                                    egpEmail,
+                                    tenderType: `${procurementMethod} ${procurementNature}`,
+                                  }}
+                                />
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            ))}
           </div>
+        )}
+      </div>
+      <div className="mt-10">
+        <h3 className="text-2xl font-bold">Tender Preparation</h3>
+        {
+          (!tenderPreparationData || tenderPreparationData.length === 0) ? <div> <h1 className="text-base font-normal mt-2">No tender preparation data available</h1></div> : <div className="flex flex-col gap-8 p-4">
+          {tenderPreparationData?.map((table) => (
+            <Accordion
+              key={table?._id}
+              type="single"
+              collapsible
+              defaultValue="shipping"
+              className="max-w-full"
+            >
+              <AccordionItem value={table?._id}>
+                <AccordionTrigger className="bg-cyan-700 text-white mb-4 px-2">
+                  {" "}
+                  <h2 className="text-lg font-bold capitalize">
+                    {table?.tableName && table.tableName.replace("_", " ")}
+                  </h2>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="border rounded-lg overflow-hidden shadow-sm">
+                    {/* Table Header / Group Name */}
+
+                    {/* Items Table */}
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse">
+                        <thead className="bg-green-100 text-xs uppercase text-gray-600">
+                          <tr>
+                            <th className="px-4 py-2 border-b">Item no.</th>
+                            <th className="px-4 py-2 border-b">Group</th>
+                            <th className="px-4 py-2 border-b">Item Code</th>
+                            <th className="px-4 py-2 border-b">Description of Item</th>
+
+                            <th className="px-4 py-2 border-b">
+                              Measurement <br /> Unit
+                            </th>
+                            <th className="px-4 py-2 border-b text-right">Quantity</th>
+                            <th className="px-4 py-2 border-b text-right">
+                              Unit Price
+                              <br />
+                              In figures (BDT)
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="text-sm divide-y">
+                          {table.items.map((item) => (
+                            <tr key={item?._id} className="hover:bg-gray-50">
+                              <td className="px-4 py-2">{item?.itemNo}</td>
+                              <td className="px-4 py-2">
+                                <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-xs">
+                                  {item?.group}
+                                </span>
+                              </td>
+                              <td className="px-4 py-2 font-mono text-xs">{item?.itemCode}</td>
+                              <td className="px-4 py-2">
+                                <div className="font-medium">{item?.descriptionOfItem}</div>
+                                <div className="text-xs text-gray-400">
+                                  {item?.requiredDocument}
+                                </div>
+                              </td>
+
+                              <td className="px-4 py-2">{item?.unit}</td>
+                              <td className="px-4 py-2 text-right">{item?.quantity}</td>
+                              <td className="px-4 py-2 text-right">{item?.unitPrice}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ))}
         </div>
-      ))}
+        }
+      </div>
     </div>
   );
 }

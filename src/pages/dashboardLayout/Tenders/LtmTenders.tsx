@@ -12,15 +12,7 @@ import {
 import useAllTenders from "@/hooks/useAllTenders";
 // import useAllTenderDepartments from "@/hooks/useAllTenderDepartments";
 // import useAllTenderCategories from "@/hooks/getAllTenderCategories";
-import {
-  Search,
-  X,
-  ChevronDown,
-  AlignJustify,
-  Filter,
-  Printer,
-  ExternalLink,
-} from "lucide-react";
+import { Search, X, ChevronDown, AlignJustify, Filter, Printer, ExternalLink } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Pagination from "@/shared/Pagination/Pagination";
@@ -30,7 +22,14 @@ import autoTable from "jspdf-autotable";
 import districts from "@/utils/districts";
 
 // Filter Section Component
-const FilterSection = ({ title, children, searchPlaceholder, searchValue, onSearchChange, count }) => (
+const FilterSection = ({
+  title,
+  children,
+  searchPlaceholder,
+  searchValue,
+  onSearchChange,
+  count,
+}) => (
   <AccordionItem value={title} className="border-0">
     <div className="mb-2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
       <AccordionTrigger className="flex items-center justify-between bg-primary px-4 py-3 text-left text-sm font-semibold text-white hover:bg-primary/90 hover:no-underline [&[data-state=open]>svg]:rotate-180">
@@ -54,7 +53,9 @@ const FilterSection = ({ title, children, searchPlaceholder, searchValue, onSear
         )}
         <div className="max-h-64 overflow-y-auto pr-1">{children}</div>
         {count !== undefined && (
-          <div className="mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">{count} items found</div>
+          <div className="mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">
+            {count} items found
+          </div>
         )}
       </AccordionContent>
     </div>
@@ -70,7 +71,10 @@ const FilterCheckbox = ({ label, count, checked, onCheckedChange }) => (
       onCheckedChange={onCheckedChange}
       className="mt-0.5 h-4 w-4 rounded border-slate-300 data-[state=checked]:bg-primary data-[state=checked]:text-white"
     />
-    <label htmlFor={label} className="flex flex-1 cursor-pointer items-start justify-between text-sm leading-5">
+    <label
+      htmlFor={label}
+      className="flex flex-1 cursor-pointer items-start justify-between text-sm leading-5"
+    >
       <span className="text-slate-700">{label}</span>
       {count !== undefined && <span className="ml-2 text-xs text-slate-400">{count}</span>}
     </label>
@@ -80,12 +84,8 @@ const FilterCheckbox = ({ label, count, checked, onCheckedChange }) => (
 const LtmTenders = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(
-    Number(searchParams.get("page")) || 1
-  );
-  const [pageLimit, setPageLimit] = useState(
-    Number(searchParams.get("limit")) || 20
-  );
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
+  const [pageLimit, setPageLimit] = useState(Number(searchParams.get("limit")) || 20);
 
   // Multi-select filter states
   const [selectedDepartments, setSelectedDepartments] = useState([]);
@@ -152,33 +152,25 @@ const LtmTenders = () => {
   const filteredDepartments = useMemo(() => {
     const list = filterCounts.departments || [];
     if (!deptSearch) return list;
-    return list.filter((d) =>
-      d.name?.toLowerCase().includes(deptSearch.toLowerCase())
-    );
+    return list.filter((d) => d.name?.toLowerCase().includes(deptSearch.toLowerCase()));
   }, [filterCounts.departments, deptSearch]);
 
   const filteredCategories = useMemo(() => {
     const list = filterCounts.categories || [];
     if (!catSearch) return list;
-    return list.filter((c) =>
-      c.name?.toLowerCase().includes(catSearch.toLowerCase())
-    );
+    return list.filter((c) => c.name?.toLowerCase().includes(catSearch.toLowerCase()));
   }, [filterCounts.categories, catSearch]);
 
   const filteredLocations = useMemo(() => {
-    const list = filterCounts.locations?.map(l => l.name) || [];
+    const list = filterCounts.locations?.map((l) => l.name) || [];
     if (!locSearch) return list;
-    return list.filter((d) =>
-      d.toLowerCase().includes(locSearch.toLowerCase())
-    );
+    return list.filter((d) => d.toLowerCase().includes(locSearch.toLowerCase()));
   }, [filterCounts.locations, locSearch]);
 
   const filteredProcurementNatures = useMemo(() => {
     const list = filterCounts.procurementNatures || [];
     if (!procSearch) return list;
-    return list.filter((p) =>
-      p.name?.toLowerCase().includes(procSearch.toLowerCase())
-    );
+    return list.filter((p) => p.name?.toLowerCase().includes(procSearch.toLowerCase()));
   }, [filterCounts.procurementNatures, procSearch]);
 
   const displayTenders = useMemo(() => {
@@ -186,7 +178,7 @@ const LtmTenders = () => {
 
     // Client-side filter for Nature since backend ignores it
     if (selectedProcurementNatures.length > 0) {
-      list = list.filter(t => selectedProcurementNatures.includes(t.procurementNature));
+      list = list.filter((t) => selectedProcurementNatures.includes(t.procurementNature));
     }
 
     // You could add others here if backend turns out to be unreliable for them too
@@ -209,7 +201,7 @@ const LtmTenders = () => {
           const locCounts = {};
           const procCounts = {};
 
-          allLtmTenders.forEach(tender => {
+          allLtmTenders.forEach((tender) => {
             const d = tender.organization || tender.department;
             if (d) deptCounts[d] = (deptCounts[d] || 0) + 1;
 
@@ -227,7 +219,10 @@ const LtmTenders = () => {
             departments: Object.entries(deptCounts).map(([name, count]) => ({ name, count })),
             categories: Object.entries(catCounts).map(([name, count]) => ({ name, count })),
             locations: Object.entries(locCounts).map(([name, count]) => ({ name, count })),
-            procurementNatures: Object.entries(procCounts).map(([name, count]) => ({ name, count })),
+            procurementNatures: Object.entries(procCounts).map(([name, count]) => ({
+              name,
+              count,
+            })),
             methods: [{ name: "LTM", count: allLtmTenders.length }],
           });
         }
@@ -248,7 +243,7 @@ const LtmTenders = () => {
     selectedDepartments.length,
     selectedCategories.length,
     selectedLocations.length,
-    selectedProcurementNatures.length
+    selectedProcurementNatures.length,
   ]);
 
   const departmentCountMap = useMemo(
@@ -279,7 +274,7 @@ const LtmTenders = () => {
   const getCategoryCount = (catName) => categoryCountMap?.[catName] || 0;
   const getLocationCount = (locName) => locationCountMap?.[locName] || 0;
   const getNatureCount = (procName) => {
-    const item = filterCounts.procurementNatures.find(p => p.name === procName);
+    const item = filterCounts.procurementNatures.find((p) => p.name === procName);
     return item ? item.count : 0;
   };
 
@@ -288,54 +283,48 @@ const LtmTenders = () => {
     try {
       const doc = new jsPDF("l", "mm", "a4");
 
-    const tableColumn = [
-      "Tender ID",
-      "Department",
-      "Description",
-      "Location",
-      "Details",
-    ];
+      const tableColumn = ["Tender ID", "Department", "Description", "Location", "Details"];
 
-    const tableRows = [];
-    const allTendersForPrint = displayTenders || [];
+      const tableRows = [];
+      const allTendersForPrint = displayTenders || [];
 
-    allTendersForPrint.forEach((item) => {
-      const tenderIdAndMore = [
-        `${item?.tenderId || "N/A"}`,
-        `${item?.procurementType || "N/A"}`,
-        `${item?.procurementMethod || "N/A"}`,
-        `${item?.tenderStatus || "N/A"}`,
-      ].join("\n");
-      const details = [
-        `LAST SELLING DATE: ${formatDate(item?.documentLastSelling, "MM-dd-yyyy")}`,
-        `CLOSING DATE: ${formatDate(item?.openingDateTime, "MM-dd-yyyy")}`,
-        `DOCUMENT PRICE: ${item?.documentPrice || "N/A"}`,
-        `TENDER SECURITY: ${item?.tenderSecurity || "N/A"}`,
-        `ESTIMATED AMOUNT: ${item?.estimatedCost || "N/A"}`,
-        `LINE OF CREDIT: ${item?.liquidAssets || "N/A"}`,
-      ].join("\n");
+      allTendersForPrint.forEach((item) => {
+        const tenderIdAndMore = [
+          `${item?.tenderId || "N/A"}`,
+          `${item?.procurementType || "N/A"}`,
+          `${item?.procurementMethod || "N/A"}`,
+          `${item?.tenderStatus || "N/A"}`,
+        ].join("\n");
+        const details = [
+          `LAST SELLING DATE: ${formatDate(item?.documentLastSelling, "MM-dd-yyyy")}`,
+          `CLOSING DATE: ${formatDate(item?.openingDateTime, "MM-dd-yyyy")}`,
+          `DOCUMENT PRICE: ${item?.documentPrice || "N/A"}`,
+          `TENDER SECURITY: ${item?.tenderSecurity || "N/A"}`,
+          `ESTIMATED AMOUNT: ${item?.estimatedCost || "N/A"}`,
+          `LINE OF CREDIT: ${item?.liquidAssets || "N/A"}`,
+        ].join("\n");
 
-      const others = [
-        `GENERAL EXPERIENCE: ${item?.generalExperience || "N/A"}`,
-        `JVCA: ${item?.jvca || "N/A"}`,
-        `SIMILAR NATURE WORK: ${item?.similarNatureWork || "N/A"}`,
-        `TURNOVER AMOUNT: ${item?.turnoverAmount || "N/A"}`,
-        `LIQUID ASSET: ${item?.liquidAssets || "N/A"}`,
-        `TENDER CAPACITY: ${item?.tenderCapacity || "N/A"}`,
-        `WORKING LOCATION: ${item?.workingLocation || "N/A"}`,
-      ].join("\n");
+        const others = [
+          `GENERAL EXPERIENCE: ${item?.generalExperience || "N/A"}`,
+          `JVCA: ${item?.jvca || "N/A"}`,
+          `SIMILAR NATURE WORK: ${item?.similarNatureWork || "N/A"}`,
+          `TURNOVER AMOUNT: ${item?.turnoverAmount || "N/A"}`,
+          `LIQUID ASSET: ${item?.liquidAssets || "N/A"}`,
+          `TENDER CAPACITY: ${item?.tenderCapacity || "N/A"}`,
+          `WORKING LOCATION: ${item?.workingLocation || "N/A"}`,
+        ].join("\n");
 
-      const rowData = [
-        tenderIdAndMore,
-        item?.organization || item?.department,
-        item?.descriptionOfWorks || "N/A",
-        item?.locationDistrict,
-        details,
-      ];
-      tableRows.push(rowData);
-    });
+        const rowData = [
+          tenderIdAndMore,
+          item?.organization || item?.department,
+          item?.descriptionOfWorks || "N/A",
+          item?.locationDistrict,
+          details,
+        ];
+        tableRows.push(rowData);
+      });
 
-    autoTable(doc, {
+      autoTable(doc, {
         head: [tableColumn],
         body: tableRows,
         startY: 25,
@@ -366,70 +355,69 @@ const LtmTenders = () => {
         alternateRowStyles: {
           fillColor: [255, 255, 255],
         },
-      didDrawPage: (data) => {
-        const pageNumber = doc.internal.getNumberOfPages();
-        doc.setFontSize(18);
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(0, 0, 0);
-        doc.text("E-GP Tender Automation (LTM Tenders)", data.settings.margin.left, 15);
+        didDrawPage: (data) => {
+          const pageNumber = doc.internal.getNumberOfPages();
+          doc.setFontSize(18);
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor(0, 0, 0);
+          doc.text("E-GP Tender Automation (LTM Tenders)", data.settings.margin.left, 15);
 
-        const dateStr = new Date().toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-        });
-        doc.setFontSize(10);
-        doc.setTextColor(0, 0, 0);
-        doc.text(dateStr, doc.internal.pageSize.width - data.settings.margin.right - doc.getTextWidth(dateStr), 15);
+          const dateStr = new Date().toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          });
+          doc.setFontSize(10);
+          doc.setTextColor(0, 0, 0);
+          doc.text(
+            dateStr,
+            doc.internal.pageSize.width - data.settings.margin.right - doc.getTextWidth(dateStr),
+            15
+          );
 
-        const pageHeight = doc.internal.pageSize.height;
-        const centerX = doc.internal.pageSize.width / 2;
+          const pageHeight = doc.internal.pageSize.height;
+          const centerX = doc.internal.pageSize.width / 2;
 
-        const line1Y = pageHeight - 18;
-        const line2Y = line1Y + 4;
-        const line3Y = line2Y + 4;
+          const line1Y = pageHeight - 18;
+          const line2Y = line1Y + 4;
+          const line3Y = line2Y + 4;
 
-        doc.setFontSize(8);
-        doc.setTextColor(0, 0, 0);
+          doc.setFontSize(8);
+          doc.setTextColor(0, 0, 0);
 
-        doc.text(
-          `© ${new Date().getFullYear()} E-GP Tender Automation — All Rights Reserved.`,
-          centerX,
-          line1Y,
-          { align: "center" }
-        );
-        
-        const prefix = "Visit us: ";
-        const website = "etenderbd.com";
-        const mid = " | WhatsApp: ";
-        const whatsapp = "01926-959331";
+          doc.text(
+            `© ${new Date().getFullYear()} E-GP Tender Automation — All Rights Reserved.`,
+            centerX,
+            line1Y,
+            { align: "center" }
+          );
 
-        const fullText = prefix + website + mid + whatsapp;
-        const fullWidth = doc.getTextWidth(fullText);
-        const startX = centerX - fullWidth / 2;
+          const prefix = "Visit us: ";
+          const website = "etenderbd.com";
+          const mid = " | WhatsApp: ";
+          const whatsapp = "01926-959331";
 
-        doc.text(prefix, startX, line2Y);
+          const fullText = prefix + website + mid + whatsapp;
+          const fullWidth = doc.getTextWidth(fullText);
+          const startX = centerX - fullWidth / 2;
 
-        const prefixWidth = doc.getTextWidth(prefix);
-        doc.textWithLink(website, startX + prefixWidth, line2Y, {
-          url: "https://etenderbd.com",
-        });
+          doc.text(prefix, startX, line2Y);
 
-        const websiteWidth = doc.getTextWidth(website);
-        doc.text(mid, startX + prefixWidth + websiteWidth, line2Y);
+          const prefixWidth = doc.getTextWidth(prefix);
+          doc.textWithLink(website, startX + prefixWidth, line2Y, {
+            url: "https://etenderbd.com",
+          });
 
-        const midWidth = doc.getTextWidth(mid);
-        doc.textWithLink(
-          whatsapp,
-          startX + prefixWidth + websiteWidth + midWidth,
-          line2Y,
-          {
+          const websiteWidth = doc.getTextWidth(website);
+          doc.text(mid, startX + prefixWidth + websiteWidth, line2Y);
+
+          const midWidth = doc.getTextWidth(mid);
+          doc.textWithLink(whatsapp, startX + prefixWidth + websiteWidth + midWidth, line2Y, {
             url: `https://wa.me/8801926959331`,
-          }
-        );
-        doc.text(`Page ${pageNumber}`, centerX, line3Y, { align: "center" });
-      },
-    });
+          });
+          doc.text(`Page ${pageNumber}`, centerX, line3Y, { align: "center" });
+        },
+      });
 
       doc.save("ltm-tenders.pdf");
     } catch (error) {
@@ -445,7 +433,6 @@ const LtmTenders = () => {
     params.set("limit", pageLimit);
     setSearchParams(params);
   }, [currentPage, pageLimit, setSearchParams]);
-
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -495,7 +482,9 @@ const LtmTenders = () => {
                       label={dept.name}
                       count={getDepartmentCount(dept.name)}
                       checked={selectedDepartments.includes(dept.name)}
-                      onCheckedChange={() => toggleSelection(setSelectedDepartments, selectedDepartments, dept.name)}
+                      onCheckedChange={() =>
+                        toggleSelection(setSelectedDepartments, selectedDepartments, dept.name)
+                      }
                     />
                   ))}
                 </div>
@@ -515,7 +504,9 @@ const LtmTenders = () => {
                       label={cat.name}
                       count={getCategoryCount(cat.name)}
                       checked={selectedCategories.includes(cat.name)}
-                      onCheckedChange={() => toggleSelection(setSelectedCategories, selectedCategories, cat.name)}
+                      onCheckedChange={() =>
+                        toggleSelection(setSelectedCategories, selectedCategories, cat.name)
+                      }
                     />
                   ))}
                 </div>
@@ -535,7 +526,9 @@ const LtmTenders = () => {
                       label={loc}
                       count={getLocationCount(loc)}
                       checked={selectedLocations.includes(loc)}
-                      onCheckedChange={() => toggleSelection(setSelectedLocations, selectedLocations, loc)}
+                      onCheckedChange={() =>
+                        toggleSelection(setSelectedLocations, selectedLocations, loc)
+                      }
                     />
                   ))}
                 </div>
@@ -555,7 +548,13 @@ const LtmTenders = () => {
                       label={proc.name}
                       count={proc.count}
                       checked={selectedProcurementNatures.includes(proc.name)}
-                      onCheckedChange={() => toggleSelection(setSelectedProcurementNatures, selectedProcurementNatures, proc.name)}
+                      onCheckedChange={() =>
+                        toggleSelection(
+                          setSelectedProcurementNatures,
+                          selectedProcurementNatures,
+                          proc.name
+                        )
+                      }
                     />
                   ))}
                 </div>
@@ -575,7 +574,9 @@ const LtmTenders = () => {
                   <p className="text-sm text-slate-500">
                     {tendersCount} results found
                     {hasActiveFilters && (
-                      <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">Filtered</span>
+                      <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                        Filtered
+                      </span>
                     )}
                   </p>
                 </div>
@@ -603,61 +604,94 @@ const LtmTenders = () => {
               <table className="w-full">
                 <thead>
                   <tr className="bg-primary text-primary-foreground">
-                    <th className="px-4 py-3 text-left text-sm font-semibold rounded-tl-lg">Tender Id</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold rounded-tl-lg">
+                      Tender Id
+                    </th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Organization</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold w-96">Description</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Location</th>
                     <th className="px-4 py-3 text-left text-sm font-semibold">Details</th>
-                    <th className="px-4 py-3 text-center text-sm font-semibold rounded-tr-lg">Actions</th>
+                    <th className="px-4 py-3 text-center text-sm font-semibold rounded-tr-lg">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {!loading ? (
-                    displayTenders?.map((item, idx) => (
-                      <tr key={idx} className={`${idx % 2 === 1 ? "bg-slate-50" : "bg-white"} hover:bg-slate-100 transition-colors`}>
-                        <td className="px-4 py-3 text-sm align-top">{item?.tenderId}</td>
-                        <td className="px-4 py-3 text-sm align-top">{item?.organization || item?.department}</td>
-                        <td className="px-4 py-3 text-xs text-justify align-top">
-                          <Link className="underline whitespace-break-spaces text-slate-700 hover:text-[#4874c7]" to={`/dashboard/view-tender/${item?._id}`}>
-                            {item?.descriptionOfWorks}
-                          </Link>
-                        </td>
-                        <td className="px-4 py-3 text-sm align-top">{item?.locationDistrict}</td>
-                        <td className="px-4 py-3 text-sm align-top whitespace-nowrap text-slate-600">
-                          <p><span className="font-medium">Selling: </span>{formatDate(item?.documentLastSelling, "MM-dd-yyyy")}</p>
-                          <p><span className="font-medium">Closing: </span>{formatDate(item?.openingDateTime, "MM-dd-yyyy")}</p>
-                          <p><span className="font-medium">Price: </span>{item?.documentPrice}</p>
-                          <p><span className="font-medium">Security: </span>{item?.tenderSecurity}</p>
-                          <p><span className="font-medium">Estimated: </span>{item?.estimatedCost}</p>
-                          <p><span className="font-medium">Credit: </span>{item?.liquidAssets}</p>
-                        </td>
-                        <td className="px-4 py-3 text-center align-top">
-                          <a
-                            href={`https://www.eprocure.gov.bd/resources/common/ViewTender.jsp?id=${item?.tenderId}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 rounded-md transition-colors"
-                          >
-                            <ExternalLink className="h-3.5 w-3.5" />
-                            e-GP
-                          </a>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    skeleton.map((_, idx) => (
-                      <tr key={idx}>
-                        <td colSpan={6} className={`h-20 ${idx % 2 === 1 ? "bg-slate-100" : "bg-white"}`} />
-                      </tr>
-                    ))
-                  )}
+                  {!loading
+                    ? displayTenders?.map((item, idx) => (
+                        <tr
+                          key={idx}
+                          className={`${idx % 2 === 1 ? "bg-slate-50" : "bg-white"} hover:bg-slate-100 transition-colors`}
+                        >
+                          <td className="px-4 py-3 text-sm align-top">{item?.tenderId}</td>
+                          <td className="px-4 py-3 text-sm align-top">
+                            {item?.organization || item?.department}
+                          </td>
+                          <td className="px-4 py-3 text-xs text-justify align-top">
+                            <Link
+                              className="underline whitespace-break-spaces text-slate-700 hover:text-[#4874c7]"
+                              to={`/dashboard/view-tender/${item?._id}`}
+                            >
+                              {item?.descriptionOfWorks}
+                            </Link>
+                          </td>
+                          <td className="px-4 py-3 text-sm align-top">{item?.locationDistrict}</td>
+                          <td className="px-4 py-3 text-sm align-top whitespace-nowrap text-slate-600">
+                            <p>
+                              <span className="font-medium">Selling: </span>
+                              {formatDate(item?.documentLastSelling, "MM-dd-yyyy")}
+                            </p>
+                            <p>
+                              <span className="font-medium">Closing: </span>
+                              {formatDate(item?.openingDateTime, "MM-dd-yyyy")}
+                            </p>
+                            <p>
+                              <span className="font-medium">Price: </span>
+                              {item?.documentPrice}
+                            </p>
+                            <p>
+                              <span className="font-medium">Security: </span>
+                              {item?.tenderSecurity}
+                            </p>
+                            <p>
+                              <span className="font-medium">Estimated: </span>
+                              {item?.estimatedCost}
+                            </p>
+                            <p>
+                              <span className="font-medium">Credit: </span>
+                              {item?.liquidAssets}
+                            </p>
+                          </td>
+                          <td className="px-4 py-3 text-center align-top">
+                            <a
+                              href={`https://www.eprocure.gov.bd/resources/common/ViewTender.jsp?id=${item?.tenderId}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 rounded-md transition-colors"
+                            >
+                              <ExternalLink className="h-3.5 w-3.5" />
+                              e-GP
+                            </a>
+                          </td>
+                        </tr>
+                      ))
+                    : skeleton.map((_, idx) => (
+                        <tr key={idx}>
+                          <td
+                            colSpan={6}
+                            className={`h-20 ${idx % 2 === 1 ? "bg-slate-100" : "bg-white"}`}
+                          />
+                        </tr>
+                      ))}
                 </tbody>
               </table>
               {!loading && tenders?.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                   <Filter className="mb-4 h-12 w-12 text-slate-300" />
                   <p className="text-lg font-medium text-slate-600">No LTM tenders found</p>
-                  <Button onClick={handleClearFilters} variant="outline" className="mt-4">Clear all filters</Button>
+                  <Button onClick={handleClearFilters} variant="outline" className="mt-4">
+                    Clear all filters
+                  </Button>
                 </div>
               )}
             </div>
@@ -687,7 +721,11 @@ const LtmTenders = () => {
                     </div>
                   </div>
                   <Button asChild className="w-full bg-green-600 hover:bg-green-700">
-                    <a href={`https://www.eprocure.gov.bd/resources/common/ViewTender.jsp?id=${item?.tenderId}`} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={`https://www.eprocure.gov.bd/resources/common/ViewTender.jsp?id=${item?.tenderId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <ExternalLink className="h-4 w-4 mr-2" /> View on e-GP
                     </a>
                   </Button>
@@ -712,4 +750,3 @@ const LtmTenders = () => {
 };
 
 export default LtmTenders;
-

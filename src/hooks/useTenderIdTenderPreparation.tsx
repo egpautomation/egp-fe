@@ -2,7 +2,7 @@
 import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
-const useAllTenderIDBOQ = (tenderId) => {
+const useAllTenderIdTenderPreparation = (tenderId) => {
   const [data, setData] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -13,8 +13,7 @@ const useAllTenderIDBOQ = (tenderId) => {
       try {
         setLoading(true);
         // https://egp-tender-automation-server.vercel.app
-        const url = `${config.apiBaseUrl}/boq/tenderId/${tenderId}`;
-        
+        const url = `${config.apiBaseUrl}/tender-preparation/tenderId/${tenderId}`;
         const response = await fetch(url);
         const data = await response.json();
         setData(data?.data);
@@ -40,4 +39,4 @@ const useAllTenderIDBOQ = (tenderId) => {
   };
 };
 
-export default useAllTenderIDBOQ;
+export default useAllTenderIdTenderPreparation;
