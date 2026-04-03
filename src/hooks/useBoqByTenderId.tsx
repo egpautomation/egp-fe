@@ -1,10 +1,9 @@
 // @ts-nocheck
-
-import config from "@/lib/config";
+import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
-const useAllSOR = (searchTerm, page, limit) => {
-  const [sors, setSors] = useState([]);
+const useAllTenderIDBOQ = (tenderId) => {
+  const [data, setData] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [reload, setReload] = useState(0);
@@ -13,13 +12,12 @@ const useAllSOR = (searchTerm, page, limit) => {
     const result = async () => {
       try {
         setLoading(true);
-
-        const response = await fetch(
-          `${config.apiBaseUrl}/sor?departmentShortName=${searchTerm?.departmentShortName || ""}&itemCode=${searchTerm?.itemCode || ""}&description=${searchTerm?.description || ""}&page=${page}&limit=${limit}`
-        );
+        // https://egp-tender-automation-server.vercel.app
+        const url = `${config.apiBaseUrl}/boq/tenderId/${tenderId}`;
+        
+        const response = await fetch(url);
         const data = await response.json();
-
-        setSors(data?.data);
+        setData(data?.data);
         setCount(data?.count);
       } catch (error) {
         console.error("Error fetching :", error);
@@ -28,11 +26,11 @@ const useAllSOR = (searchTerm, page, limit) => {
       }
     };
     result();
-  }, [reload, searchTerm]);
+  }, [tenderId, reload]);
 
   return {
-    sors,
-    setSors,
+    data,
+    setData,
     count,
     setCount,
     reload,
@@ -42,4 +40,4 @@ const useAllSOR = (searchTerm, page, limit) => {
   };
 };
 
-export default useAllSOR;
+export default useAllTenderIDBOQ;

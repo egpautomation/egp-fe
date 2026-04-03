@@ -43,6 +43,7 @@ const mockTenderData = [
 
 import useUsersCompanyMigration from "@/hooks/useUsersCompanyMigrations";
 import { AuthContext } from "@/provider/AuthProvider";
+import BOQTab from "./TenderTabs/BOQTab";
 
 // --- মেইন কম্পোনেন্ট ---
 const PgTwoTowOtmGoodsDetails = () => {
@@ -73,7 +74,7 @@ const PgTwoTowOtmGoodsDetails = () => {
     ? `${config.apiBaseUrl}/tenders/tenderId/${currentTender.tenderId}`
     : null;
   const { data: liveTenderData } = useSingleData(liveTenderUrl);
-  console.log(liveTenderUrl);
+
   // Initialize shared state from database values
   useEffect(() => {
     if (currentTender) {
@@ -384,8 +385,10 @@ const PgTwoTowOtmGoodsDetails = () => {
   const handleAddToBypass = async () => {
     setIsSubmittingBypass(true);
     try {
-      const specificExp = completedContracts?.find((c) => c._id === currentTender?.experienceContractId);
-      
+      const specificExp = completedContracts?.find(
+        (c) => c._id === currentTender?.experienceContractId
+      );
+
       const payload = {
         invoice_no: String(currentTender?.jobOrder || ""),
         job_no: String(currentTender?.jobOrder || ""),
@@ -403,7 +406,10 @@ const PgTwoTowOtmGoodsDetails = () => {
         trade_license: companyData?.trade || "",
         tin: companyData?.tin || "",
         vat: companyData?.vat || "",
-        ltm_license: companyData?.departmentLicenses && Object.keys(companyData.departmentLicenses).length > 0 ? "Yes" : "",
+        ltm_license:
+          companyData?.departmentLicenses && Object.keys(companyData.departmentLicenses).length > 0
+            ? "Yes"
+            : "",
         other1_map: companyData?.other1Map || "",
         slno_line_credit: companyData?.slnoLineCredit || "",
         other2_map: companyData?.other2Map || "",
@@ -423,7 +429,9 @@ const PgTwoTowOtmGoodsDetails = () => {
         specific_contract_role: specificExp?.role || "",
         specific_award_date: specificExp?.dateOfNOA || "",
         specific_completion_date: specificExp?.contractPeriodExtendedUpTo || "",
-        specific_contract_value: String(specificExp?.actualPayment || specificExp?.actualPaymentJvShare || ""),
+        specific_contract_value: String(
+          specificExp?.actualPayment || specificExp?.actualPaymentJvShare || ""
+        ),
         specific_entity_details: specificExp?.organization || "",
         specific_description: specificExp?.descriptionOfWorks || "",
 
@@ -452,8 +460,8 @@ const PgTwoTowOtmGoodsDetails = () => {
         tender_capacity_period: String(currentTender?.proposeYear || ""),
         tender_capacity_max_value: String(currentTender?.Maximumvalue || ""),
         tender_capacity_remaining_value: String(calculatedAssessedCapacity || ""),
-        
-        user_email: user?.email || "" // Passing user email for coin deduction
+
+        user_email: user?.email || "", // Passing user email for coin deduction
       };
 
       const response = await axiosInstance.post("/otm-bypass-report", payload);
@@ -643,9 +651,12 @@ const PgTwoTowOtmGoodsDetails = () => {
       id: 9,
       name: "BOQ",
       content: (
-        <div className="bg-green-50 p-4 rounded-lg">
-          <h3 className="font-semibold text-green-800 mb-2">Bill of Quantities</h3>
-        </div>
+        <BOQTab
+          procurementNature={currentTender?.procurementNature}
+          egpEmail={egpEmail}
+          procurementMethod={currentTender?.procurementMethod}
+          tenderId={currentTender?.tenderId || ""}
+        />
       ),
     },
     {

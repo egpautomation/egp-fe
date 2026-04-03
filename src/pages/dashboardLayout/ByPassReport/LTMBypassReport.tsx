@@ -8,8 +8,10 @@ const LTMBypassReport = () => {
 
   // Fetch real bypass report data from API
   const { data: bypassReports, loading } = useSingleData(`${config.apiBaseUrl}/otm-bypass-report`);
-  
-  const reportData = Array.isArray(bypassReports) ? bypassReports : ((bypassReports as any)?.data || []);
+
+  const reportData = Array.isArray(bypassReports)
+    ? bypassReports
+    : (bypassReports as any)?.data || [];
 
   const error = null;
 
@@ -18,7 +20,7 @@ const LTMBypassReport = () => {
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4 text-primary">OTM By Pass Report</h2>
-      
+
       {/* Error State */}
       {error && (
         <div className="mt-5 p-4 bg-red-50 border border-red-200 rounded-md">
@@ -47,7 +49,7 @@ const LTMBypassReport = () => {
                 <th className="whitespace-nowrap px-4 py-3">Active Date 2</th>
                 <th className="whitespace-nowrap px-4 py-3">Company Address</th>
                 <th className="whitespace-nowrap px-4 py-3">Author</th>
-                
+
                 {/* Documents & Mappings */}
                 <th className="whitespace-nowrap px-4 py-3">NID</th>
                 <th className="whitespace-nowrap px-4 py-3">Trade License</th>
@@ -112,7 +114,10 @@ const LTMBypassReport = () => {
               {loading ? (
                 skeleton.map((_, idx) => (
                   <tr key={idx} className="animate-pulse border-b">
-                    <td colSpan={63} className={`h-12 ${idx % 2 === 1 ? "bg-gray-50" : "bg-white"}`}></td>
+                    <td
+                      colSpan={63}
+                      className={`h-12 ${idx % 2 === 1 ? "bg-gray-50" : "bg-white"}`}
+                    ></td>
                   </tr>
                 ))
               ) : reportData && reportData.length > 0 ? (

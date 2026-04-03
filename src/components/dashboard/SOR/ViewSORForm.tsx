@@ -1,6 +1,5 @@
 "use client";
 
-
 import {
   Dialog,
   DialogContent,
@@ -33,16 +32,16 @@ export default function ViewSORModal({ data }: { data: any }) {
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold flex items-center justify-between">
             SOR Details
-            <Badge className="mt-5" variant="outline">Item Code: {data?.itemCode}</Badge>
+            <Badge className="mt-5" variant="outline">
+              Item Code: {data?.itemCode}
+            </Badge>
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 mt-4">
           {/* 🔹 Basic Info */}
           <div className="bg-muted/40 p-4 rounded-xl border">
-            <h3 className="text-sm font-semibold mb-3 text-muted-foreground">
-              Basic Information
-            </h3>
+            <h3 className="text-sm font-semibold mb-3 text-muted-foreground">Basic Information</h3>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <Field label="Department" value={data?.departmentShortName} />
@@ -56,13 +55,9 @@ export default function ViewSORModal({ data }: { data: any }) {
 
           {/* 🔹 Description */}
           <div className="bg-muted/40 p-4 rounded-xl border">
-            <h3 className="text-sm font-semibold mb-3 text-muted-foreground">
-              Description
-            </h3>
+            <h3 className="text-sm font-semibold mb-3 text-muted-foreground">Description</h3>
 
-            <p className="text-sm leading-relaxed text-gray-700">
-              {data?.description || "—"}
-            </p>
+            <p className="text-sm leading-relaxed text-gray-700">{data?.description || "—"}</p>
           </div>
 
           {/* 🔹 Additional Info */}
@@ -77,9 +72,7 @@ export default function ViewSORModal({ data }: { data: any }) {
               <Field label="Reference" value={data?.reference} />
 
               <div className="col-span-2 md:col-span-1">
-                <span className="text-xs text-muted-foreground">
-                  Attachment
-                </span>
+                <span className="text-xs text-muted-foreground">Attachment</span>
                 {data?.attachment ? (
                   <a
                     href={data.attachment}
@@ -97,19 +90,12 @@ export default function ViewSORModal({ data }: { data: any }) {
 
           {/* 🔹 Rates */}
           <div className="bg-muted/40 p-4 rounded-xl border">
-            <h3 className="text-sm font-semibold mb-3 text-muted-foreground">
-              Rates
-            </h3>
+            <h3 className="text-sm font-semibold mb-3 text-muted-foreground">Rates</h3>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {[1, 2, 3, 4, 5, 6].map((num) => (
-                <div
-                  key={num}
-                  className="p-3 rounded-lg bg-white border shadow-sm"
-                >
-                  <p className="text-xs text-muted-foreground">
-                    Rate {num}
-                  </p>
+                <div key={num} className="p-3 rounded-lg bg-white border shadow-sm">
+                  <p className="text-xs text-muted-foreground">Rate {num}</p>
                   <p className="font-semibold text-sm mt-1">
                     {data?.rates?.[`rate_${num}`] ?? "—"}
                   </p>

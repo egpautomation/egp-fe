@@ -46,7 +46,14 @@ import autoTable from "jspdf-autotable";
 
 import useAllTenders from "@/hooks/useAllTenders";
 
-const FilterSection = ({ title, children, searchPlaceholder, searchValue, onSearchChange, count }) => (
+const FilterSection = ({
+  title,
+  children,
+  searchPlaceholder,
+  searchValue,
+  onSearchChange,
+  count,
+}) => (
   <AccordionItem value={title} className="border-0">
     <div className="mb-2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
       <AccordionTrigger className="flex items-center justify-between bg-teal-600 px-4 py-3 text-left text-sm font-semibold text-white hover:bg-teal-700 hover:no-underline [&[data-state=open]>svg]:rotate-180 [&>svg]:text-white">
@@ -70,7 +77,9 @@ const FilterSection = ({ title, children, searchPlaceholder, searchValue, onSear
         )}
         <div className="max-h-64 overflow-y-auto pr-1">{children}</div>
         {count !== undefined && (
-          <div className="mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">{count} items found</div>
+          <div className="mt-2 border-t border-slate-100 pt-2 text-xs text-slate-500">
+            {count} items found
+          </div>
         )}
       </AccordionContent>
     </div>
@@ -85,7 +94,10 @@ const FilterCheckbox = ({ label, count, checked, onCheckedChange }) => (
       onCheckedChange={onCheckedChange}
       className="mt-0.5 h-4 w-4 rounded border-slate-300 data-[state=checked]:bg-teal-600 data-[state=checked]:text-white"
     />
-    <label htmlFor={label} className="flex flex-1 cursor-pointer items-start justify-between text-sm leading-5">
+    <label
+      htmlFor={label}
+      className="flex flex-1 cursor-pointer items-start justify-between text-sm leading-5"
+    >
       <span className="text-slate-700">{label}</span>
       {count !== undefined && <span className="ml-2 text-xs text-slate-400">{count}</span>}
     </label>
@@ -97,7 +109,9 @@ const PromotionalTender = () => {
   const [pageLimit, setPageLimit] = useState(20);
   const [isPdfLoading, setIsPdfLoading] = useState(false);
 
-  const localToday = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+  const localToday = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .split("T")[0];
   const [selectedDate, setSelectedDate] = useState(localToday);
 
   const [selectedDepartments, setSelectedDepartments] = useState([]);
@@ -142,7 +156,7 @@ Check now: www.etenderbd.com`,
 - Easily calculate SLT
 - Upload TOR2 PDF and calculate instantly
 - No registration or passcode required
-Check now: www.etenderbd.com`
+Check now: www.etenderbd.com`,
   ];
 
   const downloadPdf = async () => {
@@ -157,7 +171,7 @@ Check now: www.etenderbd.com`
         "Document Price",
         "Security",
         "Estimated Cost",
-        "Closing Date"
+        "Closing Date",
       ];
 
       const tableRows: any[] = [];
@@ -172,7 +186,7 @@ Check now: www.etenderbd.com`
           item?.documentPrice ? `BDT ${item.documentPrice}` : "N/A",
           item?.tenderSecurity ? `BDT ${item.tenderSecurity}` : "N/A",
           item?.estimatedCost ? `BDT ${item.estimatedCost}` : "N/A",
-          formatDate(item?.openingDateTime, "dd-MM-yyyy")
+          formatDate(item?.openingDateTime, "dd-MM-yyyy"),
         ];
         tableRows.push(rowData);
       });
@@ -204,7 +218,7 @@ Check now: www.etenderbd.com`
         columnStyles: {
           0: { cellWidth: 25, halign: "center", fontStyle: "bold" },
           1: { cellWidth: 45 },
-          2: { cellWidth: 'auto' }, // Let desc take remaining space
+          2: { cellWidth: "auto" }, // Let desc take remaining space
           3: { cellWidth: 28, halign: "right" },
           4: { cellWidth: 28, halign: "right" },
           5: { cellWidth: 32, halign: "right", fontStyle: "bold" },
@@ -221,7 +235,12 @@ Check now: www.etenderbd.com`
           doc.setFontSize(10);
           doc.setTextColor(0, 0, 0);
           doc.setFont("helvetica", "normal");
-          doc.text(`Generated on: ${new Date().toLocaleDateString()}`, doc.internal.pageSize.getWidth() - data.settings.margin.right, 18, { align: 'right' });
+          doc.text(
+            `Generated on: ${new Date().toLocaleDateString()}`,
+            doc.internal.pageSize.getWidth() - data.settings.margin.right,
+            18,
+            { align: "right" }
+          );
 
           const pageHeight = doc.internal.pageSize.getHeight();
           const centerX = doc.internal.pageSize.getWidth() / 2;
@@ -239,7 +258,7 @@ Check now: www.etenderbd.com`
             line1Y,
             { align: "center" }
           );
-          
+
           const prefix = "Visit us: ";
           const website = "etenderbd.com";
           const mid = " | WhatsApp: ";
@@ -260,20 +279,14 @@ Check now: www.etenderbd.com`
           doc.text(mid, startX + prefixWidth + websiteWidth, line2Y);
 
           const midWidth = doc.getTextWidth(mid);
-          doc.textWithLink(
-            whatsapp,
-            startX + prefixWidth + websiteWidth + midWidth,
-            line2Y,
-            {
-              url: `https://wa.me/8801926959331`,
-            }
-          );
+          doc.textWithLink(whatsapp, startX + prefixWidth + websiteWidth + midWidth, line2Y, {
+            url: `https://wa.me/8801926959331`,
+          });
           doc.text(`Page ${pageNumber}`, centerX, line3Y, { align: "center" });
-        }
+        },
       });
 
-
-      doc.save(`Promotional_Tenders_${getBengaliDate(selectedDate).replace(/ /g, '_')}.pdf`);
+      doc.save(`Promotional_Tenders_${getBengaliDate(selectedDate).replace(/ /g, "_")}.pdf`);
     } catch (error) {
       console.error("Error generating PDF:", error);
     } finally {
@@ -288,15 +301,17 @@ Check now: www.etenderbd.com`
       try {
         setLoading(true);
         // Fetch ALL tenders for the selected date directly to get accurate global counts for that day
-        const response = await import("@/lib/axiosInstance").then(m => m.default.get('/tenders', {
-          params: {
-            from: selectedDate,
-            to: selectedDate,
-            dateType: "publicationDateTime",
-            page: 1,
-            limit: 10000
-          }
-        }));
+        const response = await import("@/lib/axiosInstance").then((m) =>
+          m.default.get("/tenders", {
+            params: {
+              from: selectedDate,
+              to: selectedDate,
+              dateType: "publicationDateTime",
+              page: 1,
+              limit: 10000,
+            },
+          })
+        );
 
         const allTendersForDate = response.data?.data || [];
 
@@ -304,7 +319,7 @@ Check now: www.etenderbd.com`
           const deptCounts = {};
           const locCounts = {};
 
-          allTendersForDate.forEach(tender => {
+          allTendersForDate.forEach((tender) => {
             const d = tender.organization || tender.department;
             if (d) deptCounts[d] = (deptCounts[d] || 0) + 1;
 
@@ -326,7 +341,9 @@ Check now: www.etenderbd.com`
     };
 
     loadFilterCounts();
-    return () => { ignore = true; };
+    return () => {
+      ignore = true;
+    };
   }, [selectedDate]); // Re-run whenever selectedDate changes
 
   const filteredDepartments = useMemo(() => {
@@ -336,20 +353,24 @@ Check now: www.etenderbd.com`
   }, [filterCounts.departments, deptSearch]);
 
   const filteredLocations = useMemo(() => {
-    const list = filterCounts.locations?.map(l => l.name) || [];
+    const list = filterCounts.locations?.map((l) => l.name) || [];
     if (!locationSearch) return list;
-    return list.filter((d) =>
-      d.toLowerCase().includes(locationSearch.toLowerCase())
-    );
+    return list.filter((d) => d.toLowerCase().includes(locationSearch.toLowerCase()));
   }, [filterCounts.locations, locationSearch]);
 
   const departmentCountMap = useMemo(
-    () => Object.fromEntries((filterCounts?.departments || []).map((item) => [item.name, item.count || 0])),
+    () =>
+      Object.fromEntries(
+        (filterCounts?.departments || []).map((item) => [item.name, item.count || 0])
+      ),
     [filterCounts?.departments]
   );
 
   const locationCountMap = useMemo(
-    () => Object.fromEntries((filterCounts?.locations || []).map((item) => [item.name, item.count || 0])),
+    () =>
+      Object.fromEntries(
+        (filterCounts?.locations || []).map((item) => [item.name, item.count || 0])
+      ),
     [filterCounts?.locations]
   );
 
@@ -372,7 +393,14 @@ Check now: www.etenderbd.com`
 
   // Filter options
   const priorities = ["সব", "উচ্চ", "মাঝারি", "নিম্ন"];
-  const categories = ["সব", "পরিবেশ ব্যবস্থাপনা", "স্বাস্থ্যসেবা", "নিরাপত্তা ব্যবস্থা", "তথ্য প্রযুক্তি", "বিদ্যুৎ ও জ্বালানি"];
+  const categories = [
+    "সব",
+    "পরিবেশ ব্যবস্থাপনা",
+    "স্বাস্থ্যসেবা",
+    "নিরাপত্তা ব্যবস্থা",
+    "তথ্য প্রযুক্তি",
+    "বিদ্যুৎ ও জ্বালানি",
+  ];
 
   // Filter and sort data
 
@@ -404,11 +432,14 @@ Check now: www.etenderbd.com`
     }
   };
 
-
   const getBengaliDate = (dateString: string) => {
     if (!dateString) return "নির্বাচন করুন";
     try {
-      return new Intl.DateTimeFormat('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(dateString));
+      return new Intl.DateTimeFormat("bn-BD", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }).format(new Date(dateString));
     } catch (e) {
       return "নির্বাচন করুন";
     }
@@ -425,7 +456,9 @@ Check now: www.etenderbd.com`
           className="mb-10 text-center flex flex-col items-center"
         >
           <h1 className="text-4xl lg:text-5xl font-bold text-red-600">টেন্ডার বিজ্ঞপ্তি</h1>
-          <p className="text-red-500 mt-2 text-xl font-bold">প্রকাশনা তারিখ: {getBengaliDate(selectedDate)}</p>
+          <p className="text-red-500 mt-2 text-xl font-bold">
+            প্রকাশনা তারিখ: {getBengaliDate(selectedDate)}
+          </p>
           <Button
             onClick={downloadPdf}
             disabled={isPdfLoading}
@@ -481,64 +514,76 @@ Check now: www.etenderbd.com`
                   </TableHeader>
                   <TableBody>
                     <AnimatePresence>
-                      {loading ? (
-                        Array.from({ length: pageLimit }).map((_, idx) => (
-                          <TableRow key={idx}>
-                            <TableCell colSpan={8} className="h-16">
-                              <div className="flex items-center justify-center w-full">
-                                <div className="h-4 bg-slate-200 rounded animate-pulse w-full"></div>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      ) : (
-                        tenders?.map((tender, index) => (
-                          <motion.tr
-                            key={tender._id}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 20 }}
-                            transition={{ duration: 0.3, delay: index * 0.05 }}
-                            className={`border-b border-slate-100 hover:bg-blue-50/50 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-slate-50/30"
+                      {loading
+                        ? Array.from({ length: pageLimit }).map((_, idx) => (
+                            <TableRow key={idx}>
+                              <TableCell colSpan={8} className="h-16">
+                                <div className="flex items-center justify-center w-full">
+                                  <div className="h-4 bg-slate-200 rounded animate-pulse w-full"></div>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        : tenders?.map((tender, index) => (
+                            <motion.tr
+                              key={tender._id}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: 20 }}
+                              transition={{ duration: 0.3, delay: index * 0.05 }}
+                              className={`border-b border-slate-100 hover:bg-blue-50/50 transition-colors ${
+                                index % 2 === 0 ? "bg-white" : "bg-slate-50/30"
                               }`}
-                          >
-                            <TableCell className="px-4 py-4 text-center">
-                              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
-                                {(currentPage - 1) * pageLimit + index + 1}
-                              </span>
-                            </TableCell>
-                            <TableCell className="px-4 py-4 text-center">
-                              <div className="flex items-center justify-center gap-2">
-                                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 font-mono text-xs">
-                                  {tender.tenderId}
-                                </Badge>
-                              </div>
-                            </TableCell>
-                            <TableCell className="px-4 py-4 text-center">
-                              <span className="font-medium text-slate-700">{tender.organization || tender.department || "N/A"}</span>
-                            </TableCell>
-                            <TableCell className="px-4 py-4 text-center">
-                              <div className="max-w-xs mx-auto">
-                                <p className="text-sm text-slate-700 line-clamp-3 leading-relaxed">
-                                  {tender.descriptionOfWorks}
-                                </p>
-                              </div>
-                            </TableCell>
-                            <TableCell className="px-4 py-4 text-center">
-                              <span className="font-semibold text-green-700">BDT {tender.documentPrice}</span>
-                            </TableCell>
-                            <TableCell className="px-4 py-4 text-center">
-                              <span className="font-medium text-orange-700">BDT {tender.tenderSecurity}</span>
-                            </TableCell>
-                            <TableCell className="px-4 py-4 text-center">
-                              <span className="font-medium text-slate-700">BDT {tender.estimatedCost}</span>
-                            </TableCell>
-                            <TableCell className="px-4 py-4 text-center">
-                              <span className="font-medium text-red-700">{formatDate(tender.openingDateTime, "MM-dd-yyyy")}</span>
-                            </TableCell>
-                          </motion.tr>
-                        ))
-                      )}
+                            >
+                              <TableCell className="px-4 py-4 text-center">
+                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
+                                  {(currentPage - 1) * pageLimit + index + 1}
+                                </span>
+                              </TableCell>
+                              <TableCell className="px-4 py-4 text-center">
+                                <div className="flex items-center justify-center gap-2">
+                                  <Badge
+                                    variant="outline"
+                                    className="bg-blue-50 text-blue-700 border-blue-200 font-mono text-xs"
+                                  >
+                                    {tender.tenderId}
+                                  </Badge>
+                                </div>
+                              </TableCell>
+                              <TableCell className="px-4 py-4 text-center">
+                                <span className="font-medium text-slate-700">
+                                  {tender.organization || tender.department || "N/A"}
+                                </span>
+                              </TableCell>
+                              <TableCell className="px-4 py-4 text-center">
+                                <div className="max-w-xs mx-auto">
+                                  <p className="text-sm text-slate-700 line-clamp-3 leading-relaxed">
+                                    {tender.descriptionOfWorks}
+                                  </p>
+                                </div>
+                              </TableCell>
+                              <TableCell className="px-4 py-4 text-center">
+                                <span className="font-semibold text-green-700">
+                                  BDT {tender.documentPrice}
+                                </span>
+                              </TableCell>
+                              <TableCell className="px-4 py-4 text-center">
+                                <span className="font-medium text-orange-700">
+                                  BDT {tender.tenderSecurity}
+                                </span>
+                              </TableCell>
+                              <TableCell className="px-4 py-4 text-center">
+                                <span className="font-medium text-slate-700">
+                                  BDT {tender.estimatedCost}
+                                </span>
+                              </TableCell>
+                              <TableCell className="px-4 py-4 text-center">
+                                <span className="font-medium text-red-700">
+                                  {formatDate(tender.openingDateTime, "MM-dd-yyyy")}
+                                </span>
+                              </TableCell>
+                            </motion.tr>
+                          ))}
                     </AnimatePresence>
                   </TableBody>
                 </Table>
@@ -549,8 +594,12 @@ Check now: www.etenderbd.com`
                   <div className="p-4 bg-slate-100 rounded-full mb-4">
                     <Search className="h-12 w-12 text-slate-400" />
                   </div>
-                  <h3 className="text-lg font-semibold text-slate-700 mb-2">কোন টেন্ডার পাওয়া যায়নি</h3>
-                  <p className="text-slate-500 mb-4">অনুগ্রহ করে আপনার অনুসন্ধান শর্তাবলী পরিবর্তন করুন</p>
+                  <h3 className="text-lg font-semibold text-slate-700 mb-2">
+                    কোন টেন্ডার পাওয়া যায়নি
+                  </h3>
+                  <p className="text-slate-500 mb-4">
+                    অনুগ্রহ করে আপনার অনুসন্ধান শর্তাবলী পরিবর্তন করুন
+                  </p>
                 </div>
               )}
             </Card>
@@ -580,31 +629,94 @@ Check now: www.etenderbd.com`
 
             {/* Contact Info Bar */}
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-lg bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 px-4 py-2.5 text-slate-600 text-xs shadow-sm">
-              <a href="mailto:support@etenderbd.com" className="flex items-center gap-1.5 hover:text-blue-700 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+              <a
+                href="mailto:support@etenderbd.com"
+                className="flex items-center gap-1.5 hover:text-blue-700 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3.5 w-3.5 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
                 support@etenderbd.com
               </a>
-              <a href="tel:01926959331" className="flex items-center gap-1.5 hover:text-blue-700 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+              <a
+                href="tel:01926959331"
+                className="flex items-center gap-1.5 hover:text-blue-700 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3.5 w-3.5 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
                 01926-959331
               </a>
               <span className="flex items-center gap-1.5">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3.5 w-3.5 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
                 ঢাকা, বাংলাদেশ
               </span>
-              <a href="https://www.facebook.com/etenderinfo" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-blue-600 hover:text-blue-800 transition-colors font-semibold">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
+              <a
+                href="https://www.facebook.com/etenderinfo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-blue-600 hover:text-blue-800 transition-colors font-semibold"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3.5 w-3.5 shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
                 facebook.com/etenderinfo
               </a>
             </div>
 
             {/* Promotional Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-
               {/* Card 1 — নতুন টেন্ডার নোটিশ */}
               <div className="rounded-xl border border-blue-200 overflow-hidden shadow-sm">
                 <div className="bg-[#318CE7] px-4 py-3">
-                  <h3 className="text-white font-bold text-base leading-snug">নতুন টেন্ডার নোটিশ – eGP + পূর্ণ ডেটা শীট</h3>
+                  <h3 className="text-white font-bold text-base leading-snug">
+                    নতুন টেন্ডার নোটিশ – eGP + পূর্ণ ডেটা শীট
+                  </h3>
                 </div>
                 <div className="bg-white px-4 py-3 space-y-1.5">
                   {[
@@ -638,7 +750,9 @@ Check now: www.etenderbd.com`
               {/* Card 2 — SLT Calculation */}
               <div className="rounded-xl border border-blue-200 overflow-hidden shadow-sm">
                 <div className="bg-[#318CE7] px-4 py-3">
-                  <h3 className="text-white font-bold text-base leading-snug">E-GP Tender Automation – টেন্ডার প্রক্রিয়া সহজ করুন!</h3>
+                  <h3 className="text-white font-bold text-base leading-snug">
+                    E-GP Tender Automation – টেন্ডার প্রক্রিয়া সহজ করুন!
+                  </h3>
                 </div>
                 <div className="bg-white px-4 py-3 space-y-1.5">
                   {[
@@ -660,11 +774,12 @@ Check now: www.etenderbd.com`
                     >
                       এখনই চেক করুন: www.etenderbd.com
                     </a>
-                    <p className="text-xs text-slate-400 mt-1 text-center">www.etenderbd.com/stl-calculation</p>
+                    <p className="text-xs text-slate-400 mt-1 text-center">
+                      www.etenderbd.com/stl-calculation
+                    </p>
                   </div>
                 </div>
               </div>
-
             </div>
           </motion.div>
 
@@ -691,7 +806,11 @@ Check now: www.etenderbd.com`
               </Button>
             )}
 
-            <Accordion type="multiple" defaultValue={["Date Filter", "Organizations"]} className="space-y-2">
+            <Accordion
+              type="multiple"
+              defaultValue={["Date Filter", "Organizations"]}
+              className="space-y-2"
+            >
               <AccordionItem value="Date Filter" className="border-0">
                 <div className="mb-2 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
                   <AccordionTrigger className="flex items-center justify-between bg-teal-600 px-4 py-3 text-left text-sm font-semibold text-white hover:bg-teal-700 hover:no-underline [&[data-state=open]>svg]:rotate-180 [&>svg]:text-white">
@@ -732,7 +851,9 @@ Check now: www.etenderbd.com`
                       label={dept.name}
                       count={getDepartmentCount(dept.name)}
                       checked={selectedDepartments.includes(dept.name)}
-                      onCheckedChange={() => toggleSelection(setSelectedDepartments, selectedDepartments, dept.name)}
+                      onCheckedChange={() =>
+                        toggleSelection(setSelectedDepartments, selectedDepartments, dept.name)
+                      }
                     />
                   ))}
                 </div>
@@ -752,7 +873,9 @@ Check now: www.etenderbd.com`
                       label={loc}
                       count={getLocationCount(loc)}
                       checked={selectedLocations.includes(loc)}
-                      onCheckedChange={() => toggleSelection(setSelectedLocations, selectedLocations, loc)}
+                      onCheckedChange={() =>
+                        toggleSelection(setSelectedLocations, selectedLocations, loc)
+                      }
                     />
                   ))}
                 </div>

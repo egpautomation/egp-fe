@@ -12,7 +12,13 @@ import { useState } from "react";
 import useAllSOR from "@/hooks/useAllSor";
 import { Input } from "@/components/ui/input";
 import useAllDepartments from "@/hooks/useAllDepartments";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Pagination from "@/shared/Pagination/Pagination";
 import { CirclePlus, Download, Edit, File, Paperclip } from "lucide-react";
 import EditSORForm from "./EditSORForm";
@@ -30,75 +36,83 @@ export default function SOR() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(10);
-  const { sors, count, loading,setReload } = useAllSOR(searchTerm, 1, 10);
-  const {departments} = useAllDepartments();
+  const { sors, count, loading, setReload } = useAllSOR(searchTerm, 1, 10);
+  const { departments } = useAllDepartments();
   const skeleton = new Array(pageLimit).fill(Math?.random());
   const [isJSONImportOpen, setIsJSONImportOpen] = useState(false);
   return (
     <div className="p-6 container mx-auto">
-  
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 mb-5 gap-5 ">
         <Input
           placeholder="Search by Description..."
           value={searchTerm.description}
           onChange={(e) => setSearchTerm({ ...searchTerm, description: e.target.value })}
         />
-        
-        <Select onValueChange={(v) => setSearchTerm({ ...searchTerm, departmentShortName: v == "all" ? "" : v })}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Department" />
-            </SelectTrigger>
-            <SelectContent>
-               <SelectItem value="all">All</SelectItem>
-              {departments?.map((dept) => (
-                <SelectItem key={dept.shortName} value={dept.shortName}>
-                  {dept.shortName}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+
+        <Select
+          onValueChange={(v) =>
+            setSearchTerm({ ...searchTerm, departmentShortName: v == "all" ? "" : v })
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Department" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All</SelectItem>
+            {departments?.map((dept) => (
+              <SelectItem key={dept.shortName} value={dept.shortName}>
+                {dept.shortName}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Input
           placeholder="Search by Item Code..."
           value={searchTerm.itemCode}
           onChange={(e) => setSearchTerm({ ...searchTerm, itemCode: e.target.value })}
         />
-       <div className="grid col-span-2 grid-cols-1 xl:grid-cols-3 gap-5">
-         <Dialog>
-          <DialogTrigger asChild>
-            <Button><CirclePlus /> Add SOR</Button>
-          </DialogTrigger>
+        <div className="grid col-span-2 grid-cols-1 xl:grid-cols-3 gap-5">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>
+                <CirclePlus /> Add SOR
+              </Button>
+            </DialogTrigger>
 
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Create SOR</DialogTitle>
-            </DialogHeader>
-            <CreateSORForm setReload={setReload} />
-          </DialogContent>
-        </Dialog>
-            <DownloadSOR sors={sors} />
-            <Button onClick={() => setIsJSONImportOpen(!isJSONImportOpen)} className="bg-blue-200 hover:bg-blue-200 text-gray-600 font-semibold">
-              <File size={14} className=" inline" /> Import JSON
-            
-            </Button>
-       </div>
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Create SOR</DialogTitle>
+              </DialogHeader>
+              <CreateSORForm setReload={setReload} />
+            </DialogContent>
+          </Dialog>
+          <DownloadSOR sors={sors} />
+          <Button
+            onClick={() => setIsJSONImportOpen(!isJSONImportOpen)}
+            className="bg-blue-200 hover:bg-blue-200 text-gray-600 font-semibold"
+          >
+            <File size={14} className=" inline" /> Import JSON
+          </Button>
+        </div>
       </div>
 
-      <SORJsonImport  isJSONImportOpen={isJSONImportOpen} setReload={setReload} />
+      <SORJsonImport isJSONImportOpen={isJSONImportOpen} setReload={setReload} />
 
       <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm mt-7">
         <table className="w-full overflow-x-auto">
           <thead>
             <tr className="bg-primary text-primary-foreground">
-                  <th className="px-4 py-3 text-left text-sm font-semibold rounded-tl-lg">Item Code</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold ">Department <br /> Year Of Rate</th>
-              
+              <th className="px-4 py-3 text-left text-sm font-semibold rounded-tl-lg">Item Code</th>
+              <th className="px-4 py-3 text-left text-sm font-semibold ">
+                Department <br /> Year Of Rate
+              </th>
+
               <th className="px-4 py-3 text-left text-sm font-semibold">
                 Category, Sub-category, <br /> Sub-sub category
               </th>
-          
+
               <th className="px-4 py-3 text-left text-sm font-semibold">Description</th>
-           
-            
+
               <th className="px-4 py-3 text-center text-sm font-semibold rounded-tr-lg">Actions</th>
             </tr>
           </thead>
@@ -121,8 +135,8 @@ export default function SOR() {
                       <br />
                       Year of Rate: {item?.yearOfRate || "NOT AVAILABLE"}
                     </td>
- {/* Year */}
-                    
+                    {/* Year */}
+
                     {/* Category */}
                     <td className="px-4 py-3 text-sm align-top">
                       {item?.category && <p>Category : {item?.category}</p>}
@@ -133,22 +147,16 @@ export default function SOR() {
                       )}
                     </td>
 
-                   
-
                     {/* Description */}
                     <td className="px-4 py-3 text-xs text-justify min-w-50 align-top">
                       {item?.description || "NOT AVAILABLE"}
                     </td>
 
-                    
-
-                    
-
                     {/* Actions */}
                     <td className="px-4 py-3 align-top grid grid-cols-3 gap-2">
-<ViewSORModal data={item}/>
+                      <ViewSORModal data={item} />
                       <EditSORForm data={item} setReload={setReload} />
-                      <DeleteDataModal url={`/sor/delete-sor/${item?._id}`} setReload={setReload}/>
+                      <DeleteDataModal url={`/sor/delete-sor/${item?._id}`} setReload={setReload} />
                       {item?.attachment ? (
                         <a
                           href={item.attachment}
@@ -156,16 +164,15 @@ export default function SOR() {
                           rel="noopener noreferrer"
                           className="group inline-flex items-center justify-center gap-1 rounded border border-blue-300 bg-[#4874c7] text-nowrap px-1.5 mt-2 py-1.5 text-xs font-semibold text-white hover:bg-blue-600 col-span-3"
                         >
-                        <Paperclip size={14} /> View File
+                          <Paperclip size={14} /> View File
                         </a>
                       ) : (
                         <span
-                          
                           target="_blank"
                           rel="noopener noreferrer"
                           className="group inline-flex items-center justify-center gap-1 rounded border border-gray-300 bg-gray-100 text-gray-500 text-nowrap px-1.5 mt-2 py-1.5 text-xs font-semibold col-span-3"
                         >
-                        <Paperclip size={14} /> No File
+                          <Paperclip size={14} /> No File
                         </span>
                       )}
                     </td>

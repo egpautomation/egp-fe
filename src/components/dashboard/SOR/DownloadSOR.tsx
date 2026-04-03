@@ -1,7 +1,5 @@
-
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-
 
 // ✅ Type Definition
 type SOR = {
@@ -25,7 +23,6 @@ type SOR = {
   rate_6?: number;
 };
 
-
 const SOR_FIELD_LABELS: Record<keyof SOR, string> = {
   departmentShortName: "Department Name",
   yearOfRate: "Year of Rate",
@@ -48,7 +45,6 @@ const SOR_FIELD_LABELS: Record<keyof SOR, string> = {
 };
 
 export default function DownloadSOR({ sors }: { sors: SOR[] }) {
-  
   // ✅ Clean Data (remove unwanted fields)
   const cleanSORData = (data: SOR[]): SOR[] => {
     return data.map((item) => {
@@ -62,41 +58,41 @@ export default function DownloadSOR({ sors }: { sors: SOR[] }) {
     });
   };
 
-const downloadCSV = (data: SOR[], filename = "SOR_List.csv") => {
-  if (!data || data.length === 0) return;
+  const downloadCSV = (data: SOR[], filename = "SOR_List.csv") => {
+    if (!data || data.length === 0) return;
 
-  const cleanedData = cleanSORData(data);
+    const cleanedData = cleanSORData(data);
 
-  const headers = Object.keys(SOR_FIELD_LABELS) as (keyof SOR)[];
-  const headerLabels = Object.values(SOR_FIELD_LABELS);
+    const headers = Object.keys(SOR_FIELD_LABELS) as (keyof SOR)[];
+    const headerLabels = Object.values(SOR_FIELD_LABELS);
 
-  const csvRows = [
-    headerLabels.join(","), // professional headers
-    ...cleanedData.map((row) =>
-      headers
-        .map((field) => {
-          let value = row[field] ?? "";
-          // Replace newlines with space
-          value = String(value).replace(/\r?\n|\r/g, " ");
-          // Escape double quotes
-          value = value.replace(/"/g, '""');
-          return `"${value}"`;
-        })
-        .join(",")
-    ),
-  ];
+    const csvRows = [
+      headerLabels.join(","), // professional headers
+      ...cleanedData.map((row) =>
+        headers
+          .map((field) => {
+            let value = row[field] ?? "";
+            // Replace newlines with space
+            value = String(value).replace(/\r?\n|\r/g, " ");
+            // Escape double quotes
+            value = value.replace(/"/g, '""');
+            return `"${value}"`;
+          })
+          .join(",")
+      ),
+    ];
 
-  const blob = new Blob([csvRows.join("\n")], {
-    type: "text/csv;charset=utf-8;",
-  });
+    const blob = new Blob([csvRows.join("\n")], {
+      type: "text/csv;charset=utf-8;",
+    });
 
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
-};
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   const handleDownloadCSV = () => {
     downloadCSV(sors);
@@ -105,7 +101,7 @@ const downloadCSV = (data: SOR[], filename = "SOR_List.csv") => {
   return (
     <div className="flex justify-end">
       <Button className="bg-green-700" onClick={handleDownloadCSV} disabled={!sors?.length}>
-       <Download /> Download CSV
+        <Download /> Download CSV
       </Button>
     </div>
   );

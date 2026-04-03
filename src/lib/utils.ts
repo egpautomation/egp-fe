@@ -33,7 +33,8 @@ export function downloadCreditLineAsWord(element: HTMLElement | null, filename =
       if (/style=(['"]).*?\1/i.test(attrs)) {
         return `<h3${attrs.replace(
           /style=(['"])(.*?)\1/i,
-          (_s: string, q: string, v: string) => `style=${q}${v}; font-size:20px; color:#6D28D9; text-align:center;${q}`
+          (_s: string, q: string, v: string) =>
+            `style=${q}${v}; font-size:20px; color:#6D28D9; text-align:center;${q}`
         )}>`;
       }
       return `<h3${attrs} style="font-size:20px; color:#6D28D9; text-align:center;">`;
@@ -68,69 +69,81 @@ export function downloadCreditLineAsWord(element: HTMLElement | null, filename =
     return `<${tag}${attrs} style="border:1px solid #000;">`;
   });
 
-  content = content.replace(/<([a-z0-9]+)([^>]*)>/gi, (full: string, tag: string, attrs: string) => {
-    try {
-      if (!/class=(['"]).*?\btext-xs\b.*?\1/i.test(attrs)) return full;
-      if (/style=(['"])(.*?)\1/i.test(attrs)) {
-        return `<${tag}${attrs.replace(
-          /style=(['"])(.*?)\1/i,
-          (_s: string, q: string, v: string) => `style=${q}${v}; font-size:9px;${q}`
-        )}>`;
-      }
-      return `<${tag}${attrs} style="font-size:9px;">`;
-    } catch (e) {
-      return full;
-    }
-  });
-
-  content = content.replace(/<([a-z0-9]+)([^>]*)>/gi, (full: string, tag: string, attrs: string) => {
-    try {
-      if (
-        !/class=(['"]) .*?\btext-sm\b.*?\1/i.test(attrs) &&
-        !/class=(['"])\btext-sm\b.*?\1/i.test(attrs)
-      )
+  content = content.replace(
+    /<([a-z0-9]+)([^>]*)>/gi,
+    (full: string, tag: string, attrs: string) => {
+      try {
+        if (!/class=(['"]).*?\btext-xs\b.*?\1/i.test(attrs)) return full;
+        if (/style=(['"])(.*?)\1/i.test(attrs)) {
+          return `<${tag}${attrs.replace(
+            /style=(['"])(.*?)\1/i,
+            (_s: string, q: string, v: string) => `style=${q}${v}; font-size:9px;${q}`
+          )}>`;
+        }
+        return `<${tag}${attrs} style="font-size:9px;">`;
+      } catch (e) {
         return full;
-      if (/style=(['"])(.*?)\1/i.test(attrs)) {
-        return `<${tag}${attrs.replace(
-          /style=(['"])(.*?)\1/i,
-          (_s: string, q: string, v: string) => `style=${q}${v}; font-size:10px;${q}`
-        )}>`;
       }
-      return `<${tag}${attrs} style="font-size:10px;">`;
-    } catch (e) {
-      return full;
     }
-  });
+  );
 
-  content = content.replace(/<([a-z0-9]+)([^>]*)>/gi, (full: string, tag: string, attrs: string) => {
-    try {
-      if (!/class=(['"]).*?\bpl-3\b.*?\1/i.test(attrs)) return full;
-      if (/style=(['"])(.*?)\1/i.test(attrs)) {
-        return `<${tag}${attrs.replace(
-          /style=(['"])(.*?)\1/i,
-          (_s: string, q: string, v: string) => `style=${q}${v}; padding-left:12px;${q}`
-        )}>`;
+  content = content.replace(
+    /<([a-z0-9]+)([^>]*)>/gi,
+    (full: string, tag: string, attrs: string) => {
+      try {
+        if (
+          !/class=(['"]) .*?\btext-sm\b.*?\1/i.test(attrs) &&
+          !/class=(['"])\btext-sm\b.*?\1/i.test(attrs)
+        )
+          return full;
+        if (/style=(['"])(.*?)\1/i.test(attrs)) {
+          return `<${tag}${attrs.replace(
+            /style=(['"])(.*?)\1/i,
+            (_s: string, q: string, v: string) => `style=${q}${v}; font-size:10px;${q}`
+          )}>`;
+        }
+        return `<${tag}${attrs} style="font-size:10px;">`;
+      } catch (e) {
+        return full;
       }
-      return `<${tag}${attrs} style="padding-left:12px;">`;
-    } catch (e) {
-      return full;
     }
-  });
+  );
 
-  content = content.replace(/<([a-z0-9]+)([^>]*)>/gi, (full: string, tag: string, attrs: string) => {
-    try {
-      if (!/class=(['"]).*?\bitalic\b.*?\1/i.test(attrs)) return full;
-      if (/style=(['"])(.*?)\1/i.test(attrs)) {
-        return `<${tag}${attrs.replace(
-          /style=(['"])(.*?)\1/i,
-          (_s: string, q: string, v: string) => `style=${q}${v}; font-style:italic;${q}`
-        )}>`;
+  content = content.replace(
+    /<([a-z0-9]+)([^>]*)>/gi,
+    (full: string, tag: string, attrs: string) => {
+      try {
+        if (!/class=(['"]).*?\bpl-3\b.*?\1/i.test(attrs)) return full;
+        if (/style=(['"])(.*?)\1/i.test(attrs)) {
+          return `<${tag}${attrs.replace(
+            /style=(['"])(.*?)\1/i,
+            (_s: string, q: string, v: string) => `style=${q}${v}; padding-left:12px;${q}`
+          )}>`;
+        }
+        return `<${tag}${attrs} style="padding-left:12px;">`;
+      } catch (e) {
+        return full;
       }
-      return `<${tag}${attrs} style="font-style:italic;">`;
-    } catch (e) {
-      return full;
     }
-  });
+  );
+
+  content = content.replace(
+    /<([a-z0-9]+)([^>]*)>/gi,
+    (full: string, tag: string, attrs: string) => {
+      try {
+        if (!/class=(['"]).*?\bitalic\b.*?\1/i.test(attrs)) return full;
+        if (/style=(['"])(.*?)\1/i.test(attrs)) {
+          return `<${tag}${attrs.replace(
+            /style=(['"])(.*?)\1/i,
+            (_s: string, q: string, v: string) => `style=${q}${v}; font-style:italic;${q}`
+          )}>`;
+        }
+        return `<${tag}${attrs} style="font-style:italic;">`;
+      } catch (e) {
+        return full;
+      }
+    }
+  );
 
   const html = `<!DOCTYPE html>
       <html>

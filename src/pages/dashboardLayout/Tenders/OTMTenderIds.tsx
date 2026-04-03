@@ -16,12 +16,8 @@ const OTMTenderIds = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const [message, setMessage] = useState("");
-  const [currentPage, setCurrentPage] = useState(
-    Number(searchParams.get("page")) || 1
-  );
-  const [pageLimit, setPageLimit] = useState(
-    Number(searchParams.get("limit")) || 1000
-  );
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
+  const [pageLimit, setPageLimit] = useState(Number(searchParams.get("limit")) || 1000);
 
   const { tenders, loading, tendersCount, setReload } = useAllTenderIds(
     searchTerm,
@@ -65,25 +61,16 @@ const OTMTenderIds = () => {
           <JsonFileUploader setReload={setReload} />
         </div>
       </div> */}
-      <div
-        id="tenderId-delete-message"
-        className="text-green-600  mt-4 font-medium"
-      >
+      <div id="tenderId-delete-message" className="text-green-600  mt-4 font-medium">
         {message && message}{" "}
         {message && (
-          <X
-            size={16}
-            className="inline-block cursor-pointer"
-            onClick={() => setMessage("")}
-          />
+          <X size={16} className="inline-block cursor-pointer" onClick={() => setMessage("")} />
         )}
       </div>
       <div className="flex items-center gap-2 flex-wrap mt-5 justify-between">
         <div className="flex items-center gap-2">
           <AlignJustify />
-          <h1 className="text-2xl font-semibold mb-1">
-            {tendersCount} Tenders Found{" "}
-          </h1>
+          <h1 className="text-2xl font-semibold mb-1">{tendersCount} Tenders Found </h1>
         </div>
         <div className="flex flex-wrap gap-3 flex-1 justify-end">
           <Input
@@ -103,23 +90,13 @@ const OTMTenderIds = () => {
                 {/* <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">
                   Action
                 </th> */}
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">
-                  Tender Id
-                </th>
+                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">Tender Id</th>
                 <th className="whitespace-nowrap px-4 py-2 text-start">Type</th>
 
-                <th className="whitespace-nowrap px-4 py-2  text-start">
-                  Method
-                </th>
-                <th className="whitespace-nowrap px-4 py-2  text-start">
-                  District
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start ">
-                  Publication Date
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tr">
-                  Opening Date
-                </th>
+                <th className="whitespace-nowrap px-4 py-2  text-start">Method</th>
+                <th className="whitespace-nowrap px-4 py-2  text-start">District</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start ">Publication Date</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tr">Opening Date</th>
               </tr>
             </thead>
 
@@ -127,10 +104,7 @@ const OTMTenderIds = () => {
               {!loading ? (
                 tenders?.length > 0 ? (
                   tenders?.map((item, idx) => (
-                    <tr
-                      key={idx}
-                      className={`border ${idx % 2 == 1 && "bg-gray-100"}`}
-                    >
+                    <tr key={idx} className={`border ${idx % 2 == 1 && "bg-gray-100"}`}>
                       {/* <td className="px-4 py-2">
                         <Button
                           onClick={() => handleDelete(item?._id)}
@@ -163,8 +137,7 @@ const OTMTenderIds = () => {
                   <tr key={idx}>
                     <td
                       colSpan={6}
-                      className={`h-20 ${idx % 2 == 1 ? "bg-gray-300" : "bg-white"
-                        }`}
+                      className={`h-20 ${idx % 2 == 1 ? "bg-gray-300" : "bg-white"}`}
                     ></td>
                   </tr>
                 ))
