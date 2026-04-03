@@ -10,7 +10,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   googleLogin: (idToken: string) => Promise<{ onboardingRequired?: boolean }>;
   register: (userData: RegisterData) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   setUser: (user: User | null) => void;
   getToken: () => string | null;
   isAuthenticated: boolean;
@@ -84,8 +84,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   /**
    * Logout user
    */
-  const logout = (): void => {
-    authService.logout();
+  const logout = async (): Promise<void> => {
+    await authService.logout();
     setUser(null);
   };
 

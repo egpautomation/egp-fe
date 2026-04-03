@@ -386,10 +386,27 @@ export const register = async (userData: RegisterData): Promise<LoginResponse> =
 };
 
 /**
- * Logout user - clear all tokens and user data
+ * Logout user - notify backend and clear all local tokens and user data
  */
-export const logout = (): void => {
-  clearTokens();
+export const logout = async (): Promise<void> => {
+  const refreshToken = getRefreshToken();
+
+  try {
+    if (refreshToken) {
+      await fetch(`${API_BASE_URL}/user/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
+    }
+  } catch (error) {
+    console.error("Logout error (network):", error);
+    // Still clear local tokens even if the server call fails
+  } finally {
+    clearTokens();
+  }
 };
 
 /**
