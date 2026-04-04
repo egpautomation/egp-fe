@@ -37,7 +37,6 @@ const LTMBypassReport = () => {
                 {/* General Info */}
                 <th className="whitespace-nowrap px-4 py-3">SL</th>
                 <th className="whitespace-nowrap px-4 py-3">Invoice No</th>
-                <th className="whitespace-nowrap px-4 py-3">Job No</th>
                 <th className="whitespace-nowrap px-4 py-3">ReLogin</th>
                 <th className="whitespace-nowrap px-4 py-3">Tender Id</th>
                 <th className="whitespace-nowrap px-4 py-3">EGP Email</th>
@@ -56,10 +55,6 @@ const LTMBypassReport = () => {
                 <th className="whitespace-nowrap px-4 py-3">TIN</th>
                 <th className="whitespace-nowrap px-4 py-3">VAT</th>
                 <th className="whitespace-nowrap px-4 py-3">LTM License</th>
-                <th className="whitespace-nowrap px-4 py-3">Other 1 Map</th>
-                <th className="whitespace-nowrap px-4 py-3">SL No Line Credit</th>
-                <th className="whitespace-nowrap px-4 py-3">Other 2 Map</th>
-                <th className="whitespace-nowrap px-4 py-3">WhatsApp</th>
                 <th className="whitespace-nowrap px-4 py-3">TIN Return</th>
                 <th className="whitespace-nowrap px-4 py-3">VAT Return</th>
                 <th className="whitespace-nowrap px-4 py-3">Manpower</th>
@@ -115,7 +110,7 @@ const LTMBypassReport = () => {
                 skeleton.map((_, idx) => (
                   <tr key={idx} className="animate-pulse border-b">
                     <td
-                      colSpan={63}
+                      colSpan={58}
                       className={`h-12 ${idx % 2 === 1 ? "bg-gray-50" : "bg-white"}`}
                     ></td>
                   </tr>
@@ -126,7 +121,7 @@ const LTMBypassReport = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={63} className="px-4 py-12 text-center text-gray-500 bg-gray-50">
+                  <td colSpan={58} className="px-4 py-12 text-center text-gray-500 bg-gray-50">
                     <p className="text-lg font-medium">No bypass report data found</p>
                   </td>
                 </tr>

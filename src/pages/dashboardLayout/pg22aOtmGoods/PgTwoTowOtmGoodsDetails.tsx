@@ -73,7 +73,7 @@ const PgTwoTowOtmGoodsDetails = () => {
   const liveTenderUrl = currentTender?.tenderId
     ? `${config.apiBaseUrl}/tenders/tenderId/${currentTender.tenderId}`
     : null;
-  const { data: liveTenderData } = useSingleData(liveTenderUrl);
+  const { data: liveTenderData, setReload: setLiveTenderReload } = useSingleData(liveTenderUrl);
 
   // Initialize shared state from database values
   useEffect(() => {
@@ -389,6 +389,36 @@ const PgTwoTowOtmGoodsDetails = () => {
         (c) => c._id === currentTender?.experienceContractId
       );
 
+      const formatDateForExperience = (dateString: any) => {
+        if (!dateString) return "";
+        try {
+          const date = new Date(dateString);
+          if (isNaN(date.getTime())) return dateString;
+          return new Intl.DateTimeFormat("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }).format(date);
+        } catch (e) {
+          return dateString;
+        }
+      };
+
+      const cleanTurnoverValue = (val: any) => {
+        if (!val) return "";
+        return String(val).replace(/BDT\s?/gi, "").replace(/,/g, "").trim();
+      };
+
+      let calcActiveDate2 = "30";
+      if (liveTenderData?.TentativeStartDate && liveTenderData?.TentativeCompletionDate) {
+        const start = new Date(liveTenderData.TentativeStartDate);
+        const end = new Date(liveTenderData.TentativeCompletionDate);
+        if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+          const diffDays = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+          calcActiveDate2 = diffDays.toString();
+        }
+      }
+
       const payload = {
         invoice_no: String(currentTender?.jobOrder || ""),
         job_no: String(currentTender?.jobOrder || ""),
@@ -398,8 +428,8 @@ const PgTwoTowOtmGoodsDetails = () => {
         password: companyData?.password || "",
         bank_name: companyData?.bankName || "",
         liquid_asset: String(liveTenderData?.liquidAssets || ""),
-        active_date1: liveTenderData?.documentLastSelling || "",
-        active_date2: liveTenderData?.openingDateTime || "",
+        active_date1: liveTenderData?.documentLastSelling || "7",
+        active_date2: calcActiveDate2,
         company_address: companyData?.companyAddress || "",
         author: companyData?.autho || "",
         nid: companyData?.nid || "",
@@ -424,11 +454,11 @@ const PgTwoTowOtmGoodsDetails = () => {
         pavement_asphalt_works: "",
 
         general_exp_year: String(companyData?.yearsOfGeneralExperience || ""),
-        specific_contract_no: specificExp?.contractNo || "",
+        specific_contract_no: specificExp?.tenderId || "",
         specific_contract_name: specificExp?.descriptionOfWorks || "",
-        specific_contract_role: specificExp?.role || "",
-        specific_award_date: specificExp?.dateOfNOA || "",
-        specific_completion_date: specificExp?.contractPeriodExtendedUpTo || "",
+        specific_contract_role: specificExp?.jvShare ? (parseFloat(specificExp.jvShare) === 100 ? "Prime Contractor" : "Joint Venture Partner") : "",
+        specific_award_date: formatDateForExperience(specificExp?.commencementDate),
+        specific_completion_date: formatDateForExperience(specificExp?.contractPeriodExtendedUpTo),
         specific_contract_value: String(
           specificExp?.actualPayment || specificExp?.actualPaymentJvShare || ""
         ),
@@ -436,20 +466,20 @@ const PgTwoTowOtmGoodsDetails = () => {
         specific_description: specificExp?.descriptionOfWorks || "",
 
         year01_period: turnoverData[0]?.period || "",
-        year01_amount_currency: turnoverData[0]?.amountCurrency || "",
-        year01_amount_bdt: turnoverData[0]?.amountBDT || "",
+        year01_amount_currency: cleanTurnoverValue(turnoverData[0]?.amountCurrency),
+        year01_amount_bdt: cleanTurnoverValue(turnoverData[0]?.amountBDT),
         year02_period: turnoverData[1]?.period || "",
-        year02_amount_currency: turnoverData[1]?.amountCurrency || "",
-        year02_amount_bdt: turnoverData[1]?.amountBDT || "",
+        year02_amount_currency: cleanTurnoverValue(turnoverData[1]?.amountCurrency),
+        year02_amount_bdt: cleanTurnoverValue(turnoverData[1]?.amountBDT),
         year03_period: turnoverData[2]?.period || "",
-        year03_amount_currency: turnoverData[2]?.amountCurrency || "",
-        year03_amount_bdt: turnoverData[2]?.amountBDT || "",
+        year03_amount_currency: cleanTurnoverValue(turnoverData[2]?.amountCurrency),
+        year03_amount_bdt: cleanTurnoverValue(turnoverData[2]?.amountBDT),
         year04_period: turnoverData[3]?.period || "",
-        year04_amount_currency: turnoverData[3]?.amountCurrency || "",
-        year04_amount_bdt: turnoverData[3]?.amountBDT || "",
+        year04_amount_currency: cleanTurnoverValue(turnoverData[3]?.amountCurrency),
+        year04_amount_bdt: cleanTurnoverValue(turnoverData[3]?.amountBDT),
         year05_period: turnoverData[4]?.period || "",
-        year05_amount_currency: turnoverData[4]?.amountCurrency || "",
-        year05_amount_bdt: turnoverData[4]?.amountBDT || "",
+        year05_amount_currency: cleanTurnoverValue(turnoverData[4]?.amountCurrency),
+        year05_amount_bdt: cleanTurnoverValue(turnoverData[4]?.amountBDT),
 
         loc_no: "1",
         loc_source: companyData?.bankName || "",
@@ -965,22 +995,23 @@ const PgTwoTowOtmGoodsDetails = () => {
           </div>
         </div>
       </div>
-      {currentTender && (
+      {liveTenderData && (
         <UpdateTenderDialog
           open={updateDialogOpen}
           onOpenChange={setUpdateDialogOpen}
-          tenderId={currentTender._id}
+          tenderId={liveTenderData._id}
           initialData={{
-            turnoverAmount: currentTender.turnoverAmount,
-            liquidAssets: currentTender.liquidAssets,
-            tenderCapacity: currentTender.tenderCapacity,
-            yearofsimilarexperience: currentTender.yearofsimilarexperience,
-            typesOfSimilarNature: currentTender.typesOfSimilarNature,
-            jvca: currentTender.jvca,
+            turnoverAmount: liveTenderData.turnoverAmount,
+            liquidAssets: liveTenderData.liquidAssets,
+            tenderCapacity: liveTenderData.tenderCapacity,
+            yearofsimilarexperience: liveTenderData.yearofsimilarexperience,
+            typesOfSimilarNature: liveTenderData.typesOfSimilarNature,
+            jvca: liveTenderData.jvca,
           }}
           onSuccess={() => {
             setTenderReload((prev) => prev + 1);
             setContractReload((prev) => prev + 1);
+            setLiveTenderReload((prev) => prev + 1);
           }}
         />
       )}

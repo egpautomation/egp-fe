@@ -39,7 +39,6 @@ export default function ByPassReportRow({ item, idx, data }: any) {
       {/* General Info */}
       <td className="px-4 py-2">{item?.sl || idx + 1}</td>
       <td className="px-4 py-2">{item?.invoice_no || "N/A"}</td>
-      <td className="px-4 py-2">{item?.job_no || "N/A"}</td>
       <td className="px-4 py-2">
         {idx > 0 && item?.egp_email === data[idx - 1]?.egp_email ? 1 : 2}
       </td>
@@ -62,10 +61,6 @@ export default function ByPassReportRow({ item, idx, data }: any) {
       <td className="px-4 py-2">{item?.tin || "N/A"}</td>
       <td className="px-4 py-2">{item?.vat || "N/A"}</td>
       <td className="px-4 py-2">{item?.ltm_license || "N/A"}</td>
-      <td className="px-4 py-2">{item?.other1_map || "N/A"}</td>
-      <td className="px-4 py-2">{item?.slno_line_credit || "N/A"}</td>
-      <td className="px-4 py-2">{item?.other2_map || "N/A"}</td>
-      <td className="px-4 py-2">{item?.whatsapp || "N/A"}</td>
       <td className="px-4 py-2">{item?.tin_return || "N/A"}</td>
       <td className="px-4 py-2">{item?.vat_return || "N/A"}</td>
       <td className="px-4 py-2">{item?.manpower || "N/A"}</td>
