@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Pagination from "@/shared/Pagination/Pagination";
-import { CirclePlus, Download, Edit, File, Paperclip } from "lucide-react";
+import { CirclePlus,  File, Paperclip } from "lucide-react";
 import EditSORForm from "./EditSORForm";
 import ViewSORModal from "./ViewSORForm";
 import DeleteDataModal from "@/shared/Dashboard/DeleteDataModal";
@@ -36,7 +36,7 @@ export default function SOR() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(10);
-  const { sors, count, loading, setReload } = useAllSOR(searchTerm, 1, 10);
+  const { sors, count, loading, setReload } = useAllSOR(searchTerm, currentPage, pageLimit);
   const { departments } = useAllDepartments();
   const skeleton = new Array(pageLimit).fill(Math?.random());
   const [isJSONImportOpen, setIsJSONImportOpen] = useState(false);

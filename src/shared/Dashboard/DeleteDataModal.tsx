@@ -16,7 +16,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 const DeleteDataModal = ({ setReload, url }) => {
-  console.log(url)
+  
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDataDelete = async (e) => {
