@@ -7,8 +7,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { CreateNewBoqRow } from "@/components/dashboard/SOR/CreateNewBoqRow";
+import BOQRow from "./BOQRow";
+import DeleteDataModal from "@/shared/Dashboard/DeleteDataModal";
+import config from "@/lib/config";
 
-interface BOQItem {
+
+export interface BOQItem {
   itemNo: number;
   group: string;
   itemCode: string;
@@ -57,7 +62,7 @@ export default function BOQTab({
 
   return (
     <div>
-      <div className="flex flex-col gap-8 p-4">
+      <div className="flex flex-col gap-8 ">
         {!data || data.length === 0 ? (
           <div className="p-4">No BOQ data found.</div>
         ) : (
@@ -68,7 +73,7 @@ export default function BOQTab({
                 type="single"
                 collapsible
                 defaultValue="shipping"
-                className="max-w-full"
+                className="max-w-full mb-5"
               >
                 <AccordionItem value={table?._id}>
                   <AccordionTrigger className=" bg-teal-600 text-white mb-4 px-2">
@@ -77,14 +82,24 @@ export default function BOQTab({
                       {table.tableName.replace("_", " ")}
                     </h2>
                   </AccordionTrigger>
-                  <AccordionContent>
+                  <AccordionContent className="px-2 ">
                     <div className="border rounded-lg overflow-hidden shadow-sm ">
                       {/* Table Header / Group Name */}
 
                       {/* Items Table */}
                       <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
-                          <thead className="bg-green-100 text-xs uppercase text-gray-600">
+                          <thead className="bg-green-200/80 text-xs uppercase text-gray-600">
+                            <tr>
+                              <th className="px-4 py-2 border-b" colSpan={10}>
+                                <div>
+                                  <CreateNewBoqRow />
+                                </div>
+                              </th>
+                              
+                            </tr>
+                          </thead>
+                          <thead className="bg-green-50 text-xs uppercase text-gray-600">
                             <tr>
                               <th className="px-4 py-2 border-b">Item no.</th>
                               <th className="px-4 py-2 border-b">Group</th>
@@ -100,32 +115,17 @@ export default function BOQTab({
                                 <br />
                                 In figures (BDT)
                               </th>
+                              <th className="px-4 py-2 border-b text-right">Total Price</th>
+                              <th className="px-4 py-2 border-b text-right">Search</th>
+                              <th className="px-4 py-2 border-b text-right">Delete</th>
                             </tr>
                           </thead>
                           <tbody className="text-sm divide-y">
                             {table.items.map((item) => (
-                              <tr key={item._id} className="hover:bg-gray-50">
-                                <td className="px-4 py-2">{item.itemNo}</td>
-                                <td className="px-4 py-2">
-                                  <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-xs">
-                                    {item.group}
-                                  </span>
-                                </td>
-                                <td className="px-4 py-2 font-mono text-xs">{item.itemCode}</td>
-                                <td className="px-4 py-2">
-                                  <div className="font-medium">{item.descriptionOfItem}</div>
-                                  <div className="text-xs text-gray-400">
-                                    {item.requiredDocument}
-                                  </div>
-                                </td>
-
-                                <td className="px-4 py-2">{item.unit}</td>
-                                <td className="px-4 py-2 text-right">{item.quantity}</td>
-                                <td className="px-4 py-2 text-right">{item.unitPrice}</td>
-                              </tr>
+                             <BOQRow item={item} key={item?._id} />
                             ))}
                             <tr className="hover:bg-gray-50">
-                              <td className="px-4 py-2   text-end" colSpan={7}>
+                              <td className="px-4 py-2   text-end" colSpan={10}>
                                 <CreateTenderPreparationButton
                                   setReload={setAllReload}
                                   table={table}
@@ -162,17 +162,22 @@ export default function BOQTab({
               className="max-w-full"
             >
               <AccordionItem value={table?._id}>
-                <AccordionTrigger className="bg-cyan-700 text-white mb-4 px-2">
+                <AccordionTrigger className="bg-cyan-700 text-white   mb-4 px-2">
                   {" "}
-                  <h2 className="text-lg font-bold capitalize">
+                  
+                  <div className="flex flex-wrap gap-3 justify-between  w-full">
+                    <h2 className="text-lg font-bold capitalize">
                     {table?.tableName && table.tableName.replace("_", " ")}
                   </h2>
+                    <div className="w-max bg-gray-200/85 pr-1.5 pt-0.5 rounded-sm">
+                      <DeleteDataModal setReload={setAllReload}  url={`${config.apiBaseUrl}/tender-preparation/delete-tender-preparation/${table?._id}`} />
+                    </div>
+                  </div>
                 </AccordionTrigger>
                 <AccordionContent>
+                  
                   <div className="border rounded-lg overflow-hidden shadow-sm">
-                    {/* Table Header / Group Name */}
-
-                    {/* Items Table */}
+                   
                     <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse">
                         <thead className="bg-green-100 text-xs uppercase text-gray-600">
