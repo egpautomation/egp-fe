@@ -20,9 +20,7 @@ const ViewUser = () => {
             <MoveLeft /> Go Back To Data Table
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold text-center my-8">
-          User Details Information
-        </h1>
+        <h1 className="text-3xl font-bold text-center my-8">User Details Information</h1>
       </div>
       <div className=" flex justify-center items-center">
         <div className="w-full max-w-xl shadow-2xl p-3 md:p-5 rounded border">

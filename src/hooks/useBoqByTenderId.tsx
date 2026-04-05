@@ -14,7 +14,7 @@ const useAllTenderIDBOQ = (tenderId) => {
         setLoading(true);
         // https://egp-tender-automation-server.vercel.app
         const url = `${config.apiBaseUrl}/boq/tenderId/${tenderId}`;
-        
+
         const response = await fetch(url);
         const data = await response.json();
         setData(data?.data);

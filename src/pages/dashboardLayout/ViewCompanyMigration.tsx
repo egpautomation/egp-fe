@@ -16,10 +16,7 @@ const ViewCompanyMigration = () => {
 
   return (
     <section className="min-h-lvh ">
-      <Link
-        className="mt-5 inline-block"
-        to={"/dashboard/company-registration"}
-      >
+      <Link className="mt-5 inline-block" to={"/dashboard/company-registration"}>
         <Button>
           <MoveLeft /> Back To Data Table
         </Button>
@@ -102,11 +99,7 @@ const ViewCompanyMigration = () => {
                 <Label htmlFor="companyTradeLicense">Trade Licenses</Label>
                 <div className="mt-2 flex flex-wrap gap-3">
                   {data?.companyTradeLicenseDocument?.map((item, idx) => (
-                    <img
-                      src={item}
-                      className="h-24 w-24 rounded object-cover"
-                      key={idx}
-                    />
+                    <img src={item} className="h-24 w-24 rounded object-cover" key={idx} />
                   ))}
                 </div>
               </div>
@@ -116,11 +109,7 @@ const ViewCompanyMigration = () => {
                 <Label htmlFor="companyTradeLicense">Tin Certificates</Label>
                 <div className="mt-2 flex flex-wrap gap-3">
                   {data?.tinCertificateDocument?.map((item, idx) => (
-                    <img
-                      src={item}
-                      className="h-24 w-24 rounded object-cover"
-                      key={idx}
-                    />
+                    <img src={item} className="h-24 w-24 rounded object-cover" key={idx} />
                   ))}
                 </div>
               </div>
@@ -130,11 +119,7 @@ const ViewCompanyMigration = () => {
                 <Label htmlFor="companyTradeLicense">Others File</Label>
                 <div className="mt-2 flex flex-wrap gap-3">
                   {data?.othersFile?.map((item, idx) => (
-                    <img
-                      src={item}
-                      className="h-24 w-24 rounded object-cover"
-                      key={idx}
-                    />
+                    <img src={item} className="h-24 w-24 rounded object-cover" key={idx} />
                   ))}
                 </div>
               </div>

@@ -4,7 +4,6 @@ import config from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllSOR = (searchTerm, page, limit) => {
- 
   const [sors, setSors] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -29,7 +28,7 @@ const useAllSOR = (searchTerm, page, limit) => {
       }
     };
     result();
-  }, [reload, searchTerm,page, limit]);
+  }, [reload, searchTerm, page, limit]);
 
   return {
     sors,

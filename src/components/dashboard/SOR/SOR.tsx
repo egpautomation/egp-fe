@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Pagination from "@/shared/Pagination/Pagination";
-import { CirclePlus,  File, Paperclip } from "lucide-react";
+import { CirclePlus, File, Paperclip } from "lucide-react";
 import EditSORForm from "./EditSORForm";
 import ViewSORModal from "./ViewSORForm";
 import DeleteDataModal from "@/shared/Dashboard/DeleteDataModal";

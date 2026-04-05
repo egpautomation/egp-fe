@@ -31,7 +31,6 @@ import axiosInstance from "@/lib/axiosInstance";
 import { cn } from "@/lib/utils";
 import useAllDepartments from "@/hooks/useAllDepartments";
 
-
 // 64 Districts of Bangladesh
 const bangladeshDistricts = [
   // Dhaka Division (13 districts)
@@ -136,7 +135,7 @@ const UpdateCompanyMigration = () => {
   const [tempBankAccount, setTempBankAccount] = useState({
     bankAccountName: "",
     bankAccountNumber: "",
-    holderName: ""
+    holderName: "",
   });
 
   // Initialize selectedAgencies from formData.departmentLicenses
@@ -144,7 +143,7 @@ const UpdateCompanyMigration = () => {
     if (formData?.departmentLicenses) {
       const agencies = Object.entries(formData.departmentLicenses).map(([key, value]) => ({
         name: key,
-        value: value as string
+        value: value as string,
       }));
       setSelectedAgencies(agencies);
     }
@@ -166,17 +165,19 @@ const UpdateCompanyMigration = () => {
       if (!formData?.egpEmail) return;
 
       try {
-        const response = await axiosInstance.get(`/egp-listed-company?searchTerm=${formData.egpEmail}&page=1&limit=1`);
+        const response = await axiosInstance.get(
+          `/egp-listed-company?searchTerm=${formData.egpEmail}&page=1&limit=1`
+        );
         const egpCompany = response.data?.data?.[0];
 
         if (egpCompany?.yearsOfGeneralExperience) {
-          setNewFormData(prev => ({
+          setNewFormData((prev) => ({
             ...prev,
-            yearsOfGeneralExperience: egpCompany.yearsOfGeneralExperience
+            yearsOfGeneralExperience: egpCompany.yearsOfGeneralExperience,
           }));
         }
       } catch (error) {
-        console.error('Error fetching EGP Listed Company:', error);
+        console.error("Error fetching EGP Listed Company:", error);
       }
     };
 
@@ -197,10 +198,7 @@ const UpdateCompanyMigration = () => {
     }
 
     // Add to selected agencies
-    setSelectedAgencies((prev) => [
-      ...prev,
-      { name: tempAgency, value: tempValue.trim() },
-    ]);
+    setSelectedAgencies((prev) => [...prev, { name: tempAgency, value: tempValue.trim() }]);
 
     // Reset temporary values
     setTempAgency("");
@@ -215,9 +213,11 @@ const UpdateCompanyMigration = () => {
 
   // Handle adding bank account to bank details array
   const handleAddBankAccount = () => {
-    if (!tempBankAccount.bankAccountName.trim() ||
+    if (
+      !tempBankAccount.bankAccountName.trim() ||
       !tempBankAccount.bankAccountNumber.trim() ||
-      !tempBankAccount.holderName.trim()) {
+      !tempBankAccount.holderName.trim()
+    ) {
       return; // Don't add if any field is empty
     }
 
@@ -227,15 +227,15 @@ const UpdateCompanyMigration = () => {
       {
         bankAccountName: tempBankAccount.bankAccountName.trim(),
         bankAccountNumber: tempBankAccount.bankAccountNumber.trim(),
-        holderName: tempBankAccount.holderName.trim()
-      }
+        holderName: tempBankAccount.holderName.trim(),
+      },
     ]);
 
     // Reset temporary values
     setTempBankAccount({
       bankAccountName: "",
       bankAccountNumber: "",
-      holderName: ""
+      holderName: "",
     });
   };
 
@@ -249,7 +249,7 @@ const UpdateCompanyMigration = () => {
     const { name, value } = e.target;
     setTempBankAccount((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -283,15 +283,12 @@ const UpdateCompanyMigration = () => {
       // Merge with existing formData
       const submitData = {
         ...newFormData,
-        departmentLicenses,  // Send as nested object
-        bankDetails,  // Send bank details array
+        departmentLicenses, // Send as nested object
+        bankDetails, // Send bank details array
       };
 
       // Update Company Migration
-      const response = await axiosInstance.patch(
-        `/companyMigration/${formData._id}`,
-        submitData
-      );
+      const response = await axiosInstance.patch(`/companyMigration/${formData._id}`, submitData);
 
       const data = response.data;
 
@@ -299,21 +296,23 @@ const UpdateCompanyMigration = () => {
         // Also update EGP Listed Company if yearsOfGeneralExperience was changed
         if (newFormData?.yearsOfGeneralExperience !== undefined) {
           try {
-            const egpResponse = await axiosInstance.get(`/egp-listed-company?searchTerm=${formData.egpEmail}&page=1&limit=1`);
+            const egpResponse = await axiosInstance.get(
+              `/egp-listed-company?searchTerm=${formData.egpEmail}&page=1&limit=1`
+            );
             const egpCompany = egpResponse.data?.data?.[0];
 
             if (egpCompany?._id) {
               // Use PUT method with full company data (matching UpdateEgpListedCompany.tsx pattern)
               const egpUpdateData = {
                 ...egpCompany,
-                yearsOfGeneralExperience: newFormData.yearsOfGeneralExperience
+                yearsOfGeneralExperience: newFormData.yearsOfGeneralExperience,
               };
 
               const updateUrl = `${config.apiBaseUrl}/egp-listed-company/${egpCompany._id}`;
               await axiosInstance.put(updateUrl, egpUpdateData);
             }
           } catch (egpError) {
-            console.error('Error updating EGP Listed Company:', egpError);
+            console.error("Error updating EGP Listed Company:", egpError);
             // Don't fail the whole operation if EGP update fails
           }
         }
@@ -324,7 +323,8 @@ const UpdateCompanyMigration = () => {
       }
     } catch (error) {
       console.error("Error:", error);
-      const errorMessage = error?.response?.data?.message || error?.message || "An unexpected error occurred";
+      const errorMessage =
+        error?.response?.data?.message || error?.message || "An unexpected error occurred";
       toast.error(errorMessage, {
         id: toastId,
       });
@@ -344,23 +344,20 @@ const UpdateCompanyMigration = () => {
           <MoveLeft /> Back To My Companies
         </Button>
       </Link>
-      <h1 className="text-3xl font-bold text-center my-5">
-        Update Company Migration
-      </h1>
+      <h1 className="text-3xl font-bold text-center my-5">Update Company Migration</h1>
 
       {/* Informational Note */}
       <div className="w-full max-w-full md:max-w-2xl lg:max-w-4xl mx-auto mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <p className="text-sm text-gray-700 leading-relaxed">
-          এই ফর্মে প্রয়োজনীয় সকল তথ্য হবে আপনার eGP অ্যাকাউন্টে Map-এর ফাইল নামসমূহ (উদাহরণস্বরূপ: Tin Certificate 25 26.pdf)।
-          ফাইল নাম লেখার পূর্বে নিম্নলিখিত বিষয়গুলি যাচাই করুন: 1) eGP-তে উক্ত নাম দিয়ে সার্চ করলে সংশ্লিষ্ট ফাইল ফিল্টার হয় কি না। 2) ফাইল নামের শুরুতে বা শেষে কোনো স্পেস (SPACE) আছে কি না। যদি থাকে, তা অপসারণ করুন।
+          এই ফর্মে প্রয়োজনীয় সকল তথ্য হবে আপনার eGP অ্যাকাউন্টে Map-এর ফাইল নামসমূহ (উদাহরণস্বরূপ:
+          Tin Certificate 25 26.pdf)। ফাইল নাম লেখার পূর্বে নিম্নলিখিত বিষয়গুলি যাচাই করুন: 1)
+          eGP-তে উক্ত নাম দিয়ে সার্চ করলে সংশ্লিষ্ট ফাইল ফিল্টার হয় কি না। 2) ফাইল নামের শুরুতে বা
+          শেষে কোনো স্পেস (SPACE) আছে কি না। যদি থাকে, তা অপসারণ করুন।
         </p>
       </div>
       <div className=" flex justify-center items-center">
         <div className="w-full max-w-full md:max-w-2xl lg:max-w-4xl shadow-2xl p-4 md:p-6 lg:p-8 rounded border">
-          <form
-            onSubmit={handleSubmit}
-            className="w-full space-y-8"
-          >
+          <form onSubmit={handleSubmit} className="w-full space-y-8">
             {/* Section 1: Company Information */}
             <div className="space-y-5">
               <div className="border-b pb-3">
@@ -564,7 +561,7 @@ const UpdateCompanyMigration = () => {
                                 onSelect={(currentValue) => {
                                   setNewFormData((prev) => ({
                                     ...prev,
-                                    ltmDistrict: currentValue
+                                    ltmDistrict: currentValue,
                                   }));
                                   setDistrictOpen(false);
                                 }}
@@ -572,7 +569,9 @@ const UpdateCompanyMigration = () => {
                                 <Check
                                   className={cn(
                                     "mr-2 h-4 w-4",
-                                    newFormData?.ltmDistrict === district ? "opacity-100" : "opacity-0"
+                                    newFormData?.ltmDistrict === district
+                                      ? "opacity-100"
+                                      : "opacity-0"
                                   )}
                                 />
                                 {district}
@@ -605,8 +604,12 @@ const UpdateCompanyMigration = () => {
             {/* Section 2: Legal & Authorization Documents */}
             <div className="space-y-5">
               <div className="border-b pb-3">
-                <h2 className="text-2xl font-bold text-gray-800">Legal & Authorization Documents</h2>
-                <p className="text-sm text-gray-600 mt-1">File names for required documents in eGP account</p>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Legal & Authorization Documents
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  File names for required documents in eGP account
+                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -762,12 +765,13 @@ const UpdateCompanyMigration = () => {
               </div>
             </div>
 
-
             {/* Section 3: Bank Account Details */}
             <div className="space-y-5">
               <div className="border-b pb-3">
                 <h2 className="text-2xl font-bold text-gray-800">Bank Account Details</h2>
-                <p className="text-sm text-gray-600 mt-1">Add multiple bank account information (optional)</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Add multiple bank account information (optional)
+                </p>
               </div>
 
               {/* Bank Account Input Fields */}
@@ -845,10 +849,7 @@ const UpdateCompanyMigration = () => {
                       </thead>
                       <tbody>
                         {bankDetails.map((account, index) => (
-                          <tr
-                            key={index}
-                            className="border-t hover:bg-gray-50 transition-colors"
-                          >
+                          <tr key={index} className="border-t hover:bg-gray-50 transition-colors">
                             <td className="p-3">{account.bankAccountName}</td>
                             <td className="p-3">{account.bankAccountNumber}</td>
                             <td className="p-3">{account.holderName}</td>
@@ -872,12 +873,15 @@ const UpdateCompanyMigration = () => {
               )}
             </div>
 
-
             {/* Section 4: Departmental Wise LTM Enlistment Certificate */}
             <div className="space-y-5">
               <div className="border-b pb-3">
-                <h2 className="text-2xl font-bold text-gray-800">Departmental Wise LTM Enlistment Certificate</h2>
-                <p className="text-sm text-gray-600 mt-1">Add department-specific license information</p>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Departmental Wise LTM Enlistment Certificate
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  Add department-specific license information
+                </p>
               </div>
               <Label className="text-lg font-semibold mb-3">
                 Departmental Wise LTM Enlistment Certificate Name
@@ -972,10 +976,7 @@ const UpdateCompanyMigration = () => {
                       </thead>
                       <tbody>
                         {selectedAgencies.map((agency, index) => (
-                          <tr
-                            key={index}
-                            className="border-t hover:bg-gray-50 transition-colors"
-                          >
+                          <tr key={index} className="border-t hover:bg-gray-50 transition-colors">
                             <td className="p-3">{agency.name}</td>
                             <td className="p-3">{agency.value}</td>
                             <td className="p-3 text-center">

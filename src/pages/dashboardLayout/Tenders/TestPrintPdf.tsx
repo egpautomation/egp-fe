@@ -14,21 +14,15 @@ const TestPrintPdf = () => {
     const res = await fetch(`${config.apiBaseUrl}/files/upload`, {
       method: "POST",
       body: formData,
-      mode: "cors"
+      mode: "cors",
     });
 
-    const result = await res.json()
-
+    const result = await res.json();
   };
 
   return (
     <div className="p-5">
-      <Input
-        onChange={handleChange}
-        className="max-w-xs"
-        type="file"
-        placeholder="enter file"
-      />
+      <Input onChange={handleChange} className="max-w-xs" type="file" placeholder="enter file" />
     </div>
   );
 };

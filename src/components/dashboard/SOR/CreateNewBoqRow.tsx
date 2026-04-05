@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -8,12 +8,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Field, FieldGroup } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import { Plus } from "lucide-react" // Optional: for a better trigger icon
+} from "@/components/ui/dialog";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { Plus } from "lucide-react"; // Optional: for a better trigger icon
 
 export function CreateNewBoqRow() {
   const [formData, setFormData] = useState({
@@ -22,7 +22,7 @@ export function CreateNewBoqRow() {
     descriptionOfItem: "",
     unit: "",
     quantity: "",
-  })
+  });
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -34,19 +34,19 @@ export function CreateNewBoqRow() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Submitting BOQ Row:", formData);
-    // Add your submission logic here
+   
   };
 
   return (
     <Dialog>
-      <DialogTrigger  asChild>
-       <div className="flex justify-end w-full">
-         <Button className="bg-green-700" variant="default">
-          <Plus className="mr-2 h-4 w-4" /> Add BOQ Item
-        </Button>
-       </div>
+      <DialogTrigger asChild>
+        <div className="flex justify-end w-full">
+          <Button className="bg-green-700" variant="default">
+            <Plus className="mr-2 h-4 w-4" /> Add BOQ Item
+          </Button>
+        </div>
       </DialogTrigger>
-      
+
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
@@ -62,18 +62,18 @@ export function CreateNewBoqRow() {
               <div className="grid grid-cols-2 gap-4">
                 <Field>
                   <Label htmlFor="itemNo">Item No.</Label>
-                  <Input 
-                    id="itemNo" 
-                    placeholder="e.g. 1.1" 
+                  <Input
+                    id="itemNo"
+                    placeholder="e.g. 1.1"
                     value={formData.itemNo}
                     onChange={(e) => handleChange("itemNo", e.target.value)}
                   />
                 </Field>
                 <Field>
                   <Label htmlFor="itemCode">Item Code</Label>
-                  <Input 
-                    id="itemCode" 
-                    placeholder="CIV-001" 
+                  <Input
+                    id="itemCode"
+                    placeholder="CIV-001"
                     value={formData.itemCode}
                     onChange={(e) => handleChange("itemCode", e.target.value)}
                   />
@@ -83,9 +83,9 @@ export function CreateNewBoqRow() {
               {/* Row 2: Description */}
               <Field>
                 <Label htmlFor="description">Description of Item</Label>
-                <Input 
-                  id="description" 
-                  placeholder="Enter detailed description..." 
+                <Input
+                  id="description"
+                  placeholder="Enter detailed description..."
                   value={formData.descriptionOfItem}
                   className="h-20"
                   onChange={(e) => handleChange("descriptionOfItem", e.target.value)}
@@ -96,19 +96,19 @@ export function CreateNewBoqRow() {
               <div className="grid grid-cols-2 gap-4">
                 <Field>
                   <Label htmlFor="unit">Unit</Label>
-                  <Input 
-                    id="unit" 
-                    placeholder="skm, LS, etc." 
+                  <Input
+                    id="unit"
+                    placeholder="skm, LS, etc."
                     value={formData.unit}
                     onChange={(e) => handleChange("unit", e.target.value)}
                   />
                 </Field>
                 <Field>
                   <Label htmlFor="quantity">Quantity</Label>
-                  <Input 
-                    id="quantity" 
+                  <Input
+                    id="quantity"
                     type="number"
-                    placeholder="0.00" 
+                    placeholder="0.00"
                     value={formData.quantity}
                     onChange={(e) => handleChange("quantity", e.target.value)}
                   />
@@ -119,12 +119,16 @@ export function CreateNewBoqRow() {
 
           <DialogFooter className="gap-2 sm:gap-0">
             <DialogClose asChild>
-              <Button className="bg-gray-100 mr-2" variant="ghost" type="button">Cancel</Button>
+              <Button className="bg-gray-100 mr-2" variant="ghost" type="button">
+                Cancel
+              </Button>
             </DialogClose>
-            <Button className="bg-teal-700" type="submit">Add Row</Button>
+            <Button className="bg-teal-700" type="submit">
+              Add Row
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

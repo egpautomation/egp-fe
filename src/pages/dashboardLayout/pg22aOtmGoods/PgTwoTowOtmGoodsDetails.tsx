@@ -406,7 +406,10 @@ const PgTwoTowOtmGoodsDetails = () => {
 
       const cleanTurnoverValue = (val: any) => {
         if (!val) return "";
-        return String(val).replace(/BDT\s?/gi, "").replace(/,/g, "").trim();
+        return String(val)
+          .replace(/BDT\s?/gi, "")
+          .replace(/,/g, "")
+          .trim();
       };
 
       let calcActiveDate2 = "30";
@@ -414,7 +417,9 @@ const PgTwoTowOtmGoodsDetails = () => {
         const start = new Date(liveTenderData.TentativeStartDate);
         const end = new Date(liveTenderData.TentativeCompletionDate);
         if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
-          const diffDays = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+          const diffDays = Math.ceil(
+            Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+          );
           calcActiveDate2 = diffDays.toString();
         }
       }
@@ -456,7 +461,11 @@ const PgTwoTowOtmGoodsDetails = () => {
         general_exp_year: String(companyData?.yearsOfGeneralExperience || ""),
         specific_contract_no: specificExp?.tenderId || "",
         specific_contract_name: specificExp?.descriptionOfWorks || "",
-        specific_contract_role: specificExp?.jvShare ? (parseFloat(specificExp.jvShare) === 100 ? "Prime Contractor" : "Joint Venture Partner") : "",
+        specific_contract_role: specificExp?.jvShare
+          ? parseFloat(specificExp.jvShare) === 100
+            ? "Prime Contractor"
+            : "Joint Venture Partner"
+          : "",
         specific_award_date: formatDateForExperience(specificExp?.commencementDate),
         specific_completion_date: formatDateForExperience(specificExp?.contractPeriodExtendedUpTo),
         specific_contract_value: String(

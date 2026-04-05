@@ -22,9 +22,6 @@ export default function CreateTenderPreparationButton({
     };
 
     const url = `${config.apiBaseUrl}/tender-preparation/create-tender-preparation`;
-  
-
-    
 
     // Uncomment to execute
     createData(url, finalData, setReload, null);
