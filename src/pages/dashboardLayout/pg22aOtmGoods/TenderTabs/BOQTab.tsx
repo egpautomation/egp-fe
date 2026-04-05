@@ -59,6 +59,18 @@ export default function BOQTab({
     setReload((prev: number) => prev + 1);
     setTenderPreparationReload((prev: number) => prev + 1);
   };
+  const addBOQItem = (tableId: string, newItem: BOQItem) => {
+  setBoqData((prev) =>
+    prev.map((table) =>
+      table._id === tableId
+        ? {
+            ...table,
+            items: [...table.items, newItem],
+          }
+        : table
+    )
+  );
+};
 const deleteBOQItem = (tableId: string, itemId: string) => {
   setBoqData((prev) =>
     prev.map((table) =>
@@ -113,7 +125,7 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
                             <tr>
                               <th className="px-4 py-2 border-b" colSpan={10}>
                                 <div>
-                                  <CreateNewBoqRow />
+                                  <CreateNewBoqRow tableId={table._id} onAdd={addBOQItem}/>
                                 </div>
                               </th>
                             </tr>

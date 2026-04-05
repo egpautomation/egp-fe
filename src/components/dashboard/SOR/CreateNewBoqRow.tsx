@@ -15,10 +15,18 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Plus } from "lucide-react"; // Optional: for a better trigger icon
 
-export function CreateNewBoqRow() {
+export function CreateNewBoqRow({
+  tableId,
+  onAdd,
+}: {
+  tableId: string;
+  onAdd: (tableId: string, item: BOQItem) => void;
+}) {
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     itemNo: "",
     itemCode: "",
+    group:"",
     descriptionOfItem: "",
     unit: "",
     quantity: "",
@@ -31,14 +39,40 @@ export function CreateNewBoqRow() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Submitting BOQ Row:", formData);
-   
+ const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const newItem: BOQItem = {
+    _id: Date.now().toString(), // temporary unique id
+    itemNo: Number(formData.itemNo),
+    itemCode: formData.itemCode,
+    group: formData.group,
+    descriptionOfItem: formData.descriptionOfItem,
+    measurement: "",
+    unit: formData.unit,
+    quantity: Number(formData.quantity),
+    unitPrice: 0,
+    requiredDocument: "",
+    fileName: "",
+    division_no: "",
   };
 
+  onAdd(tableId, newItem);
+
+  // Reset form
+  setFormData({
+    itemNo: "",
+    itemCode: "",
+    group: "",
+    descriptionOfItem: "",
+    unit: "",
+    quantity: "",
+  });
+  setOpen(false);
+};
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div className="flex justify-end w-full">
           <Button className="bg-green-700" variant="default">
@@ -47,7 +81,7 @@ export function CreateNewBoqRow() {
         </div>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Add New BOQ Row</DialogTitle>
@@ -57,7 +91,7 @@ export function CreateNewBoqRow() {
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <FieldGroup className="space-y-2">
+            <FieldGroup className="">
               {/* Row 1: Item No & Code */}
               <div className="grid grid-cols-2 gap-4">
                 <Field>
@@ -79,6 +113,20 @@ export function CreateNewBoqRow() {
                   />
                 </Field>
               </div>
+              {/* Row 2: Group */}
+              <div className="grid grid-cols-2 gap-4">
+                <Field className="col-span-2">
+                  <Label htmlFor="group">Group</Label>
+                  <Input
+                  className="w-full"
+                    id="group"
+                    placeholder="e.g. Civil Works"
+                    value={formData.group}
+                    onChange={(e) => handleChange("group", e.target.value)}
+                  />
+                </Field>
+              </div>
+           
 
               {/* Row 2: Description */}
               <Field>
