@@ -27,7 +27,7 @@ export default function BOQRow({item}: {item: BOQItem}) {
                                     <td className="px-4 py-2 text-right">{item.quantity}</td>
                                     <td className="px-4 py-2 text-right">{unitPrice}</td>
                                     <td className="px-4 py-2 text-right">{Math.max(2, item?.quantity * unitPrice)}</td>
-                                    <td className="px-4 py-2 text-right"><SimilarRatesModal setUnitPrice={setUnitPrice}  item={item} /></td>
+                                    <td className="px-4 py-2 text-right"><SimilarRatesModal setUnitPrice={setUnitPrice} /></td>
                                     <td className="px-4 py-2 text-right"><Trash size={16} className='text-red-600' /></td>
                                   </tr>
   )
