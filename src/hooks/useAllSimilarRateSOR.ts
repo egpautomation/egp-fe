@@ -3,7 +3,7 @@
 import config from "@/lib/config";
 import { useEffect, useState } from "react";
 
-const useAllSOR = (searchTerm, page, limit) => {
+const useAllSimilarRateSOR = (itemCode, descriptionOfItem) => {
  
   const [sors, setSors] = useState([]);
   const [count, setCount] = useState(0);
@@ -14,12 +14,10 @@ const useAllSOR = (searchTerm, page, limit) => {
     const result = async () => {
       try {
         setLoading(true);
-
         const response = await fetch(
-          `${config.apiBaseUrl}/sor?departmentShortName=${searchTerm?.departmentShortName || ""}&itemCode=${searchTerm?.itemCode || ""}&description=${searchTerm?.description || ""}&page=${page}&limit=${limit}`
+          `${config.apiBaseUrl}/sor/similar-rates?itemCode=${itemCode || ""}&descriptionOfItem=${descriptionOfItem || ""}`
         );
         const data = await response.json();
-
         setSors(data?.data);
         setCount(data?.count);
       } catch (error) {
@@ -29,7 +27,7 @@ const useAllSOR = (searchTerm, page, limit) => {
       }
     };
     result();
-  }, [reload, searchTerm,page, limit]);
+  }, [reload, itemCode, descriptionOfItem]);
 
   return {
     sors,
@@ -43,4 +41,4 @@ const useAllSOR = (searchTerm, page, limit) => {
   };
 };
 
-export default useAllSOR;
+export default useAllSimilarRateSOR;
