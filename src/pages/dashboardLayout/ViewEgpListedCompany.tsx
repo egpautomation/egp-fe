@@ -19,9 +19,7 @@ const ViewEgpListedCompany = () => {
           <MoveLeft /> Back To Data Table
         </Button>
       </Link>
-      <h1 className="text-3xl font-semibold text-center my-6">
-        Company Details
-      </h1>
+      <h1 className="text-3xl font-semibold text-center my-6">Company Details</h1>
       <div>
         <form className="max-w-3xl border mx-auto p-5 shadow-xl rounded  grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* egp email */}

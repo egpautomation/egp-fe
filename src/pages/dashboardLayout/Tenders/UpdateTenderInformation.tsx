@@ -47,18 +47,13 @@ const UpdateTenderInformation = () => {
           <MoveLeft /> Back To Tender Table
         </Button>
       </Link>
-      <h1 className="text-3xl font-bold text-center my-5">
-        Update Tender Information
-      </h1>
+      <h1 className="text-3xl font-bold text-center my-5">Update Tender Information</h1>
       <div className="max-w-sm mx-auto">
         <UpdateJsonTender />
       </div>
       <div className="flex justify-center items-center">
         <div className="w-full max-w-2xl shadow-xl p-3 md:p-5 rounded border">
-          <form
-            onSubmit={handleSubmit}
-            className="grid grid-cols-1 md:grid-cols-2 gap-5"
-          >
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <Label>
                 Tender Id <span className="text-red-700">*</span>
@@ -86,7 +81,7 @@ const UpdateTenderInformation = () => {
               "financialCriteria",
               "tender_subCategories",
               "LtmLicenseNameCode",
-              "liquidAssets"
+              "liquidAssets",
             ].map((field) => (
               <div
                 key={field}
@@ -95,10 +90,7 @@ const UpdateTenderInformation = () => {
                 } ${field == "tender_subCategories" ? "col-span-full" : ""}`}
               >
                 <Label>
-                  {field}{" "}
-                  {field == "tenderId" && (
-                    <span className="text-red-700">*</span>
-                  )}
+                  {field} {field == "tenderId" && <span className="text-red-700">*</span>}
                 </Label>
                 <Input
                   type="text"

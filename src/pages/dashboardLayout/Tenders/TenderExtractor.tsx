@@ -84,10 +84,7 @@ const TenderExtractor = ({ data, setReload }) => {
 
     if (number < 20) return ones[number];
     if (number < 100)
-      return (
-        tens[Math.floor(number / 10)] +
-        (number % 10 ? " " + ones[number % 10] : "")
-      );
+      return tens[Math.floor(number / 10)] + (number % 10 ? " " + ones[number % 10] : "");
     if (number < 1000)
       return (
         ones[Math.floor(number / 100)] +
@@ -121,12 +118,8 @@ const TenderExtractor = ({ data, setReload }) => {
 
     const data = {
       tender_id: getMatch(/Tender\s*ID\s*[:\-]?\s*(\d{5,})/i) || "Not found",
-      general_experience: getMatch(
-        /general experience.*?(\d+)\s*(?:\(.*\))?\s*years/i
-      )
-        ? `${getMatch(
-            /general experience.*?(\d+)\s*(?:\(.*\))?\s*years/i
-          )} Years`
+      general_experience: getMatch(/general experience.*?(\d+)\s*(?:\(.*\))?\s*years/i)
+        ? `${getMatch(/general experience.*?(\d+)\s*(?:\(.*\))?\s*years/i)} Years`
         : "Not found",
       similar_work_amount: (() => {
         const match = getMatch(
@@ -150,9 +143,7 @@ const TenderExtractor = ({ data, setReload }) => {
         const match = getMatch(
           /(?:minimum capacity|Tender Capacity) shall be.*?((?:Tk|Taka)[\s\.]*[\d,\.]+\s*(?:Lakh|Crore)?)/i
         );
-        return match
-          ? convertAmountToWords(parseAmount(match))
-          : "Not explicitly mentioned.";
+        return match ? convertAmountToWords(parseAmount(match)) : "Not explicitly mentioned.";
       })(),
       jvca_allowed: /\b(JVCA|Joint Venture|JV)\b/i.test(text) ? "YES" : "NO",
       similar_work_types:
@@ -161,13 +152,10 @@ const TenderExtractor = ({ data, setReload }) => {
         ) || "Not specified",
       required_documents: (() => {
         const docs = [];
-        if (/Experience certificate/i.test(text))
-          docs.push("Experience Certificate");
-        if (/Turnover certificate/i.test(text))
-          docs.push("Turnover Certificate");
+        if (/Experience certificate/i.test(text)) docs.push("Experience Certificate");
+        if (/Turnover certificate/i.test(text)) docs.push("Turnover Certificate");
         if (/work order\/NOA/i.test(text)) docs.push("Work Order/NOA");
-        if (/completion certificate/i.test(text))
-          docs.push("Completion Certificate");
+        if (/completion certificate/i.test(text)) docs.push("Completion Certificate");
         if (/Payment certificate/i.test(text)) docs.push("Payment Certificate");
         return docs.length ? docs.join("; ") : "Refer to tender document";
       })(),
@@ -175,25 +163,19 @@ const TenderExtractor = ({ data, setReload }) => {
         const categories = [];
         const title = getMatch(/^\d+\s(.*?)(?=Not Available)/s) || text;
         if (/road|highway/i.test(title)) categories.push("Road Construction");
-        if (/building|floor|Armory/i.test(title))
-          categories.push("Building Construction");
+        if (/building|floor|Armory/i.test(title)) categories.push("Building Construction");
         if (/Piped Water Supply|Pump House|Water Tank/i.test(title))
           categories.push("Water Supply Works");
         if (/Civil/i.test(title)) categories.push("Civil Works");
         if (/Sanitary/i.test(title)) categories.push("Sanitary Works");
-        if (/Electric|Electrical/i.test(title))
-          categories.push("Electrical Works");
-        return categories.length
-          ? [...new Set(categories)].join("; ")
-          : "General Construction";
+        if (/Electric|Electrical/i.test(title)) categories.push("Electrical Works");
+        return categories.length ? [...new Set(categories)].join("; ") : "General Construction";
       })(),
       financial_criteria: (() => {
         const matches = text.match(
           /[^.!?]*?(turnover|credit|liquid assets|capacity)[^.!?]*[.!?]/gi
         );
-        return matches
-          ? matches.map((m) => m.trim()).join(" ")
-          : "Not specified.";
+        return matches ? matches.map((m) => m.trim()).join(" ") : "Not specified.";
       })(),
     };
 
@@ -209,9 +191,7 @@ const TenderExtractor = ({ data, setReload }) => {
     e.preventDefault();
     const extracted = extractTenderData(tenderText);
 
-    const categoryItem = extracted.TenderData.find(
-      (item) => item.Field === "Category List"
-    );
+    const categoryItem = extracted.TenderData.find((item) => item.Field === "Category List");
 
     const simplified = {
       tender_subCategories: categoryItem ? categoryItem.Value : "Not found",

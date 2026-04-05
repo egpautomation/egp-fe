@@ -4,7 +4,6 @@ import config from "@/lib/config";
 import { useEffect, useState } from "react";
 
 const useAllSimilarRateSOR = (itemCode, descriptionOfItem) => {
- 
   const [sors, setSors] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);

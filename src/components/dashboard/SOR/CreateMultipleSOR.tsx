@@ -13,7 +13,6 @@ export default function SORJsonImport({
   setReload: () => void;
   isJSONImportOpen: boolean;
 }) {
- 
   const fileRef = useRef(null);
 
   const [parsed, setParsed] = useState([]);

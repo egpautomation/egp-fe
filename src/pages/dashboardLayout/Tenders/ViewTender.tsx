@@ -5,7 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useSingleData from "@/hooks/useSingleData";
 import { formatDate } from "@/lib/formateDate";
-import { ArrowLeft, Plus, Copy, Calendar, MapPin, Building2, FileText, DollarSign, CheckCircle2, Info, Download, Share2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  Copy,
+  Calendar,
+  MapPin,
+  Building2,
+  FileText,
+  DollarSign,
+  CheckCircle2,
+  Info,
+  Download,
+  Share2,
+} from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -36,10 +49,7 @@ const ViewTender = () => {
 
   const shareLink = () => {
     // Replace localhost with production domain
-    const currentUrl = window.location.href.replace(
-      /http:\/\/localhost:\d+/,
-      config.egpSiteUrl
-    );
+    const currentUrl = window.location.href.replace(/http:\/\/localhost:\d+/, config.egpSiteUrl);
     navigator.clipboard.writeText(currentUrl);
     setLinkCopied(true);
     setTimeout(() => setLinkCopied(false), 3000);
@@ -75,7 +85,7 @@ const ViewTender = () => {
       doc.setFont("helvetica", "normal");
       const orgLines = doc.splitTextToSize(formData?.organization, 180);
       doc.text(orgLines, 15, yPos + 5);
-      yPos += 5 + (orgLines.length * 5) + 3;
+      yPos += 5 + orgLines.length * 5 + 3;
     }
 
     // Description of Works
@@ -85,7 +95,7 @@ const ViewTender = () => {
       doc.setFont("helvetica", "normal");
       const descLines = doc.splitTextToSize(formData?.descriptionOfWorks, 180);
       doc.text(descLines, 15, yPos + 5);
-      yPos += 5 + (descLines.length * 5) + 8;
+      yPos += 5 + descLines.length * 5 + 8;
     }
 
     // Key Information Table
@@ -120,7 +130,10 @@ const ViewTender = () => {
       ["Procurement Type", formData?.procurementType || "N/A"],
       ["Procurement Nature", formData?.procurementNature || "N/A"],
       ["Procurement Method", formData?.procurementMethod || "N/A"],
-      ["Tender Category", formData?.tenderCategory || formData?.category || formData?.tender_subCategories || "N/A"],
+      [
+        "Tender Category",
+        formData?.tenderCategory || formData?.category || formData?.tender_subCategories || "N/A",
+      ],
       ["Package No", formData?.packageNo || "N/A"],
     ];
 
@@ -355,14 +368,9 @@ const ViewTender = () => {
       doc.text(mid, startX + prefixWidth + websiteWidth, line2Y);
 
       const midWidth = doc.getTextWidth(mid);
-      doc.textWithLink(
-        whatsapp,
-        startX + prefixWidth + websiteWidth + midWidth,
-        line2Y,
-        {
-          url: `https://wa.me/${config.supportWhatsApp}`,
-        }
-      );
+      doc.textWithLink(whatsapp, startX + prefixWidth + websiteWidth + midWidth, line2Y, {
+        url: `https://wa.me/${config.supportWhatsApp}`,
+      });
 
       doc.text(`Page ${i} of ${pageCount}`, centerX, line3Y, { align: "center" });
     }
@@ -375,7 +383,7 @@ const ViewTender = () => {
     return new Intl.NumberFormat("en-BD", {
       style: "currency",
       currency: "BDT",
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(value);
   };
 
@@ -395,9 +403,7 @@ const ViewTender = () => {
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        {children}
-      </CardContent>
+      <CardContent className="space-y-3">{children}</CardContent>
     </Card>
   );
 
@@ -405,7 +411,9 @@ const ViewTender = () => {
     <div className="flex justify-between items-start gap-4 py-2 border-b border-gray-100 last:border-0 group">
       <span className="text-sm font-medium text-gray-600 min-w-[140px]">{label}:</span>
       <div className="flex items-center gap-2 flex-1">
-        <span className="text-sm text-gray-900 text-right flex-1 break-words">{value || "N/A"}</span>
+        <span className="text-sm text-gray-900 text-right flex-1 break-words">
+          {value || "N/A"}
+        </span>
         {copyable && value && (
           <Copy
             className="h-4 w-4 text-gray-400 hover:text-primary cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
@@ -507,11 +515,17 @@ const ViewTender = () => {
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
-                <p className="text-lg text-gray-700">{formData?.organization || "No Organization"}</p>
-                <p className="text-sm text-gray-500">{formData?.descriptionOfWorks || "No description available"}</p>
+                <p className="text-lg text-gray-700">
+                  {formData?.organization || "No Organization"}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {formData?.descriptionOfWorks || "No description available"}
+                </p>
               </div>
               {formData?.tenderStatus && (
-                <Badge className={`${getStatusColor(formData?.tenderStatus)} text-white px-4 py-2 text-base`}>
+                <Badge
+                  className={`${getStatusColor(formData?.tenderStatus)} text-white px-4 py-2 text-base`}
+                >
                   {formData?.tenderStatus}
                 </Badge>
               )}
@@ -521,7 +535,9 @@ const ViewTender = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
               <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                 <p className="text-sm text-gray-500">Estimated Cost</p>
-                <p className="text-2xl font-bold mt-1 text-gray-900">{formatCurrency(formData?.estimatedCost)}</p>
+                <p className="text-2xl font-bold mt-1 text-gray-900">
+                  {formatCurrency(formData?.estimatedCost)}
+                </p>
               </div>
               <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                 <p className="text-sm text-gray-500">Last Selling Date</p>
@@ -577,11 +593,20 @@ const ViewTender = () => {
             <DataField label="Turnover Amount" value={formatCurrency(formData?.turnoverAmount)} />
             <DataField label="Liquid Assets" value={formatCurrency(formData?.liquidAssets)} />
             <DataField label="Tender Capacity" value={formatCurrency(formData?.tenderCapacity)} />
-            <DataField label="Minimum Year of Similar Work" value={formData?.yearofsimilarexperience} />
+            <DataField
+              label="Minimum Year of Similar Work"
+              value={formData?.yearofsimilarexperience}
+            />
             {formData?.typesOfSimilarNature && formData.typesOfSimilarNature.includes(" : ") ? (
               <>
-                <DataField label="Types of Similar Nature" value={formData.typesOfSimilarNature.split(" : ")[0]} />
-                <DataField label="Type of Similar Nature Value" value={formData.typesOfSimilarNature.split(" : ")[1]} />
+                <DataField
+                  label="Types of Similar Nature"
+                  value={formData.typesOfSimilarNature.split(" : ")[0]}
+                />
+                <DataField
+                  label="Type of Similar Nature Value"
+                  value={formData.typesOfSimilarNature.split(" : ")[1]}
+                />
               </>
             ) : (
               <DataField label="Types of Similar Nature" value={formData?.typesOfSimilarNature} />
@@ -592,15 +617,24 @@ const ViewTender = () => {
 
           {/* Tender Details - Now beside Financial Information */}
           <InfoCard icon={FileText} title="Tender Details">
-            <DataField label="Tender Category" value={formData?.tenderCategory || formData?.category || formData?.tender_subCategories} />
+            <DataField
+              label="Tender Category"
+              value={
+                formData?.tenderCategory || formData?.category || formData?.tender_subCategories
+              }
+            />
             <div className="pt-4 border-t border-gray-100">
               <p className="text-sm font-medium text-gray-600 mb-2">Description of Works:</p>
-              <p className="text-sm text-gray-900 whitespace-pre-wrap">{formData?.descriptionOfWorks || "N/A"}</p>
+              <p className="text-sm text-gray-900 whitespace-pre-wrap">
+                {formData?.descriptionOfWorks || "N/A"}
+              </p>
             </div>
             {formData?.similarNatureWork && (
               <div className="pt-4 border-t border-gray-100">
                 <p className="text-sm font-medium text-gray-600 mb-2">Similar Nature Work:</p>
-                <p className="text-sm text-gray-900 whitespace-pre-wrap">{formData?.similarNatureWork}</p>
+                <p className="text-sm text-gray-900 whitespace-pre-wrap">
+                  {formData?.similarNatureWork}
+                </p>
               </div>
             )}
           </InfoCard>
@@ -643,13 +677,15 @@ const ViewTender = () => {
                 formData?.scope_details,
                 formData?.doc_list_title,
                 formData?.doc_list_intro,
-                formData?.doc_list_details
-              ].filter(Boolean).map((item, index) => (
-                <div key={index} className="flex gap-2 text-sm text-gray-900">
-                  <span className="font-medium min-w-[20px]">{index + 1}.</span>
-                  <span className="whitespace-pre-wrap">{item}</span>
-                </div>
-              ))}
+                formData?.doc_list_details,
+              ]
+                .filter(Boolean)
+                .map((item, index) => (
+                  <div key={index} className="flex gap-2 text-sm text-gray-900">
+                    <span className="font-medium min-w-[20px]">{index + 1}.</span>
+                    <span className="whitespace-pre-wrap">{item}</span>
+                  </div>
+                ))}
               {[
                 formData?.eligibilityOfTenderDocument,
                 formData?.tds_01,
@@ -670,10 +706,12 @@ const ViewTender = () => {
                 formData?.scope_details,
                 formData?.doc_list_title,
                 formData?.doc_list_intro,
-                formData?.doc_list_details
-              ].every(item => !item) && (
-                  <p className="text-sm text-gray-500 italic ml-7">No eligibility details available.</p>
-                )}
+                formData?.doc_list_details,
+              ].every((item) => !item) && (
+                <p className="text-sm text-gray-500 italic ml-7">
+                  No eligibility details available.
+                </p>
+              )}
             </div>
           </div>
         </InfoCard>

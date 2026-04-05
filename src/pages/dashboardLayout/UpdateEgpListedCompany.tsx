@@ -30,7 +30,6 @@ import { Link, useParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import useAllDepartments from "@/hooks/useAllDepartments";
 
-
 // 64 Districts of Bangladesh
 const bangladeshDistricts = [
   // Dhaka Division (13 districts)
@@ -133,7 +132,7 @@ const UpdateEgpListedCompany = () => {
   const [tempBankAccount, setTempBankAccount] = useState({
     bankAccountName: "",
     bankAccountNumber: "",
-    holderName: ""
+    holderName: "",
   });
 
   // Initialize selectedAgencies from formData.departmentLicenses
@@ -141,7 +140,7 @@ const UpdateEgpListedCompany = () => {
     if (formData?.departmentLicenses) {
       const agencies = Object.entries(formData.departmentLicenses).map(([key, value]) => ({
         name: key,
-        value: value as string
+        value: value as string,
       }));
       setSelectedAgencies(agencies);
     }
@@ -166,10 +165,7 @@ const UpdateEgpListedCompany = () => {
     }
 
     // Add to selected agencies
-    setSelectedAgencies((prev) => [
-      ...prev,
-      { name: tempAgency, value: tempValue.trim() },
-    ]);
+    setSelectedAgencies((prev) => [...prev, { name: tempAgency, value: tempValue.trim() }]);
 
     // Reset temporary values
     setTempAgency("");
@@ -184,9 +180,11 @@ const UpdateEgpListedCompany = () => {
 
   // Handle adding bank account to bank details array
   const handleAddBankAccount = () => {
-    if (!tempBankAccount.bankAccountName.trim() ||
+    if (
+      !tempBankAccount.bankAccountName.trim() ||
       !tempBankAccount.bankAccountNumber.trim() ||
-      !tempBankAccount.holderName.trim()) {
+      !tempBankAccount.holderName.trim()
+    ) {
       return; // Don't add if any field is empty
     }
 
@@ -196,15 +194,15 @@ const UpdateEgpListedCompany = () => {
       {
         bankAccountName: tempBankAccount.bankAccountName.trim(),
         bankAccountNumber: tempBankAccount.bankAccountNumber.trim(),
-        holderName: tempBankAccount.holderName.trim()
-      }
+        holderName: tempBankAccount.holderName.trim(),
+      },
     ]);
 
     // Reset temporary values
     setTempBankAccount({
       bankAccountName: "",
       bankAccountNumber: "",
-      holderName: ""
+      holderName: "",
     });
   };
 
@@ -218,7 +216,7 @@ const UpdateEgpListedCompany = () => {
     const { name, value } = e.target;
     setTempBankAccount((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -241,10 +239,10 @@ const UpdateEgpListedCompany = () => {
 
     // Merge with existing formData
     const submitData = {
-      ...formData,       // Include all existing data
-      ...newFormData,    // User's changes override existing
-      departmentLicenses,  // Send as nested object
-      bankDetails,  // Send bank details array
+      ...formData, // Include all existing data
+      ...newFormData, // User's changes override existing
+      departmentLicenses, // Send as nested object
+      bankDetails, // Send bank details array
     };
 
     console.log(submitData);
@@ -259,23 +257,20 @@ const UpdateEgpListedCompany = () => {
           <MoveLeft /> Back To Data Table
         </Button>
       </Link>
-      <h1 className="text-3xl font-bold text-center my-5">
-        Update Egp Listed Company
-      </h1>
+      <h1 className="text-3xl font-bold text-center my-5">Update Egp Listed Company</h1>
 
       {/* Informational Note */}
       <div className="max-w-4xl mx-auto mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <p className="text-sm text-gray-700 leading-relaxed">
-          এই ফর্মে প্রয়োজনীয় সকল তথ্য হবে আপনার eGP অ্যাকাউন্টে Map-এর ফাইল নামসমূহ (উদাহরণস্বরূপ: Tin Certificate 25 26.pdf)।
-          ফাইল নাম লেখার পূর্বে নিম্নলিখিত বিষয়গুলি যাচাই করুন: 1) eGP-তে উক্ত নাম দিয়ে সার্চ করলে সংশ্লিষ্ট ফাইল ফিল্টার হয় কি না। 2) ফাইল নামের শুরুতে বা শেষে কোনো স্পেস (SPACE) আছে কি না। যদি থাকে, তা অপসারণ করুন।
+          এই ফর্মে প্রয়োজনীয় সকল তথ্য হবে আপনার eGP অ্যাকাউন্টে Map-এর ফাইল নামসমূহ (উদাহরণস্বরূপ:
+          Tin Certificate 25 26.pdf)। ফাইল নাম লেখার পূর্বে নিম্নলিখিত বিষয়গুলি যাচাই করুন: 1)
+          eGP-তে উক্ত নাম দিয়ে সার্চ করলে সংশ্লিষ্ট ফাইল ফিল্টার হয় কি না। 2) ফাইল নামের শুরুতে বা
+          শেষে কোনো স্পেস (SPACE) আছে কি না। যদি থাকে, তা অপসারণ করুন।
         </p>
       </div>
       <div className=" flex justify-center items-center">
         <div className="w-full max-w-4xl shadow-2xl p-3 md:p-5 rounded border">
-          <form
-            onSubmit={handleSubmit}
-            className="w-full space-y-8"
-          >
+          <form onSubmit={handleSubmit} className="w-full space-y-8">
             {/* Section 1: Company Information */}
             <div className="space-y-5">
               <div className="border-b pb-3">
@@ -478,7 +473,7 @@ const UpdateEgpListedCompany = () => {
                                 onSelect={(currentValue) => {
                                   setNewFormData((prev) => ({
                                     ...prev,
-                                    ltmDistrict: currentValue
+                                    ltmDistrict: currentValue,
                                   }));
                                   setDistrictOpen(false);
                                 }}
@@ -486,7 +481,9 @@ const UpdateEgpListedCompany = () => {
                                 <Check
                                   className={cn(
                                     "mr-2 h-4 w-4",
-                                    (newFormData?.ltmDistrict || formData?.ltmDistrict) === district ? "opacity-100" : "opacity-0"
+                                    (newFormData?.ltmDistrict || formData?.ltmDistrict) === district
+                                      ? "opacity-100"
+                                      : "opacity-0"
                                   )}
                                 />
                                 {district}
@@ -519,8 +516,12 @@ const UpdateEgpListedCompany = () => {
             {/* Section 2: Legal & Authorization Documents */}
             <div className="space-y-5">
               <div className="border-b pb-3">
-                <h2 className="text-2xl font-bold text-gray-800">Legal & Authorization Documents</h2>
-                <p className="text-sm text-gray-600 mt-1">File names for required documents in eGP account</p>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Legal & Authorization Documents
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  File names for required documents in eGP account
+                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -686,12 +687,13 @@ const UpdateEgpListedCompany = () => {
               </div>
             </div>
 
-
             {/* Section 3: Bank Account Details */}
             <div className="space-y-5">
               <div className="border-b pb-3">
                 <h2 className="text-2xl font-bold text-gray-800">Bank Account Details</h2>
-                <p className="text-sm text-gray-600 mt-1">Add multiple bank account information (optional)</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Add multiple bank account information (optional)
+                </p>
               </div>
 
               {/* Bank Account Input Fields */}
@@ -769,10 +771,7 @@ const UpdateEgpListedCompany = () => {
                       </thead>
                       <tbody>
                         {bankDetails.map((account, index) => (
-                          <tr
-                            key={index}
-                            className="border-t hover:bg-gray-50 transition-colors"
-                          >
+                          <tr key={index} className="border-t hover:bg-gray-50 transition-colors">
                             <td className="p-3">{account.bankAccountName}</td>
                             <td className="p-3">{account.bankAccountNumber}</td>
                             <td className="p-3">{account.holderName}</td>
@@ -796,12 +795,15 @@ const UpdateEgpListedCompany = () => {
               )}
             </div>
 
-
             {/* Section 4: Departmental Wise LTM Enlistment Certificate */}
             <div className="space-y-5">
               <div className="border-b pb-3">
-                <h2 className="text-2xl font-bold text-gray-800">Departmental Wise LTM Enlistment Certificate</h2>
-                <p className="text-sm text-gray-600 mt-1">Add department-specific license information</p>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Departmental Wise LTM Enlistment Certificate
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  Add department-specific license information
+                </p>
               </div>
               <Label className="text-lg font-semibold mb-3">
                 Departmental Wise LTM Enlistment Certificate Name
@@ -896,10 +898,7 @@ const UpdateEgpListedCompany = () => {
                       </thead>
                       <tbody>
                         {selectedAgencies.map((agency, index) => (
-                          <tr
-                            key={index}
-                            className="border-t hover:bg-gray-50 transition-colors"
-                          >
+                          <tr key={index} className="border-t hover:bg-gray-50 transition-colors">
                             <td className="p-3">{agency.name}</td>
                             <td className="p-3">{agency.value}</td>
                             <td className="p-3 text-center">

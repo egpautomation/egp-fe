@@ -26,7 +26,7 @@ const demoSors = [
     year: "2025-26",
     category: "Earth Work",
     description: "Embankment Fill from Borrow pit",
-    rates: [125.50, 130.75, 128.00, 132.25, 129.80, 131.50],
+    rates: [125.5, 130.75, 128.0, 132.25, 129.8, 131.5],
   },
   {
     code: "03/07/01c",
@@ -34,7 +34,7 @@ const demoSors = [
     year: "2025-26",
     category: "Bituminous Work",
     description: "Bituminous Tack Coat",
-    rates: [45.20, 47.80, 46.50, 48.10, 46.00, 47.25],
+    rates: [45.2, 47.8, 46.5, 48.1, 46.0, 47.25],
   },
   {
     code: "03/11/02",
@@ -42,11 +42,15 @@ const demoSors = [
     year: "2025-26",
     category: "Bituminous Work",
     description: "Premix Carpeting 40mm",
-    rates: [1850.00, 1920.00, 1880.00, 1950.00, 1900.00, 1935.00],
+    rates: [1850.0, 1920.0, 1880.0, 1950.0, 1900.0, 1935.0],
   },
 ];
 
-export default function SimilarRatesModal({ setUnitPrice }: { setUnitPrice: (val: number) => void }) {
+export default function SimilarRatesModal({
+  setUnitPrice,
+}: {
+  setUnitPrice: (val: number) => void;
+}) {
   const [open, setOpen] = useState(false);
 
   const handleSelectRate = (value: number) => {
@@ -78,15 +82,21 @@ export default function SimilarRatesModal({ setUnitPrice }: { setUnitPrice: (val
               <TableRow className="hover:bg-transparent border-b border-slate-200">
                 <TableHead className="font-bold text-slate-900 h-12">Item Code</TableHead>
                 <TableHead className="font-bold text-slate-900">Department</TableHead>
-                <TableHead className="font-bold text-slate-900 leading-tight">Year Of<br/>Rate</TableHead>
+                <TableHead className="font-bold text-slate-900 leading-tight">
+                  Year Of
+                  <br />
+                  Rate
+                </TableHead>
                 <TableHead className="font-bold text-slate-900">Category</TableHead>
                 <TableHead className="font-bold text-slate-900 w-[240px]">Description</TableHead>
-                
+
                 {/* Standard Rate Headers */}
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <TableHead key={i} className="font-bold text-slate-900 text-right">Rate0{i}</TableHead>
+                  <TableHead key={i} className="font-bold text-slate-900 text-right">
+                    Rate0{i}
+                  </TableHead>
                 ))}
-                
+
                 {/* Blue Highlighted Header */}
                 <TableHead className="font-bold text-white bg-blue-600 text-right rounded-t-md px-4">
                   Rate06
@@ -96,13 +106,18 @@ export default function SimilarRatesModal({ setUnitPrice }: { setUnitPrice: (val
 
             <TableBody>
               {demoSors.map((row, idx) => (
-                <TableRow key={idx} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                <TableRow
+                  key={idx}
+                  className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"
+                >
                   <TableCell className="font-medium text-slate-700 py-5">{row.code}</TableCell>
                   <TableCell className="text-slate-600">{row.dept}</TableCell>
                   <TableCell className="text-slate-600">{row.year}</TableCell>
                   <TableCell className="text-slate-600">{row.category}</TableCell>
-                  <TableCell className="text-slate-500 text-sm leading-snug">{row.description}</TableCell>
-                  
+                  <TableCell className="text-slate-500 text-sm leading-snug">
+                    {row.description}
+                  </TableCell>
+
                   {/* Interactive Rate Cells */}
                   {row.rates.map((rate, i) => (
                     <TableCell
@@ -114,7 +129,10 @@ export default function SimilarRatesModal({ setUnitPrice }: { setUnitPrice: (val
                         ${i === 5 ? "bg-blue-50/50 text-blue-700 font-bold" : "text-slate-700"}
                       `}
                     >
-                      {rate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {rate.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                     </TableCell>
                   ))}
                 </TableRow>

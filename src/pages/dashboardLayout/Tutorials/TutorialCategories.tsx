@@ -11,14 +11,10 @@ import useAllTutorialsCategories from "@/hooks/useAllTutorialCategories";
 
 const TutorialCategories = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(
-    Number(searchParams.get("page")) || 1
-  );
-  const [pageLimit, setPageLimit] = useState(
-    Number(searchParams.get("limit")) || 20
-  );
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
+  const [pageLimit, setPageLimit] = useState(Number(searchParams.get("limit")) || 20);
 
-  const {  data, loading, count, setReload } = useAllTutorialsCategories();
+  const { data, loading, count, setReload } = useAllTutorialsCategories();
   const skeleton = new Array(pageLimit).fill(Math?.random());
 
   useEffect(() => {
@@ -51,17 +47,10 @@ const TutorialCategories = () => {
           <table className="mt-5 w-full">
             <thead>
               <tr className="bg-primary text-primary-foreground">
-                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">
-                 Category
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-start">
-                 Sub Categories
-                </th>
-               
+                <th className="whitespace-nowrap px-4 py-2 text-start rounded-tl">Category</th>
+                <th className="whitespace-nowrap px-4 py-2 text-start">Sub Categories</th>
 
-                <th className="whitespace-nowrap px-4 py-2  rounded-tr">
-                  Actions
-                </th>
+                <th className="whitespace-nowrap px-4 py-2  rounded-tr">Actions</th>
               </tr>
             </thead>
 
@@ -69,13 +58,9 @@ const TutorialCategories = () => {
               {!loading ? (
                 data?.length > 0 ? (
                   data?.map((item, idx) => (
-                    <tr
-                      key={idx}
-                      className={`border ${idx % 2 == 1 && "bg-gray-100"}`}
-                    >
+                    <tr key={idx} className={`border ${idx % 2 == 1 && "bg-gray-100"}`}>
                       <td className="px-4 py-2 align-top">{item?.category}</td>
                       <td className="px-4 py-2 min-w-md align-top">{item?.subCategories}</td>
-                     
 
                       <td className="px-4 py-2 flex items-center justify-center align-top ">
                         <Link to={`/dashboard/tutorials/edit-category/${item?._id}`}>
@@ -100,9 +85,7 @@ const TutorialCategories = () => {
                   <tr key={idx}>
                     <td
                       colSpan={6}
-                      className={`h-14 ${
-                        idx % 2 == 1 ? "bg-gray-300" : "bg-white"
-                      }`}
+                      className={`h-14 ${idx % 2 == 1 ? "bg-gray-300" : "bg-white"}`}
                     ></td>
                   </tr>
                 ))
