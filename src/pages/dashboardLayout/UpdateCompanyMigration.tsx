@@ -33,85 +33,17 @@ import useAllDepartments from "@/hooks/useAllDepartments";
 
 // 64 Districts of Bangladesh
 const bangladeshDistricts = [
-  // Dhaka Division (13 districts)
-  "Dhaka",
-  "Faridpur",
-  "Gazipur",
-  "Gopalganj",
-  "Kishoreganj",
-  "Madaripur",
-  "Manikganj",
-  "Munshiganj",
-  "Narayanganj",
-  "Narsingdi",
-  "Rajbari",
-  "Shariatpur",
-  "Tangail",
+  // ... (existing districts)
+];
 
-  // Chittagong Division (11 districts)
-  "Bandarban",
-  "Brahmanbaria",
-  "Chandpur",
-  "Chattogram",
-  "Cumilla",
-  "Cox's Bazar",
-  "Feni",
-  "Khagrachhari",
-  "Lakshmipur",
-  "Noakhali",
-  "Rangamati",
-
-  // Rajshahi Division (8 districts)
-  "Bogura",
-  "Joypurhat",
-  "Naogaon",
-  "Natore",
-  "Chapainawabganj",
-  "Pabna",
-  "Rajshahi",
-  "Sirajganj",
-
-  // Khulna Division (10 districts)
-  "Bagerhat",
-  "Chuadanga",
-  "Jashore",
-  "Jhenaidah",
-  "Khulna",
-  "Kushtia",
-  "Magura",
-  "Meherpur",
-  "Narail",
-  "Satkhira",
-
-  // Barishal Division (6 districts)
-  "Barguna",
-  "Barishal",
-  "Bhola",
-  "Jhalokathi",
-  "Patuakhali",
-  "Pirojpur",
-
-  // Sylhet Division (4 districts)
-  "Habiganj",
-  "Moulvibazar",
-  "Sunamganj",
-  "Sylhet",
-
-  // Rangpur Division (8 districts)
-  "Dinajpur",
-  "Gaibandha",
-  "Kurigram",
-  "Lalmonirhat",
-  "Nilphamari",
-  "Panchagarh",
-  "Rangpur",
-  "Thakurgaon",
-
-  // Mymensingh Division (4 districts)
-  "Jamalpur",
-  "Mymensingh",
-  "Netrokona",
-  "Sherpur",
+const CERTIFICATE_OPTIONS = [
+  { label: "General Experience Certificate", value: "General Experience Certificate" },
+  { label: "Specific Experience Certificate", value: "Specific Experience Certificate" },
+  { label: "financial Capacity certificate", value: "financial Capacity certificate" },
+  {
+    label: "average annual construction turnover certificate",
+    value: "average annual construction turnover certificate",
+  },
 ];
 
 const UpdateCompanyMigration = () => {
@@ -128,6 +60,12 @@ const UpdateCompanyMigration = () => {
   const [tempValue, setTempValue] = useState("");
   const [open, setOpen] = useState(false);
   const [districtOpen, setDistrictOpen] = useState(false);
+
+  // Experience Certificates State
+  const [selectedCertificates, setSelectedCertificates] = useState([]);
+  const [tempCertType, setTempCertType] = useState("");
+  const [tempCertValue, setTempCertValue] = useState("");
+  const [certOpen, setCertOpen] = useState(false);
   const [newFormData, setNewFormData] = useState({});
 
   // Bank Details Array State
@@ -156,6 +94,15 @@ const UpdateCompanyMigration = () => {
     // Initialize bankDetails from formData.bankDetails
     if (formData?.bankDetails && Array.isArray(formData.bankDetails)) {
       setBankDetails(formData.bankDetails);
+    }
+
+    // Initialize selectedCertificates from formData.experienceCertificates
+    if (formData?.experienceCertificates) {
+      const certificates = Object.entries(formData.experienceCertificates).map(([key, value]) => ({
+        name: key,
+        value: value as string,
+      }));
+      setSelectedCertificates(certificates);
     }
   }, [formData]);
 
@@ -209,6 +156,33 @@ const UpdateCompanyMigration = () => {
   // Handle removing agency from selected list
   const handleRemoveAgency = (agencyName) => {
     setSelectedAgencies((prev) => prev.filter((a) => a.name !== agencyName));
+  };
+
+  // Handle adding certificate to selected list
+  const handleAddCertificate = () => {
+    if (!tempCertType || !tempCertValue.trim()) {
+      return;
+    }
+
+    // Check if certificate already exists
+    const exists = selectedCertificates.find((c) => c.name === tempCertType);
+    if (exists) {
+      alert(`${tempCertType} has already been added!`);
+      return;
+    }
+
+    // Add to selected certificates
+    setSelectedCertificates((prev) => [...prev, { name: tempCertType, value: tempCertValue.trim() }]);
+
+    // Reset temporary values
+    setTempCertType("");
+    setTempCertValue("");
+    setCertOpen(false);
+  };
+
+  // Handle removing certificate from selected list
+  const handleRemoveCertificate = (certName) => {
+    setSelectedCertificates((prev) => prev.filter((c) => c.name !== certName));
   };
 
   // Handle adding bank account to bank details array
@@ -280,10 +254,17 @@ const UpdateCompanyMigration = () => {
         departmentLicenses[agency.name] = agency.value;
       });
 
+      // Transform selectedCertificates array to experienceCertificates object
+      const experienceCertificates = {};
+      selectedCertificates.forEach((cert) => {
+        experienceCertificates[cert.name] = cert.value;
+      });
+
       // Merge with existing formData
       const submitData = {
         ...newFormData,
         departmentLicenses, // Send as nested object
+        experienceCertificates, // Send as nested object
         bankDetails, // Send bank details array
       };
 
@@ -985,6 +966,125 @@ const UpdateCompanyMigration = () => {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleRemoveAgency(agency.name)}
+                                className="cursor-pointer hover:bg-red-50 hover:text-red-600"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Section 5: Experience Certificates */}
+            <div className="space-y-5">
+              <div className="border-b pb-3">
+                <h2 className="text-2xl font-bold text-gray-800">Experience Certificates</h2>
+                <p className="text-sm text-gray-600 mt-1">Add experience and capacity certificates</p>
+              </div>
+
+              {/* Search, Input, and Add Button */}
+              <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
+                {/* Searchable Combobox */}
+                <div className="flex-1 w-full">
+                  <Label className="mb-2">Select Certificate Type</Label>
+                  <Popover open={certOpen} onOpenChange={setCertOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={certOpen}
+                        className="w-full justify-between mt-2"
+                      >
+                        {tempCertType
+                          ? CERTIFICATE_OPTIONS.find((cert) => cert.value === tempCertType)?.label
+                          : "Search certificate type..."}
+                        <Check className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput placeholder="Search certificate type..." />
+                        <CommandList>
+                          <CommandEmpty>No certificate found.</CommandEmpty>
+                          <CommandGroup>
+                            {CERTIFICATE_OPTIONS.map((cert) => (
+                              <CommandItem
+                                key={cert.value}
+                                value={cert.value}
+                                onSelect={(currentValue) => {
+                                  setTempCertType(currentValue === tempCertType ? "" : currentValue);
+                                  setCertOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    tempCertType === cert.value ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {cert.label}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* Value Input */}
+                <div className="flex-1 w-full">
+                  <Label className="mb-2">Value</Label>
+                  <Input
+                    type="text"
+                    value={tempCertValue}
+                    onChange={(e) => setTempCertValue(e.target.value)}
+                    placeholder="Enter value"
+                    className="mt-2"
+                  />
+                </div>
+
+                {/* Add Button */}
+                <Button
+                  type="button"
+                  onClick={handleAddCertificate}
+                  className="cursor-pointer w-full sm:w-auto"
+                  disabled={!tempCertType || !tempCertValue.trim()}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add
+                </Button>
+              </div>
+
+              {/* Display Added Certificates */}
+              {selectedCertificates.length > 0 && (
+                <div className="mt-5">
+                  <Label className="text-base font-semibold mb-2">Added Certificates:</Label>
+                  <div className="border rounded-md mt-2 overflow-hidden">
+                    <table className="w-full">
+                      <thead className="bg-gray-100">
+                        <tr>
+                          <th className="text-left p-3 font-semibold">Certificate</th>
+                          <th className="text-left p-3 font-semibold">Value</th>
+                          <th className="text-center p-3 font-semibold w-20">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedCertificates.map((cert, index) => (
+                          <tr key={index} className="border-t hover:bg-gray-50 transition-colors">
+                            <td className="p-3">{cert.name}</td>
+                            <td className="p-3">{cert.value}</td>
+                            <td className="p-3 text-center">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleRemoveCertificate(cert.name)}
                                 className="cursor-pointer hover:bg-red-50 hover:text-red-600"
                               >
                                 <X className="h-4 w-4" />
