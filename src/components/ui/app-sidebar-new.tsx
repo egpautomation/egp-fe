@@ -390,10 +390,22 @@ export function AppSidebarNew() {
       ],
     },
     {
-      label: "OTM Bypass Report",
-      path: "/public/ltm-by-pass-report",
+      label: "Bypass Report",
+      path: "/dashboard",
       role: ["guest", "user", "moderator", "admin"],
-      icon: AlertCircle,
+      icon: FileSearch,
+      children: [
+        {
+          label: "Bypass Report",
+          path: "/public/by-pass-report",
+          role: ["guest", "user", "moderator", "admin"],
+        },
+        {
+          label: "OTM Bypass Report",
+          path: "/public/ltm-by-pass-report",
+          role: ["guest", "user", "moderator", "admin"],
+        },
+      ],
     },
     {
       label: "Data Entry",
