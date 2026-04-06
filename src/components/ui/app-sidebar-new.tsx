@@ -165,18 +165,18 @@ export function AppSidebarNew() {
       ],
     },
     {
-      label: "LTM",
+      label: "LTM Bypass Report",
       path: "/dashboard",
       role: ["admin", "user_agent", "moderator"],
       icon: Briefcase,
       children: [
         {
-          label: "Create a Job Order (Single)",
+          label: "Add to LTM Bypass (Single)",
           path: "/dashboard/create-job-order-single",
           role: ["admin", "user_agent", "user", "moderator"],
         },
         {
-          label: "Create Job Order(BulK)",
+          label: "Add to LTM Bypass (Bulk)",
           path: "/dashboard/create-job-order-bulk",
           role: ["admin", "user_agent", "user", "moderator"],
         },
@@ -240,17 +240,17 @@ export function AppSidebarNew() {
           role: ["guest", "user", "moderator", "admin", "user_agent"],
         },
         {
-          label: "My Job Order",
+          label: "My LTM Bypass Reports",
           path: "/dashboard/job-order/me",
           role: ["guest", "user", "moderator", "admin", "user_agent"],
         },
         {
-          label: "All Job Order",
+          label: "All LTM Bypass Reports",
           path: "/dashboard/job-order",
           role: ["admin"],
         },
         {
-          label: "Update Job Order",
+          label: "Update LTM Status",
           path: "/public/job-order/update-status",
           role: ["admin", "user", "moderator", "guest"],
         },
@@ -390,22 +390,10 @@ export function AppSidebarNew() {
       ],
     },
     {
-      label: "By Pass Reports",
-      path: "/dashboard/by-pass-report",
+      label: "OTM Bypass Report",
+      path: "/public/ltm-by-pass-report",
       role: ["guest", "user", "moderator", "admin"],
       icon: AlertCircle,
-      children: [
-        {
-          label: "By Pass Reports",
-          path: "/public/by-pass-report",
-          role: ["guest", "user", "moderator", "admin"],
-        },
-        {
-          label: "OTM By Pass Reports",
-          path: "/public/ltm-by-pass-report",
-          role: ["guest", "user", "moderator", "admin"],
-        },
-      ],
     },
     {
       label: "Data Entry",
@@ -568,16 +556,14 @@ export function AppSidebarNew() {
       </div>
       {/* empty space for desktop menu */}
       <div
-        className={`${
-          isOpen ? "w-64" : "w-16"
-        } max-md:hidden transition-all duration-500 ease-in-out`}
+        className={`${isOpen ? "w-64" : "w-16"
+          } max-md:hidden transition-all duration-500 ease-in-out`}
       ></div>
 
       {/* desktop menu */}
       <motion.div
-        className={`fixed left-0 top-0 h-full bg-white border-r z-50 transition-all duration-500 ease-in-out overflow-hidden ${
-          isOpen ? "w-64" : "w-16 max-md:w-0"
-        }`}
+        className={`fixed left-0 top-0 h-full bg-white border-r z-50 transition-all duration-500 ease-in-out overflow-hidden ${isOpen ? "w-64" : "w-16 max-md:w-0"
+          }`}
         onMouseEnter={() => window.innerWidth >= 768 && setIsOpen(true)}
         onMouseLeave={() => window.innerWidth >= 768 && setIsOpen(false)}
       >
@@ -590,9 +576,9 @@ export function AppSidebarNew() {
                   {/* search bar */}
                   <motion.div
                     className={`relative mt-4 px-2 ${isOpen ? "block" : "hidden"}`}
-                    // initial={{ opacity: 0, y: -20 }}
-                    // animate={{ opacity: 1, y: 0 }}
-                    // transition={{ duration: 0.3, delay: 2 }}
+                  // initial={{ opacity: 0, y: -20 }}
+                  // animate={{ opacity: 1, y: 0 }}
+                  // transition={{ duration: 0.3, delay: 2 }}
                   >
                     <Input
                       placeholder="Search"
@@ -628,9 +614,8 @@ export function AppSidebarNew() {
               >
                 <div className="w-full">
                   <motion.div
-                    className={`flex h-12 w-full rounded-xl items-center justify-between text-decoration-none ${
-                      location.pathname === "/" ? "" : " hover:bg-gray-100"
-                    }`}
+                    className={`flex h-12 w-full rounded-xl items-center justify-between text-decoration-none ${location.pathname === "/" ? "" : " hover:bg-gray-100"
+                      }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ duration: 0.2 }}
@@ -712,9 +697,8 @@ export function AppSidebarNew() {
                             setOpenIndex(openIndex === idx ? null : idx);
                           }
                         }}
-                        className={`flex h-12 w-full group transition-all duration-200 rounded-xl items-center justify-between text-decoration-none ${
-                          isActive ? "" : " hover:text-[#4874c7] hover:bg-blue-50"
-                        }`}
+                        className={`flex h-12 w-full group transition-all duration-200 rounded-xl items-center justify-between text-decoration-none ${isActive ? "" : " hover:text-[#4874c7] hover:bg-blue-50"
+                          }`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         transition={{ duration: 0.4 }}
@@ -787,11 +771,10 @@ export function AppSidebarNew() {
                                   >
                                     <Link
                                       to={item.path}
-                                      className={`flex h-10 w-full rounded-lg items-center px-4 transition-all duration-200 ${
-                                        childIsActive
-                                          ? "bg-black text-white"
-                                          : "text-black hover:bg-gray-100"
-                                      }`}
+                                      className={`flex h-10 w-full rounded-lg items-center px-4 transition-all duration-200 ${childIsActive
+                                        ? "bg-black text-white"
+                                        : "text-black hover:bg-gray-100"
+                                        }`}
                                     >
                                       {/* <div className="w-2 h-2 bg-current rounded-full opacity-60 mr-3"></div> */}
                                       <div className="text-sm min-w-fit text-nowrap flex items-center justify-center">
@@ -879,3 +862,4 @@ export function AppSidebarNew() {
     </div>
   );
 }
+
