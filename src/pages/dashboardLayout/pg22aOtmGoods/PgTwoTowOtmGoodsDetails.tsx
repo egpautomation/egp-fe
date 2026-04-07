@@ -496,8 +496,35 @@ const PgTwoTowOtmGoodsDetails = () => {
 
         contact_details: companyData?.bankAddress || "",
         qualifications_experience: "",
-        tender_capacity_period: String(currentTender?.proposeYear || ""),
-        tender_capacity_max_value: String(currentTender?.Maximumvalue || ""),
+
+        // Tender Capacity: compute from yearlyTotals (same logic as TendererFormPreview_ePW3_2 capacityInfo)
+        tender_capacity_period: (() => {
+          const tdsYears =
+            Number(tdsRequiredFY) || Number(currentTender?.tdsYearFinancialCapacity) || 5;
+          if (yearlyTotals && yearlyTotals.length > 0) {
+            const relevantYears = [...yearlyTotals]
+              .sort((a, b) => b.year.localeCompare(a.year))
+              .slice(0, tdsYears);
+            const maxYearData = relevantYears.reduce(
+              (max, current) => (current.amount > max.amount ? current : max),
+              relevantYears[0]
+            );
+            return maxYearData?.year || currentTender?.FinancialYearofMaximumvalue || "";
+          }
+          return currentTender?.FinancialYearofMaximumvalue || "";
+        })(),
+        tender_capacity_max_value: (() => {
+          const tdsYears =
+            Number(tdsRequiredFY) || Number(currentTender?.tdsYearFinancialCapacity) || 5;
+          if (yearlyTotals && yearlyTotals.length > 0) {
+            const relevantYears = [...yearlyTotals]
+              .sort((a, b) => b.year.localeCompare(a.year))
+              .slice(0, tdsYears);
+            const maxValue = Math.max(0, ...relevantYears.map((y) => y.amount));
+            if (maxValue > 0) return String(maxValue);
+          }
+          return String(currentTender?.Maximumvalue || "");
+        })(),
         tender_capacity_remaining_value: String(calculatedAssessedCapacity || ""),
 
         user_email: user?.email || "", // Passing user email for coin deduction
