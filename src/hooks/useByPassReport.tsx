@@ -25,22 +25,22 @@ const useByPassReport = (page, limit) => {
         const url = `/jobOrder/by-pass-report?${params.toString()}`;
         const response = await axiosInstance.get(url);
 
-        // Destructure response: { success, data, count }
-        const { success, data: responseData, count: responseCount } = response.data || {};
+        // Destructure response: { success, data, total }
+        const { success, data: responseData, total: responseTotal } = response.data || {};
 
         // Validate response structure
         if (success !== undefined) {
           // Ensure data is always an array
           const dataArray = Array.isArray(responseData) ? responseData : [];
-          const countValue = typeof responseCount === "number" ? responseCount : dataArray.length;
+          const totalValue = typeof responseTotal === "number" ? responseTotal : dataArray.length;
 
           setData(dataArray);
-          setCount(countValue);
+          setCount(totalValue);
         } else {
           // Fallback for unexpected response structure
           console.warn("Unexpected API response structure:", response.data);
           setData(Array.isArray(response.data?.data) ? response.data.data : []);
-          setCount(response.data?.count || 0);
+          setCount(response.data?.total || 0);
         }
       } catch (error) {
         console.error("Error fetching by-pass-report:", error);
