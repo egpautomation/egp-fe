@@ -14,22 +14,20 @@ export default function LTMBypassReportRow({ item, idx }: any) {
       <td className="px-4 py-3">{item?.liquid_asset || "N/A"}</td>
       <td className="px-4 py-3">{item?.active_date1 || "N/A"}</td>
       <td className="px-4 py-3">{item?.active_date2 || "N/A"}</td>
-      <td className="px-4 py-3 max-w-[200px] truncate" title={item?.company_address}>
-        {item?.company_address || "N/A"}
-      </td>
-      <td className="px-4 py-3 max-w-[150px] truncate" title={item?.author}>{item?.author || "N/A"}</td>
+      <td className="px-4 py-3 whitespace-pre-wrap">{item?.company_address || "N/A"}</td>
+      <td className="px-4 py-3 whitespace-pre-wrap">{item?.author || "N/A"}</td>
 
       {/* Documents */}
-      <td className="px-4 py-3 max-w-[150px] truncate" title={item?.nid}>{item?.nid || "N/A"}</td>
-      <td className="px-4 py-3 max-w-[150px] truncate" title={item?.trade_license}>{item?.trade_license || "N/A"}</td>
-      <td className="px-4 py-3 max-w-[150px] truncate" title={item?.tin}>{item?.tin || "N/A"}</td>
-      <td className="px-4 py-3 max-w-[150px] truncate" title={item?.vat}>{item?.vat || "N/A"}</td>
-      <td className="px-4 py-3">{item?.ltm_license || "N/A"}</td>
-      <td className="px-4 py-3 max-w-[150px] truncate" title={item?.tin_return}>{item?.tin_return || "N/A"}</td>
-      <td className="px-4 py-3 max-w-[150px] truncate" title={item?.vat_return}>{item?.vat_return || "N/A"}</td>
-      <td className="px-4 py-3 max-w-[150px] truncate" title={item?.manpower}>{item?.manpower || "N/A"}</td>
-      <td className="px-4 py-3 max-w-[150px] truncate" title={item?.equipment}>{item?.equipment || "N/A"}</td>
-      <td className="px-4 py-3 max-w-[150px] truncate" title={item?.audit_report}>{item?.audit_report || "N/A"}</td>
+      <td className="px-4 py-3 whitespace-pre-wrap">{item?.nid || "N/A"}</td>
+      <td className="px-4 py-3 whitespace-pre-wrap">{item?.trade_license || "N/A"}</td>
+      <td className="px-4 py-3 whitespace-pre-wrap">{item?.tin || "N/A"}</td>
+      <td className="px-4 py-3 whitespace-pre-wrap">{item?.vat || "N/A"}</td>
+      <td className="px-4 py-3 whitespace-pre-wrap">{item?.ltm_license || "N/A"}</td>
+      <td className="px-4 py-3 whitespace-pre-wrap">{item?.tin_return || "N/A"}</td>
+      <td className="px-4 py-3 whitespace-pre-wrap">{item?.vat_return || "N/A"}</td>
+      <td className="px-4 py-3 whitespace-pre-wrap">{item?.manpower || "N/A"}</td>
+      <td className="px-4 py-3 whitespace-pre-wrap">{item?.equipment || "N/A"}</td>
+      <td className="px-4 py-3 whitespace-pre-wrap">{item?.audit_report || "N/A"}</td>
 
       {/* Technical */}
       <td className="px-4 py-3">{item?.structural_steel_works || "N/A"}</td>
