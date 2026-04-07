@@ -28,6 +28,7 @@ const EditDepartmentInformation = () => {
     e.preventDefault();
     const updateUrl = `${config.apiBaseUrl}/departments/${id}`;
     await updateData(updateUrl, newFormData);
+    
   };
 
   return (
@@ -41,8 +42,9 @@ const EditDepartmentInformation = () => {
       <div className="flex justify-center items-center">
         <div className="w-full max-w-xl shadow-2xl p-3 md:p-5 rounded border">
           <form onSubmit={handleSubmit} className="w-full max-w-2xl grid grid-cols-1 gap-5">
-            {/* Organization */}
-            <div>
+           <div className="grid grid-cols-2 gap-5">
+             {/* Organization */}
+            <div className="col-span-2">
               <Label>Organization</Label>
               <Input
                 type="text"
@@ -107,6 +109,13 @@ const EditDepartmentInformation = () => {
               />
             </div>
 
+ {[1, 2, 3, 4, 5, 6].map((num) => (
+          <div key={num}>
+            <Label className="mb-2">Rate {num}</Label>
+            <Input  defaultValue={`${formData?.[`rate_${num}`] || ""}`} name={`rate_${num}`} type="number"  onChange={handleInputChange} />
+          </div>
+        ))}
+           </div>
             <div className="col-span-full">
               <Button type="submit" className="w-full cursor-pointer">
                 Submit

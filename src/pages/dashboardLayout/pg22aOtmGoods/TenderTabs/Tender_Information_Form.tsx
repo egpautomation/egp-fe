@@ -401,16 +401,16 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
                 </Select> */}
               </FormField>
               <FormField id="procurementNature" label="Procurement Nature">
-                <Input name="procurementNature" value={tenderData?.procurementNature} disabled />
+                <Input name="procurementNature" value={tenderData?.procurementNature}  onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="procurementMethod" label="Procurement Method">
-                <Input name="procurementMethod" value={tenderData?.procurementMethod} disabled />
+                <Input name="procurementMethod" value={tenderData?.procurementMethod}  onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="appId" label="APP ID">
-                <Input name="appId" value={tenderData?.appId} />
+                <Input name="appId"  onChange={(e) => handleChange(e.target.name, e.target.value)} value={tenderData?.appId} />
               </FormField>
               <FormField id="budgetType" label="Budget Type">
-                <Input name="budgetType" disabled value={tenderData?.budgetType} />
+                <Input name="budgetType"  onChange={(e) => handleChange(e.target.name, e.target.value)} value={tenderData?.budgetType} />
                 {/* <Select onValueChange={(value) => handleChange('budgetType', value)} value={formData.budgetType}>
                   <SelectTrigger><SelectValue placeholder="Select Budget" /></SelectTrigger>
                   <SelectContent>
@@ -423,29 +423,29 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
                 <Input
                   name="development_partner"
                   value={tenderData?.development_partner || "Not Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
             </div>
             <h3 className="text-lg font-semibold border-b pb-2 pt-4">Entity & Location</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <FormField id="ministry" label="Ministry">
-                <Input name="ministry" value={tenderData?.ministry} disabled />
+                <Input name="ministry" value={tenderData?.ministry}  onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="organization" label="Organization">
-                <Input name="organization" value={tenderData?.organization} disabled />
+                <Input name="organization" value={tenderData?.organization}  onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="division" label="Division">
-                <Input name="division" value={tenderData?.division} disabled />
+                <Input name="division" value={tenderData?.division}  onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="locationDistrict" label="Location District">
-                <Input name="locationDistrict" value={tenderData?.locationDistrict} disabled />
+                <Input name="locationDistrict" value={tenderData?.locationDistrict}  onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="LtmLicenseNameCode" label="LTM License Name Code">
                 <Input
                   name="LtmLicenseNameCode"
                   value={tenderData?.LtmLicenseNameCode || "NOt Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
             </div>
@@ -457,31 +457,31 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
                 <Input
                   name="procuringEntityName"
                   value={tenderData?.procuringEntityName}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <FormField id="PE_officialDesignation" label="PE Official Designation">
                 <Input
                   name="PE_officialDesignation"
                   value={tenderData?.officialDesignation || "Not Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <FormField id="PE_Address" label="PE Address">
-                <Input name="PE_Address" value={tenderData?.address || "Not Available"} disabled />
+                <Input name="PE_Address" value={tenderData?.address || "Not Available"}  onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="PE_City" label="PE City">
                 <Input
                   name="PE_City"
                   value={tenderData?.tenderData?.City || "Not Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <FormField id="PE_Thana" label="PE Thana">
-                <Input name="PE_Thana" value={tenderData?.Thana || "Not Available"} disabled />
+                <Input name="PE_Thana" value={tenderData?.Thana || "Not Available"}  onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="PE_District" label="PE District">
-                <Input name="PE_District" value={tenderData?.District} disabled />
+                <Input name="PE_District" value={tenderData?.District}  onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
             </div>
             <h3 className="text-lg font-semibold border-b pb-2 pt-4">Project & Work Details</h3>
@@ -490,38 +490,38 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
                 <Input
                   name="ProjectName"
                   value={tenderData?.ProjectName || "NOt Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <FormField id="sourceOfFunds" label="Source of Funds">
                 <Input
                   name="sourceOfFunds"
                   value={tenderData?.sourceOfFunds || "Not Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <FormField id="packageNo" label="Package No.">
-                <Input name="packageNo" value={tenderData?.packageNo || "Not Available"} disabled />
+                <Input name="packageNo" value={tenderData?.packageNo || "Not Available"}  onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="selectedTenderCategory" label="Tender Category">
                 <Input
                   name="selectedTenderCategory"
                   value={tenderData?.selectedTenderCategory || "Not Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <FormField id="tender_subCategories" label="Tender Sub-Categories">
                 <Input
                   name="tender_subCategories"
                   value={tenderData?.tender_subCategories || "Not Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <FormField id="identificationOfLot" label="Identification of Lot">
                 <Input
                   name="identificationOfLot"
                   value={tenderData?.identificationOfLot || "Not Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <div className="sm:col-span-2">
@@ -530,7 +530,7 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
                     name="descriptionOfWorks"
                     placeholder="Provide a detailed description of the works..."
                     value={tenderData?.descriptionOfWorks}
-                    disabled
+                     onChange={(e) => handleChange(e.target.name, e.target.value)}
                   />
                 </FormField>
               </div>
@@ -550,7 +550,7 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
                   name="publicationDateTime"
                   type="text"
                   value={tenderData?.publicationDateTime || "Not Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <FormField id="openingDateTime" label="Opening Date">
@@ -558,7 +558,7 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
                   name="openingDateTime"
                   type="text"
                   value={tenderData?.openingDateTime || "Not Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <FormField id="estimatedCost" label="Estimated Cost">
@@ -566,17 +566,17 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
                   name="estimatedCost"
                   type="number"
                   value={tenderData?.estimatedCost}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <FormField id="jvca" label="JVCA">
-                <Input name="jvca" value={tenderData?.jvca || "NOt Available"} disabled />
+                <Input name="jvca" value={tenderData?.jvca || "NOt Available"}  onChange={(e) => handleChange(e.target.name, e.target.value)} />
               </FormField>
               <FormField id="ProjectCode" label="Project Code">
                 <Input
                   name="ProjectCode"
                   value={tenderData?.ProjectCode || "Not Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <FormField id="TentativeStartDate" label="Tentative Start Date">
@@ -584,15 +584,16 @@ export const TenderInformationForm = ({ egpEmail, setReload }) => {
                   name="TentativeStartDate"
                   type="text"
                   value={tenderData?.TentativeStartDate || "Not Available"}
-                  disabled
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                 />
               </FormField>
               <FormField id="TentativeCompletionDate" label="Tentative Completion Date">
                 <Input
                   name="TentativeCompletionDate"
                   type="date"
+                   onChange={(e) => handleChange(e.target.name, e.target.value)}
                   value={tenderData?.TentativeCompletionDate || "Not Available"}
-                  disabled
+                  
                 />
               </FormField>
             </div>

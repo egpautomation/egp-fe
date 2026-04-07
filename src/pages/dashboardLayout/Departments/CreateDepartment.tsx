@@ -32,9 +32,7 @@ const CreateDepartment = () => {
     });
   };
   const resetForm = () => {
-    setFormData({
-      
-    });
+    setFormData({});
     setOrganization("");
     setOrganizationValue("");
   };
@@ -59,7 +57,7 @@ const CreateDepartment = () => {
         className="space-y-4 max-w-xl mx-auto   p-6 bg-white shadow rounded-xl"
       >
         <div className="grid grid-cols-2 gap-5">
-          <div>
+          <div className="col-span-2">
           <Label className="mb-2">
             Organization <span className="text-red-600">*</span>
           </Label>
@@ -84,7 +82,7 @@ const CreateDepartment = () => {
             required
           />
         </div>
-        <div className="col-span-2">
+        <div >
           <Label className="mb-2">
             Details Name <span className="text-red-600">*</span>
           </Label>
