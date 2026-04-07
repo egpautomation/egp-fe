@@ -494,7 +494,7 @@ const PgTwoTowOtmGoodsDetails = () => {
         loc_source: companyData?.bankName || "",
         loc_amount: String(liveTenderData?.liquidAssets || ""),
 
-        contact_details: companyData?.mobileNumber || companyData?.email || "",
+        contact_details: companyData?.bankAddress || "",
         qualifications_experience: "",
         tender_capacity_period: String(currentTender?.proposeYear || ""),
         tender_capacity_max_value: String(currentTender?.Maximumvalue || ""),
