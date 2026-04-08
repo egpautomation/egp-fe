@@ -13,8 +13,8 @@ export default function ByPassReportRow({ item, idx }: any) {
       <td className="px-4 py-3">{item?.password || "N/A"}</td>
       <td className="px-4 py-3">{item?.bankName || "N/A"}</td>
       <td className="px-4 py-3">{item?.liquidAsset || "N/A"}</td>
-      <td className="px-4 py-3">{item?.activeDate1 || "N/A"}</td>
-      <td className="px-4 py-3">{item?.activeDate2 || "N/A"}</td>
+      <td className="px-4 py-3">{item?.activityDate1 || "N/A"}</td>
+      <td className="px-4 py-3">{item?.activityDate2 || "N/A"}</td>
       <td className="px-4 py-3 max-w-[250px] truncate" title={item?.companyAddress}>
         {item?.companyAddress || "N/A"}
       </td>
