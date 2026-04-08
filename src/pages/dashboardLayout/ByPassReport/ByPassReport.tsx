@@ -24,36 +24,39 @@ const ByPassReport = () => {
               <tr className="uppercase font-bold">
                 <th className="px-4 py-3 whitespace-nowrap">SL</th>
                 <th className="px-4 py-3 whitespace-nowrap">InvoiceNo</th>
-                <th className="px-4 py-3 whitespace-nowrap">TenderId</th>
-                <th className="px-4 py-3 whitespace-nowrap">TenderIdNum</th>
+                <th className="px-4 py-3 whitespace-nowrap">JobNo</th>
                 <th className="px-4 py-3 whitespace-nowrap">ReLogin</th>
+                <th className="px-4 py-3 whitespace-nowrap">TenderId</th>
                 <th className="px-4 py-3 whitespace-nowrap">EGP-Email</th>
                 <th className="px-4 py-3 whitespace-nowrap">CompanyName</th>
                 <th className="px-4 py-3 whitespace-nowrap">Password</th>
                 <th className="px-4 py-3 whitespace-nowrap">BankName</th>
-                <th className="px-4 py-3 whitespace-nowrap">Status</th>
+                <th className="px-4 py-3 whitespace-nowrap">LiquidAsset</th>
+                <th className="px-4 py-3 whitespace-nowrap">ActiveDate1</th>
+                <th className="px-4 py-3 whitespace-nowrap">ActiveDate2</th>
                 <th className="px-4 py-3 whitespace-nowrap">CompanyAddress</th>
+                <th className="px-4 py-3 whitespace-nowrap">Author</th>
                 <th className="px-4 py-3 whitespace-nowrap">NID</th>
                 <th className="px-4 py-3 whitespace-nowrap">Trade</th>
-                <th className="px-4 py-3 whitespace-nowrap">TIN</th>
-                <th className="px-4 py-3 whitespace-nowrap">VAT</th>
-                <th className="px-4 py-3 whitespace-nowrap">TINReturn</th>
-                <th className="px-4 py-3 whitespace-nowrap">VATReturn</th>
-                <th className="px-4 py-3 whitespace-nowrap">WhatsApp</th>
+                <th className="px-4 py-3 whitespace-nowrap">Tin</th>
+                <th className="px-4 py-3 whitespace-nowrap">Vat</th>
+                <th className="px-4 py-3 whitespace-nowrap">Ltm_License</th>
+                <th className="px-4 py-3 whitespace-nowrap">Other_1_Map</th>
+                <th className="px-4 py-3 whitespace-nowrap">SLNoLineOfCredit</th>
+                <th className="px-4 py-3 whitespace-nowrap">Other_2_Map</th>
+                <th className="px-4 py-3 whitespace-nowrap">Whats_app</th>
+                <th className="px-4 py-3 whitespace-nowrap">TinReturn</th>
+                <th className="px-4 py-3 whitespace-nowrap">VatReturn</th>
                 <th className="px-4 py-3 whitespace-nowrap">Manpower</th>
                 <th className="px-4 py-3 whitespace-nowrap">Equipment</th>
-                <th className="px-4 py-3 whitespace-nowrap">StartDate</th>
-                <th className="px-4 py-3 whitespace-nowrap">CompletionDate</th>
-                <th className="px-4 py-3 whitespace-nowrap">ActivityDays</th>
-                <th className="px-4 py-3 whitespace-nowrap">LicenseSL</th>
-                <th className="px-4 py-3 whitespace-nowrap">OtherInfo</th>
+                <th className="px-4 py-3 whitespace-nowrap">AuditReport</th>
               </tr>
             </thead>
             <tbody className="bg-[#fbfcff]">
               {loading ? (
                 skeleton.map((idx) => (
                   <tr key={idx} className="animate-pulse">
-                    {Array.from({ length: 25 }).map((_, i) => (
+                    {Array.from({ length: 29 }).map((_, i) => (
                       <td key={i} className="px-4 py-4">
                         <div className="h-4 bg-muted rounded w-full"></div>
                       </td>
@@ -66,7 +69,7 @@ const ByPassReport = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={25} className="px-4 py-16 text-center">
+                  <td colSpan={29} className="px-4 py-16 text-center">
                     <div className="flex flex-col items-center justify-center text-muted-foreground">
                       <svg className="w-12 h-12 mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
