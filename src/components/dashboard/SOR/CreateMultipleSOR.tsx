@@ -39,18 +39,18 @@ export default function SORJsonImport({
         const validData = arr.filter((item) => item?.itemCode);
 
         //  Step 2: Remove duplicates (based on itemCode)
-        const uniqueMap = new Map();
-        validData.forEach((item) => {
-          const code = item.itemCode.trim();
-          if (!uniqueMap.has(code)) {
-            uniqueMap.set(code, { ...item, itemCode: code });
-          }
-        });
+        // const uniqueMap = new Map();
+        // validData.forEach((item) => {
+        //   const code = item.itemCode.trim();
+        //   if (!uniqueMap.has(code)) {
+        //     uniqueMap.set(code, { ...item, itemCode: code });
+        //   }
+        // });
 
-        const uniqueData = Array.from(uniqueMap.values());
+        const uniqueData = Array.from(validData.values());
 
         const removedInvalid = arr.length - validData.length;
-        const removedDuplicate = validData.length - uniqueData.length;
+        // const removedDuplicate = validData.length - uniqueData.length;
 
         if (removedInvalid > 0) {
           toast.error(`${removedInvalid} records removed (missing itemCode) `);
@@ -58,7 +58,7 @@ export default function SORJsonImport({
 
         setParsed(uniqueData);
         toast.success(
-          `${uniqueData.length} valid records ready \n ${removedDuplicate && `${removedDuplicate} duplicates removed`}`
+          `${uniqueData.length} valid records ready `
         );
       } catch {
         toast.error("Invalid JSON file");

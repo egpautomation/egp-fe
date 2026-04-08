@@ -19,6 +19,7 @@ const CreateDepartment = () => {
     detailsName: "",
     departmentBanglaShortName: "",
     LTMLicenseNameCode: "",
+
   });
 
   const [organization, setOrganization] = useState("");
@@ -31,12 +32,7 @@ const CreateDepartment = () => {
     });
   };
   const resetForm = () => {
-    setFormData({
-      shortName: "",
-      detailsName: "",
-      departmentBanglaShortName: "",
-      LTMLicenseNameCode: "",
-    });
+    setFormData({});
     setOrganization("");
     setOrganizationValue("");
   };
@@ -45,6 +41,7 @@ const CreateDepartment = () => {
     e.preventDefault();
     const url = `${config.apiBaseUrl}/departments/create-department`;
     createData(url, { ...formData, organization }, setReload, resetForm);
+   
   };
 
   return (
@@ -57,9 +54,10 @@ const CreateDepartment = () => {
       <h2 className="text-2xl font-bold mb-4 text-center my-5">Create Department</h2>
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 max-w-xl mx-auto  p-6 bg-white shadow rounded-xl"
+        className="space-y-4 max-w-xl mx-auto   p-6 bg-white shadow rounded-xl"
       >
-        <div>
+        <div className="grid grid-cols-2 gap-5">
+          <div className="col-span-2">
           <Label className="mb-2">
             Organization <span className="text-red-600">*</span>
           </Label>
@@ -84,7 +82,7 @@ const CreateDepartment = () => {
             required
           />
         </div>
-        <div>
+        <div >
           <Label className="mb-2">
             Details Name <span className="text-red-600">*</span>
           </Label>
@@ -126,6 +124,15 @@ const CreateDepartment = () => {
             required
           />
         </div>
+        {/* Rates */}
+        {[1, 2, 3, 4, 5, 6].map((num) => (
+          <div key={num}>
+            <Label className="mb-2">Rate {num}</Label>
+            <Input name={`rate_${num}`} type="number"  onChange={handleChange} />
+          </div>
+        ))}
+        </div>
+        
         <Button type="submit" className="w-full">
           Create
         </Button>

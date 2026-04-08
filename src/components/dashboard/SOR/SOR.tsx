@@ -43,13 +43,7 @@ export default function SOR() {
   return (
     <div className="p-6 container mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 mb-5 gap-5 ">
-        <Input
-          placeholder="Search by Description..."
-          value={searchTerm.description}
-          onChange={(e) => setSearchTerm({ ...searchTerm, description: e.target.value })}
-        />
-
-        <Select
+         <Select
           onValueChange={(v) =>
             setSearchTerm({ ...searchTerm, departmentShortName: v == "all" ? "" : v })
           }
@@ -71,6 +65,14 @@ export default function SOR() {
           value={searchTerm.itemCode}
           onChange={(e) => setSearchTerm({ ...searchTerm, itemCode: e.target.value })}
         />
+        <Input
+          placeholder="Search by Description..."
+          value={searchTerm.description}
+          onChange={(e) => setSearchTerm({ ...searchTerm, description: e.target.value })}
+        />
+
+       
+        
         <div className="grid col-span-2 grid-cols-1 xl:grid-cols-3 gap-5">
           <Dialog>
             <DialogTrigger asChild>

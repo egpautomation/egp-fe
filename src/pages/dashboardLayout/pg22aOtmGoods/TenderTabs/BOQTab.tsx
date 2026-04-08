@@ -12,6 +12,7 @@ import BOQRow from "./BOQRow";
 import DeleteDataModal from "@/shared/Dashboard/DeleteDataModal";
 import config from "@/lib/config";
 import { useEffect, useState } from "react";
+import UpdateTenderPreparation from "./UpdateTenderPreparation";
 
 export interface BOQItem {
   itemNo: number;
@@ -46,7 +47,7 @@ export default function BOQTab({
   procurementMethod: string;
   procurementNature: string;
 }) {
-  const [boqData, setBoqData] = useState<BOQData[]>([]);
+  const [updatedTenderPreparationData, setUpdatedTenderPreparationData] = useState<BOQData[]>([]);
   const { data, loading, setReload }: { data: BOQData[]; loading: boolean; setReload: Function } =
     useAllTenderIDBOQ(tenderId);
 
@@ -60,7 +61,7 @@ export default function BOQTab({
     setTenderPreparationReload((prev: number) => prev + 1);
   };
   const addBOQItem = (tableId: string, newItem: BOQItem) => {
-  setBoqData((prev) =>
+  setUpdatedTenderPreparationData((prev) =>
     prev.map((table) =>
       table._id === tableId
         ? {
@@ -72,7 +73,7 @@ export default function BOQTab({
   );
 };
 const deleteBOQItem = (tableId: string, itemId: string) => {
-  setBoqData((prev) =>
+  setUpdatedTenderPreparationData((prev) =>
     prev.map((table) =>
       table._id === tableId
         ? {
@@ -84,10 +85,10 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
   );
 };
   useEffect(() => {
-  if (data) {
-    setBoqData(data);
+  if (tenderPreparationData) {
+    setUpdatedTenderPreparationData(tenderPreparationData);
   }
-}, [data]);
+}, [tenderPreparationData]);
 
   if (loading) return <div className="p-4">Loading BOQ Data...</div>;
   // if (!data || data.length === 0) return <div className="p-4">No BOQ data found.</div>;
@@ -99,7 +100,7 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
           <div className="p-4">No BOQ data found.</div>
         ) : (
           <div>
-            {boqData?.map((table) => (
+            {data?.map((table) => (
               <Accordion
                 key={table._id}
                 type="single"
@@ -121,16 +122,9 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
                       {/* Items Table */}
                       <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
-                          <thead className="bg-green-200/80 text-xs uppercase text-gray-600">
-                            <tr>
-                              <th className="px-4 py-2 border-b" colSpan={10}>
-                                <div>
-                                  <CreateNewBoqRow tableId={table._id} onAdd={addBOQItem}/>
-                                </div>
-                              </th>
-                            </tr>
-                          </thead>
-                          <thead className="bg-green-50 text-xs uppercase text-gray-600">
+                          
+                          
+                           <thead className="bg-green-100 text-xs uppercase text-gray-600">
                             <tr>
                               <th className="px-4 py-2 border-b">Item no.</th>
                               <th className="px-4 py-2 border-b">Group</th>
@@ -146,15 +140,29 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
                                 <br />
                                 In figures (BDT)
                               </th>
-                              <th className="px-4 py-2 border-b text-right">Total Price</th>
-                              <th className="px-4 py-2 border-b text-right">Search</th>
-                              <th className="px-4 py-2 border-b text-right">Delete</th>
                             </tr>
                           </thead>
                           <tbody className="text-sm divide-y">
-                            {table.items.map((item) => (
-                              <BOQRow item={item} key={item?._id} tableId={table._id}
-      onDelete={deleteBOQItem} />
+                           {table.items.map((item) => (
+                              <tr key={item?._id} className="hover:bg-gray-50">
+                                <td className="px-4 py-2">{item?.itemNo}</td>
+                                <td className="px-4 py-2">
+                                  <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-xs">
+                                    {item?.group}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-2 font-mono text-xs">{item?.itemCode}</td>
+                                <td className="px-4 py-2">
+                                  <div className="font-medium">{item?.descriptionOfItem}</div>
+                                  <div className="text-xs text-gray-400">
+                                    {item?.requiredDocument}
+                                  </div>
+                                </td>
+
+                                <td className="px-4 py-2">{item?.unit}</td>
+                                <td className="px-4 py-2 text-right">{item?.quantity}</td>
+                                <td className="px-4 py-2 text-right">{item?.unitPrice}</td>
+                              </tr>
                             ))}
                             <tr className="hover:bg-gray-50">
                               <td className="px-4 py-2   text-end" colSpan={10}>
@@ -190,7 +198,7 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
           </div>
         ) : (
           <div className="flex flex-col gap-8 p-4">
-            {tenderPreparationData?.map((table) => (
+            {updatedTenderPreparationData?.map((table) => (
               <Accordion
                 key={table?._id}
                 type="single"
@@ -216,7 +224,16 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
                   <AccordionContent>
                     <div className="border rounded-lg overflow-hidden shadow-sm">
                       <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                       <table className="w-full text-left border-collapse">
+                         <thead className="bg-green-200/80 text-xs uppercase text-gray-600">
+                            <tr>
+                              <th className="px-4 py-2 border-b" colSpan={10}>
+                                <div>
+                                  <CreateNewBoqRow tableId={table._id} onAdd={addBOQItem}/>
+                                </div>
+                              </th>
+                            </tr>
+                          </thead>
                           <thead className="bg-green-100 text-xs uppercase text-gray-600">
                             <tr>
                               <th className="px-4 py-2 border-b">Item no.</th>
@@ -233,30 +250,25 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
                                 <br />
                                 In figures (BDT)
                               </th>
+                              <th className="px-4 py-2 border-b text-right">Total Price</th>
+                              <th className="px-4 py-2 border-b text-right">Search</th>
+                              <th className="px-4 py-2 border-b text-right">Delete</th>
                             </tr>
                           </thead>
                           <tbody className="text-sm divide-y">
                             {table.items.map((item) => (
-                              <tr key={item?._id} className="hover:bg-gray-50">
-                                <td className="px-4 py-2">{item?.itemNo}</td>
-                                <td className="px-4 py-2">
-                                  <span className="px-2 py-1 rounded-full bg-blue-50 text-blue-700 text-xs">
-                                    {item?.group}
-                                  </span>
-                                </td>
-                                <td className="px-4 py-2 font-mono text-xs">{item?.itemCode}</td>
-                                <td className="px-4 py-2">
-                                  <div className="font-medium">{item?.descriptionOfItem}</div>
-                                  <div className="text-xs text-gray-400">
-                                    {item?.requiredDocument}
-                                  </div>
-                                </td>
-
-                                <td className="px-4 py-2">{item?.unit}</td>
-                                <td className="px-4 py-2 text-right">{item?.quantity}</td>
-                                <td className="px-4 py-2 text-right">{item?.unitPrice}</td>
-                              </tr>
+                              <BOQRow item={item} key={item?._id} tableId={table._id}
+      onDelete={deleteBOQItem} />
                             ))}
+                             <tr className="hover:bg-gray-50">
+                              <td className="px-4 py-2   text-end" colSpan={10}>
+                                <UpdateTenderPreparation
+                                  setReload={setAllReload}
+                                 tableData={table}
+                                  data={updatedTenderPreparationData}
+                                />
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>

@@ -11,8 +11,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
+import { useState } from "react";
 
 export default function ViewSORModal({ data }: { data: any }) {
+  const [open, setOpen] = useState(false);
   const Field = ({ label, value }: any) => (
     <div className="flex flex-col space-y-1">
       <span className="text-xs text-muted-foreground">{label}</span>
@@ -23,7 +25,7 @@ export default function ViewSORModal({ data }: { data: any }) {
   );
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Eye className="cursor-pointer" />
       </DialogTrigger>
@@ -97,7 +99,7 @@ export default function ViewSORModal({ data }: { data: any }) {
                 <div key={num} className="p-3 rounded-lg bg-white border shadow-sm">
                   <p className="text-xs text-muted-foreground">Rate {num}</p>
                   <p className="font-semibold text-sm mt-1">
-                    {data?.rates?.[`rate_${num}`] ?? "—"}
+                    {data?.[`rate_${num}`] ?? "—"}
                   </p>
                 </div>
               ))}
@@ -105,8 +107,10 @@ export default function ViewSORModal({ data }: { data: any }) {
           </div>
         </div>
 
-        <div className="flex justify-end mt-6">
-          <Button variant="outline">Close</Button>
+        <div  className="flex justify-end mt-6">
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Close
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

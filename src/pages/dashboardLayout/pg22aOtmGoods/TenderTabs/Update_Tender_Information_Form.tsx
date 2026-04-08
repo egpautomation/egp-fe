@@ -462,16 +462,16 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
                 </Select> */}
               </FormField>
               <FormField id="procurementNature" label="Procurement Nature">
-                <Input name="procurementNature" value={formData?.procurementNature} disabled />
+                <Input name="procurementNature" value={formData?.procurementNature}  />
               </FormField>
               <FormField id="procurementMethod" label="Procurement Method">
-                <Input name="procurementMethod" value={formData?.procurementMethod} disabled />
+                <Input name="procurementMethod" value={formData?.procurementMethod}  />
               </FormField>
               <FormField id="appId" label="APP ID">
                 <Input name="appId" value={formData?.appId} />
               </FormField>
               <FormField id="budgetType" label="Budget Type">
-                <Input name="budgetType" value={formData?.budgetType} disabled />
+                <Input name="budgetType" value={formData?.budgetType}  />
                 {/* <Select onValueChange={(value) => handleChange('budgetType', value)} value={formData.budgetType}>
                   <SelectTrigger><SelectValue placeholder="Select Budget" /></SelectTrigger>
                   <SelectContent>
@@ -484,29 +484,29 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
                 <Input
                   name="development_partner"
                   value={formData?.development_partner || "Not Available"}
-                  disabled
+                  
                 />
               </FormField>
             </div>
             <h3 className="text-lg font-semibold border-b pb-2 pt-4">Entity & Location</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <FormField id="ministry" label="Ministry">
-                <Input name="ministry" value={formData?.ministry} disabled />
+                <Input name="ministry" value={formData?.ministry}  />
               </FormField>
               <FormField id="organization" label="Organization">
-                <Input name="organization" value={formData?.organization} disabled />
+                <Input name="organization" value={formData?.organization}  />
               </FormField>
               <FormField id="division" label="Division">
-                <Input name="division" value={formData?.division} disabled />
+                <Input name="division" value={formData?.division}  />
               </FormField>
               <FormField id="locationDistrict" label="Location District">
-                <Input name="locationDistrict" value={formData?.locationDistrict} disabled />
+                <Input name="locationDistrict" value={formData?.locationDistrict}  />
               </FormField>
               <FormField id="LtmLicenseNameCode" label="LTM License Name Code">
                 <Input
                   name="LtmLicenseNameCode"
                   value={formData?.LtmLicenseNameCode || "NOt Available"}
-                  disabled
+                  
                 />
               </FormField>
             </div>
@@ -515,26 +515,26 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <FormField id="procuringEntityName" label="PE Name">
-                <Input name="procuringEntityName" value={formData?.procuringEntityName} disabled />
+                <Input name="procuringEntityName" value={formData?.procuringEntityName}  />
               </FormField>
               <FormField id="PE_officialDesignation" label="PE Official Designation">
                 <Input
                   name="PE_officialDesignation"
                   value={formData?.PE_officialDesignation || "Not Available"}
-                  disabled
+                  
                 />
               </FormField>
               <FormField id="PE_Address" label="PE Address">
-                <Input name="PE_Address" value={formData?.PE_Address || "Not Available"} disabled />
+                <Input name="PE_Address" value={formData?.PE_Address || "Not Available"}  />
               </FormField>
               <FormField id="PE_City" label="PE City">
-                <Input name="PE_City" value={formData?.PE_City || "Not Available"} disabled />
+                <Input name="PE_City" value={formData?.PE_City || "Not Available"}  />
               </FormField>
               <FormField id="PE_Thana" label="PE Thana">
-                <Input name="PE_Thana" value={formData?.PE_Thana || "Not Available"} disabled />
+                <Input name="PE_Thana" value={formData?.PE_Thana || "Not Available"}  />
               </FormField>
               <FormField id="PE_District" label="PE District">
-                <Input name="PE_District" value={formData?.PE_District} disabled />
+                <Input name="PE_District" value={formData?.PE_District}  />
               </FormField>
             </div>
             <h3 className="text-lg font-semibold border-b pb-2 pt-4">Project & Work Details</h3>
@@ -543,38 +543,38 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
                 <Input
                   name="ProjectName"
                   value={formData?.ProjectName || "NOt Available"}
-                  disabled
+                  
                 />
               </FormField>
               <FormField id="sourceOfFunds" label="Source of Funds">
                 <Input
                   name="sourceOfFunds"
                   value={formData?.sourceOfFunds || "Not Available"}
-                  disabled
+                  
                 />
               </FormField>
               <FormField id="packageNo" label="Package No.">
-                <Input name="packageNo" value={formData?.packageNo || "Not Available"} disabled />
+                <Input name="packageNo" value={formData?.packageNo || "Not Available"}  />
               </FormField>
               <FormField id="selectedTenderCategory" label="Tender Category">
                 <Input
                   name="selectedTenderCategory"
                   value={formData?.selectedTenderCategory || "Not Available"}
-                  disabled
+                  
                 />
               </FormField>
               <FormField id="tender_subCategories" label="Tender Sub-Categories">
                 <Input
                   name="tender_subCategories"
                   value={formData?.tender_subCategories || "Not Available"}
-                  disabled
+                  
                 />
               </FormField>
               <FormField id="identificationOfLot" label="Identification of Lot">
                 <Input
                   name="identificationOfLot"
                   value={formData?.identificationOfLot || "Not Available"}
-                  disabled
+                  
                 />
               </FormField>
               <div className="sm:col-span-2">
@@ -583,7 +583,7 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
                     name="descriptionOfWorks"
                     placeholder="Provide a detailed description of the works..."
                     value={formData?.descriptionOfWorks}
-                    disabled
+                    
                   />
                 </FormField>
               </div>
@@ -603,7 +603,7 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
                   name="publicationDateTime"
                   type="text"
                   value={formData?.publicationDateTime || "Not Available"}
-                  disabled
+                  
                 />
               </FormField>
               <FormField id="openingDateTime" label="Opening Date">
@@ -611,7 +611,7 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
                   name="openingDateTime"
                   type="text"
                   value={formData?.openingDateTime || "Not Available"}
-                  disabled
+                  
                 />
               </FormField>
               <FormField id="estimatedCost" label="Estimated Cost">
@@ -619,17 +619,17 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
                   name="estimatedCost"
                   type="number"
                   value={formData?.estimatedCost}
-                  disabled
+                  
                 />
               </FormField>
               <FormField id="jvca" label="JVCA">
-                <Input name="jvca" value={formData?.jvca || "NOt Available"} disabled />
+                <Input name="jvca" value={formData?.jvca || "NOt Available"}  />
               </FormField>
               <FormField id="ProjectCode" label="Project Code">
                 <Input
                   name="ProjectCode"
                   value={formData?.ProjectCode || "Not Available"}
-                  disabled
+                  
                 />
               </FormField>
               <FormField id="TentativeStartDate" label="Tentative Start Date">
@@ -637,7 +637,7 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
                   name="TentativeStartDate"
                   type="text"
                   value={formData?.TentativeStartDate || "Not Available"}
-                  disabled
+                  
                 />
               </FormField>
               <FormField id="TentativeCompletionDate" label="Tentative Completion Date">
@@ -645,7 +645,7 @@ export const UpdateTenderInformationForm = ({ egpEmail, preSelectedContractId })
                   name="TentativeCompletionDate"
                   type="date"
                   value={formData?.TentativeCompletionDate || "Not Available"}
-                  disabled
+                  
                 />
               </FormField>
             </div>
