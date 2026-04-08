@@ -4,13 +4,13 @@ import { patchData } from "@/lib/updateData";
 import { Send } from "lucide-react";
 
 
-export default function UpdateTenderPreparation({setReload, data, tableData}: {setReload: Function, data: any, tableData: any}) {
+export default function UpdateTenderPreparation({setReload, tableData, data: _data}: {setReload: Function, tableData: any, data?: any}) {
     const handleUpdateTenderPreparation = () => {
     const { _id, ...rest } = tableData;
 
     const finalData = {
         ...rest,
-        items: tableData.items.map(({ _id, ...item }) => item)
+        items: tableData.items.map(({ _id: _itemId, ...item }: any) => item)
     };
 
     const url = `${config.apiBaseUrl}/tender-preparation/${tableData._id}`;
