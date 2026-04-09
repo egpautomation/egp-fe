@@ -21,7 +21,7 @@ const ByPassReport = () => {
         <div className="overflow-x-auto overflow-y-hidden border-t">
           <table className="w-full text-[13px] text-left border-collapse min-w-max">
             <thead className="bg-[#1a1a1a] text-white">
-              <tr className="uppercase font-bold">
+              <tr className="font-bold border-b">
                 <th className="px-4 py-3 whitespace-nowrap">SL</th>
                 <th className="px-4 py-3 whitespace-nowrap">InvoiceNo</th>
                 <th className="px-4 py-3 whitespace-nowrap">JobNo</th>
