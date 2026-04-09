@@ -41,9 +41,6 @@ const ByPassReport = () => {
                 <th className="px-4 py-3 whitespace-nowrap">Tin</th>
                 <th className="px-4 py-3 whitespace-nowrap">Vat</th>
                 <th className="px-4 py-3 whitespace-nowrap">Ltm_License</th>
-                <th className="px-4 py-3 whitespace-nowrap">Other_1_Map</th>
-                <th className="px-4 py-3 whitespace-nowrap">SLNoLineOfCredit</th>
-                <th className="px-4 py-3 whitespace-nowrap">Other_2_Map</th>
                 <th className="px-4 py-3 whitespace-nowrap">Whats_app</th>
                 <th className="px-4 py-3 whitespace-nowrap">TinReturn</th>
                 <th className="px-4 py-3 whitespace-nowrap">VatReturn</th>

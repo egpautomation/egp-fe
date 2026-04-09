@@ -36,13 +36,7 @@ export default function ByPassReportRow({ item, idx }: any) {
       <td className="px-4 py-3">{item?.trade || "N/A"}</td>
       <td className="px-4 py-3">{item?.tin || "N/A"}</td>
       <td className="px-4 py-3">{item?.vat || "N/A"}</td>
-      {/* Ltm_License = departmentLicenses matched by LtmLicenseNameCode (fallback: LGED) */}
       <td className="px-4 py-3">{item?.ltmLicense || "N/A"}</td>
-      <td className="px-4 py-3">{item?.other1 || "N/A"}</td>
-      {/* SLNoLineOfCredit = SLOfCredit from job order */}
-      <td className="px-4 py-3">{item?.slNoLineOfCredit || "N/A"}</td>
-      {/* Other_2_Map = other2Map from job order */}
-      <td className="px-4 py-3">{item?.other2 || "N/A"}</td>
       <td className="px-4 py-3">{item?.whatsApp || "N/A"}</td>
       <td className="px-4 py-3">{item?.tinReturnCertificate || "N/A"}</td>
       <td className="px-4 py-3">{item?.vatReturnCertificate || "N/A"}</td>
