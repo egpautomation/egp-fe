@@ -98,11 +98,16 @@ const UpdateCompanyMigration = () => {
 
     // Initialize selectedCertificates from formData.experienceCertificates
     if (formData?.experienceCertificates) {
-      const certificates = Object.entries(formData.experienceCertificates).map(([key, value]) => ({
-        name: key,
-        value: value as string,
-      }));
-      setSelectedCertificates(certificates);
+      // Support both array format (new) and object format (legacy)
+      if (Array.isArray(formData.experienceCertificates)) {
+        setSelectedCertificates(formData.experienceCertificates);
+      } else {
+        const certificates = Object.entries(formData.experienceCertificates).map(([key, value]) => ({
+          name: key,
+          value: value as string,
+        }));
+        setSelectedCertificates(certificates);
+      }
     }
   }, [formData]);
 
@@ -158,20 +163,13 @@ const UpdateCompanyMigration = () => {
     setSelectedAgencies((prev) => prev.filter((a) => a.name !== agencyName));
   };
 
-  // Handle adding certificate to selected list
+  // Handle adding certificate to selected list — allows multiple entries of the same type
   const handleAddCertificate = () => {
     if (!tempCertType || !tempCertValue.trim()) {
       return;
     }
 
-    // Check if certificate already exists
-    const exists = selectedCertificates.find((c) => c.name === tempCertType);
-    if (exists) {
-      alert(`${tempCertType} has already been added!`);
-      return;
-    }
-
-    // Add to selected certificates
+    // Add to selected certificates (no duplicate check — same type allowed)
     setSelectedCertificates((prev) => [...prev, { name: tempCertType, value: tempCertValue.trim() }]);
 
     // Reset temporary values
@@ -180,9 +178,9 @@ const UpdateCompanyMigration = () => {
     setCertOpen(false);
   };
 
-  // Handle removing certificate from selected list
-  const handleRemoveCertificate = (certName) => {
-    setSelectedCertificates((prev) => prev.filter((c) => c.name !== certName));
+  // Handle removing certificate from selected list by index
+  const handleRemoveCertificate = (index) => {
+    setSelectedCertificates((prev) => prev.filter((_, i) => i !== index));
   };
 
   // Handle adding bank account to bank details array
@@ -254,11 +252,8 @@ const UpdateCompanyMigration = () => {
         departmentLicenses[agency.name] = agency.value;
       });
 
-      // Transform selectedCertificates array to experienceCertificates object
-      const experienceCertificates = {};
-      selectedCertificates.forEach((cert) => {
-        experienceCertificates[cert.name] = cert.value;
-      });
+      // Send selectedCertificates as an array to support multiple entries of the same type
+      const experienceCertificates = selectedCertificates;
 
       // Merge with existing formData
       const submitData = {
@@ -1084,7 +1079,7 @@ const UpdateCompanyMigration = () => {
                                 type="button"
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => handleRemoveCertificate(cert.name)}
+                                onClick={() => handleRemoveCertificate(index)}
                                 className="cursor-pointer hover:bg-red-50 hover:text-red-600"
                               >
                                 <X className="h-4 w-4" />
