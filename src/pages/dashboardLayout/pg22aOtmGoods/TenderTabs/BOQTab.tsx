@@ -22,7 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
 import toast from "react-hot-toast";
 
@@ -101,6 +101,21 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
     setUpdatedTenderPreparationData(tenderPreparationData);
   }
 }, [tenderPreparationData]);
+
+  const handleDeleteTable = async (tableId: string) => {
+    const toastId = toast.loading("Deleting table...");
+    try {
+      await axiosInstance.delete(
+        `${config.apiBaseUrl}/tender-preparation/delete-tender-preparation/${tableId}`,
+      );
+      toast.dismiss(toastId);
+      toast.success("Table deleted");
+      setAllReload();
+    } catch (error: any) {
+      toast.dismiss(toastId);
+      toast.error(error?.message || "Failed to delete table");
+    }
+  };
 
   const handleClearBOQItems = async (tableId: string) => {
     const toastId = toast.loading("Clearing BOQ items...");
@@ -241,9 +256,10 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
                         {table?.tableName && table.tableName.replace("_", " ")}
                       </h2>
                       <div
-                        className="w-max bg-gray-200/85 pr-1.5 pt-0.5 rounded-sm"
+                        className="flex items-center gap-1 bg-gray-200/85 pr-1.5 pt-0.5 rounded-sm"
                         onClick={(e) => e.stopPropagation()}
                       >
+                        {/* Clear items only */}
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <div
@@ -271,6 +287,37 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
                                 onClick={() => handleClearBOQItems(table?._id)}
                               >
                                 Clear Items
+                              </Button>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                        {/* Delete entire table */}
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <div
+                              className="text-gray-700 ml-1 cursor-pointer py-1 hover:text-red-800 transition-colors"
+                              title="Delete Table"
+                            >
+                              <X size={20} />
+                            </div>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent className="max-w-xl">
+                            <AlertDialogTitle></AlertDialogTitle>
+                            <AlertDialogHeader>
+                              <div className="max-h-[70vh] overflow-y-auto p-4 space-y-5 text-center text-gray-900">
+                                <h3 className="text-2xl font-bold">Delete Table?</h3>
+                                <h3 className="text-lg font-semibold">
+                                  This entire table will be permanently deleted.
+                                </h3>
+                              </div>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <Button
+                                variant="destructive"
+                                onClick={() => handleDeleteTable(table?._id)}
+                              >
+                                Delete Table
                               </Button>
                             </AlertDialogFooter>
                           </AlertDialogContent>
