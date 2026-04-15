@@ -9,10 +9,22 @@ import {
 } from "@/components/ui/accordion";
 import { CreateNewBoqRow } from "@/components/dashboard/SOR/CreateNewBoqRow";
 import BOQRow from "./BOQRow";
-import DeleteDataModal from "@/shared/Dashboard/DeleteDataModal";
 import config from "@/lib/config";
 import { useEffect, useState } from "react";
 import UpdateTenderPreparation from "./UpdateTenderPreparation";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import axiosInstance from "@/lib/axiosInstance";
+import toast from "react-hot-toast";
 
 export interface BOQItem {
   itemNo: number;
@@ -89,6 +101,21 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
     setUpdatedTenderPreparationData(tenderPreparationData);
   }
 }, [tenderPreparationData]);
+
+  const handleClearBOQItems = async (tableId: string) => {
+    const toastId = toast.loading("Clearing BOQ items...");
+    try {
+      await axiosInstance.patch(
+        `${config.apiBaseUrl}/tender-preparation/clear-boq-items/${tableId}`,
+      );
+      toast.dismiss(toastId);
+      toast.success("BOQ items cleared");
+      setAllReload();
+    } catch (error: any) {
+      toast.dismiss(toastId);
+      toast.error(error?.message || "Failed to clear BOQ items");
+    }
+  };
 
   if (loading) return <div className="p-4">Loading BOQ Data...</div>;
   // if (!data || data.length === 0) return <div className="p-4">No BOQ data found.</div>;
@@ -213,11 +240,41 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
                       <h2 className="text-lg font-bold capitalize">
                         {table?.tableName && table.tableName.replace("_", " ")}
                       </h2>
-                      <div className="w-max bg-gray-200/85 pr-1.5 pt-0.5 rounded-sm">
-                        <DeleteDataModal
-                          setReload={setAllReload}
-                          url={`${config.apiBaseUrl}/tender-preparation/delete-tender-preparation/${table?._id}`}
-                        />
+                      <div
+                        className="w-max bg-gray-200/85 pr-1.5 pt-0.5 rounded-sm"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <div
+                              className="text-red-700 ml-2 cursor-pointer py-1 hover:text-red-800 transition-colors"
+                              title="Clear BOQ Items"
+                            >
+                              <Trash2 size={20} />
+                            </div>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent className="max-w-xl">
+                            <AlertDialogTitle></AlertDialogTitle>
+                            <AlertDialogHeader>
+                              <div className="max-h-[70vh] overflow-y-auto p-4 space-y-5 text-center text-gray-900">
+                                <h3 className="text-2xl font-bold">Are you sure?</h3>
+                                <h3 className="text-lg font-semibold">
+                                  All BOQ items in this section will be removed.
+                                  The tender preparation record itself will remain.
+                                </h3>
+                              </div>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <Button
+                                variant="destructive"
+                                onClick={() => handleClearBOQItems(table?._id)}
+                              >
+                                Clear Items
+                              </Button>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
                   </AccordionTrigger>
