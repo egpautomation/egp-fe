@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import {
   Dialog,
@@ -17,46 +17,60 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import config from "@/lib/config";
 
-// Demo Data
-const demoSors = [
-  {
-    code: "02/06/01(a)",
-    dept: "RHD",
-    year: "2025-26",
-    category: "Earth Work",
-    description: "Embankment Fill from Borrow pit",
-    rates: [125.5, 130.75, 128.0, 132.25, 129.8, 131.5],
-  },
-  {
-    code: "03/07/01c",
-    dept: "RHD",
-    year: "2025-26",
-    category: "Bituminous Work",
-    description: "Bituminous Tack Coat",
-    rates: [45.2, 47.8, 46.5, 48.1, 46.0, 47.25],
-  },
-  {
-    code: "03/11/02",
-    dept: "RHD",
-    year: "2025-26",
-    category: "Bituminous Work",
-    description: "Premix Carpeting 40mm",
-    rates: [1850.0, 1920.0, 1880.0, 1950.0, 1900.0, 1935.0],
-  },
-];
+interface SORItem {
+  _id: string;
+  itemCode: string;
+  departmentShortName: string;
+  yearOfRate: number;
+  category: string;
+  description: string;
+  rate_1: number;
+  rate_2: number;
+  rate_3: number;
+  rate_4: number;
+  rate_5: number;
+  rate_6: number;
+}
 
 export default function SimilarRatesModal({
   setUnitPrice,
+  itemCode,
 }: {
   setUnitPrice: (val: number) => void;
+  itemCode: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [sors, setSors] = useState<SORItem[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!open || !itemCode) return;
+    const fetchSors = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(
+          `${config.apiBaseUrl}/sor?itemCode=${encodeURIComponent(itemCode)}&page=1&limit=50`,
+        );
+        const data = await res.json();
+        setSors(data?.data || []);
+      } catch {
+        setSors([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSors();
+  }, [open, itemCode]);
 
   const handleSelectRate = (value: number) => {
+    if (!value) return;
     setUnitPrice(value);
-    setOpen(false); // Close modal on selection
+    setOpen(false);
   };
+
+  const rateKeys: (keyof SORItem)[] = ["rate_1", "rate_2", "rate_3", "rate_4", "rate_5", "rate_6"];
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -67,78 +81,90 @@ export default function SimilarRatesModal({
       </DialogTrigger>
 
       <DialogContent className="max-w-[95vw] lg:max-w-6xl p-0 overflow-hidden border-none shadow-2xl rounded-xl">
-        {/* Header Section */}
+        {/* Header */}
         <DialogHeader className="px-6 py-5 flex flex-row items-center gap-3 bg-white border-b border-slate-100">
           <Search className="w-6 h-6 text-blue-600 stroke-[3px]" />
           <DialogTitle className="text-xl font-bold text-slate-800">
             Similar Items & Rates
+            {itemCode && (
+              <span className="ml-2 text-sm font-normal text-slate-500">
+                — Item Code: {itemCode}
+              </span>
+            )}
           </DialogTitle>
         </DialogHeader>
 
-        {/* Table Content */}
-        <div className="p-4 md:p-6 bg-white overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent border-b border-slate-200">
-                <TableHead className="font-bold text-slate-900 h-12">Item Code</TableHead>
-                <TableHead className="font-bold text-slate-900">Department</TableHead>
-                <TableHead className="font-bold text-slate-900 leading-tight">
-                  Year Of
-                  <br />
-                  Rate
-                </TableHead>
-                <TableHead className="font-bold text-slate-900">Category</TableHead>
-                <TableHead className="font-bold text-slate-900 w-[240px]">Description</TableHead>
-
-                {/* Standard Rate Headers */}
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <TableHead key={i} className="font-bold text-slate-900 text-right">
-                    Rate0{i}
+        {/* Table */}
+        <div className="p-4 md:p-6 bg-white overflow-x-auto max-h-[70vh] overflow-y-auto">
+          {loading ? (
+            <div className="text-center py-10 text-slate-400">Loading...</div>
+          ) : sors.length === 0 ? (
+            <div className="text-center py-10 text-slate-400">
+              No SOR data found for item code "{itemCode}"
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent border-b border-slate-200">
+                  <TableHead className="font-bold text-slate-900 h-12">Item Code</TableHead>
+                  <TableHead className="font-bold text-slate-900">Department</TableHead>
+                  <TableHead className="font-bold text-slate-900 leading-tight">
+                    Year Of
+                    <br />
+                    Rate
                   </TableHead>
-                ))}
-
-                {/* Blue Highlighted Header */}
-                <TableHead className="font-bold text-white bg-blue-600 text-right rounded-t-md px-4">
-                  Rate06
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {demoSors.map((row, idx) => (
-                <TableRow
-                  key={idx}
-                  className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"
-                >
-                  <TableCell className="font-medium text-slate-700 py-5">{row.code}</TableCell>
-                  <TableCell className="text-slate-600">{row.dept}</TableCell>
-                  <TableCell className="text-slate-600">{row.year}</TableCell>
-                  <TableCell className="text-slate-600">{row.category}</TableCell>
-                  <TableCell className="text-slate-500 text-sm leading-snug">
-                    {row.description}
-                  </TableCell>
-
-                  {/* Interactive Rate Cells */}
-                  {row.rates.map((rate, i) => (
-                    <TableCell
-                      key={i}
-                      onClick={() => handleSelectRate(rate)}
-                      className={`
-                        text-right font-semibold cursor-pointer transition-all duration-150
-                        hover:bg-blue-600 hover:text-white active:scale-95 px-4
-                        ${i === 5 ? "bg-blue-50/50 text-blue-700 font-bold" : "text-slate-700"}
-                      `}
-                    >
-                      {rate.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </TableCell>
+                  <TableHead className="font-bold text-slate-900">Category</TableHead>
+                  <TableHead className="font-bold text-slate-900 w-[240px]">Description</TableHead>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <TableHead key={i} className="font-bold text-slate-900 text-right">
+                      Rate0{i}
+                    </TableHead>
                   ))}
+                  <TableHead className="font-bold text-white bg-blue-600 text-right rounded-t-md px-4">
+                    Rate06
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {sors.map((row, idx) => (
+                  <TableRow
+                    key={idx}
+                    className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"
+                  >
+                    <TableCell className="font-medium text-slate-700 py-5">{row.itemCode}</TableCell>
+                    <TableCell className="text-slate-600">{row.departmentShortName}</TableCell>
+                    <TableCell className="text-slate-600">{row.yearOfRate}</TableCell>
+                    <TableCell className="text-slate-600">{row.category}</TableCell>
+                    <TableCell className="text-slate-500 text-sm leading-snug">
+                      {row.description}
+                    </TableCell>
+                    {rateKeys.map((key, i) => {
+                      const rate = row[key] as number;
+                      return (
+                        <TableCell
+                          key={i}
+                          onClick={() => handleSelectRate(rate)}
+                          className={`
+                            text-right font-semibold cursor-pointer transition-all duration-150
+                            hover:bg-blue-600 hover:text-white active:scale-95 px-4
+                            ${rate ? "" : "text-slate-300 cursor-default"}
+                            ${i === 5 ? "bg-blue-50/50 text-blue-700 font-bold" : "text-slate-700"}
+                          `}
+                        >
+                          {rate
+                            ? rate.toLocaleString(undefined, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })
+                            : "—"}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </DialogContent>
     </Dialog>

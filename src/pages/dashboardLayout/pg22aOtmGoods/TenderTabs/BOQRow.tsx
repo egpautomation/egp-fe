@@ -7,14 +7,30 @@ export default function BOQRow({
   item,
   tableId,
   onDelete,
+  onUpdate,
 }: {
   item: BOQItem;
   tableId: string;
   onDelete: (tableId: string, itemId: string) => void;
+  onUpdate: (tableId: string, itemId: string, field: "quantity" | "unitPrice", value: number) => void;
 }) {
   const [unitPrice, setUnitPrice] = useState(item.unitPrice);
+  const [quantity, setQuantity] = useState(item.quantity);
 
-  
+  const handleUnitPriceChange = (val: number) => {
+    setUnitPrice(val);
+    onUpdate(tableId, item._id, "unitPrice", val);
+  };
+
+  const handleQuantityChange = (val: number) => {
+    setQuantity(val);
+    onUpdate(tableId, item._id, "quantity", val);
+  };
+
+  const handleSimilarRateSelect = (val: number) => {
+    setUnitPrice(val);
+    onUpdate(tableId, item._id, "unitPrice", val);
+  };
 
   return (
     <tr key={item._id} className="hover:bg-gray-50">
@@ -31,18 +47,34 @@ export default function BOQRow({
       </td>
 
       <td className="px-4 py-2">{item.unit}</td>
-      <td className="px-4 py-2 text-right">{item.quantity}</td>
-      <td className="px-4 py-2 text-right">{unitPrice}</td>
-      <td className="px-4 py-2 text-right">{Math.max(2, item?.quantity * unitPrice)}</td>
       <td className="px-4 py-2 text-right">
-        <SimilarRatesModal setUnitPrice={setUnitPrice} />
+        <input
+          type="number"
+          value={quantity}
+          min={0}
+          onChange={(e) => handleQuantityChange(Number(e.target.value))}
+          className="w-24 border border-gray-300 rounded px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-teal-500"
+        />
       </td>
       <td className="px-4 py-2 text-right">
-       <Trash
-    size={16}
-    className="text-red-600 cursor-pointer"
-    onClick={() => onDelete(tableId, item._id)}
-  />
+        <input
+          type="number"
+          value={unitPrice}
+          min={0}
+          onChange={(e) => handleUnitPriceChange(Number(e.target.value))}
+          className="w-28 border border-gray-300 rounded px-2 py-1 text-right text-sm focus:outline-none focus:ring-1 focus:ring-teal-500"
+        />
+      </td>
+      <td className="px-4 py-2 text-right">{(quantity * unitPrice).toLocaleString()}</td>
+      <td className="px-4 py-2 text-right">
+        <SimilarRatesModal setUnitPrice={handleSimilarRateSelect} itemCode={item.itemCode} />
+      </td>
+      <td className="px-4 py-2 text-right">
+        <Trash
+          size={16}
+          className="text-red-600 cursor-pointer"
+          onClick={() => onDelete(tableId, item._id)}
+        />
       </td>
     </tr>
   );

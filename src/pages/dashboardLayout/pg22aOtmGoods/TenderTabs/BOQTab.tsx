@@ -96,6 +96,25 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
     )
   );
 };
+const updateBOQItem = (
+  tableId: string,
+  itemId: string,
+  field: "quantity" | "unitPrice",
+  value: number,
+) => {
+  setUpdatedTenderPreparationData((prev) =>
+    prev.map((table) =>
+      table._id === tableId
+        ? {
+            ...table,
+            items: table.items.map((item) =>
+              item._id === itemId ? { ...item, [field]: value } : item,
+            ),
+          }
+        : table,
+    ),
+  );
+};
   useEffect(() => {
   if (tenderPreparationData) {
     setUpdatedTenderPreparationData(tenderPreparationData);
@@ -362,7 +381,7 @@ const deleteBOQItem = (tableId: string, itemId: string) => {
                           <tbody className="text-sm divide-y">
                             {table.items.map((item) => (
                               <BOQRow item={item} key={item?._id} tableId={table._id}
-      onDelete={deleteBOQItem} />
+      onDelete={deleteBOQItem} onUpdate={updateBOQItem} />
                             ))}
                              <tr className="hover:bg-gray-50">
                               <td className="px-4 py-2   text-end" colSpan={10}>
