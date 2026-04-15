@@ -13,7 +13,7 @@ export default function CreateTenderPreparationButton({
 }) {
   const handleCreateTenderPreparation = () => {
     // 1. Destructure the unwanted fields and collect the rest into 'cleanData'
-    const { __v, updatedAt, createdAt, ...cleanData } = data;
+    const { __v, updatedAt, createdAt, _id, ...cleanData } = data;
 
     // 2. If you also need to clean the internal 'items' array of their MongoDB IDs:
     const finalData = {
