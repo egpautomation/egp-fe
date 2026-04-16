@@ -67,7 +67,7 @@ export default function BOQRow({
       </td>
       <td className="px-4 py-2 text-right">{(quantity * unitPrice).toLocaleString()}</td>
       <td className="px-4 py-2 text-right">
-        <SimilarRatesModal setUnitPrice={handleSimilarRateSelect} itemCode={item.itemCode} />
+        <SimilarRatesModal setUnitPrice={handleSimilarRateSelect} itemCode={item.itemCode} descriptionOfItem={item.descriptionOfItem} />
       </td>
       <td className="px-4 py-2 text-right">
         <Trash

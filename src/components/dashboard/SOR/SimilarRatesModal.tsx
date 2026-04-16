@@ -37,21 +37,26 @@ interface SORItem {
 export default function SimilarRatesModal({
   setUnitPrice,
   itemCode,
+  descriptionOfItem,
 }: {
   setUnitPrice: (val: number) => void;
   itemCode: string;
+  descriptionOfItem?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [sors, setSors] = useState<SORItem[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!open || !itemCode) return;
+    if (!open) return;
     const fetchSors = async () => {
       setLoading(true);
       try {
+        const params = new URLSearchParams();
+        if (itemCode) params.set("itemCode", itemCode);
+        if (descriptionOfItem) params.set("descriptionOfItem", descriptionOfItem);
         const res = await fetch(
-          `${config.apiBaseUrl}/sor?itemCode=${encodeURIComponent(itemCode)}&page=1&limit=50`,
+          `${config.apiBaseUrl}/sor/similar-rates?${params.toString()}`,
         );
         const data = await res.json();
         setSors(data?.data || []);
@@ -62,7 +67,7 @@ export default function SimilarRatesModal({
       }
     };
     fetchSors();
-  }, [open, itemCode]);
+  }, [open, itemCode, descriptionOfItem]);
 
   const handleSelectRate = (value: number) => {
     if (!value) return;

@@ -112,7 +112,7 @@ const EditDepartmentInformation = () => {
  {[1, 2, 3, 4, 5, 6].map((num) => (
           <div key={num}>
             <Label className="mb-2">Rate {num}</Label>
-            <Input  defaultValue={`${formData?.[`rate_${num}`] || ""}`} name={`rate_${num}`} type="number"  onChange={handleInputChange} />
+            <Input  defaultValue={`${formData?.[`rate_${num}`] || ""}`} name={`rate_${num}`} type="text"  onChange={handleInputChange} />
           </div>
         ))}
            </div>

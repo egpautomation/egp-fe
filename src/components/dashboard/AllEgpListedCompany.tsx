@@ -42,7 +42,7 @@ const AllEgpListedCompany = () => {
                   <th className="whitespace-nowrap px-4 py-2 text-start ">Company Name</th>
                   <th className="whitespace-nowrap px-4 py-2 text-start ">Password Status</th>
                   <th className="whitespace-nowrap px-4 py-2 text-start ">Status</th>
-                  <th className="whitespace-nowrap px-4 py-2 text-start ">Bank Name</th>
+                  <th className="whitespace-nowrap px-4 py-2 text-start ">LTM District</th>
                   <th className="whitespace-nowrap px-4 py-2 text-start rounded-tr">Actions</th>
                 </tr>
               </thead>
@@ -55,7 +55,7 @@ const AllEgpListedCompany = () => {
                     <td className="px-4 py-2">{company?.companyName}</td>
                     <td className="px-4 py-2">{company?.password}</td>
                     <td className="px-4 py-2">{company?.remarks}</td>
-                    <td className="px-4 py-2">{company?.bankName}</td>
+                    <td className="px-4 py-2">{company?.ltmDistrict}</td>
                     <td className="px-4 py-2 flex items-center justify-center">
                       <Link to={`/dashboard/view-egp-listed-company/${company?._id}`}>
                         <Eye className="mr-2" size={20} />
@@ -135,10 +135,10 @@ const MobileTableLayout = ({ data, setReload }: { data: any; setReload: any }) =
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b pb-2 my-2">
             <span className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
-              Bank Name:
+              LTM District:
             </span>
             <span className="text-gray-800 break-words sm:text-right font-medium">
-              {item?.bankName}
+              {item?.ltmDistrict}
             </span>
           </div>
 

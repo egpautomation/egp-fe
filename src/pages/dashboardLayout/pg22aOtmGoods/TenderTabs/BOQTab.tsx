@@ -400,6 +400,33 @@ const updateBOQItem = (
                 </AccordionItem>
               </Accordion>
             ))}
+            {/* Grand Total */}
+            {(() => {
+              const grandTotal = updatedTenderPreparationData.reduce(
+                (acc, table) =>
+                  acc +
+                  table.items.reduce(
+                    (tAcc, item) => tAcc + (item.quantity ?? 0) * (item.unitPrice ?? 0),
+                    0,
+                  ),
+                0,
+              );
+              return (
+                <div className="mt-6 flex justify-end">
+                  <div className="bg-gray-900 text-white px-8 py-4 rounded-lg shadow-lg flex items-center gap-6">
+                    <span className="text-sm font-semibold uppercase tracking-widest text-gray-300">
+                      Grand Total (BDT)
+                    </span>
+                    <span className="text-2xl font-bold">
+                      {grandTotal.toLocaleString("en-BD", {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 3,
+                      })}
+                    </span>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         )}
       </div>

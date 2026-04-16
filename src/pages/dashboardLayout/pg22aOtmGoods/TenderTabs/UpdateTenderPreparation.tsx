@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import config from "@/lib/config";
 import { patchData } from "@/lib/updateData";
-import { Send } from "lucide-react";
+import { Save } from "lucide-react";
 
 
 export default function UpdateTenderPreparation({setReload, tableData, data: _data}: {setReload: Function, tableData: any, data?: any}) {
@@ -22,7 +22,7 @@ export default function UpdateTenderPreparation({setReload, tableData, data: _da
       onClick={handleUpdateTenderPreparation}
 
     >
-      <Send /> Add To Tender Preparation
+      <Save /> Save Table
     </Button>
   )
 }
