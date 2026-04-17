@@ -17,12 +17,14 @@ const LTMTenderIds = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
   const [pageLimit, setPageLimit] = useState(Number(searchParams.get("limit")) || 100);
+  const [districtSearch, setDistrictSearch] = useState(searchParams.get("district") || "");
 
   const { tenders, loading, tendersCount, setReload } = useAllTenderIds(
     searchTerm,
     "LTM",
     currentPage,
-    pageLimit
+    pageLimit,
+    districtSearch
   );
   const skeleton = new Array(pageLimit).fill(Math?.random());
 
@@ -50,8 +52,9 @@ const LTMTenderIds = () => {
     const params = new URLSearchParams();
     params.set("page", currentPage);
     params.set("limit", pageLimit);
+    if (districtSearch) params.set("district", districtSearch);
     setSearchParams(params);
-  }, [currentPage, pageLimit]);
+  }, [currentPage, pageLimit, districtSearch]);
 
   return (
     <div>
@@ -72,6 +75,12 @@ const LTMTenderIds = () => {
           <h1 className="text-2xl font-semibold mb-1">{tendersCount} Tenders Found </h1>
         </div>
         <div className="flex flex-wrap gap-3 flex-1 justify-end">
+          <Input
+            value={districtSearch}
+            placeholder="Search by District"
+            onChange={(e) => setDistrictSearch(e.target.value)}
+            className="max-w-[200px]"
+          />
           <Input
             value={searchTerm}
             placeholder="Search by Tender Id or Type"

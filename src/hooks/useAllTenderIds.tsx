@@ -2,7 +2,7 @@
 import { config } from "@/lib/config";
 import { useEffect, useState } from "react";
 
-const useAllTenderIds = (searchTerm = "", method = "", page = 1, limit = 20) => {
+const useAllTenderIds = (searchTerm = "", method = "", page = 1, limit = 20, district = "") => {
   const [tenders, setTenders] = useState([]);
   const [tendersCount, setTendersCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -12,8 +12,7 @@ const useAllTenderIds = (searchTerm = "", method = "", page = 1, limit = 20) => 
     const result = async () => {
       try {
         setLoading(true);
-        // https://egpserver.jubairahmad.com
-        const url = `${config.apiBaseUrl}/tenderIds?searchTerm=${searchTerm}&method=${method}&page=${page}&limit=${limit}`;
+        const url = `${config.apiBaseUrl}/tenderIds?searchTerm=${searchTerm}&method=${method}&page=${page}&limit=${limit}&district=${district}`;
         const response = await fetch(url);
         const data = await response.json();
 
@@ -27,7 +26,7 @@ const useAllTenderIds = (searchTerm = "", method = "", page = 1, limit = 20) => 
       }
     };
     result();
-  }, [reload, searchTerm, method, page, limit]);
+  }, [reload, searchTerm, method, page, limit, district]);
 
   return {
     tenders,
