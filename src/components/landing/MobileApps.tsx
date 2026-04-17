@@ -34,8 +34,10 @@ export default function MobileApps() {
               <p className="text-base text-white font-semibold">App Store</p>
             </div>
           </Link>
-          <Link
-            to="/#playStore"
+          <a
+            href="https://play.google.com/store/apps/details?id=com.jubairahmed.etenderbd&pcampaignid=web_share"
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex w-[190px] items-center gap-3 rounded-full bg-[#111111] px-5 py-2.5 text-white shadow-md"
             aria-label="Get it on Google Play"
           >
@@ -44,25 +46,25 @@ export default function MobileApps() {
               <p className="text-[11px] uppercase tracking-wide text-white/80">Get it on</p>
               <p className="text-base text-white font-semibold">Google Play</p>
             </div>
-          </Link>
+          </a>
         </div>
 
         <div className="mt-12 hidden lg:block">
           <div className="relative mx-auto h-[360px] lg:h-[550px] max-w-4xl">
             <img
-              src="/landing/iphone-frame.png"
+              src="/landing/mobile1.webp"
               alt="Mobile app preview"
               className="absolute left-32 bottom-0 w-[24%] max-w-[200px] -rotate-6 origin-bottom-left drop-shadow-2xl"
               loading="lazy"
             />
             <img
-              src="/landing/iphone-frame.png"
+              src="/landing/mobile2.webp"
               alt="Mobile app preview"
               className="absolute left-1/2 z-10 bottom-0 w-[30%] max-w-[240px] -translate-x-1/2 drop-shadow-2xl"
               loading="lazy"
             />
             <img
-              src="/landing/iphone-frame.png"
+              src="/landing/mobile3.webp"
               alt="Mobile app preview"
               className="absolute right-32 bottom-0 w-[24%] max-w-[200px] rotate-6 origin-bottom-right drop-shadow-2xl"
               loading="lazy"
@@ -73,19 +75,19 @@ export default function MobileApps() {
         <div className="mt-10 lg:hidden">
           <div className="relative mx-auto h-[380px] max-w-sm">
             <img
-              src="/landing/iphone-frame.png"
+              src="/landing/mobile1.webp"
               alt="Mobile app preview"
               className="absolute left-0 bottom-0 w-[38%] -rotate-6 origin-bottom-left drop-shadow-xl"
               loading="lazy"
             />
             <img
-              src="/landing/iphone-frame.png"
+              src="/landing/mobile2.webp"
               alt="Mobile app preview"
               className="absolute left-1/2 z-10 bottom-0 w-[48%] -translate-x-1/2 drop-shadow-xl"
               loading="lazy"
             />
             <img
-              src="/landing/iphone-frame.png"
+              src="/landing/mobile3.webp"
               alt="Mobile app preview"
               className="absolute right-0 bottom-0 w-[38%] rotate-6 origin-bottom-right drop-shadow-xl"
               loading="lazy"
