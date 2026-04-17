@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import {
   Dialog,
@@ -34,6 +34,8 @@ interface SORItem {
   rate_6: number;
 }
 
+const rateKeys: (keyof SORItem)[] = ["rate_1", "rate_2", "rate_3", "rate_4", "rate_5", "rate_6"];
+
 export default function SimilarRatesModal({
   setUnitPrice,
   itemCode,
@@ -46,6 +48,18 @@ export default function SimilarRatesModal({
   const [open, setOpen] = useState(false);
   const [sors, setSors] = useState<SORItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [departments, setDepartments] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchDepts = async () => {
+      try {
+        const res = await fetch(`${config.apiBaseUrl}/departments`);
+        const data = await res.json();
+        if (data?.success) setDepartments(data.data || []);
+      } catch {}
+    };
+    fetchDepts();
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -75,7 +89,31 @@ export default function SimilarRatesModal({
     setOpen(false);
   };
 
-  const rateKeys: (keyof SORItem)[] = ["rate_1", "rate_2", "rate_3", "rate_4", "rate_5", "rate_6"];
+  // Group SOR data by departmentShortName
+  const grouped = useMemo(() => {
+    const map = new Map<string, SORItem[]>();
+    sors.forEach((s) => {
+      const key = s.departmentShortName || "Unknown";
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(s);
+    });
+    return map;
+  }, [sors]);
+
+  // Get headers for a specific department
+  const getHeaders = (deptShortName: string): string[] => {
+    const dept = departments.find(
+      (d: any) =>
+        d.shortName === deptShortName ||
+        d.detailsName === deptShortName ||
+        d.organization?.includes(deptShortName),
+    );
+    const headers: string[] = [];
+    for (let i = 1; i <= 6; i++) {
+      headers.push(dept?.[`rate_${i}`] || `Rate0${i}`);
+    }
+    return headers;
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -86,7 +124,6 @@ export default function SimilarRatesModal({
       </DialogTrigger>
 
       <DialogContent className="max-w-[95vw] lg:max-w-6xl p-0 overflow-hidden border-none shadow-2xl rounded-xl">
-        {/* Header */}
         <DialogHeader className="px-6 py-5 flex flex-row items-center gap-3 bg-white border-b border-slate-100">
           <Search className="w-6 h-6 text-blue-600 stroke-[3px]" />
           <DialogTitle className="text-xl font-bold text-slate-800">
@@ -99,76 +136,90 @@ export default function SimilarRatesModal({
           </DialogTitle>
         </DialogHeader>
 
-        {/* Table */}
         <div className="p-4 md:p-6 bg-white overflow-x-auto max-h-[70vh] overflow-y-auto">
           {loading ? (
             <div className="text-center py-10 text-slate-400">Loading...</div>
           ) : sors.length === 0 ? (
             <div className="text-center py-10 text-slate-400">
-              No SOR data found for item code "{itemCode}"
+              No SOR data found for item code &quot;{itemCode}&quot;
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent border-b border-slate-200">
-                  <TableHead className="font-bold text-slate-900 h-12">Item Code</TableHead>
-                  <TableHead className="font-bold text-slate-900">Department</TableHead>
-                  <TableHead className="font-bold text-slate-900 leading-tight">
-                    Year Of
-                    <br />
-                    Rate
-                  </TableHead>
-                  <TableHead className="font-bold text-slate-900">Category</TableHead>
-                  <TableHead className="font-bold text-slate-900 w-[240px]">Description</TableHead>
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <TableHead key={i} className="font-bold text-slate-900 text-right">
-                      Rate0{i}
-                    </TableHead>
-                  ))}
-                  <TableHead className="font-bold text-white bg-blue-600 text-right rounded-t-md px-4">
-                    Rate06
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sors.map((row, idx) => (
-                  <TableRow
-                    key={idx}
-                    className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"
-                  >
-                    <TableCell className="font-medium text-slate-700 py-5">{row.itemCode}</TableCell>
-                    <TableCell className="text-slate-600">{row.departmentShortName}</TableCell>
-                    <TableCell className="text-slate-600">{row.yearOfRate}</TableCell>
-                    <TableCell className="text-slate-600">{row.category}</TableCell>
-                    <TableCell className="text-slate-500 text-sm leading-snug">
-                      {row.description}
-                    </TableCell>
-                    {rateKeys.map((key, i) => {
-                      const rate = row[key] as number;
-                      return (
-                        <TableCell
-                          key={i}
-                          onClick={() => handleSelectRate(rate)}
-                          className={`
-                            text-right font-semibold cursor-pointer transition-all duration-150
-                            hover:bg-blue-600 hover:text-white active:scale-95 px-4
-                            ${rate ? "" : "text-slate-300 cursor-default"}
-                            ${i === 5 ? "bg-blue-50/50 text-blue-700 font-bold" : "text-slate-700"}
-                          `}
+            Array.from(grouped.entries()).map(([deptName, rows]) => {
+              const headers = getHeaders(deptName);
+              return (
+                <div key={deptName} className="mb-8 last:mb-0">
+                  {/* Department Group Title */}
+                  <h3 className="text-lg font-bold text-blue-700 mb-3 pb-2 border-b-2 border-blue-200">
+                    {deptName}
+                  </h3>
+
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="hover:bg-transparent border-b border-slate-200">
+                        <TableHead className="font-bold text-slate-900 h-12">Item Code</TableHead>
+                        <TableHead className="font-bold text-slate-900">Department</TableHead>
+                        <TableHead className="font-bold text-slate-900 leading-tight">
+                          Year Of
+                          <br />
+                          Rate
+                        </TableHead>
+                        <TableHead className="font-bold text-slate-900">Category</TableHead>
+                        <TableHead className="font-bold text-slate-900 w-[240px]">Description</TableHead>
+                        {headers.map((header, i) =>
+                          i === 5 ? (
+                            <TableHead key={i} className="font-bold text-white bg-blue-600 text-right rounded-t-md px-4">
+                              {header}
+                            </TableHead>
+                          ) : (
+                            <TableHead key={i} className="font-bold text-slate-900 text-right">
+                              {header}
+                            </TableHead>
+                          ),
+                        )}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {rows.map((row, idx) => (
+                        <TableRow
+                          key={idx}
+                          className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"
                         >
-                          {rate
-                            ? rate.toLocaleString(undefined, {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })
-                            : "—"}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                          <TableCell className="font-medium text-slate-700 py-5">{row.itemCode}</TableCell>
+                          <TableCell className="text-slate-600">{row.departmentShortName}</TableCell>
+                          <TableCell className="text-slate-600">{row.yearOfRate}</TableCell>
+                          <TableCell className="text-slate-600">{row.category}</TableCell>
+                          <TableCell className="text-slate-500 text-sm leading-snug">
+                            {row.description}
+                          </TableCell>
+                          {rateKeys.map((key, i) => {
+                            const rate = row[key] as number;
+                            return (
+                              <TableCell
+                                key={i}
+                                onClick={() => handleSelectRate(rate)}
+                                className={`
+                                  text-right font-semibold cursor-pointer transition-all duration-150
+                                  hover:bg-blue-600 hover:text-white active:scale-95 px-4
+                                  ${rate ? "" : "text-slate-300 cursor-default"}
+                                  ${i === 5 ? "bg-blue-50/50 text-blue-700 font-bold" : "text-slate-700"}
+                                `}
+                              >
+                                {rate
+                                  ? rate.toLocaleString(undefined, {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
+                                    })
+                                  : "—"}
+                              </TableCell>
+                            );
+                          })}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              );
+            })
           )}
         </div>
       </DialogContent>
