@@ -255,6 +255,11 @@ export function AppSidebarNew() {
           role: ["admin", "user", "moderator", "guest"],
         },
         {
+          label: "OTM Bypass Status",
+          path: "/dashboard/otm-bypass-status",
+          role: ["admin"],
+        },
+        {
           label: "Egp Pass Email",
           path: "/dashboard/egp-pass-email",
           role: ["admin", "user_agent"],

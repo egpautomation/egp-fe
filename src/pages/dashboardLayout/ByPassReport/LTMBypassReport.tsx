@@ -9,9 +9,10 @@ const LTMBypassReport = () => {
   // Fetch real bypass report data from API
   const { data: bypassReports, loading } = useSingleData(`${config.apiBaseUrl}/otm-bypass-report`);
 
-  const reportData = Array.isArray(bypassReports)
+  const reportData = (Array.isArray(bypassReports)
     ? bypassReports
-    : (bypassReports as any)?.data || [];
+    : (bypassReports as any)?.data || []
+  ).filter((item: any) => item?.status !== "fulfilled");
 
   const error = null;
 
@@ -36,7 +37,6 @@ const LTMBypassReport = () => {
               <tr className="bg-[#1a1a1a] text-white text-left uppercase text-xs font-bold tracking-wider">
                 <th className="whitespace-nowrap px-4 py-3 border-r border-gray-700">SL</th>
                 <th className="whitespace-nowrap px-4 py-3 border-r border-gray-700">Invoice_No</th>
-                <th className="whitespace-nowrap px-4 py-3 border-r border-gray-700">Job_No</th>
                 <th className="whitespace-nowrap px-4 py-3 border-r border-gray-700">Tender_Id</th>
                 <th className="whitespace-nowrap px-4 py-3 border-r border-gray-700">EGP_Email</th>
                 <th className="whitespace-nowrap px-4 py-3 border-r border-gray-700">Company_Name</th>

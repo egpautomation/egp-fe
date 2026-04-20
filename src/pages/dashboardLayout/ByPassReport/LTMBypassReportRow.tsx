@@ -5,7 +5,6 @@ export default function LTMBypassReportRow({ item, idx }: any) {
     <tr key={idx} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
       <td className="px-4 py-3">{idx + 1}</td>
       <td className="px-4 py-3">{item?.invoice_no || "N/A"}</td>
-      <td className="px-4 py-3">{item?.job_no || "N/A"}</td>
       <td className="px-4 py-3">{item?.tender_id || "N/A"}</td>
       <td className="px-4 py-3">{item?.egp_email || "N/A"}</td>
       <td className="px-4 py-3">{item?.company_name || "N/A"}</td>

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/hasan/OneDrive/Desktop/egp/egp-be/routes/v1/**)"
+    ]
+  }
+}

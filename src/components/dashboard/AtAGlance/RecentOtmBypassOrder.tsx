@@ -67,8 +67,8 @@ const RecentOtmBypassOrder = () => {
                   </div>
                 </td>
               </tr>
-            ) : reports?.length > 0 ? (
-              reports.map((report) => (
+            ) : reports?.filter((r) => r.status !== "fulfilled").length > 0 ? (
+              reports.filter((r) => r.status !== "fulfilled").map((report) => (
                 <tr key={report._id} className="border-b last:border-b-0 hover:bg-gray-50 transition-colors">
                   <td className="text-nowrap p-3 md:py-4 md:px-5 text-start text-gray-600">
                     <Checkbox className="text-white bg-white" />

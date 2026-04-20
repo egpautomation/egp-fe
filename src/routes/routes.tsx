@@ -90,6 +90,7 @@ import ManufacturerAuthorizationForGoods from "@/pages/dashboardLayout/pg22aOtmG
 import LineOfCreditPage from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/LineOfCreditPage";
 import SOR from "@/components/dashboard/SOR/SOR";
 import LTMBypassReport from "@/pages/dashboardLayout/ByPassReport/LTMBypassReport";
+import OTMBypassStatus from "@/pages/dashboardLayout/ByPassReport/OTMBypassStatus";
 import BOQPrivate from "@/components/dashboard/SOR/BOQPrivate";
 
 
@@ -419,6 +420,14 @@ const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <JobOrder />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "otm-bypass-status",
+        element: (
+          <AdminRoute>
+            <OTMBypassStatus />
           </AdminRoute>
         ),
       },
