@@ -4,10 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, Plus, Trash2, FileText, Loader2, Info } from "lucide-react";
+import { Upload, Plus, Trash2, FileText, Loader2, Info, Download } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
 import { toast } from "react-hot-toast";
 import { patchData } from "@/lib/updateData";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // TypeScript interfaces matching backend contract
 interface Bidder {
@@ -248,6 +250,122 @@ export const STLCalculationTab = () => {
     if (isNaN(price) || isNaN(xoceVal) || xoceVal === 0) return "-";
     const diff = ((price - xoceVal) / xoceVal) * 100;
     return diff.toFixed(2) + "%";
+  };
+
+  const handleDownloadPdf = () => {
+    if (!results || "error" in results) return;
+
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("STL Calculation Report", pageWidth / 2, 20, { align: "center" });
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Generated: " + new Date().toLocaleString(), pageWidth / 2, 28, { align: "center" });
+
+    doc.setLineWidth(0.5);
+    doc.line(14, 32, pageWidth - 14, 32);
+
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("Input Parameters", 14, 40);
+
+    autoTable(doc, {
+      startY: 44,
+      head: [["Parameter", "Value", "Description"]],
+      body: [
+        ["XOCE", xoce, "Official Approved Cost Estimate"],
+        ["Price Index", priceIndex, "Market Price Adjustment Factor"],
+      ],
+      theme: "grid",
+      headStyles: { fillColor: [30, 87, 179], fontSize: 9 },
+      bodyStyles: { fontSize: 9 },
+      margin: { left: 14, right: 14 },
+    });
+
+    const resultsY = (doc as any).lastAutoTable.finalY + 10;
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("Calculation Results", 14, resultsY);
+
+    autoTable(doc, {
+      startY: resultsY + 4,
+      head: [["Metric", "Value"]],
+      body: [
+        ["Weighted Average (WA)", results.wa],
+        ["Standard Deviation (SD)", results.sd],
+        ["Significantly Low Price (SLT)", results.slt],
+        ["Average of Qualified Prices (Xi)", results.xi],
+        ["X_NPPI", results.x_nppi],
+      ],
+      theme: "grid",
+      headStyles: { fillColor: [30, 87, 179], fontSize: 9 },
+      bodyStyles: { fontSize: 9 },
+      margin: { left: 14, right: 14 },
+    });
+
+    let biddersY = (doc as any).lastAutoTable.finalY + 10;
+    if (biddersY > 240) {
+      doc.addPage();
+      biddersY = 20;
+    }
+
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("Bidders & Evaluation", 14, biddersY);
+
+    const bidderRows = bidders.map((bidder, index) => {
+      const stats = results.bidderStats[index];
+      return [
+        bidder.name,
+        parseFloat(bidder.price).toFixed(2),
+        calculateDifference(bidder.price),
+        bidder.qualified ? "Yes" : "No",
+        stats?.isResponsive ? "Responsive" : "Non-Responsive",
+        stats?.rank?.toString() || "-",
+      ];
+    });
+
+    autoTable(doc, {
+      startY: biddersY + 4,
+      head: [["Bidder Name", "Price", "Delta %", "Technical", "Financial Resp.", "Rank"]],
+      body: bidderRows,
+      theme: "grid",
+      headStyles: { fillColor: [30, 87, 179], fontSize: 8 },
+      bodyStyles: { fontSize: 8 },
+      margin: { left: 14, right: 14 },
+      columnStyles: { 0: { cellWidth: 50 } },
+    });
+
+    let winnerY = (doc as any).lastAutoTable.finalY + 10;
+    if (winnerY > 260) {
+      doc.addPage();
+      winnerY = 20;
+    }
+
+    doc.setFillColor(240, 249, 235);
+    doc.roundedRect(14, winnerY, pageWidth - 28, 28, 3, 3, "F");
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(22, 101, 52);
+    doc.text("Winning Bidder", pageWidth / 2, winnerY + 10, { align: "center" });
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text(
+      results.winner !== "None"
+        ? results.winner + " - Price: " + results.winnerPrice
+        : "No responsive bidder found",
+      pageWidth / 2,
+      winnerY + 20,
+      { align: "center" }
+    );
+    doc.setTextColor(0, 0, 0);
+
+    doc.save("STL_Calculation_Report.pdf");
+    toast.success("PDF downloaded successfully!");
   };
 
   return (
@@ -504,7 +622,18 @@ export const STLCalculationTab = () => {
           {/* Results Section */}
           {results && (
             <div className="mt-6 p-6 bg-gray-50 rounded-lg border border-gray-200">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">Calculation Results</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-gray-800">Calculation Results</h3>
+                {"error" in results ? null : (
+                  <Button
+                    onClick={handleDownloadPdf}
+                    className="flex items-center gap-2 bg-[#4874c7] hover:bg-[#3a5da8]"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download PDF
+                  </Button>
+                )}
+              </div>
               {"error" in results ? (
                 <p className="text-red-600">{results.error}</p>
               ) : (
