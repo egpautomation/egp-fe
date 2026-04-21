@@ -23,6 +23,7 @@ import AllEgpListedCompany from "@/components/dashboard/AllEgpListedCompany";
 import UpdateEgpListedCompany from "@/pages/dashboardLayout/UpdateEgpListedCompany";
 import ViewEgpListedCompany from "@/pages/dashboardLayout/ViewEgpListedCompany";
 import AtAGlance from "@/pages/dashboardLayout/AtAGlance";
+import AtAGlancePage from "@/pages/dashboardLayout/AtAGlancePage";
 import Users from "@/pages/dashboardLayout/Users";
 import ViewUser from "@/pages/dashboardLayout/ViewUser";
 import AdminRoute from "@/shared/AdminRoute/AdminRoute";
@@ -258,7 +259,7 @@ const router = createBrowserRouter([
         path: "at-a-glance",
         element: (
           <PrivateRoute>
-            <AtAGlance />
+            <AtAGlancePage />
           </PrivateRoute>
         ),
       },

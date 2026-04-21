@@ -124,11 +124,11 @@ export function AppSidebarNew() {
   const routes = [
     {
       label: "At a Glance",
-      path: "/dashboard",
+      path: "/dashboard/at-a-glance",
       role: ["admin", "user", "moderator", "user"],
       icon: BarChart3,
       children: [
-        { label: "At a Glance", path: "/dashboard", role: ["admin", "user", "moderator", "user"] },
+        { label: "At a Glance", path: "/dashboard/at-a-glance", role: ["admin", "user", "moderator", "user"] },
       ],
     },
     {
