@@ -1,10 +1,16 @@
 // @ts-nocheck
 
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import LandingLoginBox from "./LandingLoginBox";
 
 const slides = [
+  {
+    src: "/banner.jpeg",
+    alt: "ইটেন্ডার বিডি ব্যানার",
+    link: "/blogs",
+  },
   {
     src: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=1600&auto=format&fit=crop",
     alt: "টেন্ডার রিপোর্ট ও বিশ্লেষণ",
@@ -64,12 +70,23 @@ export default function Hero() {
                     {slides.map((slide, index) => (
                       <div key={slide.src} className="flex-[0_0_100%] min-w-0">
                         <div className="aspect-[16/10] bg-gray-100">
-                          <img
-                            src={slide.src}
-                            alt={slide.alt}
-                            className="h-full w-full object-cover"
-                            loading={index === 0 ? "eager" : "lazy"}
-                          />
+                          {slide.link ? (
+                            <Link to={slide.link} className="block h-full w-full">
+                              <img
+                                src={slide.src}
+                                alt={slide.alt}
+                                className="h-full w-full object-cover cursor-pointer hover:opacity-95 transition-opacity"
+                                loading={index === 0 ? "eager" : "lazy"}
+                              />
+                            </Link>
+                          ) : (
+                            <img
+                              src={slide.src}
+                              alt={slide.alt}
+                              className="h-full w-full object-cover"
+                              loading={index === 0 ? "eager" : "lazy"}
+                            />
+                          )}
                         </div>
                       </div>
                     ))}
