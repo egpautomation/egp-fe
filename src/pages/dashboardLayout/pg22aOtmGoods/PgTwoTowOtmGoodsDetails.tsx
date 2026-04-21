@@ -412,7 +412,7 @@ const PgTwoTowOtmGoodsDetails = () => {
           .trim();
       };
 
-      let calcActiveDate2 = "30";
+      let calcActiveDate2 = "27";
       if (liveTenderData?.TentativeStartDate && liveTenderData?.TentativeCompletionDate) {
         const start = new Date(liveTenderData.TentativeStartDate);
         const end = new Date(liveTenderData.TentativeCompletionDate);
@@ -420,7 +420,7 @@ const PgTwoTowOtmGoodsDetails = () => {
           const diffDays = Math.ceil(
             Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
           );
-          calcActiveDate2 = diffDays.toString();
+          calcActiveDate2 = (diffDays - 3).toString();
         }
       }
 
