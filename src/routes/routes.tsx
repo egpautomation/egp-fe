@@ -93,6 +93,7 @@ import SOR from "@/components/dashboard/SOR/SOR";
 import LTMBypassReport from "@/pages/dashboardLayout/ByPassReport/LTMBypassReport";
 import OTMBypassStatus from "@/pages/dashboardLayout/ByPassReport/OTMBypassStatus";
 import OTMUpdateStatus from "@/pages/dashboardLayout/ByPassReport/OTMUpdateStatus";
+import OTMCancelRequest from "@/pages/dashboardLayout/ByPassReport/OTMCancelRequest";
 import BOQPrivate from "@/components/dashboard/SOR/BOQPrivate";
 
 
@@ -213,6 +214,10 @@ const router = createBrowserRouter([
       {
         path: "/public/otm-update-status",
         element: <OTMUpdateStatus />,
+      },
+      {
+        path: "/public/otm-cancel-request",
+        element: <OTMCancelRequest />,
       },
       {
         path: "/public/tenders/tender-categories",

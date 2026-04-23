@@ -260,6 +260,11 @@ export function AppSidebarNew() {
           role: ["admin", "moderator"],
         },
         {
+          label: "OTM Cancel Request",
+          path: "/public/otm-cancel-request",
+          role: ["admin", "user", "moderator", "guest", "user_agent"],
+        },
+        {
           label: "OTM Bypass Status",
           path: "/dashboard/otm-bypass-status",
           role: ["admin"],
