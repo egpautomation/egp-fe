@@ -271,8 +271,11 @@ const UpdateEgpListedCompany = () => {
       departmentLicenses[agency.name] = agency.value;
     });
 
-    // Send selectedCertificates as an array to support multiple entries of the same type
-    const experienceCertificates = selectedCertificates;
+    // Transform selectedCertificates array to experienceCertificates object
+    const experienceCertificates = {};
+    selectedCertificates.forEach((cert) => {
+      experienceCertificates[cert.name] = cert.value;
+    });
 
     // Merge with existing formData
     const submitData = {
