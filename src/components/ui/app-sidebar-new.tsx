@@ -255,6 +255,11 @@ export function AppSidebarNew() {
           role: ["admin", "user", "moderator", "guest"],
         },
         {
+          label: "OTM Update Status",
+          path: "/public/otm-update-status",
+          role: ["admin", "moderator"],
+        },
+        {
           label: "OTM Bypass Status",
           path: "/dashboard/otm-bypass-status",
           role: ["admin"],

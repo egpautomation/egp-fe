@@ -92,6 +92,7 @@ import LineOfCreditPage from "@/pages/dashboardLayout/pg22aOtmGoods/TenderTabs/L
 import SOR from "@/components/dashboard/SOR/SOR";
 import LTMBypassReport from "@/pages/dashboardLayout/ByPassReport/LTMBypassReport";
 import OTMBypassStatus from "@/pages/dashboardLayout/ByPassReport/OTMBypassStatus";
+import OTMUpdateStatus from "@/pages/dashboardLayout/ByPassReport/OTMUpdateStatus";
 import BOQPrivate from "@/components/dashboard/SOR/BOQPrivate";
 
 
@@ -208,6 +209,10 @@ const router = createBrowserRouter([
         element: (
           <UpdateJobOrderStatus />
         ),
+      },
+      {
+        path: "/public/otm-update-status",
+        element: <OTMUpdateStatus />,
       },
       {
         path: "/public/tenders/tender-categories",
