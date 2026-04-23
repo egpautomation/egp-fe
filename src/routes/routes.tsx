@@ -94,6 +94,7 @@ import LTMBypassReport from "@/pages/dashboardLayout/ByPassReport/LTMBypassRepor
 import OTMBypassStatus from "@/pages/dashboardLayout/ByPassReport/OTMBypassStatus";
 import OTMUpdateStatus from "@/pages/dashboardLayout/ByPassReport/OTMUpdateStatus";
 import OTMCancelRequest from "@/pages/dashboardLayout/ByPassReport/OTMCancelRequest";
+import ExperienceCertificates from "@/pages/dashboardLayout/EgpListedCompany/ExperienceCertificates";
 import BOQPrivate from "@/components/dashboard/SOR/BOQPrivate";
 
 
@@ -482,6 +483,22 @@ const router = createBrowserRouter([
           <AdminRoute>
             <CreateEgpListedCompany />
           </AdminRoute>
+        ),
+      },
+      {
+        path: "experiencecertificate",
+        element: (
+          <PrivateRoute>
+            <ExperienceCertificates />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "experiencecertificate/:email",
+        element: (
+          <PrivateRoute>
+            <ExperienceCertificates />
+          </PrivateRoute>
         ),
       },
       {

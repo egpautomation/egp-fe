@@ -265,6 +265,11 @@ export function AppSidebarNew() {
           role: ["admin", "user", "moderator", "guest", "user_agent"],
         },
         {
+          label: "Experience Certificates",
+          path: "/dashboard/experiencecertificate",
+          role: ["admin", "user", "moderator", "guest", "user_agent"],
+        },
+        {
           label: "OTM Bypass Status",
           path: "/dashboard/otm-bypass-status",
           role: ["admin"],
