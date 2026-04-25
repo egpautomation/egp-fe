@@ -3,12 +3,12 @@
 import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { patchData } from "@/lib/updateData";
-import { Label } from "@radix-ui/react-label";
-import { X } from "lucide-react";
+import { CheckCircle, X } from "lucide-react";
 import { useState } from "react";
 
-const OTMCancelRequest = () => {
+const OTMFulfillRequest = () => {
   const [invoiceNo, setInvoiceNo] = useState("");
   const [tenderId, setTenderId] = useState("");
   const [message, setMessage] = useState("");
@@ -16,72 +16,68 @@ const OTMCancelRequest = () => {
   const resetForm = () => {
     setInvoiceNo("");
     setTenderId("");
-    setMessage("Cancel request submitted successfully.");
+    setMessage("Request fulfilled successfully.");
   };
 
-  const handleCancel = (e) => {
+  const handleFulfill = (e) => {
     e.preventDefault();
     const url = `${config.apiBaseUrl}/otm-bypass-report/update-status-by-query`;
     const payload = {
       invoice_no: invoiceNo,
       tender_id: tenderId,
-      status: "canceled",
+      status: "fulfilled",
     };
     patchData(url, payload, null, resetForm);
   };
 
   return (
-    <div>
-      <div className="text-green-600 text-center mt-4 font-medium">
-        {message && (
-          <>
-            {message}{" "}
-            <X
-              size={16}
-              className="inline-block cursor-pointer"
-              onClick={() => setMessage("")}
-            />
-          </>
-        )}
-      </div>
-      <div className="my-10">
-        <h1 className="text-xl md:text-3xl font-semibold text-center">
-          OTM Cancel Request
-        </h1>
-      </div>
+    <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
+      {message && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 px-5 py-3 rounded-lg shadow-md">
+          <CheckCircle size={18} />
+          <span className="font-medium">{message}</span>
+          <X
+            size={16}
+            className="ml-2 cursor-pointer hover:text-green-900"
+            onClick={() => setMessage("")}
+          />
+        </div>
+      )}
+
+      <h1 className="text-2xl md:text-3xl font-bold text-center mb-8">
+        OTM Fulfill Request
+      </h1>
+
       <form
-        onSubmit={handleCancel}
-        className="max-w-lg rounded border shadow-xl mx-auto p-5"
+        onSubmit={handleFulfill}
+        className="w-full max-w-md rounded-xl border bg-white shadow-lg p-6 space-y-5"
       >
         <div>
-          <Label className="font-medium">Invoice No</Label>
+          <Label className="mb-1.5">Invoice No</Label>
           <Input
-            onChange={(e) => setInvoiceNo(e.target.value)}
-            type="text"
-            className="mt-2"
             value={invoiceNo}
+            onChange={(e) => setInvoiceNo(e.target.value)}
             name="invoice_no"
             placeholder="Enter Invoice No"
+            required
           />
         </div>
-        <div className="mt-3">
-          <Label className="font-medium">Tender ID</Label>
+        <div>
+          <Label className="mb-1.5">Tender ID</Label>
           <Input
+            value={tenderId}
             onChange={(e) => setTenderId(e.target.value)}
             name="tender_id"
-            type="text"
-            className="mt-2"
-            value={tenderId}
             placeholder="Enter Tender ID"
+            required
           />
         </div>
-
-        <Button variant="destructive" className="w-full mt-5" type="submit">
-          Cancel Request
+        <Button className="w-full mt-2" type="submit">
+          Fulfill Request
         </Button>
       </form>
     </div>
   );
 };
 
-export default OTMCancelRequest;
+export default OTMFulfillRequest;

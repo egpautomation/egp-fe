@@ -93,7 +93,8 @@ import SOR from "@/components/dashboard/SOR/SOR";
 import LTMBypassReport from "@/pages/dashboardLayout/ByPassReport/LTMBypassReport";
 import OTMBypassStatus from "@/pages/dashboardLayout/ByPassReport/OTMBypassStatus";
 import OTMUpdateStatus from "@/pages/dashboardLayout/ByPassReport/OTMUpdateStatus";
-import OTMCancelRequest from "@/pages/dashboardLayout/ByPassReport/OTMCancelRequest";
+import OTMFulfillRequest from "@/pages/dashboardLayout/ByPassReport/OTMCancelRequest";
+import MyOtmBypassReport from "@/pages/dashboardLayout/ByPassReport/MyOtmBypassReport";
 import ExperienceCertificates from "@/pages/dashboardLayout/EgpListedCompany/ExperienceCertificates";
 import BOQPrivate from "@/components/dashboard/SOR/BOQPrivate";
 
@@ -217,8 +218,8 @@ const router = createBrowserRouter([
         element: <OTMUpdateStatus />,
       },
       {
-        path: "/public/otm-cancel-request",
-        element: <OTMCancelRequest />,
+        path: "/public/otm-fulfill-request",
+        element: <OTMFulfillRequest />,
       },
       {
         path: "/public/tenders/tender-categories",
@@ -424,6 +425,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <MyJobOrder />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "my-otm-bypass-reports",
+        element: (
+          <PrivateRoute>
+            <MyOtmBypassReport />
           </PrivateRoute>
         ),
       },
