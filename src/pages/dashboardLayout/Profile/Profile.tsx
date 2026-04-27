@@ -13,6 +13,9 @@ import {
   Edit,
   Save,
   Camera,
+  Layers,
+  Building2,
+  X,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate } from "@/lib/formateDate";
@@ -41,6 +44,8 @@ import districts from "@/utils/districts";
 import { cn } from "@/lib/utils";
 import { setUserData } from "@/lib/authService";
 import toast from "react-hot-toast";
+import useAllTenderCategories from "@/hooks/useAllTenderCategories";
+import useAllDepartments from "@/hooks/useAllDepartments";
 
 const Profile = () => {
   const authContext = useContext(AuthContext) as any;
@@ -52,7 +57,14 @@ const Profile = () => {
   // Edit Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDistrictPopoverOpen, setIsDistrictPopoverOpen] = useState(false);
+  const [isCategoryPopoverOpen, setIsCategoryPopoverOpen] = useState(false);
+  const [isDeptPopoverOpen, setIsDeptPopoverOpen] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
+  const { categories: rawCategories } = useAllTenderCategories();
+  const allCategories = rawCategories
+    ? Array.from(new Map(rawCategories.map((c: any) => [c.cat_name, c])).values())
+    : [];
+  const { departments: allDepartments } = useAllDepartments();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -60,8 +72,10 @@ const Profile = () => {
     phone: "",
     whatsApp: "",
     address: "",
-    district: "",
+    district: [] as string[],
     profile: "", // Image URL
+    categories: [] as string[],
+    departments: [] as string[],
   });
 
   const fetchProfile = async () => {
@@ -81,8 +95,10 @@ const Profile = () => {
           phone: data.phone || data.phoneNumber || "",
           whatsApp: data.whatsApp || "",
           address: data.address || "",
-          district: data.district || "",
+          district: Array.isArray(data.district) ? data.district : data.district ? [data.district] : [],
           profile: data.profile || "",
+          categories: data.categories || [],
+          departments: data.departments || [],
         });
       } else {
         setError("Failed to load profile data");
@@ -263,10 +279,17 @@ const Profile = () => {
                 <p className="font-medium text-slate-800 break-words">
                   {profileData.address || "Not Provided"}
                 </p>
-                {profileData.district && (
-                  <p className="text-sm text-slate-600 mt-1 font-medium">
-                    District: <span className="text-slate-800">{profileData.district}</span>
-                  </p>
+                {profileData.district && profileData.district.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {(Array.isArray(profileData.district) ? profileData.district : [profileData.district]).map((d: string, idx: number) => (
+                      <span
+                        key={idx}
+                        className="bg-primary/10 text-primary text-xs font-medium px-2.5 py-1 rounded-full border border-primary/20"
+                      >
+                        {d}
+                      </span>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
@@ -307,6 +330,52 @@ const Profile = () => {
                 </p>
               </div>
             </div>
+
+            {profileData.categories && profileData.categories.length > 0 && (
+              <div className="flex gap-4 items-start">
+                <div className="bg-primary/5 p-2 rounded-full mt-1">
+                  <Layers className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">
+                    Preferred Categories
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {profileData.categories.map((cat: string, idx: number) => (
+                      <span
+                        key={idx}
+                        className="bg-primary/10 text-primary text-xs font-medium px-2.5 py-1 rounded-full border border-primary/20"
+                      >
+                        {cat}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {profileData.departments && profileData.departments.length > 0 && (
+              <div className="flex gap-4 items-start">
+                <div className="bg-primary/5 p-2 rounded-full mt-1">
+                  <Building2 className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">
+                    Preferred Departments
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {profileData.departments.map((dept: string, idx: number) => (
+                      <span
+                        key={idx}
+                        className="bg-primary/10 text-primary text-xs font-medium px-2.5 py-1 rounded-full border border-primary/20"
+                      >
+                        {dept}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -341,9 +410,7 @@ const Profile = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="district" className="text-slate-700 font-semibold">
-                  District
-                </Label>
+                <Label className="text-slate-700 font-semibold">Districts</Label>
                 <Popover open={isDistrictPopoverOpen} onOpenChange={setIsDistrictPopoverOpen}>
                   <PopoverTrigger asChild>
                     <Button
@@ -352,9 +419,9 @@ const Profile = () => {
                       aria-expanded={isDistrictPopoverOpen}
                       className="w-full justify-between border-slate-200 hover:bg-slate-50 text-slate-700 font-normal"
                     >
-                      {formData.district
-                        ? districts.find((d) => d === formData.district)
-                        : "Select District..."}
+                      {formData.district.length > 0
+                        ? `${formData.district.length} district${formData.district.length === 1 ? "" : "s"} selected`
+                        : "Select Districts..."}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -367,32 +434,60 @@ const Profile = () => {
                       <CommandList>
                         <CommandEmpty>No district found.</CommandEmpty>
                         <CommandGroup className="max-h-60 overflow-y-auto">
-                          {districts.map((district) => (
-                            <CommandItem
-                              key={district}
-                              value={district}
-                              onSelect={() => {
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  district: district === formData.district ? "" : district,
-                                }));
-                                setIsDistrictPopoverOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  formData.district === district ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                              {district}
-                            </CommandItem>
-                          ))}
+                          {districts.map((district) => {
+                            const isSelected = formData.district.includes(district);
+                            return (
+                              <CommandItem
+                                key={district}
+                                value={district}
+                                onSelect={() => {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    district: isSelected
+                                      ? prev.district.filter((d) => d !== district)
+                                      : [...prev.district, district],
+                                  }));
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    isSelected ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {district}
+                              </CommandItem>
+                            );
+                          })}
                         </CommandGroup>
                       </CommandList>
                     </Command>
                   </PopoverContent>
                 </Popover>
+                {formData.district.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {formData.district.map((d) => (
+                      <span
+                        key={d}
+                        className="bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full border border-primary/20 flex items-center gap-1"
+                      >
+                        {d}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              district: prev.district.filter((item) => item !== d),
+                            }))
+                          }
+                          className="hover:text-red-500"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -458,6 +553,176 @@ const Profile = () => {
                 placeholder="Enter your full address"
                 className="min-h-[80px] border-slate-200 focus:border-primary focus:ring-primary/20"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-slate-700 font-semibold flex items-center gap-2">
+                <Layers className="h-4 w-4" />
+                Preferred Categories
+              </Label>
+              <Popover open={isCategoryPopoverOpen} onOpenChange={setIsCategoryPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={isCategoryPopoverOpen}
+                    className="w-full justify-between border-slate-200 hover:bg-slate-50 text-slate-700 font-normal"
+                  >
+                    {formData.categories.length > 0
+                      ? `${formData.categories.length} categor${formData.categories.length === 1 ? "y" : "ies"} selected`
+                      : "Select Categories..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-[var(--radix-popover-trigger-width)] p-0"
+                  align="start"
+                >
+                  <Command>
+                    <CommandInput placeholder="Search category..." className="h-9" />
+                    <CommandList>
+                      <CommandEmpty>No category found.</CommandEmpty>
+                      <CommandGroup className="max-h-60 overflow-y-auto">
+                        {allCategories?.map((cat: any) => {
+                          const name = cat.cat_name;
+                          const isSelected = formData.categories.includes(name);
+                          return (
+                            <CommandItem
+                              key={cat._id || cat.cat_id}
+                              value={name}
+                              onSelect={() => {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  categories: isSelected
+                                    ? prev.categories.filter((c) => c !== name)
+                                    : [...prev.categories, name],
+                                }));
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  isSelected ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              <span>{name}</span>
+                            </CommandItem>
+                          );
+                        })}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {formData.categories.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {formData.categories.map((cat) => (
+                    <span
+                      key={cat}
+                      className="bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full border border-primary/20 flex items-center gap-1"
+                    >
+                      {cat}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            categories: prev.categories.filter((c) => c !== cat),
+                          }))
+                        }
+                        className="hover:text-red-500"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-slate-700 font-semibold flex items-center gap-2">
+                <Building2 className="h-4 w-4" />
+                Preferred Departments
+              </Label>
+              <Popover open={isDeptPopoverOpen} onOpenChange={setIsDeptPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={isDeptPopoverOpen}
+                    className="w-full justify-between border-slate-200 hover:bg-slate-50 text-slate-700 font-normal"
+                  >
+                    {formData.departments.length > 0
+                      ? `${formData.departments.length} department${formData.departments.length === 1 ? "" : "s"} selected`
+                      : "Select Departments..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-[var(--radix-popover-trigger-width)] p-0"
+                  align="start"
+                >
+                  <Command>
+                    <CommandInput placeholder="Search department..." className="h-9" />
+                    <CommandList>
+                      <CommandEmpty>No department found.</CommandEmpty>
+                      <CommandGroup className="max-h-60 overflow-y-auto">
+                        {allDepartments?.map((dept: any) => {
+                          const name = dept.shortName;
+                          const isSelected = formData.departments.includes(name);
+                          return (
+                            <CommandItem
+                              key={dept._id}
+                              value={name}
+                              onSelect={() => {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  departments: isSelected
+                                    ? prev.departments.filter((d) => d !== name)
+                                    : [...prev.departments, name],
+                                }));
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  isSelected ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              <span>{name}</span>
+                            </CommandItem>
+                          );
+                        })}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {formData.departments.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {formData.departments.map((dept) => (
+                    <span
+                      key={dept}
+                      className="bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full border border-primary/20 flex items-center gap-1"
+                    >
+                      {dept}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            departments: prev.departments.filter((d) => d !== dept),
+                          }))
+                        }
+                        className="hover:text-red-500"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             <DialogFooter className="pt-4 border-t border-slate-100">

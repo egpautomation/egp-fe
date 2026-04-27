@@ -386,7 +386,11 @@ const SimpleTenderCalendar = () => {
         const monthFiltered: any[] = [];
         const areaFiltered: any[] = [];
 
-        const currentDistrict = userData?.district?.trim()?.toLowerCase() || "";
+        const currentDistrict = Array.isArray(userData?.district)
+          ? userData.district.map((d: string) => d?.trim()?.toLowerCase()).filter(Boolean)
+          : userData?.district?.trim()?.toLowerCase()
+            ? [userData.district.trim().toLowerCase()]
+            : [];
 
         list.forEach((t) => {
           const raw = t.publicationDateTime || t.publishingDate || "";
@@ -396,7 +400,7 @@ const SimpleTenderCalendar = () => {
           if (dateStr >= weekStartStr && dateStr <= weekEndStr) weekFiltered.push(t);
           if (dateStr >= monthStartStr && dateStr <= monthEndStr) monthFiltered.push(t);
 
-          if (currentDistrict && t.locationDistrict?.toLowerCase().includes(currentDistrict)) {
+          if (currentDistrict.length > 0 && currentDistrict.some((d: string) => t.locationDistrict?.toLowerCase().includes(d))) {
             areaFiltered.push(t);
           }
         });
@@ -433,7 +437,11 @@ const SimpleTenderCalendar = () => {
   }, [userData?.district]);
 
   // Define userDistrict outside useEffect so it's accessible in render
-  const userDistrict = userData?.district?.trim()?.toLowerCase() || "";
+  const userDistrict = Array.isArray(userData?.district)
+    ? userData.district.map((d: string) => d?.trim()?.toLowerCase()).filter(Boolean)
+    : userData?.district?.trim()?.toLowerCase()
+      ? [userData.district.trim().toLowerCase()]
+      : [];
 
   // Selected date string in dd-MMM-yyyy format
   const formattedDate = date ? format(date, "dd-MMM-yyyy") : "";
@@ -716,7 +724,7 @@ const SimpleTenderCalendar = () => {
                               <div className="col-span-3 h-3 bg-slate-200 rounded animate-pulse" />
                             </div>
                           ))
-                      ) : !userDistrict ? (
+                      ) : userDistrict.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-10 gap-2">
                           <span className="text-slate-400 text-sm italic">
                             Your district is not set in your profile.

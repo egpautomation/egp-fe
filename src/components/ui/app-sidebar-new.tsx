@@ -360,6 +360,11 @@ export function AppSidebarNew() {
           role: "user",
         },
         {
+          label: "Notifications",
+          path: "/dashboard/notifications",
+          role: ["user", "user_agent", "moderator", "admin", "tti_agent"],
+        },
+        {
           label: "Support (App Ticket)",
           path: "/dashboard/services",
           role: "user",

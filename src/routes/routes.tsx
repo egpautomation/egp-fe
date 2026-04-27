@@ -61,6 +61,7 @@ import CreateDepartment from "@/pages/dashboardLayout/Departments/CreateDepartme
 import EditDepartmentInformation from "@/pages/dashboardLayout/Departments/EditDepartment";
 import CreateTutorialCategory from "@/pages/dashboardLayout/Tutorials/CreateTutorialCategory";
 import Profile from "@/pages/dashboardLayout/Profile/Profile";
+import Notifications from "@/pages/dashboardLayout/Notifications/Notifications";
 import TutorialCategories from "@/pages/dashboardLayout/Tutorials/TutorialCategories";
 import EditTutorialCategory from "@/pages/dashboardLayout/Tutorials/EditTutorialCategory";
 import UpdateTenderDataEntry from "@/pages/dashboardLayout/TenderDataEntry/UpdateDataEntry";
@@ -300,6 +301,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "notifications",
+        element: (
+          <PrivateRoute>
+            <Notifications />
+          </PrivateRoute>
+        ),
+      },
+      {
         path: "create-company-registration",
         element: (
           <PrivateRoute>
@@ -368,6 +377,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <Profile />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "notifications",
+        element: (
+          <PrivateRoute>
+            <Notifications />
           </PrivateRoute>
         ),
       },
