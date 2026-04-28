@@ -272,25 +272,44 @@ export default function StlCalculation() {
 
     const doc = new jsPDF()
     const pageWidth = doc.internal.pageSize.getWidth()
+    const pageHeight = doc.internal.pageSize.getHeight()
 
-    doc.setFontSize(18)
+    // === BRANDING HEADER ===
+    doc.setFillColor(30, 87, 179)
+    doc.rect(0, 0, pageWidth, 25, "F")
+
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(22)
     doc.setFont("helvetica", "bold")
-    doc.text("STL Calculation Report", pageWidth / 2, 20, { align: "center" })
+    doc.text("eTenderBD", 14, 16)
+    
+    doc.setFontSize(10)
+    doc.setFont("helvetica", "normal")
+    doc.text("www.etenderbd.com", pageWidth - 14, 16, { align: "right" })
+
+    // === REPORT TITLE ===
+    doc.setTextColor(0, 0, 0)
+    doc.setFontSize(16)
+    doc.setFont("helvetica", "bold")
+    doc.text("STL Calculation Report", pageWidth / 2, 38, { align: "center" })
 
     doc.setFontSize(10)
     doc.setFont("helvetica", "normal")
-    doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth / 2, 28, { align: "center" })
+    doc.setTextColor(100, 100, 100)
+    doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth / 2, 44, { align: "center" })
 
     doc.setLineWidth(0.5)
-    doc.line(14, 32, pageWidth - 14, 32)
+    doc.setDrawColor(200, 200, 200)
+    doc.line(14, 48, pageWidth - 14, 48)
 
-    // Input Parameters
+    // === REPORT DATA ===
+    doc.setTextColor(0, 0, 0)
     doc.setFontSize(13)
     doc.setFont("helvetica", "bold")
-    doc.text("Input Parameters", 14, 40)
+    doc.text("Input Parameters", 14, 58)
 
     autoTable(doc, {
-      startY: 44,
+      startY: 62,
       head: [["Parameter", "Value", "Description"]],
       body: [
         ["XOCE", xoce, "Official Approved Cost Estimate"],
@@ -299,10 +318,9 @@ export default function StlCalculation() {
       theme: "grid",
       headStyles: { fillColor: [30, 87, 179], fontSize: 9 },
       bodyStyles: { fontSize: 9 },
-      margin: { left: 14, right: 14 },
+      margin: { left: 14, right: 14, bottom: 25 },
     })
 
-    // Calculation Results
     const resultsY = (doc as any).lastAutoTable.finalY + 10
     doc.setFontSize(13)
     doc.setFont("helvetica", "bold")
@@ -321,12 +339,11 @@ export default function StlCalculation() {
       theme: "grid",
       headStyles: { fillColor: [30, 87, 179], fontSize: 9 },
       bodyStyles: { fontSize: 9 },
-      margin: { left: 14, right: 14 },
+      margin: { left: 14, right: 14, bottom: 25 },
     })
 
-    // Bidders Table
     let biddersY = (doc as any).lastAutoTable.finalY + 10
-    if (biddersY > 240) {
+    if (biddersY > pageHeight - 40) {
       doc.addPage()
       biddersY = 20
     }
@@ -354,13 +371,12 @@ export default function StlCalculation() {
       theme: "grid",
       headStyles: { fillColor: [30, 87, 179], fontSize: 8 },
       bodyStyles: { fontSize: 8 },
-      margin: { left: 14, right: 14 },
+      margin: { left: 14, right: 14, bottom: 25 },
       columnStyles: { 0: { cellWidth: 50 } },
     })
 
-    // Winner Section
     let winnerY = (doc as any).lastAutoTable.finalY + 10
-    if (winnerY > 260) {
+    if (winnerY > pageHeight - 50) {
       doc.addPage()
       winnerY = 20
     }
@@ -381,7 +397,28 @@ export default function StlCalculation() {
       winnerY + 20,
       { align: "center" },
     )
-    doc.setTextColor(0, 0, 0)
+    
+    // === BRANDING FOOTER (All Pages) ===
+    const pageCount = doc.internal.getNumberOfPages()
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i)
+      
+      doc.setDrawColor(200, 200, 200)
+      doc.setLineWidth(0.5)
+      doc.line(14, pageHeight - 20, pageWidth - 14, pageHeight - 20)
+
+      doc.setFontSize(8)
+      doc.setTextColor(100, 100, 100)
+      doc.setFont("helvetica", "normal")
+      
+      const footerText1 = "Email: support@etenderbd.com  |  Phone: 01926-959331  |  Dhaka, Bangladesh"
+      const footerText2 = "Facebook: facebook.com/etenderinfo  |  Web: www.etenderbd.com"
+      
+      doc.text(footerText1, pageWidth / 2, pageHeight - 13, { align: "center" })
+      doc.text(footerText2, pageWidth / 2, pageHeight - 8, { align: "center" })
+      
+      doc.text(`Page ${i} of ${pageCount}`, pageWidth - 14, pageHeight - 13, { align: "right" })
+    }
 
     doc.save("STL_Calculation_Report.pdf")
     toast.success("PDF downloaded successfully!")
