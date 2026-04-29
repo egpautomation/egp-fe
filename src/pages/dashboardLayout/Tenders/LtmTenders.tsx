@@ -115,10 +115,10 @@ const LtmTenders = () => {
     "", // from
     "", // to
     "LTM", // method locked to LTM
-    selectedDepartments.join(","),
-    selectedCategories.join(","),
-    selectedLocations.join(","),
-    selectedProcurementNatures.join(","),
+    selectedDepartments.join("||"),
+    selectedCategories.join("||"),
+    selectedLocations.join("||"),
+    selectedProcurementNatures.join("||"),
     currentPage,
     pageLimit
   );
