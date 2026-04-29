@@ -98,6 +98,7 @@ import OTMFulfillRequest from "@/pages/dashboardLayout/ByPassReport/OTMCancelReq
 import MyOtmBypassReport from "@/pages/dashboardLayout/ByPassReport/MyOtmBypassReport";
 import ExperienceCertificates from "@/pages/dashboardLayout/EgpListedCompany/ExperienceCertificates";
 import BOQPrivate from "@/components/dashboard/SOR/BOQPrivate";
+import TenderBidAnalysis from "@/pages/dashboardLayout/Tenders/TenderBidAnalysis";
 
 
 const router = createBrowserRouter([
@@ -784,6 +785,14 @@ const router = createBrowserRouter([
           <AdminRoute>
             <EditTutorialCategory />
           </AdminRoute>
+        ),
+      },
+      {
+        path: "tender-bid-analysis",
+        element: (
+          <PrivateRoute>
+            <TenderBidAnalysis />
+          </PrivateRoute>
         ),
       },
     ],
