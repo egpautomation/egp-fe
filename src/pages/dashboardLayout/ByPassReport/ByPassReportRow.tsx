@@ -21,8 +21,8 @@ export default function ByPassReportRow({ item, idx }: any) {
       <td className="px-4 py-3">{item?.companyName || "N/A"}</td>
       <td className="px-4 py-3">{item?.password || "N/A"}</td>
       <td className="px-4 py-3">{item?.bankName || "N/A"}</td>
-      {/* LiquidAsset = liquidAssetsTenderAmount entered at job-order time */}
-      <td className="px-4 py-3">{item?.liquidAsset || "N/A"}</td>
+      {/* LiquidAsset: user-entered value > tender's liquidAssets > 0 */}
+      <td className="px-4 py-3">{item?.liquidAsset ?? 0}</td>
       {/* ActiveDate1 is always 3 (fixed value from backend) */}
       <td className="px-4 py-3">{item?.activityDate1 ?? "N/A"}</td>
       {/* ActiveDate2 = (TentativeCompletionDate - TentativeStartDate) - 3 */}
