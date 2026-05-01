@@ -12,16 +12,20 @@ const slides = [
     link: "/blogs",
   },
   {
-    src: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=1600&auto=format&fit=crop",
+    src: "/banner1.jpeg",
     alt: "টেন্ডার রিপোর্ট ও বিশ্লেষণ",
   },
   {
-    src: "https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1600&auto=format&fit=crop",
+    src: "/banner2.jpeg",
     alt: "ব্যবসায়িক সহযোগিতা",
   },
   {
-    src: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1600&auto=format&fit=crop",
+    src: "/banner3.jpeg",
     alt: "ডকুমেন্ট ও নিরাপত্তা যাচাই",
+  },
+  {
+    src: "/banner4.jpeg",
+    alt: "Etender BD banner",
   },
 ];
 
