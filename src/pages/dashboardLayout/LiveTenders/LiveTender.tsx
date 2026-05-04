@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import Pagination from "@/shared/Pagination/Pagination";
 import useLiveTenders from "@/hooks/useLiveTenders";
 import { formatDate } from "@/lib/formateDate";
@@ -338,9 +339,24 @@ export default function LiveTender() {
 
                     {/* Description / Nature */}
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-800 leading-snug line-clamp-2 max-w-[280px]">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <p
+                            tabIndex={0}
+                            className="font-medium text-gray-800 leading-snug line-clamp-2 max-w-[280px] cursor-help rounded-sm outline-none transition-colors hover:text-primary focus-visible:text-primary focus-visible:ring-2 focus-visible:ring-primary/25"
+                          >
                         {item?.BriefDescriptionofWorks ?? item?.title ?? "—"}
-                      </p>
+                          </p>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="top"
+                          align="start"
+                          sideOffset={8}
+                          className="max-w-[420px] bg-white text-slate-800 border border-slate-200 shadow-xl text-xs leading-relaxed p-3"
+                        >
+                          {item?.BriefDescriptionofWorks ?? item?.title ?? "N/A"}
+                        </TooltipContent>
+                      </Tooltip>
                       {item?.procurementNature && (
                         <div className="mt-1">
                           <Badge label={item.procurementNature} />

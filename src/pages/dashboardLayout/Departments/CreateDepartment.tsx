@@ -128,7 +128,12 @@ const CreateDepartment = () => {
         {[1, 2, 3, 4, 5, 6].map((num) => (
           <div key={num}>
             <Label className="mb-2">Rate {num}</Label>
-            <Input name={`rate_${num}`} type="number"  onChange={handleChange} />
+            <Input
+              name={`rate_${num}`}
+              type="text"
+              placeholder={`Rate ${num}`}
+              onChange={handleChange}
+            />
           </div>
         ))}
         </div>

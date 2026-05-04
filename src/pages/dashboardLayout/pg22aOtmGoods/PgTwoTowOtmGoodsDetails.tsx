@@ -358,10 +358,9 @@ const PgTwoTowOtmGoodsDetails = () => {
     return result;
   }, [currentTender, yearlyTotals, totalOngoingCommitments, tdsRequiredFY, proposedProjectYear]);
 
-  // Handle edit contract from CMS tab
   const handleEditContract = (contractId) => {
     setSelectedContractIdForEdit(contractId);
-    setActiveTab(11); // Navigate to Update Tender Info tab
+    setActiveTab(12);
   };
 
   // Handle saving the selected Experience Contract

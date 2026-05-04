@@ -193,7 +193,7 @@ export const CMSTab = ({
         <h3 className="font-semibold text-purple-800 text-xl">Contract Management System (CMS)</h3>
         <div className="flex gap-2">
           <button
-            onClick={() => setActiveTab(10)}
+            onClick={() => setActiveTab(11)}
             className="flex gap-2 items-center bg-blue-600 rounded-md px-3 py-2 text-white hover:bg-blue-700 transition-colors"
           >
             Add New <Plus className="w-4 h-4" />
