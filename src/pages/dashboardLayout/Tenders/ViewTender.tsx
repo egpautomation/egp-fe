@@ -57,6 +57,19 @@ const ViewTender = () => {
 
   const downloadPDF = () => {
     const doc = new jsPDF("p", "mm", "a4");
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const pageMargin = 15;
+    const footerReservedHeight = 30;
+    const contentBottomY = pageHeight - footerReservedHeight;
+    const tableMargin = { left: pageMargin, right: pageMargin, top: pageMargin, bottom: footerReservedHeight };
+
+    const ensurePdfSpace = (currentY, requiredHeight = 20) => {
+      if (currentY + requiredHeight > contentBottomY) {
+        doc.addPage();
+        return pageMargin;
+      }
+      return currentY;
+    };
 
     // Title
     doc.setFontSize(20);
@@ -120,7 +133,7 @@ const ViewTender = () => {
         0: { cellWidth: 70, fontStyle: "bold" },
         1: { cellWidth: 120 },
       },
-      margin: { left: 15, right: 15 },
+      margin: tableMargin,
     });
 
     yPos = (doc as any).lastAutoTable.finalY + 8;
@@ -151,7 +164,7 @@ const ViewTender = () => {
         0: { cellWidth: 70, fontStyle: "bold" },
         1: { cellWidth: 120 },
       },
-      margin: { left: 15, right: 15 },
+      margin: tableMargin,
     });
 
     yPos = (doc as any).lastAutoTable.finalY + 8;
@@ -179,16 +192,11 @@ const ViewTender = () => {
         0: { cellWidth: 70, fontStyle: "bold" },
         1: { cellWidth: 120 },
       },
-      margin: { left: 15, right: 15 },
+      margin: tableMargin,
     });
 
     // Check if new page needed
-    if ((doc as any).lastAutoTable.finalY > 240) {
-      doc.addPage();
-      yPos = 15;
-    } else {
-      yPos = (doc as any).lastAutoTable.finalY + 8;
-    }
+    yPos = ensurePdfSpace((doc as any).lastAutoTable.finalY + 8, 35);
 
     // Location Information
     const locationData = [
@@ -211,7 +219,7 @@ const ViewTender = () => {
         0: { cellWidth: 70, fontStyle: "bold" },
         1: { cellWidth: 120 },
       },
-      margin: { left: 15, right: 15 },
+      margin: tableMargin,
     });
 
     yPos = (doc as any).lastAutoTable.finalY + 8;
@@ -240,16 +248,11 @@ const ViewTender = () => {
         0: { cellWidth: 70, fontStyle: "bold" },
         1: { cellWidth: 120 },
       },
-      margin: { left: 15, right: 15 },
+      margin: tableMargin,
     });
 
     // Check if new page needed
-    if ((doc as any).lastAutoTable.finalY > 240) {
-      doc.addPage();
-      yPos = 15;
-    } else {
-      yPos = (doc as any).lastAutoTable.finalY + 8;
-    }
+    yPos = ensurePdfSpace((doc as any).lastAutoTable.finalY + 8, 45);
 
     // Eligibility & Quality Criteria
     const eligibilityData = [
@@ -274,17 +277,14 @@ const ViewTender = () => {
         0: { cellWidth: 70, fontStyle: "bold" },
         1: { cellWidth: 120 },
       },
-      margin: { left: 15, right: 15 },
+      margin: tableMargin,
     });
 
     // Project Information (if exists)
     if (formData?.projectName) {
       yPos = (doc as any).lastAutoTable.finalY + 8;
 
-      if (yPos > 240) {
-        doc.addPage();
-        yPos = 15;
-      }
+      yPos = ensurePdfSpace(yPos, 30);
 
       const projectData = [
         ["Project Name", formData?.projectName || "N/A"],
@@ -305,7 +305,7 @@ const ViewTender = () => {
           0: { cellWidth: 70, fontStyle: "bold" },
           1: { cellWidth: 120 },
         },
-        margin: { left: 15, right: 15 },
+        margin: tableMargin,
       });
     }
 
@@ -313,17 +313,14 @@ const ViewTender = () => {
     if (formData?.similarNatureWork) {
       yPos = (doc as any).lastAutoTable.finalY + 8;
 
-      if (yPos > 240) {
-        doc.addPage();
-        yPos = 15;
-      }
+      const similarLines = doc.splitTextToSize(formData?.similarNatureWork, 180);
+      yPos = ensurePdfSpace(yPos, 10 + similarLines.length * 5);
 
       doc.setFontSize(12);
       doc.setFont("helvetica", "bold");
-      doc.text("Similar Nature Work:", 15, yPos);
+      doc.text("Similar Nature Work:", pageMargin, yPos);
       doc.setFont("helvetica", "normal");
-      const similarLines = doc.splitTextToSize(formData?.similarNatureWork, 180);
-      doc.text(similarLines, 15, yPos + 5);
+      doc.text(similarLines, pageMargin, yPos + 5);
     }
 
     // Footer on all pages
