@@ -788,7 +788,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "tender-bid-analysis",
+        path: "nppi-calculation",
         element: (
           <PrivateRoute>
             <TenderBidAnalysis />

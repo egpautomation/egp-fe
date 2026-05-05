@@ -198,6 +198,11 @@ export function AppSidebarNew() {
           path: "/dashboard/stl-calculation",
           role: ["admin", "user_agent", "user", "moderator"],
         },
+        {
+          label: "NPPI Calculation",
+          path: "/dashboard/nppi-calculation",
+          role: ["admin", "user_agent", "user", "moderator"],
+        },
       ],
     },
     {
