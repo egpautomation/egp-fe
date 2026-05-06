@@ -337,57 +337,71 @@ export default function TenderBidAnalysis() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* ── Discount Doughnut (CSS) ──────────────── */}
+        {/* ── District-wise Bar Chart ──────────────── */}
         <Card className="lg:col-span-5 rounded-2xl border-slate-200/60 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold text-slate-800">
-              ডিসকাউন্ট শতাংশ ব্রেকডাউন
+              জেলা ভিত্তিক দরের বিতরণ
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col items-center gap-6 pt-0">
-            <DonutChart zero={zeroDiscount} medium={mediumDiscount} high={highDiscount} total={bidders.length} />
-            <div className="grid grid-cols-3 gap-4 w-full text-center">
-              <StatBlock value={`${((zeroDiscount / bidders.length) * 100).toFixed(0)}%`} label="০% ছাড়" color="slate" />
-              <StatBlock value={`${((mediumDiscount / bidders.length) * 100).toFixed(0)}%`} label="১-১০% ছাড়" color="amber" />
-              <StatBlock value={`${((highDiscount / bidders.length) * 100).toFixed(0)}%`} label="১০%+ ছাড়" color="emerald" />
-            </div>
+          <CardContent className="pt-2">
+            <DistrictBarChart records={filteredRecords} />
           </CardContent>
         </Card>
 
-        {/* ── Bid Distribution Bar (CSS) ───────────── */}
+        {/* ── Record-wise Bar Chart ───────────── */}
         <Card className="lg:col-span-7 rounded-2xl border-slate-200/60 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-              দরের বিতরণ
+              প্রতিটি টেন্ডারের দর বনাম এস্টিমেট
               <Badge variant="secondary" className="text-xs font-normal">
-                টেন্ডার #{data.tenderId}
+                মোট {filteredRecords.length} টি
               </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-2">
-            <BidBarChart bidders={bidders} estimate={estimate} />
+            <RecordBarChart records={filteredRecords} />
           </CardContent>
         </Card>
       </div>
 
-      {/* ── Comparison Cards ───────────────────────────── */}
-      <Card className="rounded-2xl border-slate-200/60 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-            জেলা ও অধিদপ্তর অনুযায়ী দরের তুলনা
-            <Badge variant="secondary" className="text-xs font-normal">
-              টেন্ডার #{data.tenderId}
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <ComparisonCard district="ঢাকা" pct="১২.০২%" sub="এস্টিমেট থেকে গড় কম দর" color="emerald" />
-            <ComparisonCard district="চট্টগ্রাম" pct="৮.৭৫%" sub="এস্টিমেট থেকে গড় কম দর" color="amber" />
-            <ComparisonCard district="রাজশাহী" pct="১৫.৩০%" sub="এস্টিমেট থেকে গড় কম দর" color="blue" />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Comparison Cards */}
+      {(() => {
+        const dists = [...new Set(allRecords.map((r) => r.locationDistrict).filter(Boolean))];
+        const colors = ["emerald", "amber", "blue", "red"];
+        return dists.length > 0 ? (
+          <Card className="rounded-2xl border-slate-200/60 shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                জেলা অনুযায়ী দরের তুলনা
+                <Badge variant="secondary" className="text-xs font-normal">
+                  মোট {allRecords.length} টি টেন্ডার
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {dists.slice(0, 6).map((dist, i) => {
+                  const distRecords = allRecords.filter((r) => r.locationDistrict === dist);
+                  const avgPct = distRecords.reduce((sum, r) => {
+                    const p = r.estimateCost ? ((r.estimateCost - (r.winnerPrice || 0)) / r.estimateCost) * 100 : 0;
+                    return sum + p;
+                  }, 0) / distRecords.length;
+                  return (
+                    <ComparisonCard
+                      key={dist}
+                      district={dist}
+                      pct={avgPct.toFixed(2) + "%"}
+                      sub={"এস্টিমেট থেকে গড় কম দর (" + distRecords.length + " টি)"}
+                      color={colors[i % colors.length]}
+                    />
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        ) : null;
+      })()}
 
       {/* ── Data Table ──────────────────────────────── */}
       <Card className="rounded-2xl border-slate-200/60 shadow-sm overflow-hidden">
@@ -544,19 +558,6 @@ function KPICard({ icon, label, value, sub, color }: { icon: React.ReactNode; la
   );
 }
 
-function StatBlock({ value, label, color }: { value: string; label: string; color: string }) {
-  const colors: Record<string, string> = {
-    slate: "text-slate-700",
-    amber: "text-amber-600",
-    emerald: "text-emerald-600",
-  };
-  return (
-    <div>
-      <div className={`text-3xl font-bold ${colors[color]}`}>{value}</div>
-      <div className="text-xs text-slate-500 mt-1">{label}</div>
-    </div>
-  );
-}
 
 function ComparisonCard({ district, pct, sub, color }: { district: string; pct: string; sub: string; color: string }) {
   const styles: Record<string, string> = {
@@ -575,91 +576,94 @@ function ComparisonCard({ district, pct, sub, color }: { district: string; pct: 
   );
 }
 
-// ─── CSS-only Donut Chart ────────────────────────────────────
-function DonutChart({ zero, medium, high, total }: { zero: number; medium: number; high: number; total: number }) {
-  const zeroPct = (zero / total) * 100;
-  const mediumPct = (medium / total) * 100;
-  const highPct = (high / total) * 100;
+// ─── District Bar Chart ────────────────────────────────────
+function DistrictBarChart({ records }: { records: StlRecord[] }) {
+  const districts = [...new Set(records.map((r) => r.locationDistrict).filter(Boolean))];
+  const distData = districts.map((d) => {
+    const recs = records.filter((r) => r.locationDistrict === d);
+    const avgEstimate = recs.reduce((s, r) => s + (r.estimateCost || 0), 0) / recs.length;
+    const avgWinner = recs.reduce((s, r) => s + (r.winnerPrice || 0), 0) / recs.length;
+    return { district: d, count: recs.length, avgEstimate, avgWinner };
+  });
+  const maxVal = Math.max(...distData.map((d) => d.avgEstimate), ...distData.map((d) => d.avgWinner), 1);
 
   return (
-    <div className="relative w-56 h-56">
-      <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-        <circle cx="50" cy="50" r="40" fill="none" stroke="#f1f5f9" strokeWidth="18" />
-        <circle
-          cx="50" cy="50" r="40" fill="none"
-          stroke="#64748b" strokeWidth="18"
-          strokeDasharray={`${zeroPct * 2.513} ${251.3 - zeroPct * 2.513}`}
-          strokeDashoffset="0"
-          className="transition-all duration-700"
-        />
-        <circle
-          cx="50" cy="50" r="40" fill="none"
-          stroke="#f59e0b" strokeWidth="18"
-          strokeDasharray={`${mediumPct * 2.513} ${251.3 - mediumPct * 2.513}`}
-          strokeDashoffset={`${-zeroPct * 2.513}`}
-          className="transition-all duration-700"
-        />
-        <circle
-          cx="50" cy="50" r="40" fill="none"
-          stroke="#10b981" strokeWidth="18"
-          strokeDasharray={`${highPct * 2.513} ${251.3 - highPct * 2.513}`}
-          strokeDashoffset={`${-(zeroPct + mediumPct) * 2.513}`}
-          className="transition-all duration-700"
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-bold text-slate-800">{total}</span>
-        <span className="text-xs text-slate-500">ঠিকাদার</span>
-      </div>
+    <div className="space-y-3 max-h-[340px] overflow-y-auto pr-2">
+      {distData.map((d, i) => {
+        const estPct = (d.avgEstimate / maxVal) * 100;
+        const winPct = (d.avgWinner / maxVal) * 100;
+        return (
+          <div key={i} className="space-y-1">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-medium text-slate-700 truncate max-w-[60%]" title={d.district}>{d.district} ({d.count} টি)</span>
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-blue-500 w-12 shrink-0">এস্টিমেট</span>
+                <div className="flex-1 h-4 bg-slate-100 rounded overflow-hidden">
+                  <div className="h-full bg-blue-400 rounded" style={{ width: estPct + "%" }} />
+                </div>
+                <span className="text-[10px] text-slate-600 w-20 text-right">{fmt(Math.round(d.avgEstimate))}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-emerald-600 w-12 shrink-0">বিজয়ী</span>
+                <div className="flex-1 h-4 bg-slate-100 rounded overflow-hidden">
+                  <div className="h-full bg-emerald-400 rounded" style={{ width: winPct + "%" }} />
+                </div>
+                <span className="text-[10px] text-slate-600 w-20 text-right">{fmt(Math.round(d.avgWinner))}</span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+      {distData.length === 0 && <p className="text-center text-slate-400 py-8">কোনো জেলার ডাটা নেই</p>}
     </div>
   );
 }
 
-// ─── CSS-only Bar Chart ──────────────────────────────────────
-function BidBarChart({ bidders, estimate }: { bidders: ExtractedBid[]; estimate: number }) {
-  const prices = bidders.map((b) => b.quotedAmountWithDiscount);
-  const maxPrice = Math.max(...prices, estimate);
-  const barMax = maxPrice * 1.08;
+// ─── Record Bar Chart ──────────────────────────────────────
+function RecordBarChart({ records }: { records: StlRecord[] }) {
+  const maxVal = Math.max(...records.map((r) => r.estimateCost || 0), ...records.map((r) => r.winnerPrice || 0), 1);
 
   return (
     <div className="space-y-1.5 max-h-[340px] overflow-y-auto pr-2">
-      {bidders.map((b, i) => {
-        const widthPct = (b.quotedAmountWithDiscount / barMax) * 100;
-        const estimatePct = (estimate / barMax) * 100;
-        const isBelow = b.quotedAmountWithDiscount < estimate;
+      {records.map((r, i) => {
+        const estPct = ((r.estimateCost || 0) / maxVal) * 100;
+        const winPct = ((r.winnerPrice || 0) / maxVal) * 100;
+        const isBelow = (r.winnerPrice || 0) < (r.estimateCost || 0);
         return (
           <div key={i} className="flex items-center gap-3 group">
-            <div className="w-20 text-xs text-slate-500 truncate shrink-0 text-right" title={b.nameOfTenderer}>
-              দর {i + 1}
+            <div className="w-16 text-xs text-slate-500 truncate shrink-0 text-right" title={r.winner}>
+              #{r.tenderId || i + 1}
             </div>
             <div className="flex-1 relative h-6 bg-slate-100 rounded-lg overflow-hidden">
               <div
-                className={`h-full rounded-lg transition-all duration-500 ${isBelow ? "bg-gradient-to-r from-emerald-400 to-emerald-500" : "bg-gradient-to-r from-amber-400 to-amber-500"}`}
-                style={{ width: `${widthPct}%` }}
+                className="absolute top-0 h-full w-0.5 bg-blue-500 z-10"
+                style={{ left: estPct + "%" }}
               />
               <div
-                className="absolute top-0 h-full w-0.5 bg-blue-500 z-10"
-                style={{ left: `${estimatePct}%` }}
+                className={"h-full rounded-lg transition-all duration-500 " + (isBelow ? "bg-gradient-to-r from-emerald-400 to-emerald-500" : "bg-gradient-to-r from-amber-400 to-amber-500")}
+                style={{ width: winPct + "%" }}
               />
               <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-slate-600">
-                {fmt(Math.round(b.quotedAmountWithDiscount))}
+                {fmt(Math.round(r.winnerPrice || 0))}
               </span>
             </div>
           </div>
         );
       })}
-      <div className="flex items-center gap-3 pt-1">
-        <div className="w-20 shrink-0" />
-        <div className="flex-1 relative h-4">
-          <div
-            className="absolute top-0 h-3 w-0.5 bg-blue-500"
-            style={{ left: `${(estimate / barMax) * 100}%` }}
-          />
-          <span className="text-[10px] text-blue-600 font-medium" style={{ paddingLeft: `${Math.max(0, (estimate / barMax) * 100 - 10)}%` }}>
-            এস্টিমেট: {fmt(Math.round(estimate))}
-          </span>
+      {records.length > 0 && (
+        <div className="flex items-center gap-3 pt-1">
+          <div className="w-16 shrink-0" />
+          <div className="flex-1 flex items-center gap-3 text-[10px]">
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-500" /> এস্টিমেট</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-emerald-400" /> কম দর</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-amber-400" /> বেশি দর</span>
+          </div>
         </div>
-      </div>
+      )}
+      {records.length === 0 && <p className="text-center text-slate-400 py-8">কোনো ডাটা নেই</p>}
     </div>
   );
 }
+
