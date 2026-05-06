@@ -34,7 +34,11 @@ import {
   ArrowUp,
   CheckCircle2,
   XCircle,
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
+import useAllStlData from "@/hooks/useAllStlData";
 
 // ─── Types ───────────────────────────────────────────────────
 interface ExtractedBid {
@@ -53,6 +57,16 @@ interface TenderData {
   district: string;
   department: string;
   workType: string;
+}
+
+interface StlRecord {
+  _id: string;
+  tenderId: string;
+  estimateCost: number;
+  winner: string;
+  winnerPrice: number;
+  slt: number;
+  priceIndex: number;
 }
 
 // ─── Demo Data ───────────────────────────────────────────────
@@ -124,23 +138,59 @@ const fmt = (n: number) => n.toLocaleString("bn-BD");
 const pct = (n: number) => n.toFixed(2);
 
 // ─── Component ───────────────────────────────────────────────
+const ITEMS_PER_PAGE = 10;
+
 export default function TenderBidAnalysis() {
+  const { stlData, loading, setReload } = useAllStlData();
   const [districtFilter, setDistrictFilter] = useState("all");
   const [departmentFilter, setDepartmentFilter] = useState("all");
   const [workTypeFilter, setWorkTypeFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const filtered = useMemo(() => {
-    const result = allTenders.filter((t) => {
-      const md = districtFilter === "all" || t.district === districtFilter;
-      const mdep = departmentFilter === "all" || t.department === departmentFilter;
-      const mw = workTypeFilter === "all" || t.workType === workTypeFilter;
-      return md && mdep && mw;
-    });
-    return result.length > 0 ? result : allTenders;
-  }, [districtFilter, departmentFilter, workTypeFilter]);
+  const allRecords: StlRecord[] = stlData;
 
-  const data = filtered[0];
+  // ─── Table search & pagination ────────────────────────────
+  const filteredRecords = useMemo(() => {
+    if (!searchQuery.trim()) return allRecords;
+    const q = searchQuery.toLowerCase();
+    return allRecords.filter(
+      (r) =>
+        r.winner?.toLowerCase().includes(q) ||
+        r.tenderId?.toLowerCase().includes(q)
+    );
+  }, [searchQuery, allRecords]);
+
+  const totalPages = Math.ceil(filteredRecords.length / ITEMS_PER_PAGE);
+  const paginatedRecords = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredRecords.slice(start, start + ITEMS_PER_PAGE);
+  }, [currentPage, filteredRecords]);
+
+  // ─── First record for KPI / charts (keep existing UI) ────
+  const firstRecord = allRecords.length > 0 ? allRecords[0] : null;
+  const data: TenderData = firstRecord
+    ? {
+        tenderId: firstRecord.tenderId || "0",
+        estimateCost: firstRecord.estimateCost || 0,
+        district: "ঢাকা",
+        department: "পিডব্লিউডি",
+        workType: "রাস্তা নির্মাণ",
+        extractedData: firstRecord.extractedData || rawTenderData.extractedData,
+      }
+    : rawTenderData;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/40 to-indigo-50/30 -m-5 p-5 md:p-8 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+          <p className="text-slate-500 text-sm">ডাটা লোড হচ্ছে...</p>
+        </div>
+      </div>
+    );
+  }
+
   const bidders = data.extractedData;
   const estimate = data.estimateCost;
 
@@ -158,13 +208,6 @@ export default function TenderBidAnalysis() {
   const zeroDiscount = bidders.filter((b) => b.discountPercentage === 0).length;
   const mediumDiscount = bidders.filter((b) => b.discountPercentage > 0 && b.discountPercentage <= 10).length;
   const highDiscount = bidders.filter((b) => b.discountPercentage > 10).length;
-
-  // ─── Search filter ──────────────────────────────────────
-  const displayedBidders = useMemo(() => {
-    if (!searchQuery.trim()) return bidders;
-    const q = searchQuery.toLowerCase();
-    return bidders.filter((b) => b.nameOfTenderer.toLowerCase().includes(q));
-  }, [searchQuery, bidders]);
 
   const resetFilters = () => {
     setDistrictFilter("all");
@@ -344,7 +387,7 @@ export default function TenderBidAnalysis() {
         </CardContent>
       </Card>
 
-      {/* ── Bidders Table ──────────────────────────────── */}
+      {/* ── Data Table ──────────────────────────────── */}
       <Card className="rounded-2xl border-slate-200/60 shadow-sm overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
           <CardTitle className="text-lg font-semibold text-slate-800">
@@ -353,9 +396,12 @@ export default function TenderBidAnalysis() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
-              placeholder="ঠিকাদারের নাম খুঁজুন..."
+              placeholder="ঠিকাদারের নাম বা টেন্ডার আইডি খুঁজুন..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
               className="pl-9 w-72 rounded-xl"
             />
           </div>
@@ -367,44 +413,100 @@ export default function TenderBidAnalysis() {
                 <TableRow className="bg-slate-50/80 hover:bg-slate-50/80">
                   <TableHead className="font-semibold text-slate-600">সিরিয়াল</TableHead>
                   <TableHead className="font-semibold text-slate-600">ঠিকাদারের নাম</TableHead>
+                  <TableHead className="font-semibold text-slate-600">টেন্ডার আইডি</TableHead>
+                  <TableHead className="text-right font-semibold text-slate-600">এস্টিমেটেড কস্ট</TableHead>
                   <TableHead className="text-right font-semibold text-slate-600">দর (ছাড় ছাড়া)</TableHead>
-                  <TableHead className="text-center font-semibold text-slate-600">ছাড় %</TableHead>
-                  <TableHead className="text-right font-semibold text-slate-600">ফাইনাল দর</TableHead>
-                  <TableHead className="text-center font-semibold text-slate-600">এস্টিমেট থেকে</TableHead>
+                  <TableHead className="text-right font-semibold text-slate-600">এস্টিমেট থেকে %</TableHead>
+                  <TableHead className="text-right font-semibold text-slate-600">বিজয়ী দর</TableHead>
                   <TableHead className="text-center font-semibold text-slate-600">যোগ্যতা</TableHead>
+                  <TableHead className="text-right font-semibold text-slate-600">NPPI</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {displayedBidders.map((bidder) => {
-                  const diff = ((estimate - bidder.quotedAmountWithDiscount) / estimate) * 100;
-                  const isBelow = diff > 0;
+                {paginatedRecords.map((record, index) => {
+                  const serialNo = (currentPage - 1) * ITEMS_PER_PAGE + index + 1;
+                  const diffCost = (record.estimateCost || 0) - (record.winnerPrice || 0);
+                  const diffPct = record.estimateCost ? (diffCost / record.estimateCost) * 100 : 0;
                   return (
-                    <TableRow key={bidder.serialNo} className="hover:bg-slate-50/60">
-                      <TableCell className="font-medium">{bidder.serialNo}</TableCell>
-                      <TableCell className="font-medium text-slate-800">{bidder.nameOfTenderer}</TableCell>
-                      <TableCell className="text-right">{fmt(bidder.quotedAmountWithoutDiscount)}</TableCell>
-                      <TableCell className="text-center">
-                        <span className="font-semibold text-amber-600">{bidder.discountPercentage}%</span>
+                    <TableRow key={record._id} className="hover:bg-slate-50/60">
+                      <TableCell className="font-medium">{serialNo}</TableCell>
+                      <TableCell className="font-medium text-slate-800">{record.winner || "-"}</TableCell>
+                      <TableCell>
+                        {record.tenderId ? (
+                          <Badge variant="outline" className="text-xs">#{record.tenderId}</Badge>
+                        ) : "-"}
                       </TableCell>
-                      <TableCell className="text-right font-semibold">{fmt(bidder.quotedAmountWithDiscount)}</TableCell>
+                      <TableCell className="text-right">{fmt(record.estimateCost || 0)}</TableCell>
+                      <TableCell className="text-right">{fmt(diffCost)}</TableCell>
                       <TableCell className="text-center">
-                        <span className={`inline-flex items-center gap-1 font-semibold ${isBelow ? "text-emerald-600" : "text-red-500"}`}>
-                          {isBelow ? <ArrowDown className="w-3.5 h-3.5" /> : <ArrowUp className="w-3.5 h-3.5" />}
-                          {Math.abs(diff).toFixed(2)}%
+                        <span className={`inline-flex items-center gap-1 font-semibold ${diffPct >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+                          {diffPct >= 0 ? <ArrowDown className="w-3.5 h-3.5" /> : <ArrowUp className="w-3.5 h-3.5" />}
+                          {Math.abs(diffPct).toFixed(2)}%
                         </span>
                       </TableCell>
+                      <TableCell className="text-right font-semibold">{fmt(record.winnerPrice || 0)}</TableCell>
                       <TableCell className="text-center">
                         <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border border-emerald-200 gap-1">
                           <CheckCircle2 className="w-3 h-3" />
                           যোগ্য
                         </Badge>
                       </TableCell>
+                      <TableCell className="text-right font-semibold">{record.priceIndex != null ? record.priceIndex : "-"}</TableCell>
                     </TableRow>
                   );
                 })}
+                {paginatedRecords.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={9} className="text-center py-8 text-slate-400">
+                      কোনো ডাটা পাওয়া যায়নি
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </div>
+
+          {/* ── Pagination ────────────────────────────────── */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200/60">
+              <p className="text-sm text-slate-500">
+                {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredRecords.length)} / {filteredRecords.length} টি রেকর্ড
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  className="gap-1"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  আগে
+                </Button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={page === currentPage ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                    className="w-9 h-9 p-0"
+                  >
+                    {page}
+                  </Button>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  className="gap-1"
+                >
+                  পরে
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
