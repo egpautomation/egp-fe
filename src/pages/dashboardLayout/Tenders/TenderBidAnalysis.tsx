@@ -211,20 +211,26 @@ export default function TenderBidAnalysis() {
   const bidders = data.extractedData;
   const estimate = data.estimateCost;
 
-  // ─── Metrics ─────────────────────────────────────────────
-  const finalPrices = bidders.map((b) => b.quotedAmountWithDiscount);
-  const discountPercents = bidders.map((b) => b.discountPercentage);
-  const minBid = Math.min(...finalPrices);
-  const maxBid = Math.max(...finalPrices);
-  const avgDiscount = discountPercents.reduce((a, b) => a + b, 0) / discountPercents.length;
-  const belowEstimate = finalPrices.filter((q) => q < estimate).length;
-  const lowestPct = ((estimate - minBid) / estimate) * 100;
-  const highestPct = ((maxBid - estimate) / estimate) * 100;
+  // ─── KPI Metrics from real filteredRecords ──────────────────
+  const totalRecords = filteredRecords.length;
+  const winnerPrices = filteredRecords.map((r) => r.winnerPrice || 0).filter((p) => p > 0);
+  const estimateCosts = filteredRecords.map((r) => r.estimateCost || 0).filter((p) => p > 0);
 
-  // Discount breakdown
-  const zeroDiscount = bidders.filter((b) => b.discountPercentage === 0).length;
-  const mediumDiscount = bidders.filter((b) => b.discountPercentage > 0 && b.discountPercentage <= 10).length;
-  const highDiscount = bidders.filter((b) => b.discountPercentage > 10).length;
+  const minWinnerPrice = winnerPrices.length ? Math.min(...winnerPrices) : 0;
+  const maxWinnerPrice = winnerPrices.length ? Math.max(...winnerPrices) : 0;
+  const avgEstimate = estimateCosts.length ? estimateCosts.reduce((a, b) => a + b, 0) / estimateCosts.length : 0;
+
+  const belowEstimateCount = filteredRecords.filter(
+    (r) => r.winnerPrice && r.estimateCost && r.winnerPrice < r.estimateCost
+  ).length;
+  const belowPct = totalRecords ? ((belowEstimateCount / totalRecords) * 100).toFixed(1) : "0";
+
+  const lowestDiffPct = avgEstimate && minWinnerPrice
+    ? (((avgEstimate - minWinnerPrice) / avgEstimate) * 100).toFixed(2)
+    : "0";
+  const highestDiffPct = avgEstimate && maxWinnerPrice
+    ? (((maxWinnerPrice - avgEstimate) / avgEstimate) * 100).toFixed(2)
+    : "0";
 
   const resetFilters = () => {
     setDistrictFilter("all");
@@ -294,44 +300,44 @@ export default function TenderBidAnalysis() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <KPICard
           icon={<Users className="w-5 h-5" />}
-          label="মোট ঠিকাদার"
-          value={fmt(bidders.length)}
-          sub="এই টেন্ডারে"
+          label="মোট টেন্ডার"
+          value={fmt(totalRecords)}
+          sub="ফিল্টার করা"
           color="blue"
         />
         <KPICard
           icon={<TrendingDown className="w-5 h-5" />}
           label="সর্বনিম্ন দর"
-          value={`${pct(lowestPct)}% কম`}
-          sub={fmt(minBid) + " টাকা"}
+          value={`${lowestDiffPct}% কম`}
+          sub={fmt(minWinnerPrice) + " টাকা"}
           color="emerald"
         />
         <KPICard
           icon={<Percent className="w-5 h-5" />}
-          label="গড় ছাড় %"
-          value={`${pct(avgDiscount)}%`}
-          sub="সর্বোচ্চ ছাড়"
+          label="গড় এস্টিমেট"
+          value={fmt(Math.round(avgEstimate))}
+          sub="টাকা"
           color="amber"
         />
         <KPICard
           icon={<ArrowDown className="w-5 h-5" />}
           label="কম দর দিয়েছে"
-          value={`${((belowEstimate / bidders.length) * 100).toFixed(1)}%`}
-          sub="ঠিকাদার"
+          value={`${belowPct}%`}
+          sub={`${belowEstimateCount} টি টেন্ডার`}
           color="emerald"
         />
         <KPICard
           icon={<Award className="w-5 h-5" />}
-          label="সর্বনিম্ন দরের শতাংশ"
-          value={`${((finalPrices.filter((q) => q <= minBid * 1.01).length / bidders.length) * 100).toFixed(1)}%`}
-          sub="ঠিকাদার কম দর দিয়েছে"
+          label="সর্বনিম্ন বিজয়ী দর"
+          value={fmt(minWinnerPrice)}
+          sub="টাকা"
           color="blue"
         />
         <KPICard
           icon={<TrendingUp className="w-5 h-5" />}
           label="সর্বোচ্চ বেশি দর"
-          value={`${pct(highestPct)}% বেশি`}
-          sub="সর্বোচ্চ দর"
+          value={`${highestDiffPct}% বেশি`}
+          sub={fmt(maxWinnerPrice) + " টাকা"}
           color="red"
         />
       </div>
