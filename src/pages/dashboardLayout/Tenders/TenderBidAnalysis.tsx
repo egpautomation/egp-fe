@@ -67,6 +67,8 @@ interface StlRecord {
   winnerPrice: number;
   slt: number;
   priceIndex: number;
+  locationDistrict: string;
+  organization: string;
 }
 
 // ─── Demo Data ───────────────────────────────────────────────
@@ -129,10 +131,6 @@ const allTenders: TenderData[] = [
   },
 ];
 
-const districts = ["all", "ঢাকা", "চট্টগ্রাম", "রাজশাহী", "খুলনা", "সিলেট"];
-const departments = ["all", "পিডব্লিউডি", "এলজিইডি", "বিআরটিএ", "সড়ক ও জনপথ"];
-const workTypes = ["all", "রাস্তা নির্মাণ", "বিদ্যুৎ সরবরাহ", "ভবন নির্মাণ", "সেতু নির্মাণ", "পানি সরবরাহ"];
-
 // ─── Helpers ─────────────────────────────────────────────────
 const fmt = (n: number) => n.toLocaleString("bn-BD");
 const pct = (n: number) => n.toFixed(2);
@@ -144,22 +142,41 @@ export default function TenderBidAnalysis() {
   const { stlData, loading, setReload } = useAllStlData();
   const [districtFilter, setDistrictFilter] = useState("all");
   const [departmentFilter, setDepartmentFilter] = useState("all");
-  const [workTypeFilter, setWorkTypeFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const allRecords: StlRecord[] = stlData;
 
-  // ─── Table search & pagination ────────────────────────────
+  // ─── Dynamic filter options from API data ─────────────────
+  const districtOptions = useMemo(() => {
+    const set = new Set(allRecords.map((r) => r.locationDistrict).filter(Boolean));
+    return ["all", ...Array.from(set).sort()];
+  }, [allRecords]);
+
+  const orgOptions = useMemo(() => {
+    const set = new Set(allRecords.map((r) => r.organization).filter(Boolean));
+    return ["all", ...Array.from(set).sort()];
+  }, [allRecords]);
+
+  // ─── Table search, filter & pagination ─────────────────────
   const filteredRecords = useMemo(() => {
-    if (!searchQuery.trim()) return allRecords;
-    const q = searchQuery.toLowerCase();
-    return allRecords.filter(
-      (r) =>
-        r.winner?.toLowerCase().includes(q) ||
-        r.tenderId?.toLowerCase().includes(q)
-    );
-  }, [searchQuery, allRecords]);
+    let result = allRecords;
+    if (districtFilter !== "all") {
+      result = result.filter((r) => r.locationDistrict === districtFilter);
+    }
+    if (departmentFilter !== "all") {
+      result = result.filter((r) => r.organization === departmentFilter);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (r) =>
+          r.winner?.toLowerCase().includes(q) ||
+          r.tenderId?.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [searchQuery, allRecords, districtFilter, departmentFilter]);
 
   const totalPages = Math.ceil(filteredRecords.length / ITEMS_PER_PAGE);
   const paginatedRecords = useMemo(() => {
@@ -212,7 +229,7 @@ export default function TenderBidAnalysis() {
   const resetFilters = () => {
     setDistrictFilter("all");
     setDepartmentFilter("all");
-    setWorkTypeFilter("all");
+    setCurrentPage(1);
   };
 
   return (
@@ -233,12 +250,12 @@ export default function TenderBidAnalysis() {
         <div className="flex flex-wrap items-end gap-3 bg-white/80 backdrop-blur px-5 py-4 rounded-2xl border border-slate-200/60 shadow-sm">
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-slate-500">জেলা</label>
-            <Select value={districtFilter} onValueChange={setDistrictFilter}>
+            <Select value={districtFilter} onValueChange={(v) => { setDistrictFilter(v); setCurrentPage(1); }}>
               <SelectTrigger className="w-[150px] rounded-xl">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {districts.map((d) => (
+                {districtOptions.map((d) => (
                   <SelectItem key={d} value={d}>
                     {d === "all" ? "সব জেলা" : d}
                   </SelectItem>
@@ -247,30 +264,15 @@ export default function TenderBidAnalysis() {
             </Select>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-slate-500">অধিদপ্তর</label>
-            <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-              <SelectTrigger className="w-[150px] rounded-xl">
+            <label className="text-xs font-medium text-slate-500">অর্গানাইজেশন</label>
+            <Select value={departmentFilter} onValueChange={(v) => { setDepartmentFilter(v); setCurrentPage(1); }}>
+              <SelectTrigger className="w-[200px] rounded-xl">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {departments.map((d) => (
+                {orgOptions.map((d) => (
                   <SelectItem key={d} value={d}>
-                    {d === "all" ? "সব অধিদপ্তর" : d}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-slate-500">কাজের ধরন</label>
-            <Select value={workTypeFilter} onValueChange={setWorkTypeFilter}>
-              <SelectTrigger className="w-[150px] rounded-xl">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {workTypes.map((w) => (
-                  <SelectItem key={w} value={w}>
-                    {w === "all" ? "সব ধরন" : w}
+                    {d === "all" ? "সব অর্গানাইজেশন" : d}
                   </SelectItem>
                 ))}
               </SelectContent>
