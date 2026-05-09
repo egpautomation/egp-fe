@@ -20,6 +20,7 @@ import {
   Share2,
   Heart,
   Loader2,
+  Pencil,
 } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -427,26 +428,26 @@ const ViewTender = () => {
 
   const InfoCard = ({ icon: Icon, title, children }) => (
     <Card className="hover:shadow-lg transition-shadow duration-300">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <Icon className="h-5 w-5 text-primary" />
-          {title}
+      <CardHeader className="pb-2 sm:pb-3">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <Icon className="h-5 w-5 text-primary shrink-0" />
+          <span className="truncate">{title}</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">{children}</CardContent>
+      <CardContent className="space-y-2 sm:space-y-3">{children}</CardContent>
     </Card>
   );
 
   const DataField = ({ label, value, copyable = false }) => (
-    <div className="flex justify-between items-start gap-4 py-2 border-b border-gray-100 last:border-0 group">
-      <span className="text-sm font-medium text-gray-600 min-w-[140px]">{label}:</span>
+    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4 py-2 border-b border-gray-100 last:border-0 group">
+      <span className="text-xs sm:text-sm font-medium text-gray-600 sm:min-w-[140px]">{label}:</span>
       <div className="flex items-center gap-2 flex-1">
-        <span className="text-sm text-gray-900 text-right flex-1 break-words">
+        <span className="text-xs sm:text-sm text-gray-900 sm:text-right flex-1 break-words">
           {value || "N/A"}
         </span>
         {copyable && value && (
           <Copy
-            className="h-4 w-4 text-gray-400 hover:text-primary cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+            className="h-4 w-4 text-gray-400 hover:text-primary cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
             onClick={() => copyToClipboard(value)}
           />
         )}
@@ -463,66 +464,69 @@ const ViewTender = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-3 sm:p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="max-w-7xl mx-auto space-y-6"
       >
         {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center justify-between gap-3">
           <Button onClick={() => navigate(-1)} variant="ghost" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap justify-end">
             {isAuthenticated && (
               <Button
                 onClick={toggleFavorite}
                 variant="outline"
-                size="sm"
+                size="icon"
                 disabled={favoriteLoading}
-                className={`flex items-center gap-2 ${isFavorite ? "text-red-500 border-red-200 hover:bg-red-50" : "text-gray-400 hover:text-red-400"}`}
+                className={`h-9 w-9 ${isFavorite ? "text-red-500 border-red-200 hover:bg-red-50" : "text-gray-400 hover:text-red-400"}`}
               >
                 {favoriteLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <Heart className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
                 )}
-                {isFavorite ? "Saved" : "Save"}
               </Button>
             )}
 
             <Button
               onClick={shareLink}
               variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
+              size="icon"
+              className="h-9 w-9"
             >
               <Share2 className="h-4 w-4" />
-              Share
             </Button>
 
             <Button
               onClick={downloadPDF}
               variant="outline"
               size="sm"
-              className="flex items-center gap-2"
+              className="flex items-center gap-1"
             >
               <Download className="h-4 w-4" />
-              Print / Download PDF
+              <span className="hidden sm:inline">PDF</span>
             </Button>
 
             <Link to="/dashboard/create-job-order">
-              <Button className="cursor-pointer">
-                <Plus className="mr-2 h-4 w-4" />
-                Order A Job
+              <Button size="sm" className="cursor-pointer">
+                <Plus className="h-4 w-4 sm:mr-2 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Order</span>
               </Button>
             </Link>
 
-            <Button onClick={() => setUpdateDialogOpen(true)} variant="outline">
-              Update Tender Info
+            <Button
+              onClick={() => setUpdateDialogOpen(true)}
+              variant="outline"
+              size="icon"
+              className="h-9 w-9"
+            >
+              <Pencil className="h-4 w-4" />
             </Button>
           </div>
 
@@ -548,11 +552,11 @@ const ViewTender = () => {
 
         {/* Hero Section */}
         <Card className="bg-white text-gray-900 shadow-lg border border-gray-200">
-          <CardContent className="p-8">
-            <div className="flex items-start justify-between">
-              <div className="space-y-2 flex-1">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-3xl font-bold">Tender #{formData?.tenderId}</h1>
+          <CardContent className="p-4 sm:p-8">
+            <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
+              <div className="space-y-2 flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xl sm:text-3xl font-bold truncate">Tender #{formData?.tenderId}</h1>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -579,27 +583,27 @@ const ViewTender = () => {
             </div>
 
             {/* Key Highlights */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <p className="text-sm text-gray-500">Estimated Cost</p>
-                <p className="text-2xl font-bold mt-1 text-gray-900">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 mt-6">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200">
+                <p className="text-xs sm:text-sm text-gray-500">Estimated Cost</p>
+                <p className="text-lg sm:text-2xl font-bold mt-1 text-gray-900">
                   {formatCurrency(formData?.estimatedCost)}
                 </p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <p className="text-sm text-gray-500">Last Selling Date</p>
-                <p className="text-xl font-semibold mt-1 text-gray-900">{lastSelling}</p>
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200">
+                <p className="text-xs sm:text-sm text-gray-500">Last Selling Date</p>
+                <p className="text-base sm:text-xl font-semibold mt-1 text-gray-900">{lastSelling}</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <p className="text-sm text-gray-500">Closing Date</p>
-                <p className="text-xl font-semibold mt-1 text-gray-900">{openingDateTime}</p>
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200">
+                <p className="text-xs sm:text-sm text-gray-500">Closing Date</p>
+                <p className="text-base sm:text-xl font-semibold mt-1 text-gray-900">{openingDateTime}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Basic Information */}
           <InfoCard icon={Info} title="Basic Information">
             <DataField label="Tender ID" value={formData?.tenderId} copyable />
@@ -690,7 +694,7 @@ const ViewTender = () => {
         {/* Project Information */}
         {formData?.projectName && (
           <InfoCard icon={FileText} title="Project Information">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <DataField label="Project Name" value={formData?.projectName} />
               <DataField label="Source of Funds" value={formData?.sourceOfFunds} />
             </div>
