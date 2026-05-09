@@ -31,15 +31,15 @@ const DashboardHeader = () => {
       </div>
 
       <div className="ml-auto flex items-center gap-3 min-h-16">
-        <Link className="relative max-md:hidden" to={"/dashboard/jobOrder-cart"}>
-          <ShoppingCart size={32} />
+        <Link className="relative" to={"/dashboard/jobOrder-cart"}>
+          <ShoppingCart size={28} />
           <p className="rounded-full text-[10px] h-5 w-5 text-white flex justify-center items-center bg-red-500 absolute -top-1 -right-2">
             {JobOrderCount}
           </p>
         </Link>
 
-        <Link className="relative max-md:hidden" to="/dashboard/favorite-tenders">
-          <Heart size={28} className="text-gray-600 hover:text-red-500 transition-colors" />
+        <Link className="relative" to="/dashboard/favorite-tenders">
+          <Heart size={24} className="text-gray-600 hover:text-red-500 transition-colors" />
           {favoriteCount > 0 && (
             <p className="rounded-full text-[10px] h-5 min-w-5 px-1 text-white flex justify-center items-center bg-red-500 absolute -top-1 -right-2">
               {favoriteCount > 99 ? "99+" : favoriteCount}
@@ -49,8 +49,8 @@ const DashboardHeader = () => {
 
         <Popover>
           <PopoverTrigger asChild>
-            <button className="relative max-md:hidden cursor-pointer">
-              <Bell size={32} />
+            <button className="relative cursor-pointer">
+              <Bell size={28} />
               {unreadCount > 0 && (
                 <span className="rounded-full text-[10px] h-5 min-w-5 px-1 text-white flex justify-center items-center bg-red-500 absolute -top-1 -right-2">
                   {unreadCount > 99 ? "99+" : unreadCount}
