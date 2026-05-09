@@ -40,6 +40,7 @@ import LiveTenders from "@/pages/dashboardLayout/Tenders/LiveTenders";
 import PromotionalTender from "@/pages/dashboardLayout/Tenders/PromotionalTender";
 import CreateTender from "@/pages/dashboardLayout/Tenders/CreateTender";
 import ViewTender from "@/pages/dashboardLayout/Tenders/ViewTender";
+import FavoriteTenders from "@/pages/dashboardLayout/Tenders/FavoriteTenders";
 import MyJobOrder from "@/pages/dashboardLayout/JobOrder/MyJobOrder";
 import LtmTenders from "@/pages/dashboardLayout/Tenders/LtmTenders";
 import Payment from "@/pages/dashboardLayout/Payment/Payment";
@@ -621,6 +622,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <ViewTender />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "favorite-tenders",
+        element: (
+          <PrivateRoute>
+            <FavoriteTenders />
           </PrivateRoute>
         ),
       },

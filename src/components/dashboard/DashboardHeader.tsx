@@ -1,12 +1,13 @@
 // @ts-nocheck
 
-import { Bell, Search, ShoppingCart } from "lucide-react";
+import { Bell, Search, ShoppingCart, Heart } from "lucide-react";
 import { Input } from "../ui/input";
 import { SidebarTrigger } from "../ui/sidebar";
 import { ProfileDropdown } from "@/shared/Navbar/ProfileDropdown";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { CartContext } from "@/provider/CartContext";
+import { FavoriteContext } from "@/provider/FavoriteContext";
 import { NotificationContext } from "@/provider/NotificationContext";
 import {
   Popover,
@@ -17,6 +18,7 @@ import {
 const DashboardHeader = () => {
   const { JobOrderCount } = useContext(CartContext);
   const { unreadCount } = useContext(NotificationContext) as any;
+  const { favoriteCount } = useContext(FavoriteContext);
 
   return (
     <div className="md:sticky md:top-0 fixed top-0 left-0 right-0 md:relative py-0.5 border-b flex justify-between items-center pr-6 bg-white z-40">
@@ -34,6 +36,15 @@ const DashboardHeader = () => {
           <p className="rounded-full text-[10px] h-5 w-5 text-white flex justify-center items-center bg-red-500 absolute -top-1 -right-2">
             {JobOrderCount}
           </p>
+        </Link>
+
+        <Link className="relative max-md:hidden" to="/dashboard/favorite-tenders">
+          <Heart size={28} className="text-gray-600 hover:text-red-500 transition-colors" />
+          {favoriteCount > 0 && (
+            <p className="rounded-full text-[10px] h-5 min-w-5 px-1 text-white flex justify-center items-center bg-red-500 absolute -top-1 -right-2">
+              {favoriteCount > 99 ? "99+" : favoriteCount}
+            </p>
+          )}
         </Link>
 
         <Popover>

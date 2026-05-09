@@ -5,6 +5,7 @@ import { AppSidebarNew } from "@/components/ui/app-sidebar-new";
 import { Outlet } from "react-router-dom";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import CartProvider from "@/provider/CartContext";
+import FavoriteProvider from "@/provider/FavoriteContext";
 import { NotificationProvider } from "@/provider/NotificationContext";
 import { useContext } from "react";
 import { AuthContext } from "@/provider/AuthProvider";
@@ -14,7 +15,8 @@ const Dashboard = () => {
   return (
     <NotificationProvider>
       <CartProvider userEmail={user?.email}>
-        <SidebarProvider>
+        <FavoriteProvider>
+          <SidebarProvider>
           <AppSidebarNew />
 
           <main className=" w-full overflow-x-auto pt-16 md:pt-0">
@@ -26,6 +28,7 @@ const Dashboard = () => {
             </div>
           </main>
         </SidebarProvider>
+        </FavoriteProvider>
       </CartProvider>
     </NotificationProvider>
   );

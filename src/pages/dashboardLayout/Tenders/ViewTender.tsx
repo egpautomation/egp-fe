@@ -18,14 +18,19 @@ import {
   Info,
   Download,
   Share2,
+  Heart,
+  Loader2,
 } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Badge } from "@/components/ui/badge";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import UpdateTenderDialog from "@/components/dashboard/UpdateTenderDialog";
+import { favoriteService } from "@/lib/favoriteService";
+import { AuthContext } from "@/provider/AuthProvider";
+import { FavoriteContext } from "@/provider/FavoriteContext";
 
 const ViewTender = () => {
   const { id } = useParams();
@@ -33,9 +38,37 @@ const ViewTender = () => {
   const [copied, setCopied] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
+  const { isAuthenticated } = useContext(AuthContext);
+  const { setReload: setFavoriteReload } = useContext(FavoriteContext);
 
   const url = `${config.apiBaseUrl}/tenders/${id}`;
   const { data: formData, loading, setReload } = useSingleData(url);
+
+  useEffect(() => {
+    if (id && isAuthenticated) {
+      favoriteService.checkFavorite(id).then((res) => {
+        setIsFavorite(res.isFavorite);
+      }).catch(() => {});
+    }
+  }, [id, isAuthenticated]);
+
+  const toggleFavorite = async () => {
+    setFavoriteLoading(true);
+    try {
+      if (isFavorite) {
+        await favoriteService.removeFavorite(id);
+      } else {
+        await favoriteService.addFavorite(id);
+      }
+      setIsFavorite(!isFavorite);
+      setFavoriteReload((p) => p + 1);
+    } catch {
+    } finally {
+      setFavoriteLoading(false);
+    }
+  };
 
   const openingDateTime = formatDate(formData?.openingDateTime, "eee MMM dd yyyy");
   const lastSelling = formatDate(formData?.documentLastSelling, "eee MMM dd yyyy");
@@ -444,6 +477,23 @@ const ViewTender = () => {
           </Button>
 
           <div className="flex items-center gap-2">
+            {isAuthenticated && (
+              <Button
+                onClick={toggleFavorite}
+                variant="outline"
+                size="sm"
+                disabled={favoriteLoading}
+                className={`flex items-center gap-2 ${isFavorite ? "text-red-500 border-red-200 hover:bg-red-50" : "text-gray-400 hover:text-red-400"}`}
+              >
+                {favoriteLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Heart className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
+                )}
+                {isFavorite ? "Saved" : "Save"}
+              </Button>
+            )}
+
             <Button
               onClick={shareLink}
               variant="outline"
