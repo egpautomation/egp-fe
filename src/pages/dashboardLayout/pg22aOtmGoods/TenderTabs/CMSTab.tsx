@@ -20,8 +20,33 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { config } from "@/lib/config";
+import useSingleData from "@/hooks/useSingleData";
 import axiosInstance from "@/lib/axiosInstance";
 import toast from "react-hot-toast";
+
+const generateFinancialYears = () => {
+  const years = [];
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth();
+  let currentYear = currentDate.getFullYear();
+  if (currentMonth < 6) {
+    currentYear -= 1;
+  }
+  for (let i = currentYear + 2; i >= currentYear - 12; i--) {
+    years.push(`${i}-${i + 1}`);
+  }
+  return years;
+};
 
 export const CMSTab = ({
   completedContracts,
@@ -30,6 +55,7 @@ export const CMSTab = ({
   setReload,
   setActiveTab,
   onEditContract,
+  egpEmail,
 }) => {
   const [showFilter, setShowFilter] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -38,6 +64,68 @@ export const CMSTab = ({
   const [deletingId, setDeletingId] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [contractToDelete, setContractToDelete] = useState(null);
+
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    tenderId: "",
+    companyId: "",
+    financialYear: "",
+    Name_Of_Contractor: "",
+    Role_in_Contract: "",
+    contractValue: "",
+    commencementDate: "",
+    intendedCompletionDate: "",
+    contractPeriodExtendedUpTo: "",
+    Status_Complite_ongoing: "Ongoing",
+  });
+  const financialYears = useMemo(() => generateFinancialYears(), []);
+
+  const url = egpEmail ? `${config.apiBaseUrl}/egp-listed-company/get-by-mail?mail=${egpEmail}` : null;
+  const { data: egpListedCompany } = useSingleData(url);
+
+  React.useEffect(() => {
+    if (egpListedCompany?.companyUniqueEGP_ID && !formData.companyId) {
+      setFormData(prev => ({ ...prev, companyId: egpListedCompany.companyUniqueEGP_ID }));
+    }
+  }, [egpListedCompany]);
+
+  const handleAddSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const toastId = toast.loading("Adding contract information...");
+    try {
+      const dataToSubmit = {
+        ...formData,
+        contractValue: parseFloat(formData.contractValue) || 0,
+      };
+      
+      const response = await axiosInstance.post("/contract-information/create-contract-information", [dataToSubmit]);
+      
+      if (response.data) {
+        toast.success("Contract information added successfully", { id: toastId });
+        setIsAddDialogOpen(false);
+        setFormData({
+          tenderId: "",
+          companyId: egpListedCompany?.companyUniqueEGP_ID || "",
+          financialYear: "",
+          Name_Of_Contractor: "",
+          Role_in_Contract: "",
+          contractValue: "",
+          commencementDate: "",
+          intendedCompletionDate: "",
+          contractPeriodExtendedUpTo: "",
+          Status_Complite_ongoing: "Ongoing",
+        });
+        if (setReload) setReload((prev) => prev + 1);
+      }
+    } catch (error) {
+      const errorMessage = error?.response?.data?.message || error?.message || "Failed to add contract";
+      toast.error(errorMessage, { id: toastId });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Combine all contracts (completed + ongoing)
   const allContracts = useMemo(() => {
@@ -193,7 +281,7 @@ export const CMSTab = ({
         <h3 className="font-semibold text-purple-800 text-xl">Contract Management System (CMS)</h3>
         <div className="flex gap-2">
           <button
-            onClick={() => setActiveTab(11)}
+            onClick={() => setIsAddDialogOpen(true)}
             className="flex gap-2 items-center bg-blue-600 rounded-md px-3 py-2 text-white hover:bg-blue-700 transition-colors"
           >
             Add New <Plus className="w-4 h-4" />
@@ -345,8 +433,6 @@ export const CMSTab = ({
                         <th className="p-3">SL</th>
                         <th className="p-3">Actions</th>
                         <th className="p-3">Status</th>
-
-                        {/* Part 1: General Info */}
                         <th className="p-3">Company ID</th>
                         <th className="p-3">Tender ID</th>
                         <th className="p-3">Procurement Type</th>
@@ -355,23 +441,17 @@ export const CMSTab = ({
                         <th className="p-3">APP ID</th>
                         <th className="p-3">Budget Type</th>
                         <th className="p-3">Dev Partner</th>
-
-                        {/* Entity & Location */}
                         <th className="p-3">Ministry</th>
                         <th className="p-3">Organization</th>
                         <th className="p-3">Division</th>
                         <th className="p-3">Location District</th>
                         <th className="p-3">LTM License</th>
-
-                        {/* PE Details */}
                         <th className="p-3">PE Name</th>
                         <th className="p-3">PE Designation</th>
                         <th className="p-3">PE Address</th>
                         <th className="p-3">PE City</th>
                         <th className="p-3">PE Thana</th>
                         <th className="p-3">PE District</th>
-
-                        {/* Project Details */}
                         <th className="p-3">Project Name</th>
                         <th className="p-3">Project Code</th>
                         <th className="p-3">Source of Funds</th>
@@ -380,8 +460,6 @@ export const CMSTab = ({
                         <th className="p-3">Sub Categories</th>
                         <th className="p-3">Lot ID</th>
                         <th className="p-3">Description</th>
-
-                        {/* Dates */}
                         <th className="p-3">Publication Date</th>
                         <th className="p-3">Opening Date</th>
                         <th className="p-3">Tentative Start</th>
@@ -393,8 +471,6 @@ export const CMSTab = ({
                         <th className="p-3">Intended Completion</th>
                         <th className="p-3">Contract End</th>
                         <th className="p-3">Extended Up To</th>
-
-                        {/* Financials & Contractor Data */}
                         <th className="p-3 text-right">Estimated Cost</th>
                         <th className="p-3 text-right">Contract Value</th>
                         <th className="p-3 text-right">Revised Value</th>
@@ -402,7 +478,6 @@ export const CMSTab = ({
                         <th className="p-3 text-right">JV Share (%)</th>
                         <th className="p-3 text-right">Actual Payment (JV)</th>
                         <th className="p-3">JVCA</th>
-
                         <th className="p-3">Contractor Name</th>
                         <th className="p-3">Role</th>
                         <th className="p-3">Memo No (WCC)</th>
@@ -412,7 +487,6 @@ export const CMSTab = ({
                         <th className="p-3">Payment Cert File</th>
                         <th className="p-3 text-right">Works In Hand</th>
                         <th className="p-3">Created At</th>
-                        <th className="p-3">Updated At</th>
                         <th className="p-3">Updated At</th>
                       </tr>
                     </thead>
@@ -456,8 +530,6 @@ export const CMSTab = ({
                                 {contract.contractStatus}
                               </span>
                             </td>
-
-                            {/* General */}
                             <td className="p-3">{contract.companyId || "N/A"}</td>
                             <td className="p-3">{contract.tenderId || "N/A"}</td>
                             <td className="p-3">{contract.procurementType || "N/A"}</td>
@@ -466,162 +538,53 @@ export const CMSTab = ({
                             <td className="p-3">{contract.appId || "N/A"}</td>
                             <td className="p-3">{contract.budgetType || "N/A"}</td>
                             <td className="p-3">{contract.development_partner || "N/A"}</td>
-
-                            {/* Entity */}
                             <td className="p-3">{contract.ministry || "N/A"}</td>
                             <td className="p-3">{contract.organization || "N/A"}</td>
                             <td className="p-3">{contract.division || "N/A"}</td>
                             <td className="p-3">{contract.locationDistrict || "N/A"}</td>
                             <td className="p-3">{contract.LtmLicenseNameCode || "N/A"}</td>
-
-                            {/* PE */}
                             <td className="p-3">{contract.procuringEntityName || "N/A"}</td>
                             <td className="p-3">{contract.PE_officialDesignation || "N/A"}</td>
                             <td className="p-3">{contract.PE_Address || "N/A"}</td>
                             <td className="p-3">{contract.PE_City || "N/A"}</td>
                             <td className="p-3">{contract.PE_Thana || "N/A"}</td>
                             <td className="p-3">{contract.PE_District || "N/A"}</td>
-
-                            {/* Project */}
-                            <td className="p-3" title={contract.ProjectName}>
-                              {contract.ProjectName || "N/A"}
-                            </td>
+                            <td className="p-3">{contract.ProjectName || "N/A"}</td>
                             <td className="p-3">{contract.ProjectCode || "N/A"}</td>
                             <td className="p-3">{contract.sourceOfFunds || "N/A"}</td>
                             <td className="p-3">{contract.packageNo || "N/A"}</td>
                             <td className="p-3">{contract.selectedTenderCategory || "N/A"}</td>
                             <td className="p-3">{contract.tender_subCategories || "N/A"}</td>
                             <td className="p-3">{contract.identificationOfLot || "N/A"}</td>
-                            <td
-                              className="p-3 max-w-xs truncate"
-                              title={contract.descriptionOfWorks}
-                            >
-                              {contract.descriptionOfWorks || "N/A"}
-                            </td>
-
-                            {/* Dates (Format YYYY-MM-DD or string) */}
-                            <td className="p-3">
-                              {contract.publicationDateTime
-                                ? new Date(contract.publicationDateTime).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="p-3">
-                              {contract.openingDateTime
-                                ? new Date(contract.openingDateTime).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="p-3">
-                              {contract.TentativeStartDate
-                                ? new Date(contract.TentativeStartDate).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="p-3">
-                              {contract.TentativeCompletionDate
-                                ? new Date(contract.TentativeCompletionDate).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="p-3">
-                              {contract.noaIssueDate
-                                ? new Date(contract.noaIssueDate).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="p-3">
-                              {contract.contractSigningDate
-                                ? new Date(contract.contractSigningDate).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="p-3">
-                              {contract.commencementDate
-                                ? new Date(contract.commencementDate).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="p-3">
-                              {contract.contractStartDate
-                                ? new Date(contract.contractStartDate).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="p-3">
-                              {contract.intendedCompletionDate
-                                ? new Date(contract.intendedCompletionDate).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="p-3">
-                              {contract.contractEndDate
-                                ? new Date(contract.contractEndDate).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="p-3">
-                              {contract.contractPeriodExtendedUpTo
-                                ? new Date(contract.contractPeriodExtendedUpTo).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-
-                            {/* Financials & Contractor - Formatted with comma separation */}
-                            <td className="p-3 text-right">
-                              {contract.estimatedCost
-                                ? Number(contract.estimatedCost).toLocaleString("en-IN")
-                                : "0"}
-                            </td>
-                            <td className="p-3 text-right">
-                              {contract.contractValue
-                                ? Number(contract.contractValue).toLocaleString("en-IN")
-                                : "0"}
-                            </td>
-                            <td className="p-3 text-right">
-                              {contract.revisedContractValue
-                                ? Number(contract.revisedContractValue).toLocaleString("en-IN")
-                                : "0"}
-                            </td>
-                            <td className="p-3 text-right">
-                              {contract.paymentAmount
-                                ? Number(contract.paymentAmount).toLocaleString("en-IN")
-                                : "0"}
-                            </td>
+                            <td className="p-3 truncate">{contract.descriptionOfWorks || "N/A"}</td>
+                            <td className="p-3">{contract.publicationDateTime ? new Date(contract.publicationDateTime).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.openingDateTime ? new Date(contract.openingDateTime).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.TentativeStartDate ? new Date(contract.TentativeStartDate).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.TentativeCompletionDate ? new Date(contract.TentativeCompletionDate).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.noaIssueDate ? new Date(contract.noaIssueDate).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.contractSigningDate ? new Date(contract.contractSigningDate).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.commencementDate ? new Date(contract.commencementDate).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.contractStartDate ? new Date(contract.contractStartDate).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.intendedCompletionDate ? new Date(contract.intendedCompletionDate).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.contractEndDate ? new Date(contract.contractEndDate).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.contractPeriodExtendedUpTo ? new Date(contract.contractPeriodExtendedUpTo).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3 text-right">{contract.estimatedCost ? Number(contract.estimatedCost).toLocaleString("en-IN") : "0"}</td>
+                            <td className="p-3 text-right">{contract.contractValue ? Number(contract.contractValue).toLocaleString("en-IN") : "0"}</td>
+                            <td className="p-3 text-right">{contract.revisedContractValue ? Number(contract.revisedContractValue).toLocaleString("en-IN") : "0"}</td>
+                            <td className="p-3 text-right">{contract.paymentAmount ? Number(contract.paymentAmount).toLocaleString("en-IN") : "0"}</td>
                             <td className="p-3 text-right">{contract.jvShare || "0"}%</td>
-                            <td className="p-3 text-right">
-                              {contract.actualPaymentJvShare
-                                ? Number(contract.actualPaymentJvShare).toLocaleString("en-IN")
-                                : "0"}
-                            </td>
+                            <td className="p-3 text-right">{contract.actualPaymentJvShare ? Number(contract.actualPaymentJvShare).toLocaleString("en-IN") : "0"}</td>
                             <td className="p-3">{contract.jvca || "N/A"}</td>
-
                             <td className="p-3">{contract.Name_Of_Contractor || "N/A"}</td>
-                            <td className="p-3">
-                              {contract.Role_in_Contract === "1"
-                                ? "Prime"
-                                : contract.Role_in_Contract === "2"
-                                  ? "Sub"
-                                  : contract.Role_in_Contract === "3"
-                                    ? "Mgmt"
-                                    : "N/A"}
-                            </td>
+                            <td className="p-3">{contract.Role_in_Contract === "1" ? "Prime" : contract.Role_in_Contract === "2" ? "Sub" : contract.Role_in_Contract === "3" ? "Mgmt" : "N/A"}</td>
                             <td className="p-3">{contract.Memo_Number_WCC || "N/A"}</td>
-                            <td className="p-3">
-                              {contract.Memo_Date_WCC
-                                ? new Date(contract.Memo_Date_WCC).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="p-3">
-                              {contract.Bill_Payment_Date
-                                ? new Date(contract.Bill_Payment_Date).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            <td className="p-3">
-                              {contract.workCompletationCertificateFileName || "N/A"}
-                            </td>
+                            <td className="p-3">{contract.Memo_Date_WCC ? new Date(contract.Memo_Date_WCC).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.Bill_Payment_Date ? new Date(contract.Bill_Payment_Date).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.workCompletationCertificateFileName || "N/A"}</td>
                             <td className="p-3">{contract.paymentCertificateFileName || "N/A"}</td>
                             <td className="p-3 text-right">{contract.WorksInHand || "0"}</td>
-                            <td className="p-3">
-                              {contract.createdAt
-                                ? new Date(contract.createdAt).toLocaleDateString()
-                                : "N/A"}
-                            </td>
-                            {/* Handle potential string vs Date object for updatedAt */}
-                            <td className="p-3">
-                              {contract.updatedAt
-                                ? new Date(contract.updatedAt).toLocaleDateString()
-                                : "N/A"}
-                            </td>
+                            <td className="p-3">{contract.createdAt ? new Date(contract.createdAt).toLocaleDateString() : "N/A"}</td>
+                            <td className="p-3">{contract.updatedAt ? new Date(contract.updatedAt).toLocaleDateString() : "N/A"}</td>
                           </tr>
                         );
                       })}
@@ -679,6 +642,164 @@ export const CMSTab = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Add New Contract Dialog */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-800">Add New Contract Information</DialogTitle>
+            <DialogDescription>
+              Fill in the required details to create a new contract entry manually.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleAddSubmit} className="space-y-6 mt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="tenderId">Tender ID *</Label>
+                <Input
+                  id="tenderId"
+                  required
+                  value={formData.tenderId}
+                  onChange={(e) => setFormData({ ...formData, tenderId: e.target.value })}
+                  placeholder="Enter Tender ID"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="companyId">Company ID *</Label>
+                <Input
+                  id="companyId"
+                  required
+                  value={formData.companyId}
+                  onChange={(e) => setFormData({ ...formData, companyId: e.target.value })}
+                  placeholder="Enter Company ID"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="financialYear">Financial Year *</Label>
+                <Select
+                  value={formData.financialYear}
+                  onValueChange={(value) => setFormData({ ...formData, financialYear: value })}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Year" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {financialYears.map((year) => (
+                      <SelectItem key={year} value={year}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="Name_Of_Contractor">Name of Contractor *</Label>
+                <Input
+                  id="Name_Of_Contractor"
+                  required
+                  value={formData.Name_Of_Contractor}
+                  onChange={(e) => setFormData({ ...formData, Name_Of_Contractor: e.target.value })}
+                  placeholder="Enter Contractor Name"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="Role_in_Contract">Role in Contract *</Label>
+                <Select
+                  value={formData.Role_in_Contract}
+                  onValueChange={(value) => setFormData({ ...formData, Role_in_Contract: value })}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">Prime</SelectItem>
+                    <SelectItem value="2">Sub</SelectItem>
+                    <SelectItem value="3">Management</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contractValue">Contract Value *</Label>
+                <Input
+                  id="contractValue"
+                  required
+                  type="number"
+                  value={formData.contractValue}
+                  onChange={(e) => setFormData({ ...formData, contractValue: e.target.value })}
+                  placeholder="Enter Value"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="commencementDate">Work Order Date *</Label>
+                <Input
+                  id="commencementDate"
+                  required
+                  type="date"
+                  value={formData.commencementDate}
+                  onChange={(e) => setFormData({ ...formData, commencementDate: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="intendedCompletionDate">Work Completion Date *</Label>
+                <Input
+                  id="intendedCompletionDate"
+                  required
+                  type="date"
+                  value={formData.intendedCompletionDate}
+                  onChange={(e) => setFormData({ ...formData, intendedCompletionDate: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contractPeriodExtendedUpTo">Time Extension Date *</Label>
+                <Input
+                  id="contractPeriodExtendedUpTo"
+                  required
+                  type="date"
+                  value={formData.contractPeriodExtendedUpTo}
+                  onChange={(e) => setFormData({ ...formData, contractPeriodExtendedUpTo: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="Status_Complite_ongoing">Status *</Label>
+                <Select
+                  value={formData.Status_Complite_ongoing}
+                  onValueChange={(value) => setFormData({ ...formData, Status_Complite_ongoing: value })}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Ongoing">Ongoing</SelectItem>
+                    <SelectItem value="Completed">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <DialogFooter className="pt-4">
+              <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isSubmitting} className="bg-blue-600 hover:bg-blue-700 text-white">
+                {isSubmitting ? "Saving..." : "Save Contract"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

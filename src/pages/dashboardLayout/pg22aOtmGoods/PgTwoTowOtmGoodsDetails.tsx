@@ -735,6 +735,7 @@ const PgTwoTowOtmGoodsDetails = () => {
           setReload={setContractReload}
           setActiveTab={setActiveTab}
           onEditContract={handleEditContract}
+          egpEmail={egpEmail}
         />
       ),
     },
