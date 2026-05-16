@@ -43,11 +43,11 @@ const NotificationCard = ({ notification, onMarkRead, onDelete }) => {
       )}
     >
       <div className={cn("absolute inset-y-0 left-0 w-1", isUnread ? "bg-primary" : "bg-slate-200")} />
-      <CardContent className="p-4">
+      <CardContent className="p-3.5 sm:p-4">
         <div className="flex gap-3">
           <div
             className={cn(
-              "p-2 rounded-full h-fit border",
+              "p-2 rounded-full h-fit border shrink-0",
               isUnread
                 ? "bg-white border-primary/15 shadow-sm"
                 : "bg-slate-50 border-slate-200 opacity-75"
@@ -56,9 +56,9 @@ const NotificationCard = ({ notification, onMarkRead, onDelete }) => {
             <Icon className={cn("h-4 w-4", config.color.split(" ")[1])} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
+            <div className="flex flex-col gap-1.5 sm:flex-row sm:items-start sm:justify-between">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
+                <div className="mb-1 flex items-center gap-2">
                   <span
                     className={cn(
                       "h-2 w-2 rounded-full shrink-0",
@@ -80,8 +80,8 @@ const NotificationCard = ({ notification, onMarkRead, onDelete }) => {
                 <Link
                   to={`/dashboard/view-tender/${tender._id}`}
                   className={cn(
-                    "text-sm hover:text-primary line-clamp-2",
-                    isUnread ? "font-semibold text-slate-900" : "font-medium text-slate-600"
+                    "block text-sm font-semibold leading-5 hover:text-primary line-clamp-2 break-words",
+                    isUnread ? "text-slate-950" : "text-slate-700"
                   )}
                 >
                   {tender.descriptionOfWorks || "Tender Notification"}
@@ -89,7 +89,7 @@ const NotificationCard = ({ notification, onMarkRead, onDelete }) => {
                 {tender.organization && (
                   <p
                     className={cn(
-                      "text-xs mt-0.5",
+                      "mt-1 line-clamp-1 text-xs break-words",
                       isUnread ? "text-slate-600" : "text-slate-400"
                     )}
                   >
@@ -100,23 +100,23 @@ const NotificationCard = ({ notification, onMarkRead, onDelete }) => {
               <Badge
                 variant="outline"
                 className={cn(
-                  "text-[10px] shrink-0",
+                  "w-fit max-w-full shrink-0 whitespace-normal break-words text-left text-[10px] leading-4 sm:max-w-[220px]",
                   isUnread ? config.color : "border-slate-200 bg-slate-50 text-slate-500"
                 )}
               >
                 {config.label}: {notification.matchValue}
               </Badge>
             </div>
-            <div className="flex items-center justify-between mt-2">
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <p className={cn("text-[11px]", isUnread ? "text-slate-500" : "text-slate-400")}>
                 {formatDate(notification.createdAt, "dd MMM, yyyy hh:mm a")}
               </p>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {isUnread ? (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 border-[#4874c7]/25 bg-white px-2 text-xs text-[#4874c7] hover:border-[#4874c7] hover:bg-[#4874c7] hover:text-white focus-visible:border-[#4874c7] focus-visible:ring-[#4874c7]/25"
+                    className="h-8 rounded-md border-[#4874c7]/25 bg-white px-3 text-xs text-[#4874c7] hover:border-[#4874c7] hover:bg-[#4874c7] hover:text-white focus-visible:border-[#4874c7] focus-visible:ring-[#4874c7]/25 sm:h-7"
                     onClick={() => onMarkRead(notification._id)}
                   >
                     <Check className="h-3 w-3 mr-1" /> Mark read
@@ -129,7 +129,7 @@ const NotificationCard = ({ notification, onMarkRead, onDelete }) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-7 px-2 text-xs text-red-500 hover:text-red-600"
+                  className="h-8 px-2 text-xs text-red-500 hover:text-red-600 sm:h-7"
                   onClick={() => onDelete(notification._id)}
                 >
                   <Trash2 className="h-3 w-3" />
@@ -195,14 +195,14 @@ const NotificationGroup = ({
         type="button"
         onClick={onToggle}
         className={cn(
-          "w-full text-left px-4 py-3 transition-colors",
+          "w-full text-left px-3 py-3 transition-colors sm:px-4",
           hasUnread ? "hover:bg-white/60" : "hover:bg-slate-50"
         )}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-start gap-2 sm:items-center sm:gap-3">
           <div
             className={cn(
-              "p-2 rounded-full border",
+              "p-2 rounded-full border shrink-0",
               hasUnread
                 ? "bg-white border-primary/15 shadow-sm"
                 : "bg-slate-50 border-slate-200 opacity-75"
@@ -211,7 +211,7 @@ const NotificationGroup = ({
             <Icon className={cn("h-4 w-4", config.color.split(" ")[1])} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5 min-w-0 sm:gap-2">
               <span
                 className={cn(
                   "h-2 w-2 rounded-full shrink-0",
@@ -220,36 +220,36 @@ const NotificationGroup = ({
               />
               <p
                 className={cn(
-                  "truncate",
+                  "min-w-0 max-w-full break-words text-sm sm:truncate sm:text-base",
                   hasUnread ? "font-bold text-slate-900" : "font-semibold text-slate-600"
                 )}
               >
                 {group.value}
               </p>
               {hasUnread ? (
-                <Badge className="bg-primary text-white shrink-0 rounded-full">
+                <Badge className="bg-primary text-white shrink-0 rounded-full text-[10px] sm:text-xs">
                   {group.unreadCount} unread
                 </Badge>
               ) : (
                 <Badge
                   variant="outline"
-                  className="rounded-full border-slate-200 bg-slate-50 text-slate-500 shrink-0"
+                  className="rounded-full border-slate-200 bg-slate-50 text-slate-500 shrink-0 text-[10px] sm:text-xs"
                 >
                   all read
                 </Badge>
               )}
             </div>
-            <p className={cn("text-xs mt-0.5", hasUnread ? "text-slate-600" : "text-slate-400")}>
+            <p className={cn("mt-1 text-[11px] leading-4 sm:text-xs", hasUnread ? "text-slate-600" : "text-slate-400")}>
               {group.notifications.length} notification
               {group.notifications.length === 1 ? "" : "s"} · Latest{" "}
               {formatDate(group.latestAt, "dd MMM, yyyy hh:mm a")}
             </p>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0 sm:gap-2">
             <Badge
               variant="outline"
               className={cn(
-                "text-[10px]",
+                "hidden text-[10px] sm:inline-flex",
                 hasUnread ? config.color : "border-slate-200 bg-slate-50 text-slate-500"
               )}
             >
@@ -382,7 +382,7 @@ const NotificationList = ({
             />
           ))}
       {total > pageSize && (
-        <div className="flex justify-center gap-2 pt-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
           <Button
             variant="outline"
             size="sm"
@@ -391,7 +391,7 @@ const NotificationList = ({
           >
             Previous
           </Button>
-          <span className="text-sm text-slate-500 flex items-center">
+          <span className="flex min-w-full items-center justify-center text-sm text-slate-500 sm:min-w-0">
             Page {page} of {Math.ceil(total / pageSize)}
           </span>
           <Button
@@ -412,10 +412,10 @@ const Notifications = () => {
   const { markAllAsRead, unreadCount } = useContext(NotificationContext) as any;
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-4xl">
-      <div className="flex justify-between items-center mb-6 border-b pb-2">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-800">Notifications</h1>
+    <div className="mx-auto w-full max-w-4xl px-0 py-3 sm:px-4 md:p-8">
+      <div className="mb-4 flex flex-col gap-3 border-b pb-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-2">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold leading-tight text-slate-800 sm:text-3xl">Notifications</h1>
           {unreadCount > 0 && (
             <p className="text-sm text-slate-500 mt-1">
               {unreadCount} unread notification{unreadCount === 1 ? "" : "s"}
@@ -423,36 +423,38 @@ const Notifications = () => {
           )}
         </div>
         {unreadCount > 0 && (
-          <Button variant="outline" size="sm" onClick={markAllAsRead}>
+          <Button variant="outline" size="sm" className="w-full justify-center sm:w-auto" onClick={markAllAsRead}>
             <Check className="h-4 w-4 mr-1" /> Mark All Read
           </Button>
         )}
       </div>
 
-      <Tabs defaultValue="all">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="district" className="gap-1">
+      <Tabs defaultValue="all" className="gap-4">
+        <div className="-mx-1 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <TabsList className="flex !h-10 min-w-max w-full justify-start gap-1 p-1 sm:min-w-0">
+          <TabsTrigger value="all" className="h-8 min-w-20 flex-none px-4 text-xs sm:flex-1 sm:text-sm">All</TabsTrigger>
+          <TabsTrigger value="district" className="h-8 min-w-28 flex-none gap-1 px-4 text-xs sm:flex-1 sm:text-sm">
             <MapPin className="h-3 w-3" /> District
           </TabsTrigger>
-          <TabsTrigger value="department" className="gap-1">
+          <TabsTrigger value="department" className="h-8 min-w-32 flex-none gap-1 px-4 text-xs sm:flex-1 sm:text-sm">
             <Building2 className="h-3 w-3" /> Department
           </TabsTrigger>
-          <TabsTrigger value="category" className="gap-1">
+          <TabsTrigger value="category" className="h-8 min-w-28 flex-none gap-1 px-4 text-xs sm:flex-1 sm:text-sm">
             <Layers className="h-3 w-3" /> Category
           </TabsTrigger>
         </TabsList>
+        </div>
 
-        <TabsContent value="all" className="mt-4">
+        <TabsContent value="all" className="mt-0">
           <NotificationList />
         </TabsContent>
-        <TabsContent value="district" className="mt-4">
+        <TabsContent value="district" className="mt-0">
           <NotificationList matchType="district" grouped />
         </TabsContent>
-        <TabsContent value="department" className="mt-4">
+        <TabsContent value="department" className="mt-0">
           <NotificationList matchType="department" grouped />
         </TabsContent>
-        <TabsContent value="category" className="mt-4">
+        <TabsContent value="category" className="mt-0">
           <NotificationList matchType="category" grouped />
         </TabsContent>
       </Tabs>
