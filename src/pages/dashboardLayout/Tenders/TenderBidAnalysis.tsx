@@ -342,35 +342,6 @@ export default function TenderBidAnalysis() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* ── District-wise Bar Chart ──────────────── */}
-        <Card className="lg:col-span-5 rounded-2xl border-slate-200/60 shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-semibold text-slate-800">
-              জেলা ভিত্তিক দরের বিতরণ
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-2">
-            <DistrictBarChart records={filteredRecords} />
-          </CardContent>
-        </Card>
-
-        {/* ── Record-wise Bar Chart ───────────── */}
-        <Card className="lg:col-span-7 rounded-2xl border-slate-200/60 shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-              প্রতিটি টেন্ডারের দর বনাম এস্টিমেট
-              <Badge variant="secondary" className="text-xs font-normal">
-                মোট {filteredRecords.length} টি
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-2">
-            <RecordBarChart records={filteredRecords} />
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Comparison Cards */}
       {(() => {
         const dists = [...new Set(allRecords.map((r) => r.locationDistrict).filter(Boolean))];
