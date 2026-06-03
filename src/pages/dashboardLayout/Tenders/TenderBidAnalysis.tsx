@@ -77,64 +77,29 @@ export default function TenderBidAnalysis() {
 
   const records: StlRecord[] = stlData;
 
-  // ─── All District Stats & KPI Metrics (from full dataset) ──────
+  // ─── Global Stats (from dedicated /stl/stats endpoint) ──────
   const [districtStats, setDistrictStats] = useState([]);
   const [districtsLoading, setDistrictsLoading] = useState(false);
   const [globalKPIs, setGlobalKPIs] = useState({ lowest: "0", avg: "0", highest: "0", avgEstimate: 0, minWinnerPrice: 0, totalCount: 0 });
 
   useEffect(() => {
-    const fetchAllData = async () => {
+    const fetchStats = async () => {
       try {
         setDistrictsLoading(true);
-        const response = await fetch(`${config.apiBaseUrl}/stl/all?limit=100000`);
-        const data = await response.json();
-        const allRecords = data?.data || [];
+        const response = await fetch(`${config.apiBaseUrl}/stl/stats`);
+        const result = await response.json();
 
-        // District aggregation
-        const districtMap = {};
-        allRecords.forEach((r) => {
-          const dist = r.locationDistrict;
-          if (!dist) return;
-          if (!districtMap[dist]) {
-            districtMap[dist] = { district: dist, totalPct: 0, count: 0 };
-          }
-          const pct = r.estimateCost ? ((r.estimateCost - (r.winnerPrice || 0)) / r.estimateCost) * 100 : 0;
-          districtMap[dist].totalPct += pct;
-          districtMap[dist].count += 1;
-        });
-
-        const stats = Object.values(districtMap)
-          .map((d) => ({ ...d, avgPct: d.totalPct / d.count }))
-          .sort((a, b) => b.count - a.count);
-
-        setDistrictStats(stats);
-
-        // Global KPI metrics from ALL records
-        const allPcts = allRecords
-          .map((r) => {
-            const diffCost = (r.estimateCost || 0) - (r.winnerPrice || 0);
-            return r.estimateCost ? (diffCost / r.estimateCost) * 100 : 0;
-          })
-          .filter((p) => p !== 0);
-
-        const estimateCosts = allRecords.map((r) => r.estimateCost || 0).filter((p) => p > 0);
-        const winnerPrices = allRecords.map((r) => r.winnerPrice || 0).filter((p) => p > 0);
-
-        setGlobalKPIs({
-          lowest: allPcts.length ? Math.min(...allPcts).toFixed(2) : "0",
-          avg: allPcts.length ? (allPcts.reduce((a, b) => a + b, 0) / allPcts.length).toFixed(2) : "0",
-          highest: allPcts.length ? Math.max(...allPcts).toFixed(2) : "0",
-          avgEstimate: estimateCosts.length ? Math.round(estimateCosts.reduce((a, b) => a + b, 0) / estimateCosts.length) : 0,
-          minWinnerPrice: winnerPrices.length ? Math.min(...winnerPrices) : 0,
-          totalCount: data?.totalCount || 0,
-        });
+        if (result?.success) {
+          setGlobalKPIs(result.data.kpi);
+          setDistrictStats(result.data.districts);
+        }
       } catch (error) {
-        console.error("Error fetching all data:", error);
+        console.error("Error fetching stats:", error);
       } finally {
         setDistrictsLoading(false);
       }
     };
-    fetchAllData();
+    fetchStats();
   }, []);
 
   const resetFilters = () => {
