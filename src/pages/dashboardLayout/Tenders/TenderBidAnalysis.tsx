@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
+import config from "@/lib/config";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +35,7 @@ import {
   Loader2,
   ChevronLeft,
   ChevronRight,
+  MapPin,
 } from "lucide-react";
 import useAllStlData from "@/hooks/useAllStlData";
 
@@ -75,6 +77,44 @@ export default function TenderBidAnalysis() {
 
   const records: StlRecord[] = stlData;
 
+  // ─── All District Stats (from full dataset) ──────────────────
+  const [districtStats, setDistrictStats] = useState([]);
+  const [districtsLoading, setDistrictsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchDistrictData = async () => {
+      try {
+        setDistrictsLoading(true);
+        const response = await fetch(`${config.apiBaseUrl}/stl/all?limit=100000`);
+        const data = await response.json();
+        const allRecords = data?.data || [];
+
+        const districtMap = {};
+        allRecords.forEach((r) => {
+          const dist = r.locationDistrict;
+          if (!dist) return;
+          if (!districtMap[dist]) {
+            districtMap[dist] = { district: dist, totalPct: 0, count: 0 };
+          }
+          const pct = r.estimateCost ? ((r.estimateCost - (r.winnerPrice || 0)) / r.estimateCost) * 100 : 0;
+          districtMap[dist].totalPct += pct;
+          districtMap[dist].count += 1;
+        });
+
+        const stats = Object.values(districtMap)
+          .map((d) => ({ ...d, avgPct: d.totalPct / d.count }))
+          .sort((a, b) => b.count - a.count);
+
+        setDistrictStats(stats);
+      } catch (error) {
+        console.error("Error fetching district data:", error);
+      } finally {
+        setDistrictsLoading(false);
+      }
+    };
+    fetchDistrictData();
+  }, []);
+
   // ─── KPI Metrics from current page data ──────────────────
   const winnerPrices = records.map((r) => r.winnerPrice || 0).filter((p) => p > 0);
   const estimateCosts = records.map((r) => r.estimateCost || 0).filter((p) => p > 0);
@@ -88,16 +128,16 @@ export default function TenderBidAnalysis() {
   ).length;
   const belowPct = records.length ? ((belowEstimateCount / records.length) * 100).toFixed(1) : "0";
 
-  const avgDiffPct = records.length
-    ? (records.reduce((sum, r) => {
-        const diffCost = (r.estimateCost || 0) - (r.winnerPrice || 0);
-        const pct = r.estimateCost ? (diffCost / r.estimateCost) * 100 : 0;
-        return sum + pct;
-      }, 0) / records.length).toFixed(2)
-    : "0";
-  const highestDiffPct = avgEstimate && maxWinnerPrice
-    ? (((maxWinnerPrice - avgEstimate) / avgEstimate) * 100).toFixed(2)
-    : "0";
+  const allPcts = records
+    .map((r) => {
+      const diffCost = (r.estimateCost || 0) - (r.winnerPrice || 0);
+      return r.estimateCost ? (diffCost / r.estimateCost) * 100 : 0;
+    })
+    .filter((p) => p !== 0);
+
+  const lowestDiffPct = allPcts.length ? Math.min(...allPcts).toFixed(2) : "0";
+  const avgDiffPct = allPcts.length ? (allPcts.reduce((a, b) => a + b, 0) / allPcts.length).toFixed(2) : "0";
+  const highestDiffPct = allPcts.length ? Math.max(...allPcts).toFixed(2) : "0";
 
   const resetFilters = () => {
     setDistrictFilter("all");
@@ -183,10 +223,17 @@ export default function TenderBidAnalysis() {
         />
         <KPICard
           icon={<TrendingDown className="w-5 h-5" />}
+          label="সর্বনিম্ন দর"
+          value={`${lowestDiffPct}%`}
+          sub="এস্টিমেট থেকে সর্বনিম্ন %"
+          color="emerald"
+        />
+        <KPICard
+          icon={<Percent className="w-5 h-5" />}
           label="গড় ছাড় %"
           value={`${avgDiffPct}%`}
-          sub="এস্টিমেট থেকে গড়"
-          color="emerald"
+          sub="এস্টিমেট থেকে গড় %"
+          color="amber"
         />
         <KPICard
           icon={<Percent className="w-5 h-5" />}
@@ -194,13 +241,6 @@ export default function TenderBidAnalysis() {
           value={fmt(Math.round(avgEstimate))}
           sub="টাকা"
           color="amber"
-        />
-        <KPICard
-          icon={<ArrowDown className="w-5 h-5" />}
-          label="কম দর দিয়েছে"
-          value={`${belowPct}%`}
-          sub={`${belowEstimateCount} টি টেন্ডার`}
-          color="emerald"
         />
         <KPICard
           icon={<Award className="w-5 h-5" />}
@@ -211,50 +251,82 @@ export default function TenderBidAnalysis() {
         />
         <KPICard
           icon={<TrendingUp className="w-5 h-5" />}
-          label="সর্বোচ্চ বেশি দর"
-          value={`${highestDiffPct}% বেশি`}
-          sub={fmt(maxWinnerPrice) + " টাকা"}
+          label="সর্বোচ্চ দর"
+          value={`${highestDiffPct}%`}
+          sub="এস্টিমেট থেকে সর্বোচ্চ %"
           color="red"
         />
       </div>
 
-      {/* Comparison Cards */}
-      {(() => {
-        const dists = [...new Set(records.map((r) => r.locationDistrict).filter(Boolean))];
-        const colors = ["emerald", "amber", "blue", "red"];
-        return dists.length > 0 ? (
-          <Card className="rounded-2xl border-slate-200/60 shadow-sm">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                জেলা অনুযায়ী দরের তুলনা
-                <Badge variant="secondary" className="text-xs font-normal">
-                  মোট {records.length} টি টেন্ডার
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {dists.slice(0, 6).map((dist, i) => {
-                  const distRecords = records.filter((r) => r.locationDistrict === dist);
-                  const avgPct = distRecords.reduce((sum, r) => {
-                    const p = r.estimateCost ? ((r.estimateCost - (r.winnerPrice || 0)) / r.estimateCost) * 100 : 0;
-                    return sum + p;
-                  }, 0) / distRecords.length;
+      {/* ── District Comparison ───────────────────────────── */}
+      {districtStats.length > 0 && (
+        <Card className="rounded-2xl border-slate-200/60 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-blue-600" />
+              জেলা অনুযায়ী দরের তুলনা
+              <Badge variant="secondary" className="text-xs font-normal">
+                মোট {districtStats.length} টি জেলা
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="max-h-[420px] overflow-y-auto pr-1 scrollbar-thin">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {districtStats.map((d) => {
+                  const isHigh = d.avgPct > 15;
+                  const isMed = d.avgPct > 5;
+                  const barColor = isHigh
+                    ? "bg-emerald-500"
+                    : isMed
+                    ? "bg-amber-500"
+                    : "bg-red-500";
+                  const bgClass = isHigh
+                    ? "bg-emerald-50/80 border-emerald-200/60"
+                    : isMed
+                    ? "bg-amber-50/80 border-amber-200/60"
+                    : "bg-red-50/80 border-red-200/60";
+                  const textClass = isHigh
+                    ? "text-emerald-700"
+                    : isMed
+                    ? "text-amber-700"
+                    : "text-red-600";
                   return (
-                    <ComparisonCard
-                      key={dist}
-                      district={dist}
-                      pct={avgPct.toFixed(2) + "%"}
-                      sub={"এস্টিমেট থেকে গড় কম দর (" + distRecords.length + " টি)"}
-                      color={colors[i % colors.length]}
-                    />
+                    <div
+                      key={d.district}
+                      className={`rounded-xl p-4 border transition-all hover:shadow-md hover:-translate-y-0.5 ${bgClass}`}
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium text-sm text-slate-800 truncate">
+                          {d.district}
+                        </span>
+                        <span className={`text-lg font-bold ${textClass}`}>
+                          {d.avgPct.toFixed(2)}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-white/60 rounded-full h-1.5 mb-2">
+                        <div
+                          className={`h-1.5 rounded-full ${barColor} transition-all`}
+                          style={{ width: `${Math.min(Math.abs(d.avgPct), 100)}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-slate-500">
+                        এস্টিমেট থেকে গড় ছাড় • {d.count} টি টেন্ডার
+                      </p>
+                    </div>
                   );
                 })}
               </div>
-            </CardContent>
-          </Card>
-        ) : null;
-      })()}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      {districtsLoading && (
+        <div className="flex items-center justify-center py-6 gap-3">
+          <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+          <p className="text-slate-500 text-sm">জেলার ডাটা লোড হচ্ছে...</p>
+        </div>
+      )}
 
       {/* ── Data Table ──────────────────────────────── */}
       <Card className="rounded-2xl border-slate-200/60 shadow-sm overflow-hidden">
@@ -293,7 +365,6 @@ export default function TenderBidAnalysis() {
                       <TableHead className="font-semibold text-slate-600">ঠিকাদারের নাম</TableHead>
                       <TableHead className="font-semibold text-slate-600">টেন্ডার আইডি</TableHead>
                       <TableHead className="text-right font-semibold text-slate-600">এস্টিমেটেড কস্ট</TableHead>
-                      <TableHead className="text-right font-semibold text-slate-600">দর (ছাড় ছাড়া)</TableHead>
                       <TableHead className="text-right font-semibold text-slate-600">এস্টিমেট থেকে %</TableHead>
                       <TableHead className="text-right font-semibold text-slate-600">বিজয়ী দর</TableHead>
                       <TableHead className="text-center font-semibold text-slate-600">যোগ্যতা</TableHead>
@@ -317,7 +388,6 @@ export default function TenderBidAnalysis() {
                             ) : "-"}
                           </TableCell>
                           <TableCell className="text-right">{fmt(record.estimateCost || 0)}</TableCell>
-                          <TableCell className="text-right">{fmt(diffCost)}</TableCell>
                           <TableCell className="text-center">
                             <span className={`inline-flex items-center gap-1 font-semibold ${diffPct >= 0 ? "text-emerald-600" : "text-red-500"}`}>
                               {diffPct >= 0 ? <ArrowDown className="w-3.5 h-3.5" /> : <ArrowUp className="w-3.5 h-3.5" />}
@@ -337,7 +407,7 @@ export default function TenderBidAnalysis() {
                     })}
                     {records.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={9} className="text-center py-8 text-slate-400">
+                        <TableCell colSpan={8} className="text-center py-8 text-slate-400">
                           কোনো ডাটা পাওয়া যায়নি
                         </TableCell>
                       </TableRow>
@@ -434,23 +504,5 @@ function KPICard({ icon, label, value, sub, color }: { icon: React.ReactNode; la
         <p className="text-xs text-slate-400">{sub}</p>
       </CardContent>
     </Card>
-  );
-}
-
-function ComparisonCard({ district, pct, sub, color }: { district: string; pct: string; sub: string; color: string }) {
-  const styles: Record<string, string> = {
-    emerald: "bg-emerald-50 border-emerald-200 text-emerald-700",
-    amber: "bg-amber-50 border-amber-200 text-amber-700",
-    blue: "bg-blue-50 border-blue-200 text-blue-700",
-    red: "bg-red-50 border-red-200 text-red-700",
-  };
-  return (
-    <div className={`rounded-2xl p-6 border ${styles[color]}`}>
-      <div className="flex justify-between items-center">
-        <span className="font-medium">{district} জেলা</span>
-        <span className="text-2xl font-bold">{pct}</span>
-      </div>
-      <p className="text-xs mt-4 opacity-70">{sub} (এই অধিদপ্তরে)</p>
-    </div>
   );
 }
