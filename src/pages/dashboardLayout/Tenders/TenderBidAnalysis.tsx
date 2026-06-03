@@ -77,18 +77,20 @@ export default function TenderBidAnalysis() {
 
   const records: StlRecord[] = stlData;
 
-  // ─── All District Stats (from full dataset) ──────────────────
+  // ─── All District Stats & KPI Metrics (from full dataset) ──────
   const [districtStats, setDistrictStats] = useState([]);
   const [districtsLoading, setDistrictsLoading] = useState(false);
+  const [globalKPIs, setGlobalKPIs] = useState({ lowest: "0", avg: "0", highest: "0", avgEstimate: 0, minWinnerPrice: 0, totalCount: 0 });
 
   useEffect(() => {
-    const fetchDistrictData = async () => {
+    const fetchAllData = async () => {
       try {
         setDistrictsLoading(true);
         const response = await fetch(`${config.apiBaseUrl}/stl/all?limit=100000`);
         const data = await response.json();
         const allRecords = data?.data || [];
 
+        // District aggregation
         const districtMap = {};
         allRecords.forEach((r) => {
           const dist = r.locationDistrict;
@@ -106,38 +108,34 @@ export default function TenderBidAnalysis() {
           .sort((a, b) => b.count - a.count);
 
         setDistrictStats(stats);
+
+        // Global KPI metrics from ALL records
+        const allPcts = allRecords
+          .map((r) => {
+            const diffCost = (r.estimateCost || 0) - (r.winnerPrice || 0);
+            return r.estimateCost ? (diffCost / r.estimateCost) * 100 : 0;
+          })
+          .filter((p) => p !== 0);
+
+        const estimateCosts = allRecords.map((r) => r.estimateCost || 0).filter((p) => p > 0);
+        const winnerPrices = allRecords.map((r) => r.winnerPrice || 0).filter((p) => p > 0);
+
+        setGlobalKPIs({
+          lowest: allPcts.length ? Math.min(...allPcts).toFixed(2) : "0",
+          avg: allPcts.length ? (allPcts.reduce((a, b) => a + b, 0) / allPcts.length).toFixed(2) : "0",
+          highest: allPcts.length ? Math.max(...allPcts).toFixed(2) : "0",
+          avgEstimate: estimateCosts.length ? Math.round(estimateCosts.reduce((a, b) => a + b, 0) / estimateCosts.length) : 0,
+          minWinnerPrice: winnerPrices.length ? Math.min(...winnerPrices) : 0,
+          totalCount: data?.totalCount || 0,
+        });
       } catch (error) {
-        console.error("Error fetching district data:", error);
+        console.error("Error fetching all data:", error);
       } finally {
         setDistrictsLoading(false);
       }
     };
-    fetchDistrictData();
+    fetchAllData();
   }, []);
-
-  // ─── KPI Metrics from current page data ──────────────────
-  const winnerPrices = records.map((r) => r.winnerPrice || 0).filter((p) => p > 0);
-  const estimateCosts = records.map((r) => r.estimateCost || 0).filter((p) => p > 0);
-
-  const minWinnerPrice = winnerPrices.length ? Math.min(...winnerPrices) : 0;
-  const maxWinnerPrice = winnerPrices.length ? Math.max(...winnerPrices) : 0;
-  const avgEstimate = estimateCosts.length ? estimateCosts.reduce((a, b) => a + b, 0) / estimateCosts.length : 0;
-
-  const belowEstimateCount = records.filter(
-    (r) => r.winnerPrice && r.estimateCost && r.winnerPrice < r.estimateCost
-  ).length;
-  const belowPct = records.length ? ((belowEstimateCount / records.length) * 100).toFixed(1) : "0";
-
-  const allPcts = records
-    .map((r) => {
-      const diffCost = (r.estimateCost || 0) - (r.winnerPrice || 0);
-      return r.estimateCost ? (diffCost / r.estimateCost) * 100 : 0;
-    })
-    .filter((p) => p !== 0);
-
-  const lowestDiffPct = allPcts.length ? Math.min(...allPcts).toFixed(2) : "0";
-  const avgDiffPct = allPcts.length ? (allPcts.reduce((a, b) => a + b, 0) / allPcts.length).toFixed(2) : "0";
-  const highestDiffPct = allPcts.length ? Math.max(...allPcts).toFixed(2) : "0";
 
   const resetFilters = () => {
     setDistrictFilter("all");
@@ -212,47 +210,47 @@ export default function TenderBidAnalysis() {
         </div>
       </div>
 
-      {/* ── KPI Cards ──────────────────────────────────── */}
+      {/* ── KPI Cards (from full dataset) ──────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <KPICard
           icon={<Users className="w-5 h-5" />}
           label="মোট টেন্ডার"
-          value={fmt(totalCount)}
+          value={fmt(globalKPIs.totalCount || totalCount)}
           sub={hasActiveFilters ? `ফিল্টার করা ${fmt(totalCount)} টি` : "সকল টেন্ডার"}
           color="blue"
         />
         <KPICard
           icon={<TrendingDown className="w-5 h-5" />}
           label="সর্বনিম্ন দর"
-          value={`${lowestDiffPct}%`}
+          value={`${globalKPIs.lowest}%`}
           sub="এস্টিমেট থেকে সর্বনিম্ন %"
           color="emerald"
         />
         <KPICard
           icon={<Percent className="w-5 h-5" />}
           label="গড় ছাড় %"
-          value={`${avgDiffPct}%`}
+          value={`${globalKPIs.avg}%`}
           sub="এস্টিমেট থেকে গড় %"
           color="amber"
         />
         <KPICard
           icon={<Percent className="w-5 h-5" />}
           label="গড় এস্টিমেট"
-          value={fmt(Math.round(avgEstimate))}
+          value={fmt(globalKPIs.avgEstimate)}
           sub="টাকা"
           color="amber"
         />
         <KPICard
           icon={<Award className="w-5 h-5" />}
           label="সর্বনিম্ন বিজয়ী দর"
-          value={fmt(minWinnerPrice)}
+          value={fmt(globalKPIs.minWinnerPrice)}
           sub="টাকা"
           color="blue"
         />
         <KPICard
           icon={<TrendingUp className="w-5 h-5" />}
           label="সর্বোচ্চ দর"
-          value={`${highestDiffPct}%`}
+          value={`${globalKPIs.highest}%`}
           sub="এস্টিমেট থেকে সর্বোচ্চ %"
           color="red"
         />
