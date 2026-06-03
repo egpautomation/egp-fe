@@ -99,7 +99,7 @@ const useAllStlData = () => {
     totalCount,
     totalPages,
     currentPage,
-    setCurrentPage,
+    setCurrentPage: (page: number) => fetchData(page),
     loading,
     // Filters
     districtFilter,

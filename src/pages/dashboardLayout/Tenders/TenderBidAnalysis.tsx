@@ -364,6 +364,7 @@ export default function TenderBidAnalysis() {
                       <TableHead className="font-semibold text-slate-600">সিরিয়াল</TableHead>
                       <TableHead className="font-semibold text-slate-600">ঠিকাদারের নাম</TableHead>
                       <TableHead className="font-semibold text-slate-600">টেন্ডার আইডি</TableHead>
+                      <TableHead className="font-semibold text-slate-600">অর্গানাইজেশন</TableHead>
                       <TableHead className="text-right font-semibold text-slate-600">এস্টিমেটেড কস্ট</TableHead>
                       <TableHead className="text-right font-semibold text-slate-600">এস্টিমেট থেকে %</TableHead>
                       <TableHead className="text-right font-semibold text-slate-600">বিজয়ী দর</TableHead>
@@ -387,6 +388,9 @@ export default function TenderBidAnalysis() {
                               <Badge variant="outline" className="text-xs">#{record.tenderId}</Badge>
                             ) : "-"}
                           </TableCell>
+                          <TableCell className="text-sm text-slate-600 max-w-[200px] truncate" title={record.organization}>
+                            {record.organization || "-"}
+                          </TableCell>
                           <TableCell className="text-right">{fmt(record.estimateCost || 0)}</TableCell>
                           <TableCell className="text-center">
                             <span className={`inline-flex items-center gap-1 font-semibold ${diffPct >= 0 ? "text-emerald-600" : "text-red-500"}`}>
@@ -407,7 +411,7 @@ export default function TenderBidAnalysis() {
                     })}
                     {records.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={8} className="text-center py-8 text-slate-400">
+                        <TableCell colSpan={9} className="text-center py-8 text-slate-400">
                           কোনো ডাটা পাওয়া যায়নি
                         </TableCell>
                       </TableRow>
