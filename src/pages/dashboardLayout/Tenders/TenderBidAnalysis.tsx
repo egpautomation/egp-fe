@@ -80,7 +80,7 @@ export default function TenderBidAnalysis() {
   // ─── Global Stats (from dedicated /stl/stats endpoint) ──────
   const [districtStats, setDistrictStats] = useState([]);
   const [districtsLoading, setDistrictsLoading] = useState(false);
-  const [globalKPIs, setGlobalKPIs] = useState({ lowest: "0", avg: "0", highest: "0", avgEstimate: 0, minWinnerPrice: 0, totalCount: 0 });
+  const [globalKPIs, setGlobalKPIs] = useState({ lowest: 0, avg: 0, highest: 0, avgEstimate: 0, minWinnerPrice: 0, totalCount: 0 });
 
   useEffect(() => {
     const fetchStats = async () => {
