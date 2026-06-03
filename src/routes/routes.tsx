@@ -80,6 +80,7 @@ import SkippedTenders from "@/pages/dashboardLayout/Tenders/SkippedTenders";
 import CreateContactInfo from "@/pages/dashboardLayout/TenderPreparation/CreateContactInfo";
 import CreateCompanyProfile from "@/pages/dashboardLayout/TenderPreparation/CreateCompnayProfile";
 import CreateBOQ from "@/pages/dashboardLayout/TenderPreparation/CreateBOQ";
+import DailyNppiAverage from "@/pages/dashboardLayout/TenderPreparation/DailyNppiAverage";
 import PgTwoTowOtmGoodsDetails from "@/pages/dashboardLayout/pg22aOtmGoods/PgTwoTowOtmGoodsDetails";
 import PgTwoTowOtmGoods from "@/pages/dashboardLayout/pg22aOtmGoods/pgTwoTowOtmGoods";
 import SuccessTest from "@/pages/SuccessTest";
@@ -801,6 +802,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <TenderBidAnalysis />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "daily-nppi-average",
+        element: (
+          <PrivateRoute>
+            <DailyNppiAverage />
           </PrivateRoute>
         ),
       },

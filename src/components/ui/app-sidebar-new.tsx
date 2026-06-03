@@ -203,6 +203,11 @@ export function AppSidebarNew() {
           path: "/dashboard/nppi-calculation",
           role: ["admin", "user_agent", "user", "moderator"],
         },
+        {
+          label: "Daily NPPI Average",
+          path: "/dashboard/daily-nppi-average",
+          role: ["admin", "user_agent", "user", "moderator"],
+        },
       ],
     },
     {
