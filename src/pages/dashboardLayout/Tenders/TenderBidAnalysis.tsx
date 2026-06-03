@@ -88,8 +88,12 @@ export default function TenderBidAnalysis() {
   ).length;
   const belowPct = records.length ? ((belowEstimateCount / records.length) * 100).toFixed(1) : "0";
 
-  const lowestDiffPct = avgEstimate && minWinnerPrice
-    ? (((avgEstimate - minWinnerPrice) / avgEstimate) * 100).toFixed(2)
+  const avgDiffPct = records.length
+    ? (records.reduce((sum, r) => {
+        const diffCost = (r.estimateCost || 0) - (r.winnerPrice || 0);
+        const pct = r.estimateCost ? (diffCost / r.estimateCost) * 100 : 0;
+        return sum + pct;
+      }, 0) / records.length).toFixed(2)
     : "0";
   const highestDiffPct = avgEstimate && maxWinnerPrice
     ? (((maxWinnerPrice - avgEstimate) / avgEstimate) * 100).toFixed(2)
@@ -179,9 +183,9 @@ export default function TenderBidAnalysis() {
         />
         <KPICard
           icon={<TrendingDown className="w-5 h-5" />}
-          label="সর্বনিম্ন দর"
-          value={`${lowestDiffPct}% কম`}
-          sub={fmt(minWinnerPrice) + " টাকা"}
+          label="গড় ছাড় %"
+          value={`${avgDiffPct}%`}
+          sub="এস্টিমেট থেকে গড়"
           color="emerald"
         />
         <KPICard
