@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useAllCompanyMigration from "@/hooks/useAllCompanyMigration";
 import DeleteDataModal from "@/shared/Dashboard/DeleteDataModal";
-import { AlignJustify, Eye, Plus, SquarePen } from "lucide-react";
+import { AlignJustify, Eye, Plus, SquarePen, PlusCircle, CheckCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import CompnayMigrationRow from "./CompnayMigrationRow";
+import { createData } from "@/lib/createData";
 import {
   Select,
   SelectContent,
@@ -39,6 +40,40 @@ const CompanyMigrations = () => {
     return item.status?.toLowerCase() === statusFilter.toLowerCase();
   });
 
+  const handleTransfer = async (item) => {
+    const departmentLicenses = { ...(item.departmentLicenses || {}) };
+    if (!departmentLicenses.LGED || departmentLicenses.LGED.trim() === "") {
+      departmentLicenses.LGED = "N/A";
+    }
+
+    const payload = {
+      userMail: item.user,
+      egpEmail: item.egpEmail,
+      companyName: item.companyName,
+      password: item.egpLoginKey,
+      status: "active",
+      remarks: "OK",
+      bankName: item.bankName || "N/A",
+      bankAddress: item.bankAddress || "",
+      companyAddress: item.companyAddress || "",
+      autho: item.autho || "N/A",
+      nid: item.nid || "N/A",
+      trade: item.trade || "N/A",
+      tin: item.tin || "N/A",
+      tinReturnCertificate: item.tinReturnCertificate || "",
+      vat: item.vat || "N/A",
+      vatReturnCertificate: item.vatReturnCertificate || "",
+      equipment: item.equipment || "N/A",
+      manpower: item.manpower || "N/A",
+      companyUniqueEGP_ID: "1",
+      departmentLicenses,
+      experienceCertificates: item.experienceCertificates || {},
+      bankDetails: item.bankDetails || []
+    };
+
+    await createData(`${config.apiBaseUrl}/egp-listed-company/create-egp-listed-company`, payload, setReload);
+  };
+
   return (
     <div>
       <div className="flex max-md:flex-col max-md:gap-2 justify-between mt-5">
@@ -60,7 +95,7 @@ const CompanyMigrations = () => {
           />
           <Select onValueChange={(value) => setStatusFilter(value)}>
             <SelectTrigger className="w-full sm:w-auto sm:min-w-[180px]">
-              <SelectValue placeholder="Select a fruit" />
+              <SelectValue placeholder="Select Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -86,25 +121,43 @@ const CompanyMigrations = () => {
                 <th className="whitespace-nowrap px-4 py-2  text-start">Status</th>
                 <th className="whitespace-nowrap px-4 py-2 text-start ">Remarks</th>
 
-                <th className="whitespace-nowrap px-4 py-2  rounded-tr">Actions</th>
+                <th className="whitespace-nowrap px-4 py-2  rounded-tr text-center">Actions</th>
               </tr>
             </thead>
 
             <tbody>
               {!loading &&
                 filteredMigrations?.map((item, idx) => (
-                  <CompnayMigrationRow key={idx} idx={idx} item={item} setReload={setReload} />
+                  <CompnayMigrationRow
+                    key={idx}
+                    idx={idx}
+                    item={item}
+                    setReload={setReload}
+                    onTransfer={handleTransfer}
+                  />
                 ))}
             </tbody>
           </table>
-          <MobileTableLayout data={filteredMigrations} setReload={setReload} />
+          <MobileTableLayout
+            data={filteredMigrations}
+            setReload={setReload}
+            onTransfer={handleTransfer}
+          />
         </div>
       }
     </div>
   );
 };
 
-const MobileTableLayout = ({ data, setReload }: { data: any; setReload: any }) => {
+const MobileTableLayout = ({
+  data,
+  setReload,
+  onTransfer,
+}: {
+  data: any;
+  setReload: any;
+  onTransfer: any;
+}) => {
   return (
     <div className="flex flex-col gap-6 my-8 lg:hidden px-2">
       {data?.map((item: any, idx: number) => (
@@ -164,6 +217,19 @@ const MobileTableLayout = ({ data, setReload }: { data: any; setReload: any }) =
               Actions:
             </span>
             <div className="flex items-center gap-4">
+              {item?.status === "active" ? (
+                <span className="flex items-center gap-1 text-xs text-green-600 font-semibold bg-green-50 px-2 py-1 rounded">
+                  <CheckCircle size={14} /> Listed
+                </span>
+              ) : (
+                <Button
+                  onClick={() => onTransfer(item)}
+                  size="sm"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1 text-xs cursor-pointer"
+                >
+                  <PlusCircle size={14} /> Add to EGP
+                </Button>
+              )}
               <Link
                 to={`/dashboard/edit-company-registration/${item?._id}`}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
