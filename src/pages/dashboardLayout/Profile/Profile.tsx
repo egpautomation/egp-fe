@@ -16,6 +16,7 @@ import {
   Layers,
   Building2,
   X,
+  KeyRound,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate } from "@/lib/formateDate";
@@ -60,6 +61,55 @@ const Profile = () => {
   const [isCategoryPopoverOpen, setIsCategoryPopoverOpen] = useState(false);
   const [isDeptPopoverOpen, setIsDeptPopoverOpen] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
+
+  // Change Password State
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
+  const handlePasswordInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPasswordForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast.error("Confirm password does not match with new password");
+      return;
+    }
+    if (passwordForm.newPassword.length < 6) {
+      toast.error("New password must be at least 6 characters long");
+      return;
+    }
+    try {
+      setPasswordLoading(true);
+      const res = await axiosInstance.put("/user/change-password", {
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      });
+
+      if (res.data?.success) {
+        toast.success("Password changed successfully!");
+        setIsPasswordModalOpen(false);
+        setPasswordForm({
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+      } else {
+        toast.error(res.data?.message || "Failed to change password");
+      }
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || err.message || "Password change failed");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
   const { categories: rawCategories } = useAllTenderCategories();
   const allCategories = rawCategories
     ? Array.from(new Map(rawCategories.map((c: any) => [c.cat_name, c])).values())
@@ -180,16 +230,26 @@ const Profile = () => {
 
   return (
     <div className="container mx-auto p-4 md:p-8 max-w-4xl">
-      <div className="flex justify-between items-center mb-6 border-b pb-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b pb-2 gap-3">
         <h1 className="text-3xl font-bold text-slate-800">User Profile</h1>
-        <Button
-          onClick={() => setIsEditModalOpen(true)}
-          variant="outline"
-          className="flex items-center gap-2 border-primary text-primary hover:bg-primary/5"
-        >
-          <Edit className="h-4 w-4" />
-          Edit Profile
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            onClick={() => setIsPasswordModalOpen(true)}
+            variant="outline"
+            className="flex items-center gap-2 border-primary text-primary hover:bg-primary/5"
+          >
+            <KeyRound className="h-4 w-4 text-primary" />
+            Change Password
+          </Button>
+          <Button
+            onClick={() => setIsEditModalOpen(true)}
+            variant="outline"
+            className="flex items-center gap-2 border-primary text-primary hover:bg-primary/5"
+          >
+            <Edit className="h-4 w-4" />
+            Edit Profile
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -748,6 +808,99 @@ const Profile = () => {
                   <>
                     <Save className="mr-2 h-4 w-4" />
                     Save Changes
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Change Password Dialog */}
+      <Dialog open={isPasswordModalOpen} onOpenChange={setIsPasswordModalOpen}>
+        <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden border-none shadow-2xl">
+          <DialogHeader className="bg-primary p-6 text-white text-left">
+            <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+              <KeyRound className="h-6 w-6" />
+              Change Password
+            </DialogTitle>
+            <p className="text-primary-foreground/80 text-sm mt-1">
+              Provide your current password and a new password to update your account security.
+            </p>
+          </DialogHeader>
+
+          <form onSubmit={handleChangePassword} className="p-6 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="currentPassword" className="text-slate-700 font-semibold">
+                Current Password
+              </Label>
+              <Input
+                id="currentPassword"
+                name="currentPassword"
+                type="password"
+                value={passwordForm.currentPassword}
+                onChange={handlePasswordInputChange}
+                placeholder="Enter current password"
+                className="border-slate-200 focus:border-primary focus:ring-primary/20"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="newPassword" className="text-slate-700 font-semibold">
+                New Password
+              </Label>
+              <Input
+                id="newPassword"
+                name="newPassword"
+                type="password"
+                value={passwordForm.newPassword}
+                onChange={handlePasswordInputChange}
+                placeholder="Minimum 6 characters"
+                className="border-slate-200 focus:border-primary focus:ring-primary/20"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-slate-700 font-semibold">
+                Confirm New Password
+              </Label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                value={passwordForm.confirmPassword}
+                onChange={handlePasswordInputChange}
+                placeholder="Retype new password"
+                className="border-slate-200 focus:border-primary focus:ring-primary/20"
+                required
+              />
+            </div>
+
+            <DialogFooter className="pt-4 border-t border-slate-100">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsPasswordModalOpen(false)}
+                className="text-slate-500 hover:text-slate-700"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={passwordLoading}
+                className="bg-primary hover:bg-primary/90 text-white min-w-[120px] shadow-lg shadow-primary/20"
+              >
+                {passwordLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Change Password
                   </>
                 )}
               </Button>
