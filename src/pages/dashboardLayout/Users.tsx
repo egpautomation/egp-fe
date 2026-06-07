@@ -14,7 +14,7 @@ import {
 import useAllUsers from "@/hooks/useAllUsers";
 import { updateData } from "@/lib/updateData";
 import { AuthContext } from "@/provider/AuthProvider";
-import { AlignJustify, CircleUserRound, Eye } from "lucide-react";
+import { AlignJustify, CircleUserRound, Eye, CircleDollarSign } from "lucide-react";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { formatDate } from "@/lib/formateDate";
@@ -117,9 +117,21 @@ const Users = () => {
                     <td className="px-4 py-2 whitespace-nowrap text-slate-500">
                       {user?.createdAt ? formatDate(user.createdAt, "dd MMM, yyyy") : "N/A"}
                     </td>
-                    <td className="px-4 py-2 flex items-center justify-center">
-                      <Link to={`/dashboard/users/${user?.userId}`}>
-                        <Eye className="mr-2 mt-2" size={24} />
+                    <td className="px-4 py-2 flex items-center justify-center gap-3">
+                      <Link
+                        to="/dashboard/create-payment"
+                        state={{ userId: user?.userId, walletBalance: user?.wallet?.balance }}
+                        title="Add Payment"
+                        className="text-emerald-600 hover:text-emerald-700 transition-colors"
+                      >
+                        <CircleDollarSign size={22} />
+                      </Link>
+                      <Link
+                        to={`/dashboard/users/${user?.userId}`}
+                        title="View User"
+                        className="text-blue-600 hover:text-blue-700 transition-colors"
+                      >
+                        <Eye size={22} />
                       </Link>
                     </td>
                   </tr>
