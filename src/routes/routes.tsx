@@ -102,6 +102,7 @@ import ExperienceCertificates from "@/pages/dashboardLayout/EgpListedCompany/Exp
 import BOQPrivate from "@/components/dashboard/SOR/BOQPrivate";
 import TenderBidAnalysis from "@/pages/dashboardLayout/Tenders/TenderBidAnalysis";
 import TenderBidAnalysisView from "@/pages/dashboardLayout/Tenders/TenderBidAnalysisView";
+import ContractorPerformance from "@/pages/dashboardLayout/Tenders/ContractorPerformance";
 
 
 const router = createBrowserRouter([
@@ -819,6 +820,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <DailyNppiAverage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "contractor-performance",
+        element: (
+          <PrivateRoute>
+            <ContractorPerformance />
           </PrivateRoute>
         ),
       },

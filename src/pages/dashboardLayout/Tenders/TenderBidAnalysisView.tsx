@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import config from "@/lib/config";
 import useSingleData from "@/hooks/useSingleData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,10 +28,14 @@ import {
   MapPin,
   ArrowLeft,
   Download,
+  Search,
+  Eye,
 } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { toast } from "react-hot-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import axiosInstance from "@/lib/axiosInstance";
 
 // ─── Types ───────────────────────────────────────────────────
 interface BidderDetail {
@@ -201,6 +206,10 @@ export default function TenderBidAnalysisView() {
 
   // Recalculate on top of fetched record to ensure full integrity
   const record = rawRecord && Object.keys(rawRecord).length > 0 ? getCalculatedRecord(rawRecord as StlRecord) : null;
+
+  const handleOpenPerformance = (contractorName: string) => {
+    navigate(`/dashboard/contractor-performance?name=${encodeURIComponent(contractorName)}`);
+  };
 
   const handleDownloadPdf = () => {
     if (!record) return;
@@ -534,7 +543,22 @@ export default function TenderBidAnalysisView() {
                     return (
                       <TableRow key={idx} className="hover:bg-slate-50/40">
                         <TableCell className="font-medium text-slate-600">{idx + 1}</TableCell>
-                        <TableCell className="font-bold text-slate-800">{bidder.name || "-"}</TableCell>
+                        <TableCell className="font-bold text-slate-800">
+                          <div className="flex items-center gap-2">
+                            <span>{bidder.name || "-"}</span>
+                            {bidder.name && (
+                              <Button
+                                onClick={() => handleOpenPerformance(bidder.name)}
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded cursor-pointer"
+                                title="Contractor Performance Analysis"
+                              >
+                                <Search size={14} />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
                         <TableCell className="text-right font-extrabold text-slate-700">{fmt(bidder.price || 0)} টাকা</TableCell>
                         <TableCell className="text-center">
                           <span className={`inline-flex items-center gap-1 font-bold text-sm ${diffPct >= 0 ? "text-emerald-600" : "text-red-500"}`}>
@@ -568,6 +592,7 @@ export default function TenderBidAnalysisView() {
           </div>
         </CardContent>
       </Card>
+
     </div>
   );
 }
