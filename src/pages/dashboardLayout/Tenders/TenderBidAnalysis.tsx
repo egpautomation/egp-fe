@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { useMemo, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import config from "@/lib/config";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -36,10 +37,21 @@ import {
   ChevronLeft,
   ChevronRight,
   MapPin,
+  Eye,
 } from "lucide-react";
 import useAllStlData from "@/hooks/useAllStlData";
 
 // ─── Types ───────────────────────────────────────────────────
+interface BidderDetail {
+  name: string;
+  price: number;
+  finalPrice?: number;
+  quotedAmount?: number;
+  qualified: boolean;
+  isResponsive?: boolean;
+  rank?: number | "-";
+}
+
 interface StlRecord {
   _id: string;
   tenderId: string;
@@ -50,6 +62,10 @@ interface StlRecord {
   priceIndex: number;
   locationDistrict: string;
   organization: string;
+  xi?: number;
+  wa?: number;
+  sd?: number;
+  bidders?: BidderDetail[];
 }
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -74,6 +90,8 @@ export default function TenderBidAnalysis() {
     districtOptions,
     orgOptions,
   } = useAllStlData();
+
+  const navigate = useNavigate();
 
   const records: StlRecord[] = stlData;
 
@@ -107,6 +125,7 @@ export default function TenderBidAnalysis() {
     setDepartmentFilter("all");
     setSearchQuery("");
   };
+
 
   const hasActiveFilters = districtFilter !== "all" || departmentFilter !== "all" || searchQuery.trim();
 
@@ -333,6 +352,7 @@ export default function TenderBidAnalysis() {
                       <TableHead className="text-right font-semibold text-slate-600">বিজয়ী দর</TableHead>
                       <TableHead className="text-center font-semibold text-slate-600">যোগ্যতা</TableHead>
                       <TableHead className="text-right font-semibold text-slate-600">NPPI</TableHead>
+                      <TableHead className="text-center font-semibold text-slate-600">অ্যাকশন</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -369,12 +389,23 @@ export default function TenderBidAnalysis() {
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right font-semibold">{record.priceIndex != null ? record.priceIndex : "-"}</TableCell>
+                          <TableCell className="text-center">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => navigate(`/dashboard/nppi-calculation/${record._id}`)}
+                              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-200 gap-1.5 rounded-xl transition-all duration-200"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              দেখুন
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       );
                     })}
                     {records.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={9} className="text-center py-8 text-slate-400">
+                        <TableCell colSpan={10} className="text-center py-8 text-slate-400">
                           কোনো ডাটা পাওয়া যায়নি
                         </TableCell>
                       </TableRow>
@@ -440,8 +471,7 @@ export default function TenderBidAnalysis() {
             </>
           )}
         </CardContent>
-      </Card>
-    </div>
+      </Card>    </div>
   );
 }
 

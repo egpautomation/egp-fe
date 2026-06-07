@@ -101,6 +101,7 @@ import MyOtmBypassReport from "@/pages/dashboardLayout/ByPassReport/MyOtmBypassR
 import ExperienceCertificates from "@/pages/dashboardLayout/EgpListedCompany/ExperienceCertificates";
 import BOQPrivate from "@/components/dashboard/SOR/BOQPrivate";
 import TenderBidAnalysis from "@/pages/dashboardLayout/Tenders/TenderBidAnalysis";
+import TenderBidAnalysisView from "@/pages/dashboardLayout/Tenders/TenderBidAnalysisView";
 
 
 const router = createBrowserRouter([
@@ -802,6 +803,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <TenderBidAnalysis />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "nppi-calculation/:id",
+        element: (
+          <PrivateRoute>
+            <TenderBidAnalysisView />
           </PrivateRoute>
         ),
       },
