@@ -97,7 +97,7 @@ const CompanyMigrations = () => {
                 ))}
             </tbody>
           </table>
-          <MobileTableLayout data={companyMigrations} setReload={setReload} />
+          <MobileTableLayout data={filteredMigrations} setReload={setReload} />
         </div>
       }
     </div>
