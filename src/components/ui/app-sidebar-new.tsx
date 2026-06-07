@@ -208,11 +208,6 @@ export function AppSidebarNew() {
           path: "/dashboard/daily-nppi-average",
           role: ["admin", "user_agent", "user", "moderator"],
         },
-        {
-          label: "Contractor Performance",
-          path: "/dashboard/contractor-performance",
-          role: ["admin", "user_agent", "user", "moderator"],
-        },
       ],
     },
     {
