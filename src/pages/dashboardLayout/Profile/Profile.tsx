@@ -89,7 +89,8 @@ const Profile = () => {
     try {
       setPasswordLoading(true);
       const res = await axiosInstance.put("/user/change-password", {
-        currentPassword: passwordForm.currentPassword,
+        email: user?.email,
+        oldPassword: passwordForm.currentPassword,
         newPassword: passwordForm.newPassword,
       });
 
