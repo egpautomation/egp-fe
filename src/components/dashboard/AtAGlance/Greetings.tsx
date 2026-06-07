@@ -5,7 +5,7 @@ import useUsersCompanyMigration from "@/hooks/useUsersCompanyMigrations";
 import { AuthContext } from "@/provider/AuthProvider";
 import { CartContext } from "@/provider/CartContext";
 import { ChevronRight, Dot, RefreshCw } from "lucide-react";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axiosInstance from "@/lib/axiosInstance";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,6 @@ const Greetings = () => {
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Fetch real-time wallet data
   // Fetch real-time wallet data
   const fetchWalletData = async () => {
     if (!user?.userId) return;
@@ -49,6 +48,11 @@ const Greetings = () => {
       setTimeout(() => setIsRefreshing(false), 500);
     }
   };
+
+  // Fetch fresh wallet data on component mount
+  useEffect(() => {
+    fetchWalletData();
+  }, [user?.userId]);
 
   return (
     <div className="shadow-xl mt-10 border border-gray-50">
