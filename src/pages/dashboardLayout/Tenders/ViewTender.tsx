@@ -29,6 +29,7 @@ import { Badge } from "@/components/ui/badge";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import UpdateTenderDialog from "@/components/dashboard/UpdateTenderDialog";
+import FullTenderUpdateDialog from "@/components/dashboard/FullTenderUpdateDialog";
 import { favoriteService } from "@/lib/favoriteService";
 import { AuthContext } from "@/provider/AuthProvider";
 import { FavoriteContext } from "@/provider/FavoriteContext";
@@ -39,6 +40,7 @@ const ViewTender = () => {
   const [copied, setCopied] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const [fullUpdateDialogOpen, setFullUpdateDialogOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
   const { isAuthenticated } = useContext(AuthContext);
@@ -528,6 +530,14 @@ const ViewTender = () => {
             >
               <Pencil className="h-4 w-4" />
             </Button>
+
+            <Button
+              onClick={() => setFullUpdateDialogOpen(true)}
+              className="h-9 px-3 bg-blue-600 hover:bg-blue-700 text-white"
+              size="sm"
+            >
+              <span className="text-sm font-medium">Update Tender</span>
+            </Button>
           </div>
 
           {linkCopied && (
@@ -779,6 +789,14 @@ const ViewTender = () => {
             jvca: formData?.jvca,
             tenderCategories: formData?.tenderCategories || [],
           }}
+          onSuccess={() => setReload((prev) => prev + 1)}
+        />
+
+        <FullTenderUpdateDialog
+          open={fullUpdateDialogOpen}
+          onOpenChange={setFullUpdateDialogOpen}
+          tenderId={id}
+          tenderData={formData}
           onSuccess={() => setReload((prev) => prev + 1)}
         />
       </motion.div>
