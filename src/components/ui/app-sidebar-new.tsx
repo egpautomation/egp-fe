@@ -185,7 +185,7 @@ export function AppSidebarNew() {
     {
       label: "Tender Preparation",
       path: "/dashboard",
-      role: ["admin", "user_agent", "moderator"],
+      role: ["admin", "user_agent", "user", "moderator"],
       icon: Briefcase,
       children: [
         {
@@ -196,6 +196,11 @@ export function AppSidebarNew() {
         {
           label: "STL Calculation",
           path: "/dashboard/stl-calculation",
+          role: ["admin", "user_agent", "user", "moderator"],
+        },
+        {
+          label: "My STL Calculations",
+          path: "/dashboard/my-stl-calculations",
           role: ["admin", "user_agent", "user", "moderator"],
         },
         {

@@ -103,6 +103,8 @@ import BOQPrivate from "@/components/dashboard/SOR/BOQPrivate";
 import TenderBidAnalysis from "@/pages/dashboardLayout/Tenders/TenderBidAnalysis";
 import TenderBidAnalysisView from "@/pages/dashboardLayout/Tenders/TenderBidAnalysisView";
 import ContractorPerformance from "@/pages/dashboardLayout/Tenders/ContractorPerformance";
+import MyStlCalculations from "@/pages/dashboardLayout/TenderPreparation/MyStlCalculations";
+import MyStlCalculationDetail from "@/pages/dashboardLayout/TenderPreparation/MyStlCalculationDetail";
 
 
 const router = createBrowserRouter([
@@ -820,6 +822,22 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <DailyNppiAverage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "my-stl-calculations",
+        element: (
+          <PrivateRoute>
+            <MyStlCalculations />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "my-stl-calculations/:id",
+        element: (
+          <PrivateRoute>
+            <MyStlCalculationDetail />
           </PrivateRoute>
         ),
       },
