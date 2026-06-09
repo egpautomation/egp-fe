@@ -29,6 +29,7 @@ import { Badge } from "@/components/ui/badge";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import UpdateTenderDialog from "@/components/dashboard/UpdateTenderDialog";
+import FullTenderUpdateDialog from "@/components/dashboard/FullTenderUpdateDialog";
 import { favoriteService } from "@/lib/favoriteService";
 import { AuthContext } from "@/provider/AuthProvider";
 import { FavoriteContext } from "@/provider/FavoriteContext";
@@ -39,6 +40,7 @@ const ViewTender = () => {
   const [copied, setCopied] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const [fullUpdateDialogOpen, setFullUpdateDialogOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
   const { isAuthenticated } = useContext(AuthContext);
@@ -92,8 +94,9 @@ const ViewTender = () => {
   const downloadPDF = () => {
     const doc = new jsPDF("p", "mm", "a4");
     const pageHeight = doc.internal.pageSize.getHeight();
+    const pageWidth = doc.internal.pageSize.getWidth();
     const pageMargin = 15;
-    const footerReservedHeight = 30;
+    const footerReservedHeight = 35;
     const contentBottomY = pageHeight - footerReservedHeight;
     const tableMargin = { left: pageMargin, right: pageMargin, top: pageMargin, bottom: footerReservedHeight };
 
@@ -105,43 +108,64 @@ const ViewTender = () => {
       return currentY;
     };
 
+    // Add Header with eTenderBD Branding
+    const addHeader = () => {
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(25, 103, 210); // Blue color for eTenderBD
+      doc.text("eTenderBD", pageMargin, 10);
+      
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(100, 100, 100);
+      doc.text("Bangladesh e-Procurement Platform", pageMargin, 14);
+      
+      // Horizontal line
+      doc.setDrawColor(200, 200, 200);
+      doc.line(pageMargin, 16, pageWidth - pageMargin, 16);
+    };
+
+    addHeader();
+
     // Title
     doc.setFontSize(20);
     doc.setFont("helvetica", "bold");
-    doc.text("Tender Details", 105, 15, { align: "center" });
+    doc.setTextColor(0, 0, 0);
+    doc.text("Tender Details", pageWidth / 2, 25, { align: "center" });
 
     // Tender ID and Status
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
-    doc.text(`Tender ID: ${formData?.tenderId || "N/A"}`, 15, 30);
+    doc.text(`Tender ID: ${formData?.tenderId || "N/A"}`, pageMargin, 33);
 
     if (formData?.tenderStatus) {
-      doc.setFontSize(12);
-      doc.setTextColor(0, 128, 0);
-      doc.text(`Status: ${formData?.tenderStatus}`, 15, 38);
+      doc.setFontSize(11);
+      doc.setTextColor(34, 139, 34);
+      doc.setFont("helvetica", "bold");
+      doc.text(`Status: ${formData?.tenderStatus}`, pageMargin, 39);
       doc.setTextColor(0, 0, 0);
     }
 
-    let yPos = 48;
+    let yPos = 46;
 
     // Organization
     if (formData?.organization) {
       doc.setFontSize(12);
       doc.setFont("helvetica", "bold");
-      doc.text("Organization:", 15, yPos);
+      doc.text("Organization:", pageMargin, yPos);
       doc.setFont("helvetica", "normal");
       const orgLines = doc.splitTextToSize(formData?.organization, 180);
-      doc.text(orgLines, 15, yPos + 5);
+      doc.text(orgLines, pageMargin, yPos + 5);
       yPos += 5 + orgLines.length * 5 + 3;
     }
 
     // Description of Works
     if (formData?.descriptionOfWorks) {
       doc.setFont("helvetica", "bold");
-      doc.text("Description of Works:", 15, yPos);
+      doc.text("Description of Works:", pageMargin, yPos);
       doc.setFont("helvetica", "normal");
       const descLines = doc.splitTextToSize(formData?.descriptionOfWorks, 180);
-      doc.text(descLines, 15, yPos + 5);
+      doc.text(descLines, pageMargin, yPos + 5);
       yPos += 5 + descLines.length * 5 + 8;
     }
 
@@ -159,7 +183,7 @@ const ViewTender = () => {
       body: keyInfoData,
       theme: "grid",
       headStyles: {
-        fillColor: [59, 130, 246],
+        fillColor: [25, 103, 210],
         fontSize: 12,
         fontStyle: "bold",
       },
@@ -190,7 +214,7 @@ const ViewTender = () => {
       body: basicInfoData,
       theme: "grid",
       headStyles: {
-        fillColor: [59, 130, 246],
+        fillColor: [25, 103, 210],
         fontSize: 12,
         fontStyle: "bold",
       },
@@ -218,7 +242,7 @@ const ViewTender = () => {
       body: orgEntityData,
       theme: "grid",
       headStyles: {
-        fillColor: [59, 130, 246],
+        fillColor: [25, 103, 210],
         fontSize: 12,
         fontStyle: "bold",
       },
@@ -245,7 +269,7 @@ const ViewTender = () => {
       body: locationData,
       theme: "grid",
       headStyles: {
-        fillColor: [59, 130, 246],
+        fillColor: [25, 103, 210],
         fontSize: 12,
         fontStyle: "bold",
       },
@@ -274,7 +298,7 @@ const ViewTender = () => {
       body: financialData,
       theme: "grid",
       headStyles: {
-        fillColor: [59, 130, 246],
+        fillColor: [25, 103, 210],
         fontSize: 12,
         fontStyle: "bold",
       },
@@ -357,53 +381,138 @@ const ViewTender = () => {
       doc.text(similarLines, pageMargin, yPos + 5);
     }
 
-    // Footer on all pages
+    // Dynamically add ALL remaining fields from database
+    const displayedFields = new Set([
+      "tenderId", "procurementType", "procurementNature", "procurementMethod",
+      "tenderStatus", "packageNo", "estimatedCost", "documentPrice",
+      "tenderSecurity", "turnoverAmount", "liquidAssets", "tenderCapacity",
+      "locationDistrict", "workingLocation", "division", "department",
+      "procuringEntityName", "ministry", "organization", "officialDesignation",
+      "projectName", "sourceOfFunds", "budgetType", "tentativeStartDate",
+      "tentativeCompletionDate", "publicationDateTime", "documentLastSelling",
+      "openingDateTime", "activityTotalDays", "descriptionOfWorks",
+      "qualityCriteria", "financialCriteria", "eligibilityOfTenderDocument",
+      "tds", "generalExperience", "typesOfSimilarNature",
+      "yearofsimilarexperience", "similarNatureWork", "jvca",
+      "ltmLicenseNameCode", "tenderCategory", "selectedTenderCategory",
+      "processId", "projectCode", "nameofOfficialInviting",
+      "invitationReferenceNo", "address", "city", "thana", "district",
+      "contentOfTender", "procuringEntityCode", "appId", "identificationOfLot",
+      "tds_01", "tds_03", "tds_05", "tds_06", "tds_07", "tds_08", "tds_09",
+      "tds_10", "tds_12", "tds_14", "tds_15", "tds_18", "tds_21",
+      "scope_title", "scope_intro", "scope_details", "tender_subCategories",
+      "doc_list_title", "doc_list_intro", "doc_list_details",
+      "development_partner", "skip", "_id", "__v", "createdAt", "updatedAt"
+    ]);
+
+    const remainingFields: any[] = [];
+    Object.keys(formData || {}).forEach((key) => {
+      if (!displayedFields.has(key.toLowerCase()) && formData[key]) {
+        remainingFields.push([
+          key.replace(/([A-Z])/g, " $1").trim(),
+          typeof formData[key] === "object"
+            ? JSON.stringify(formData[key])
+            : String(formData[key])
+        ]);
+      }
+    });
+
+    // Add remaining fields section
+    if (remainingFields.length > 0) {
+      yPos = ensurePdfSpace((doc as any).lastAutoTable?.finalY + 8 || yPos + 8, 25);
+
+      autoTable(doc, {
+        startY: yPos,
+        head: [["Additional Fields", ""]],
+        body: remainingFields.slice(0, 10), // Show up to 10 fields per section
+        theme: "grid",
+        headStyles: {
+          fillColor: [25, 103, 210],
+          fontSize: 12,
+          fontStyle: "bold",
+        },
+        columnStyles: {
+          0: { cellWidth: 70, fontStyle: "bold" },
+          1: { cellWidth: 120 },
+        },
+        margin: tableMargin,
+      });
+    }
+
+    // Enhanced Footer with eTenderBD Branding
     const pageCount = doc.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
-      const pageHeight = doc.internal.pageSize.height;
-      const centerX = doc.internal.pageSize.width / 2;
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const centerX = pageWidth / 2;
 
-      const line1Y = pageHeight - 18;
-      const line2Y = line1Y + 4;
-      const line3Y = line2Y + 4;
+      // Add header on every page
+      if (i > 1) {
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(25, 103, 210);
+        doc.text("eTenderBD - Tender Details", pageMargin, 12);
+        doc.setDrawColor(200, 200, 200);
+        doc.line(pageMargin, 14, pageWidth - pageMargin, 14);
+      }
 
-      doc.setFontSize(8);
-      doc.setTextColor(37, 37, 37);
+      // Dividing line before footer
+      const footerStartY = pageHeight - 30;
+      doc.setDrawColor(200, 200, 200);
+      doc.line(pageMargin, footerStartY, pageWidth - pageMargin, footerStartY);
 
+      // Footer content
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(25, 103, 210);
+      doc.text("eTenderBD", centerX, footerStartY + 5, { align: "center" });
+
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(80, 80, 80);
       doc.text(
-        `© ${new Date().getFullYear()} E-GP Tender Automation — All Rights Reserved.`,
+        `© ${new Date().getFullYear()} eTenderBD. Bangladesh e-Procurement Platform. All Rights Reserved.`,
         centerX,
-        line1Y,
+        footerStartY + 9,
         { align: "center" }
       );
 
       // Website and contact info
-      const prefix = "Visit us: ";
-      const website = "egp.jubairahmad.com";
-      const mid = " | WhatsApp: ";
-      const whatsapp = "01926-959331";
+      const prefix = "Web: ";
+      const website = "etenderbd.gov.bd";
+      const mid = " | Support: ";
+      const email = "support@etenderbd.gov.bd";
 
-      const fullText = prefix + website + mid + whatsapp;
+      doc.setFontSize(7);
+      doc.setTextColor(100, 100, 100);
+      
+      const fullText = prefix + website + mid + email;
       const fullWidth = doc.getTextWidth(fullText);
       const startX = centerX - fullWidth / 2;
 
-      doc.text(prefix, startX, line2Y);
+      doc.text(prefix, startX, footerStartY + 13);
 
       const prefixWidth = doc.getTextWidth(prefix);
-      doc.textWithLink(website, startX + prefixWidth, line2Y, {
+      doc.setTextColor(25, 103, 210);
+      doc.setFont("helvetica", "bold");
+      doc.textWithLink(website, startX + prefixWidth, footerStartY + 13, {
         url: config.egpSiteUrl,
       });
 
       const websiteWidth = doc.getTextWidth(website);
-      doc.text(mid, startX + prefixWidth + websiteWidth, line2Y);
+      doc.setTextColor(100, 100, 100);
+      doc.setFont("helvetica", "normal");
+      doc.text(mid, startX + prefixWidth + websiteWidth, footerStartY + 13);
 
       const midWidth = doc.getTextWidth(mid);
-      doc.textWithLink(whatsapp, startX + prefixWidth + websiteWidth + midWidth, line2Y, {
-        url: `https://wa.me/${config.supportWhatsApp}`,
-      });
+      doc.setTextColor(25, 103, 210);
+      doc.setFont("helvetica", "bold");
+      doc.text(email, startX + prefixWidth + websiteWidth + midWidth, footerStartY + 13);
 
-      doc.text(`Page ${i} of ${pageCount}`, centerX, line3Y, { align: "center" });
+      doc.setFontSize(7);
+      doc.setTextColor(150, 150, 150);
+      doc.setFont("helvetica", "italic");
+      doc.text(`Page ${i} of ${pageCount}`, centerX, pageHeight - 5, { align: "center" });
     }
 
     doc.save(`tender-${formData?.tenderId || "details"}.pdf`);
@@ -527,6 +636,14 @@ const ViewTender = () => {
               className="h-9 w-9"
             >
               <Pencil className="h-4 w-4" />
+            </Button>
+
+            <Button
+              onClick={() => setFullUpdateDialogOpen(true)}
+              className="h-9 px-3 bg-blue-600 hover:bg-blue-700 text-white"
+              size="sm"
+            >
+              <span className="text-sm font-medium">Update Tender</span>
             </Button>
           </div>
 
@@ -779,6 +896,14 @@ const ViewTender = () => {
             jvca: formData?.jvca,
             tenderCategories: formData?.tenderCategories || [],
           }}
+          onSuccess={() => setReload((prev) => prev + 1)}
+        />
+
+        <FullTenderUpdateDialog
+          open={fullUpdateDialogOpen}
+          onOpenChange={setFullUpdateDialogOpen}
+          tenderId={id}
+          tenderData={formData}
           onSuccess={() => setReload((prev) => prev + 1)}
         />
       </motion.div>
