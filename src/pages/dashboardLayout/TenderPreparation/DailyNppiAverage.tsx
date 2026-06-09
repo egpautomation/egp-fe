@@ -1,6 +1,7 @@
 // @ts-nocheck
-import { useState, useMemo } from "react";
+import { useState, useMemo, useContext } from "react";
 import { format } from "date-fns";
+import { AuthContext } from "@/provider/AuthProvider";
 import {
   Card,
   CardContent,
@@ -26,9 +27,24 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
+  FileEdit,
+  Plus,
 } from "lucide-react";
 import useDailyNppiAverage from "@/hooks/useDailyNppiAverage";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "react-hot-toast";
+import axiosInstance from "@/lib/axiosInstance";
+import { config } from "@/lib/config";
 
 const ITEMS_PER_PAGE = 15;
 
@@ -107,6 +123,75 @@ function LoadingSkeleton() {
 const DailyNppiAverage = () => {
   const { data, loading, error, refetch } = useDailyNppiAverage();
   const [currentPage, setCurrentPage] = useState(1);
+  const { user } = useContext(AuthContext);
+  const isAdmin = user?.role === "admin";
+  const [isOpen, setIsOpen] = useState(false);
+  const [modalDate, setModalDate] = useState("");
+  const [modalWorks, setModalWorks] = useState("");
+  const [modalGoods, setModalGoods] = useState("");
+  const [isEdit, setIsEdit] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleOpenAddModal = () => {
+    setIsEdit(false);
+    setModalDate("");
+    setModalWorks("");
+    setModalGoods("");
+    setIsOpen(true);
+  };
+
+  const handleOpenEditModal = (record) => {
+    setIsEdit(true);
+    setModalDate(record.date);
+    setModalWorks(record.works !== null ? record.works.toString() : "");
+    setModalGoods(record.goods !== null ? record.goods.toString() : "");
+    setIsOpen(true);
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    if (!modalDate) {
+      toast.error("Date is required");
+      return;
+    }
+    
+    setIsSaving(true);
+    try {
+      const payload = {
+        date: modalDate,
+        works: modalWorks === "" ? null : parseFloat(modalWorks),
+        goods: modalGoods === "" ? null : parseFloat(modalGoods),
+      };
+
+      if (payload.works !== null && isNaN(payload.works)) {
+        toast.error("Works value must be a valid number");
+        setIsSaving(false);
+        return;
+      }
+      if (payload.goods !== null && isNaN(payload.goods)) {
+        toast.error("Goods value must be a valid number");
+        setIsSaving(false);
+        return;
+      }
+
+      const response = await axiosInstance.post(
+        `${config.apiBaseUrl}/stl/daily-nppi-average`,
+        payload
+      );
+
+      if (response.data?.success) {
+        toast.success(response.data.message || "Saved successfully");
+        setIsOpen(false);
+        refetch();
+      } else {
+        toast.error(response.data?.message || "Failed to save");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message || "Failed to save");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // All hooks must be called BEFORE any early returns
   const totalCount = data?.dailyData?.length || 0;
@@ -203,13 +288,25 @@ const DailyNppiAverage = () => {
           </div>
         </div>
 
-        <a
-          href="#"
-          className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
-        >
-          <CalendarDays className="w-4 h-4" />
-          Daily Table: Last 90 Days
-        </a>
+        <div className="flex items-center gap-3">
+          {isAdmin && (
+            <Button
+              onClick={handleOpenAddModal}
+              className="bg-blue-600 hover:bg-blue-700 text-white gap-2 rounded-xl shadow-md shadow-blue-200 hover:shadow-lg transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              Override Average
+            </Button>
+          )}
+
+          <a
+            href="#"
+            className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-default pointer-events-none"
+          >
+            <CalendarDays className="w-4 h-4" />
+            Daily Table: Last 90 Days
+          </a>
+        </div>
       </div>
 
       {/* ---------------------------------------------------------------- */}
@@ -271,6 +368,11 @@ const DailyNppiAverage = () => {
                     <TableHead className="text-right font-semibold text-emerald-600">
                       Goods
                     </TableHead>
+                    {isAdmin && (
+                      <TableHead className="text-right font-semibold text-slate-700 w-24">
+                        Actions
+                      </TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -310,6 +412,19 @@ const DailyNppiAverage = () => {
                           ? record.goods.toFixed(3)
                           : "—"}
                       </TableCell>
+                      {isAdmin && (
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 hover:bg-slate-100 hover:text-slate-900 rounded-full"
+                            onClick={() => handleOpenEditModal(record)}
+                          >
+                            <FileEdit className="h-4 w-4 text-slate-500 hover:text-blue-600" />
+                            <span className="sr-only">Edit override</span>
+                          </Button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -382,6 +497,94 @@ const DailyNppiAverage = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* Dialog Modal for Edit / Add Override                           */}
+      {/* ---------------------------------------------------------------- */}
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-md bg-white border border-slate-100 rounded-2xl shadow-xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-slate-800">
+              {isEdit ? "Edit Daily NPPI Factors" : "Add Daily NPPI Override"}
+            </DialogTitle>
+            <DialogDescription className="text-sm text-slate-400">
+              {isEdit
+                ? `Update NPPI factor overrides for ${modalDate ? format(new Date(modalDate + "T00:00:00"), "MMM d, yyyy") : ""}.`
+                : "Set manual NPPI factor overrides for a specific date."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSave} className="space-y-6 py-4">
+            <div className="space-y-4">
+              {/* Date Input */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="date" className="text-sm font-semibold text-slate-700">
+                  Date
+                </Label>
+                <Input
+                  id="date"
+                  type="date"
+                  disabled={isEdit}
+                  value={modalDate}
+                  onChange={(e) => setModalDate(e.target.value)}
+                  className="rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-60"
+                  required
+                />
+              </div>
+
+              {/* Works Input */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="works" className="text-sm font-semibold text-slate-700">
+                  Works NPPI Factor
+                </Label>
+                <Input
+                  id="works"
+                  type="number"
+                  step="0.0001"
+                  placeholder="e.g. 0.9150 (Leave empty to reset to default)"
+                  value={modalWorks}
+                  onChange={(e) => setModalWorks(e.target.value)}
+                  className="rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Goods Input */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="goods" className="text-sm font-semibold text-slate-700">
+                  Goods NPPI Factor
+                </Label>
+                <Input
+                  id="goods"
+                  type="number"
+                  step="0.0001"
+                  placeholder="e.g. 0.9100 (Leave empty to reset to default)"
+                  value={modalGoods}
+                  onChange={(e) => setModalGoods(e.target.value)}
+                  className="rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end border-t pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsOpen(false)}
+                className="rounded-xl"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSaving}
+                className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-200"
+              >
+                {isSaving ? "Saving..." : "Save Overrides"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
