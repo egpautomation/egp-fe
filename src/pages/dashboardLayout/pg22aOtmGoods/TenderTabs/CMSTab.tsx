@@ -29,6 +29,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { config } from "@/lib/config";
 import useSingleData from "@/hooks/useSingleData";
 import axiosInstance from "@/lib/axiosInstance";
@@ -78,6 +79,12 @@ export const CMSTab = ({
     intendedCompletionDate: "",
     contractPeriodExtendedUpTo: "",
     Status_Complite_ongoing: "Ongoing",
+    contractSigningDate: "",
+    descriptionOfWorks: "",
+    paymentAmount: "",
+    WorksInHand: "",
+    jvShare: "",
+    procuringEntityName: "",
   });
   const financialYears = useMemo(() => generateFinancialYears(), []);
 
@@ -98,6 +105,9 @@ export const CMSTab = ({
       const dataToSubmit = {
         ...formData,
         contractValue: parseFloat(formData.contractValue) || 0,
+        paymentAmount: parseFloat(formData.paymentAmount) || 0,
+        WorksInHand: parseFloat(formData.WorksInHand) || 0,
+        jvShare: parseFloat(formData.jvShare) || 0,
       };
       
       const response = await axiosInstance.post("/contract-information/create-contract-information", [dataToSubmit]);
@@ -116,6 +126,12 @@ export const CMSTab = ({
           intendedCompletionDate: "",
           contractPeriodExtendedUpTo: "",
           Status_Complite_ongoing: "Ongoing",
+          contractSigningDate: "",
+          descriptionOfWorks: "",
+          paymentAmount: "",
+          WorksInHand: "",
+          jvShare: "",
+          procuringEntityName: "",
         });
         if (setReload) setReload((prev) => prev + 1);
       }
@@ -786,6 +802,70 @@ export const CMSTab = ({
                     <SelectItem value="Completed">Completed</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contractSigningDate">Signing Date</Label>
+                <Input
+                  id="contractSigningDate"
+                  type="date"
+                  value={formData.contractSigningDate}
+                  onChange={(e) => setFormData({ ...formData, contractSigningDate: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="procuringEntityName">PE Name</Label>
+                <Input
+                  id="procuringEntityName"
+                  value={formData.procuringEntityName}
+                  onChange={(e) => setFormData({ ...formData, procuringEntityName: e.target.value })}
+                  placeholder="Enter PE Name"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="paymentAmount">Payment Amount</Label>
+                <Input
+                  id="paymentAmount"
+                  type="number"
+                  value={formData.paymentAmount}
+                  onChange={(e) => setFormData({ ...formData, paymentAmount: e.target.value })}
+                  placeholder="Enter Payment Amount"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="WorksInHand">Works In Hand</Label>
+                <Input
+                  id="WorksInHand"
+                  type="number"
+                  value={formData.WorksInHand}
+                  onChange={(e) => setFormData({ ...formData, WorksInHand: e.target.value })}
+                  placeholder="Enter Works In Hand"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="jvShare">JV Share (%)</Label>
+                <Input
+                  id="jvShare"
+                  type="number"
+                  value={formData.jvShare}
+                  onChange={(e) => setFormData({ ...formData, jvShare: e.target.value })}
+                  placeholder="Enter JV Share %"
+                />
+              </div>
+
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="descriptionOfWorks">Description</Label>
+                <Textarea
+                  id="descriptionOfWorks"
+                  value={formData.descriptionOfWorks}
+                  onChange={(e) => setFormData({ ...formData, descriptionOfWorks: e.target.value })}
+                  placeholder="Enter Work Description"
+                  rows={3}
+                />
               </div>
             </div>
 
