@@ -73,7 +73,9 @@ export const CMSTab = ({
     companyId: "",
     financialYear: "",
     Name_Of_Contractor: "",
-    Role_in_Contract: "",
+    Role_in_Contract: "1",
+    procurementMethod: "",
+    organization: "",
     contractValue: "",
     commencementDate: "",
     intendedCompletionDate: "",
@@ -102,11 +104,15 @@ export const CMSTab = ({
     setIsSubmitting(true);
     const toastId = toast.loading("Adding contract information...");
     try {
+      const contractVal = parseFloat(formData.contractValue) || 0;
+      const paymentAmt = parseFloat(formData.paymentAmount) || 0;
+      const calculatedWorksInHand = Math.max(0, contractVal - paymentAmt);
+
       const dataToSubmit = {
         ...formData,
-        contractValue: parseFloat(formData.contractValue) || 0,
-        paymentAmount: parseFloat(formData.paymentAmount) || 0,
-        WorksInHand: parseFloat(formData.WorksInHand) || 0,
+        contractValue: contractVal,
+        paymentAmount: paymentAmt,
+        WorksInHand: calculatedWorksInHand,
         jvShare: parseFloat(formData.jvShare) || 0,
       };
       
@@ -120,7 +126,9 @@ export const CMSTab = ({
           companyId: egpListedCompany?.companyUniqueEGP_ID || "",
           financialYear: "",
           Name_Of_Contractor: "",
-          Role_in_Contract: "",
+          Role_in_Contract: "1",
+          procurementMethod: "",
+          organization: "",
           contractValue: "",
           commencementDate: "",
           intendedCompletionDate: "",
@@ -683,13 +691,13 @@ export const CMSTab = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="companyId">Company ID *</Label>
+                <Label htmlFor="companyId">Company ID</Label>
                 <Input
                   id="companyId"
-                  required
+                  disabled
                   value={formData.companyId}
-                  onChange={(e) => setFormData({ ...formData, companyId: e.target.value })}
-                  placeholder="Enter Company ID"
+                  placeholder="Loading Company ID..."
+                  className="bg-gray-100 cursor-not-allowed"
                 />
               </div>
 
@@ -725,6 +733,29 @@ export const CMSTab = ({
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="contractValue">Contract Value *</Label>
+                <Input
+                  id="contractValue"
+                  required
+                  type="number"
+                  value={formData.contractValue}
+                  onChange={(e) => setFormData({ ...formData, contractValue: e.target.value })}
+                  placeholder="Enter Value"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="paymentAmount">Payment Amount</Label>
+                <Input
+                  id="paymentAmount"
+                  type="number"
+                  value={formData.paymentAmount}
+                  onChange={(e) => setFormData({ ...formData, paymentAmount: e.target.value })}
+                  placeholder="Enter Payment Amount"
+                />
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="Role_in_Contract">Role in Contract *</Label>
                 <Select
                   value={formData.Role_in_Contract}
@@ -736,22 +767,27 @@ export const CMSTab = ({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="1">Prime</SelectItem>
-                    <SelectItem value="2">Sub</SelectItem>
-                    <SelectItem value="3">Management</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="contractValue">Contract Value *</Label>
-                <Input
-                  id="contractValue"
-                  required
-                  type="number"
-                  value={formData.contractValue}
-                  onChange={(e) => setFormData({ ...formData, contractValue: e.target.value })}
-                  placeholder="Enter Value"
-                />
+                <Label htmlFor="procurementMethod">Procurement Method</Label>
+                <Select
+                  value={formData.procurementMethod}
+                  onValueChange={(value) => setFormData({ ...formData, procurementMethod: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="OTM">OTM</SelectItem>
+                    <SelectItem value="LTM">LTM</SelectItem>
+                    <SelectItem value="OSTETM">OSTETM</SelectItem>
+                    <SelectItem value="RFQ">RFQ</SelectItem>
+                    <SelectItem value="DPM">DPM</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -772,18 +808,14 @@ export const CMSTab = ({
                   required
                   type="date"
                   value={formData.intendedCompletionDate}
-                  onChange={(e) => setFormData({ ...formData, intendedCompletionDate: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="contractPeriodExtendedUpTo">Time Extension Date *</Label>
-                <Input
-                  id="contractPeriodExtendedUpTo"
-                  required
-                  type="date"
-                  value={formData.contractPeriodExtendedUpTo}
-                  onChange={(e) => setFormData({ ...formData, contractPeriodExtendedUpTo: e.target.value })}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setFormData((prev) => ({
+                      ...prev,
+                      intendedCompletionDate: val,
+                      contractPeriodExtendedUpTo: val,
+                    }));
+                  }}
                 />
               </div>
 
@@ -805,16 +837,6 @@ export const CMSTab = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="contractSigningDate">Signing Date</Label>
-                <Input
-                  id="contractSigningDate"
-                  type="date"
-                  value={formData.contractSigningDate}
-                  onChange={(e) => setFormData({ ...formData, contractSigningDate: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="procuringEntityName">PE Name</Label>
                 <Input
                   id="procuringEntityName"
@@ -825,24 +847,12 @@ export const CMSTab = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="paymentAmount">Payment Amount</Label>
+                <Label htmlFor="organization">Organization</Label>
                 <Input
-                  id="paymentAmount"
-                  type="number"
-                  value={formData.paymentAmount}
-                  onChange={(e) => setFormData({ ...formData, paymentAmount: e.target.value })}
-                  placeholder="Enter Payment Amount"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="WorksInHand">Works In Hand</Label>
-                <Input
-                  id="WorksInHand"
-                  type="number"
-                  value={formData.WorksInHand}
-                  onChange={(e) => setFormData({ ...formData, WorksInHand: e.target.value })}
-                  placeholder="Enter Works In Hand"
+                  id="organization"
+                  value={formData.organization}
+                  onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+                  placeholder="Enter Organization (e.g. LGED, RHD)"
                 />
               </div>
 
@@ -858,7 +868,7 @@ export const CMSTab = ({
               </div>
 
               <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="descriptionOfWorks">Description</Label>
+                <Label htmlFor="descriptionOfWorks">Description of Works</Label>
                 <Textarea
                   id="descriptionOfWorks"
                   value={formData.descriptionOfWorks}
