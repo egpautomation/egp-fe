@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useMemo, useState } from "react";
-import { Filter, Search, Trash2, X, Edit, Plus } from "lucide-react";
+import { Filter, Search, Trash2, X, Edit, Plus, ChevronsUpDown, Check, FileText, Building2, CalendarDays, DollarSign } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +34,7 @@ import { config } from "@/lib/config";
 import useSingleData from "@/hooks/useSingleData";
 import axiosInstance from "@/lib/axiosInstance";
 import toast from "react-hot-toast";
+import useAllDepartments from "@/hooks/useAllDepartments";
 
 const generateFinancialYears = () => {
   const years = [];
@@ -49,6 +50,111 @@ const generateFinancialYears = () => {
   return years;
 };
 
+const OrganizationSearchDropdown = ({ value, onChange, data }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const dropdownRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filteredData = useMemo(() => {
+    if (!data) return [];
+    return data.filter((item) =>
+      item?.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [data, search]);
+
+  return (
+    <div className="relative w-full" ref={dropdownRef}>
+      {/* Trigger button */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`flex h-9 w-full items-center justify-between rounded-md border bg-white px-3 py-2 text-sm transition-all text-left ${
+          isOpen
+            ? "border-[#4874c7] ring-2 ring-[#4874c7]/20"
+            : "border-slate-200 hover:border-[#4874c7]/50"
+        }`}
+      >
+        <span className={`truncate ${!value ? "text-slate-400" : "text-slate-700 font-medium"}`}>
+          {value || "Select organization..."}
+        </span>
+        <ChevronsUpDown className={`h-4 w-4 shrink-0 ml-2 transition-colors ${isOpen ? "text-[#4874c7]" : "text-slate-400"}`} />
+      </button>
+
+      {/* Dropdown panel */}
+      {isOpen && (
+        <div className="absolute z-50 mt-1 w-full rounded-lg border border-slate-200 bg-white shadow-xl ring-1 ring-[#4874c7]/10 overflow-hidden">
+          {/* Search header */}
+          <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2 bg-[#4874c7]/5">
+            <Search className="h-3.5 w-3.5 shrink-0 text-[#4874c7]" />
+            <input
+              autoFocus
+              placeholder="Search organization..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400 text-slate-800"
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                className="p-0.5 hover:bg-[#4874c7]/10 rounded-full transition-colors"
+              >
+                <X className="h-3 w-3 text-[#4874c7]" />
+              </button>
+            )}
+          </div>
+          {/* Items list */}
+          <div className="max-h-52 overflow-y-auto py-1">
+            {filteredData.length === 0 ? (
+              <div className="py-5 text-center text-sm text-slate-400">No organization found.</div>
+            ) : (
+              filteredData.map((item) => {
+                const selected = value === item;
+                return (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => {
+                      onChange(item);
+                      setIsOpen(false);
+                      setSearch("");
+                    }}
+                    className={`relative flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors text-left ${
+                      selected
+                        ? "bg-[#4874c7]/10 text-[#4874c7] font-semibold"
+                        : "text-slate-700 hover:bg-[#4874c7]/5 hover:text-[#4874c7]"
+                    }`}
+                  >
+                    <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+                      {selected && <Check className="h-3.5 w-3.5 stroke-[3px] text-[#4874c7]" />}
+                    </span>
+                    <span className="truncate">{item}</span>
+                  </button>
+                );
+              })
+            )}
+          </div>
+          {/* Footer count */}
+          <div className="border-t border-slate-100 px-3 py-1.5 bg-slate-50">
+            <span className="text-[10px] text-slate-400">{filteredData.length} organization{filteredData.length !== 1 ? "s" : ""} found</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+
 export const CMSTab = ({
   completedContracts,
   ongoingContracts,
@@ -58,6 +164,11 @@ export const CMSTab = ({
   onEditContract,
   egpEmail,
 }) => {
+  const { departments } = useAllDepartments();
+  const organizations = useMemo(() => {
+    if (!departments || !Array.isArray(departments)) return [];
+    return [...new Set(departments.map((d) => d.organization).filter(Boolean))];
+  }, [departments]);
   const [showFilter, setShowFilter] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -669,224 +780,285 @@ export const CMSTab = ({
 
       {/* Add New Contract Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-800">Add New Contract Information</DialogTitle>
-            <DialogDescription>
-              Fill in the required details to create a new contract entry manually.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <form onSubmit={handleAddSubmit} className="space-y-6 mt-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="tenderId">Tender ID *</Label>
-                <Input
-                  id="tenderId"
-                  required
-                  value={formData.tenderId}
-                  onChange={(e) => setFormData({ ...formData, tenderId: e.target.value })}
-                  placeholder="Enter Tender ID"
-                />
+        <DialogContent className="max-w-3xl p-0 overflow-hidden max-h-[92vh] flex flex-col">
+          {/* Header — matches app brand color #4874c7 */}
+          <div className="bg-[#4874c7] px-7 py-5 flex items-start gap-4 shrink-0">
+            <div className="bg-white/20 rounded-xl p-2.5 mt-0.5">
+              <FileText className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <DialogTitle className="text-lg font-bold text-white tracking-tight leading-tight">
+                Add New Contract
+              </DialogTitle>
+              <DialogDescription className="text-blue-100 text-sm mt-0.5">
+                Fill in the details below to create a new contract entry.
+              </DialogDescription>
+            </div>
+          </div>
+
+          {/* Scrollable Form Body */}
+          <form onSubmit={handleAddSubmit} className="flex flex-col flex-1 min-h-0">
+            <div className="overflow-y-auto flex-1 px-7 py-5 space-y-6">
+
+              {/* Section 1 – Contract Identity */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <FileText className="w-4 h-4 text-[#4874c7]" />
+                  <span className="text-xs font-semibold text-[#4874c7] uppercase tracking-widest">Contract Identity</span>
+                  <div className="flex-1 h-px bg-[#4874c7]/20" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="tenderId" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Tender ID <span className="text-red-500">*</span></Label>
+                    <Input
+                      id="tenderId"
+                      required
+                      value={formData.tenderId}
+                      onChange={(e) => setFormData({ ...formData, tenderId: e.target.value })}
+                      placeholder="e.g. TND-2024-001"
+                      className="h-9 text-sm border-slate-200 focus:border-[#4874c7] focus:ring-[#4874c7]/20"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="companyId" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Company ID</Label>
+                    <Input
+                      id="companyId"
+                      disabled
+                      value={formData.companyId}
+                      placeholder="Auto-loaded..."
+                      className="h-9 text-sm bg-slate-50 text-slate-400 cursor-not-allowed border-slate-200"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="financialYear" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Financial Year <span className="text-red-500">*</span></Label>
+                    <Select
+                      value={formData.financialYear}
+                      onValueChange={(value) => setFormData({ ...formData, financialYear: value })}
+                      required
+                    >
+                      <SelectTrigger className="h-9 text-sm border-slate-200">
+                        <SelectValue placeholder="Select Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {financialYears.map((year) => (
+                          <SelectItem key={year} value={year}>{year}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="Name_Of_Contractor" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Contractor Name <span className="text-red-500">*</span></Label>
+                    <Input
+                      id="Name_Of_Contractor"
+                      required
+                      value={formData.Name_Of_Contractor}
+                      onChange={(e) => setFormData({ ...formData, Name_Of_Contractor: e.target.value })}
+                      placeholder="Enter contractor name"
+                      className="h-9 text-sm border-slate-200 focus:border-[#4874c7] focus:ring-[#4874c7]/20"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Role in Contract <span className="text-red-500">*</span></Label>
+                    <Select
+                      value={formData.Role_in_Contract}
+                      onValueChange={(value) => setFormData({ ...formData, Role_in_Contract: value })}
+                      required
+                    >
+                      <SelectTrigger className="h-9 text-sm border-slate-200 focus:border-[#4874c7]">
+                        <SelectValue placeholder="Select Role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1">Prime</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Status <span className="text-red-500">*</span></Label>
+                    <Select
+                      value={formData.Status_Complite_ongoing}
+                      onValueChange={(value) => setFormData({ ...formData, Status_Complite_ongoing: value })}
+                      required
+                    >
+                      <SelectTrigger className="h-9 text-sm border-slate-200 focus:border-[#4874c7]">
+                        <SelectValue placeholder="Select Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Ongoing">Ongoing</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="companyId">Company ID</Label>
-                <Input
-                  id="companyId"
-                  disabled
-                  value={formData.companyId}
-                  placeholder="Loading Company ID..."
-                  className="bg-gray-100 cursor-not-allowed"
-                />
+              {/* Section 2 – Financial */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <DollarSign className="w-4 h-4 text-[#4874c7]" />
+                  <span className="text-xs font-semibold text-[#4874c7] uppercase tracking-widest">Financial Details</span>
+                  <div className="flex-1 h-px bg-[#4874c7]/20" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="contractValue" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Contract Value <span className="text-red-500">*</span></Label>
+                    <Input
+                      id="contractValue"
+                      required
+                      type="number"
+                      value={formData.contractValue}
+                      onChange={(e) => setFormData({ ...formData, contractValue: e.target.value })}
+                      placeholder="0.00"
+                      className="h-9 text-sm border-slate-200 focus:border-emerald-400 focus:ring-emerald-400/20"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="paymentAmount" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Payment Amount</Label>
+                    <Input
+                      id="paymentAmount"
+                      type="number"
+                      value={formData.paymentAmount}
+                      onChange={(e) => setFormData({ ...formData, paymentAmount: e.target.value })}
+                      placeholder="0.00"
+                      className="h-9 text-sm border-slate-200 focus:border-emerald-400 focus:ring-emerald-400/20"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Procurement Method</Label>
+                    <Select
+                      value={formData.procurementMethod}
+                      onValueChange={(value) => setFormData({ ...formData, procurementMethod: value })}
+                    >
+                      <SelectTrigger className="h-9 text-sm border-slate-200">
+                        <SelectValue placeholder="Select Method" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="OTM">OTM</SelectItem>
+                        <SelectItem value="LTM">LTM</SelectItem>
+                        <SelectItem value="OSTETM">OSTETM</SelectItem>
+                        <SelectItem value="RFQ">RFQ</SelectItem>
+                        <SelectItem value="DPM">DPM</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="jvShare" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">JV Share (%)</Label>
+                    <Input
+                      id="jvShare"
+                      type="number"
+                      value={formData.jvShare}
+                      onChange={(e) => setFormData({ ...formData, jvShare: e.target.value })}
+                      placeholder="0"
+                      className="h-9 text-sm border-slate-200 focus:border-[#4874c7] focus:ring-[#4874c7]/20"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="financialYear">Financial Year *</Label>
-                <Select
-                  value={formData.financialYear}
-                  onValueChange={(value) => setFormData({ ...formData, financialYear: value })}
-                  required
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Year" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {financialYears.map((year) => (
-                      <SelectItem key={year} value={year}>
-                        {year}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              {/* Section 3 – Dates */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <CalendarDays className="w-4 h-4 text-[#4874c7]" />
+                  <span className="text-xs font-semibold text-[#4874c7] uppercase tracking-widest">Key Dates</span>
+                  <div className="flex-1 h-px bg-[#4874c7]/20" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="commencementDate" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Work Order Date <span className="text-red-500">*</span></Label>
+                    <Input
+                      id="commencementDate"
+                      required
+                      type="date"
+                      value={formData.commencementDate}
+                      onChange={(e) => setFormData({ ...formData, commencementDate: e.target.value })}
+                      className="h-9 text-sm border-slate-200 focus:border-[#4874c7] focus:ring-[#4874c7]/20"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="intendedCompletionDate" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Work Completion Date <span className="text-red-500">*</span></Label>
+                    <Input
+                      id="intendedCompletionDate"
+                      required
+                      type="date"
+                      value={formData.intendedCompletionDate}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setFormData((prev) => ({
+                          ...prev,
+                          intendedCompletionDate: val,
+                          contractPeriodExtendedUpTo: val,
+                        }));
+                      }}
+                      className="h-9 text-sm border-slate-200 focus:border-[#4874c7] focus:ring-[#4874c7]/20"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="Name_Of_Contractor">Name of Contractor *</Label>
-                <Input
-                  id="Name_Of_Contractor"
-                  required
-                  value={formData.Name_Of_Contractor}
-                  onChange={(e) => setFormData({ ...formData, Name_Of_Contractor: e.target.value })}
-                  placeholder="Enter Contractor Name"
-                />
+              {/* Section 4 – Organization & Additional */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Building2 className="w-4 h-4 text-[#4874c7]" />
+                  <span className="text-xs font-semibold text-[#4874c7] uppercase tracking-widest">Organization & Additional</span>
+                  <div className="flex-1 h-px bg-[#4874c7]/20" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="procuringEntityName" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">PE Name</Label>
+                    <Input
+                      id="procuringEntityName"
+                      value={formData.procuringEntityName}
+                      onChange={(e) => setFormData({ ...formData, procuringEntityName: e.target.value })}
+                      placeholder="Procuring entity name"
+                      className="h-9 text-sm border-slate-200 focus:border-[#4874c7] focus:ring-[#4874c7]/20"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Organization</Label>
+                    <OrganizationSearchDropdown
+                      value={formData.organization}
+                      onChange={(val) => setFormData((prev) => ({ ...prev, organization: val }))}
+                      data={organizations || []}
+                    />
+                  </div>
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label htmlFor="descriptionOfWorks" className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Description of Works</Label>
+                    <Textarea
+                      id="descriptionOfWorks"
+                      value={formData.descriptionOfWorks}
+                      onChange={(e) => setFormData({ ...formData, descriptionOfWorks: e.target.value })}
+                      placeholder="Brief description of the work scope..."
+                      rows={3}
+                      className="text-sm border-slate-200 resize-none focus:border-[#4874c7] focus:ring-[#4874c7]/20"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="contractValue">Contract Value *</Label>
-                <Input
-                  id="contractValue"
-                  required
-                  type="number"
-                  value={formData.contractValue}
-                  onChange={(e) => setFormData({ ...formData, contractValue: e.target.value })}
-                  placeholder="Enter Value"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="paymentAmount">Payment Amount</Label>
-                <Input
-                  id="paymentAmount"
-                  type="number"
-                  value={formData.paymentAmount}
-                  onChange={(e) => setFormData({ ...formData, paymentAmount: e.target.value })}
-                  placeholder="Enter Payment Amount"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="Role_in_Contract">Role in Contract *</Label>
-                <Select
-                  value={formData.Role_in_Contract}
-                  onValueChange={(value) => setFormData({ ...formData, Role_in_Contract: value })}
-                  required
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">Prime</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="procurementMethod">Procurement Method</Label>
-                <Select
-                  value={formData.procurementMethod}
-                  onValueChange={(value) => setFormData({ ...formData, procurementMethod: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Method" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="OTM">OTM</SelectItem>
-                    <SelectItem value="LTM">LTM</SelectItem>
-                    <SelectItem value="OSTETM">OSTETM</SelectItem>
-                    <SelectItem value="RFQ">RFQ</SelectItem>
-                    <SelectItem value="DPM">DPM</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="commencementDate">Work Order Date *</Label>
-                <Input
-                  id="commencementDate"
-                  required
-                  type="date"
-                  value={formData.commencementDate}
-                  onChange={(e) => setFormData({ ...formData, commencementDate: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="intendedCompletionDate">Work Completion Date *</Label>
-                <Input
-                  id="intendedCompletionDate"
-                  required
-                  type="date"
-                  value={formData.intendedCompletionDate}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setFormData((prev) => ({
-                      ...prev,
-                      intendedCompletionDate: val,
-                      contractPeriodExtendedUpTo: val,
-                    }));
-                  }}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="Status_Complite_ongoing">Status *</Label>
-                <Select
-                  value={formData.Status_Complite_ongoing}
-                  onValueChange={(value) => setFormData({ ...formData, Status_Complite_ongoing: value })}
-                  required
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Ongoing">Ongoing</SelectItem>
-                    <SelectItem value="Completed">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="procuringEntityName">PE Name</Label>
-                <Input
-                  id="procuringEntityName"
-                  value={formData.procuringEntityName}
-                  onChange={(e) => setFormData({ ...formData, procuringEntityName: e.target.value })}
-                  placeholder="Enter PE Name"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="organization">Organization</Label>
-                <Input
-                  id="organization"
-                  value={formData.organization}
-                  onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
-                  placeholder="Enter Organization (e.g. LGED, RHD)"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="jvShare">JV Share (%)</Label>
-                <Input
-                  id="jvShare"
-                  type="number"
-                  value={formData.jvShare}
-                  onChange={(e) => setFormData({ ...formData, jvShare: e.target.value })}
-                  placeholder="Enter JV Share %"
-                />
-              </div>
-
-              <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="descriptionOfWorks">Description of Works</Label>
-                <Textarea
-                  id="descriptionOfWorks"
-                  value={formData.descriptionOfWorks}
-                  onChange={(e) => setFormData({ ...formData, descriptionOfWorks: e.target.value })}
-                  placeholder="Enter Work Description"
-                  rows={3}
-                />
-              </div>
             </div>
 
-            <DialogFooter className="pt-4">
-              <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-blue-600 hover:bg-blue-700 text-white">
-                {isSubmitting ? "Saving..." : "Save Contract"}
-              </Button>
-            </DialogFooter>
+            {/* Sticky Footer */}
+            <div className="border-t border-slate-100 bg-slate-50 px-7 py-4 flex items-center justify-between shrink-0">
+              <p className="text-xs text-slate-400"><span className="text-red-400">*</span> Required fields</p>
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsAddDialogOpen(false)}
+                  className="h-9 px-5 text-sm border-slate-200 text-slate-600 hover:bg-slate-100"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="h-9 px-6 text-sm bg-[#4874c7] hover:bg-[#3a5fa8] text-white shadow-sm transition-colors"
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center gap-2"><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Saving...</span>
+                  ) : "Save Contract"}
+                </Button>
+              </div>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
