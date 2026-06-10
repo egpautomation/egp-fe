@@ -78,6 +78,7 @@ const OrganizationSearchDropdown = ({ value, onChange, data }) => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
+        title={value || undefined}
         className={`flex h-9 w-full items-center justify-between rounded-md border bg-white px-3 py-2 text-sm transition-all text-left ${
           isOpen
             ? "border-[#4874c7] ring-2 ring-[#4874c7]/20"
@@ -124,6 +125,7 @@ const OrganizationSearchDropdown = ({ value, onChange, data }) => {
                   <button
                     key={item}
                     type="button"
+                    title={item}
                     onClick={() => {
                       onChange(item);
                       setIsOpen(false);
