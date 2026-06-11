@@ -88,6 +88,8 @@ export default function LiveTender() {
 
   const [tenderIdSearch, setTenderIdSearch] = useState("");
   const [debouncedTenderIdSearch, setDebouncedTenderIdSearch] = useState("");
+  const [descriptionSearch, setDescriptionSearch] = useState("");
+  const [debouncedDescriptionSearch, setDebouncedDescriptionSearch] = useState("");
   const [ministrySearch, setMinistrySearch] = useState("");
   const [debouncedMinistrySearch, setDebouncedMinistrySearch] = useState("");
   const [districtSearch, setDistrictSearch] = useState("");
@@ -107,13 +109,14 @@ export default function LiveTender() {
   useEffect(() => {
     const t = setTimeout(() => {
       setDebouncedTenderIdSearch(tenderIdSearch);
+      setDebouncedDescriptionSearch(descriptionSearch);
       setDebouncedMinistrySearch(ministrySearch);
       setDebouncedDistrictSearch(districtSearch);
       setDebouncedTypeMethodSearch(typeMethodSearch);
       setDebouncedPublishingDateSearch(publishingDateSearch);
     }, 450);
     return () => clearTimeout(t);
-  }, [tenderIdSearch, ministrySearch, districtSearch, typeMethodSearch, publishingDateSearch]);
+  }, [tenderIdSearch, descriptionSearch, ministrySearch, districtSearch, typeMethodSearch, publishingDateSearch]);
 
   // Sync URL params
   useEffect(() => {
@@ -135,7 +138,8 @@ export default function LiveTender() {
     debouncedTypeMethodSearch,
     currentPage,
     pageLimit,
-    debouncedPublishingDateSearch
+    debouncedPublishingDateSearch,
+    debouncedDescriptionSearch
   );
 
   // Build tenderId → _id lookup map for current page tenders
@@ -229,7 +233,7 @@ export default function LiveTender() {
       </div>
 
       {/* Column Filters */}
-      <div className="mb-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
+      <div className="mb-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-2">
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <Input
@@ -245,6 +249,26 @@ export default function LiveTender() {
             <button
               className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
               onClick={() => setTenderIdSearch("")}
+            >
+              <X size={13} />
+            </button>
+          )}
+        </div>
+
+        <div className="relative">
+          <Input
+            value={descriptionSearch}
+            onChange={(e) => {
+              setDescriptionSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+            placeholder="Brief Description"
+            className="h-9 text-sm pr-7"
+          />
+          {descriptionSearch && (
+            <button
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
+              onClick={() => setDescriptionSearch("")}
             >
               <X size={13} />
             </button>
@@ -482,14 +506,15 @@ export default function LiveTender() {
               })
             ) : (
               <tr>
-                <td colSpan={7} className="text-center py-16 text-gray-400">
+                <td colSpan={8} className="text-center py-16 text-gray-400">
                   <div className="flex flex-col items-center gap-2">
                     <AlignJustify size={32} className="opacity-30" />
                     <p className="text-sm">No tenders found</p>
-                    {(tenderIdSearch || ministrySearch || districtSearch || typeMethodSearch) && (
+                    {(tenderIdSearch || descriptionSearch || ministrySearch || districtSearch || typeMethodSearch) && (
                       <button
                         onClick={() => {
                           setTenderIdSearch("");
+                          setDescriptionSearch("");
                           setMinistrySearch("");
                           setDistrictSearch("");
                           setTypeMethodSearch("");

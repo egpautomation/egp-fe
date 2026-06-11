@@ -11,7 +11,8 @@ const useLiveTenders = (
   typeMethod = "",
   page = 1,
   limit = 20,
-  publishingDate = ""
+  publishingDate = "",
+  description = ""
 ) => {
   const [allTenders, setAllTenders] = useState([]);
   const [tenders, setTenders] = useState([]);
@@ -33,12 +34,14 @@ const useLiveTenders = (
         const d = district.trim();
         const t = typeMethod.trim();
         const pDate = publishingDate.trim();
+        const desc = description.trim();
 
         if (s) params.searchTerm = s;
         if (t) params.method = t;
         if (m) params.organization = m;
         if (d) params.locationDistrict = d;
         if (pDate) params.publicationDateTime = pDate;
+        if (desc) params.description = desc;
 
         const response = await axiosInstance.get("/live-tenders", { params });
         const data = response.data;
@@ -59,7 +62,7 @@ const useLiveTenders = (
       }
     };
     fetchAllData();
-  }, [reload, searchTerm, ministry, district, typeMethod, page, limit, publishingDate]);
+  }, [reload, searchTerm, ministry, district, typeMethod, page, limit, publishingDate, description]);
 
   return {
     allTenders,
