@@ -105,6 +105,18 @@ const CERTIFICATE_OPTIONS = [
     label: "average annual construction turnover certificate",
     value: "average annual construction turnover certificate",
   },
+  { label: "Average Turnover", value: "Average Turnover" },
+  { label: "Payment Certificate", value: "Payment Certificate" },
+  { label: "Audit Report", value: "Audit Report" },
+  { label: "Company Profile", value: "Company Profile" },
+  { label: "Key Personnel", value: "Key Personnel" },
+  { label: "Construction Equipment", value: "Construction Equipment" },
+  { label: "JVCA Agreement", value: "JVCA Agreement" },
+  { label: "Current Commitment", value: "Current Commitment" },
+  { label: "Undertaking", value: "Undertaking" },
+  { label: "Legal Capacity", value: "Legal Capacity" },
+  { label: "Technical CV", value: "Technical CV" },
+  { label: "Equipment Ownership", value: "Equipment Ownership" },
 ];
 
 const UpdateEgpListedCompany = () => {
